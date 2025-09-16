@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+
+/* Base styles aligned with brand */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-darkGray;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-purple rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-purpleDark;
+}
+
+@layer base {
+  body {
+    @apply font-body text-brand-lightGray bg-brand-dark;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-branding text-brand-lightGray;
+  }
+  ::selection {
+    background: rgba(108, 92, 231, 0.3);
+    color: #e1e5e9;
+  }
+}
+
+@layer components {
+  /* Gaming Buttons */
+  .btn {
+    @apply relative overflow-hidden inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-purple/30 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon hover:shadow-glow-hover;
+  }
+
+  .btn-secondary {
+    @apply bg-gradient-to-r from-brand-orange to-brand-orangeDark text-white shadow-neon-orange hover:shadow-glow-hover;
+  }
+
+  .btn-ghost {
+    @apply bg-brand-darkGray/50 backdrop-blur text-brand-lightGray border-2 border-brand-purple/30 hover:border-brand-purple hover:bg-brand-purple/10;
+  }
+
+  /* Gaming Cards */
+  .gaming-card {
+    @apply rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/20 p-6 shadow-card hover:shadow-neon transition-all duration-300 transform hover:scale-[1.02] hover:border-brand-purple/40;
+  }
+
+  .menu-card {
+    @apply gaming-card cursor-pointer;
+  }
+
+  /* Pills and Badges */
+  .pill {
+    @apply rounded-full bg-brand-darkGray/80 backdrop-blur px-4 py-2 text-brand-lightGray border border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-green/20 text-brand-green px-3 py-1 text-sm font-semibold border border-brand-green/30;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-orange/20 text-brand-orange px-3 py-1 text-sm font-semibold border border-brand-orange/30;
+  }
+
+  .badge-info {
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-cyan/20 text-brand-cyan px-3 py-1 text-sm font-semibold border border-brand-cyan/30;
+  }
+
+  /* Legacy badges for compatibility */
+  .badge-green {
+    @apply badge-success;
+  }
+
+  .badge-orange {
+    @apply badge-warning;
+  }
+
+  /* Gaming Text Effects */
+  .glow-text {
+    text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+  }
+
+  .title-gaming {
+    @apply font-display text-6xl md:text-7xl lg:text-8xl bg-gradient-to-r from-brand-purple via-brand-pink to-brand-orange bg-clip-text text-transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Category Buttons */
+  .category-button {
+    @apply relative overflow-hidden rounded-2xl border-2 transition-all duration-300 transform hover:scale-105;
+  }
+
+  .category-button:not(.selected) {
+    @apply border-brand-purple/30 bg-brand-darkGray/50 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10;
+  }
+
+  .category-button.selected {
+    @apply border-brand-purple bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon;
+  }
+
+  /* Modal Animations */
+  @keyframes modalPop {
+    0% {
+      transform: scale(0.8) rotate(-2deg);
+    }
+    50% {
+      transform: scale(1.05) rotate(1deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  .modal-enter-active {
+    animation: modalPop 0.3s ease-out;
+  }
+
+  /* Transitions */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+}
