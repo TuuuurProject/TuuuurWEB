@@ -1,5 +1,5 @@
 import axiosOverlay from './axiosOverlay'
-// import { useUserStore } from '@/stores/user'
+import useUserStore from '@/stores/user'
 
 export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
   // let userStore = useUserStore()

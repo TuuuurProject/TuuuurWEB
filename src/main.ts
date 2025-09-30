@@ -37,6 +37,7 @@ import {
   faLaptopCode,
   faUniversity,
   faWandMagicSparkles,
+  faUserPlus,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -68,6 +69,7 @@ library.add(
   faLaptopCode,
   faUniversity,
   faWandMagicSparkles,
+  faUserPlus,
 )
 
 const app = createApp(App)
