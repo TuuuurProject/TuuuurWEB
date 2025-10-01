@@ -34,7 +34,7 @@
             </button>
           </div>
         </div>
-        <div class="pt-2 flex items-center justify-end gap-3">
+        <div class="pt-2 flex items-center justify-center gap-3">
           <button type="button" class="btn btn-secondary" @click="$emit('back')">Annuler</button>
           <button type="submit" class="btn btn-primary">Se connecter</button>
         </div>
