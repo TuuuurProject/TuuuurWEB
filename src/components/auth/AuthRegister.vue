@@ -63,9 +63,8 @@
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
               role="alert"
             >
-              <strong class="font-medium capitalize">{{ field }}:</strong>
               <ul class="mt-1 list-disc list-inside">
-                <li v-for="(message, index) in error[field]" :key="index">{{ message }}</li>
+                <li>{{ error[field]?.description }}</li>
               </ul>
             </div>
           </div>
