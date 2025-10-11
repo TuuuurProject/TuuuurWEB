@@ -14,6 +14,14 @@
 
 <script setup lang="ts">
 import HeaderBlock from './components/HeaderBlock.vue'
+import useUserStore from '@/stores/user.js'
+
+const userStore = useUserStore()
+
+// If token is expired, log out the user
+if (userStore.token && !userStore.isLogged) {
+  userStore.logout()
+}
 </script>
 
 <style>
