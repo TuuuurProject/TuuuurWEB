@@ -73,8 +73,8 @@
           </div> -->
 
           <!-- Historique des parties avec style gaming -->
-          <!-- <div>
-            <h4 class="font-display text-xl mb-4 text-brand-lightGray flex items-center gap-2">
+          <div>
+            <!-- <h4 class="font-display text-xl mb-4 text-brand-lightGray flex items-center gap-2">
               📈 Historique des parties
               <span class="badge-info text-xs">Dernières sessions</span>
             </h4>
@@ -109,17 +109,17 @@
                 </div>
                 <div class="badge-warning">+8 Élo</div>
               </li>
-            </ul>
-            <div class="mt-4 flex items-center justify-between">
-              <button class="btn btn-ghost" disabled>
+            </ul> -->
+            <div class="mt-4 flex items-center justify-end">
+              <!-- <button class="btn btn-ghost" disabled>
                 <font-awesome-icon icon="chart-bar" class="mr-2" /> Voir toutes les statistiques
-              </button>
+              </button> -->
 
               <button class="btn btn-ghost" @click="userStore.logout()">
                 <font-awesome-icon icon="sign-out-alt" class="mr-2" /> Se déconnecter
               </button>
             </div>
-          </div> -->
+          </div>
         </div>
         <!-- Not logged in -->
         <div v-else class="text-center p-6 text-brand-gray">

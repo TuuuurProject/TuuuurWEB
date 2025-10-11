@@ -78,7 +78,6 @@ export default defineStore('user', {
         const responseData = response.data
 
         this.token = responseData.token.token
-        console.log('Token set:', this.token)
 
         return responseData
       } catch (error: any) {

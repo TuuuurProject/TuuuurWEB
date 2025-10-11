@@ -78,42 +78,18 @@
         </overlay-block>
       </div>
       <div v-else class="max-w-lg gaming-card mx-auto">
-        <overlay-block :loading="userStore.isLoading">
-          <div class="max-w-md mx-auto">
-            <h2 class="font-branding text-3xl text-brand-lightGray glow-text text-center mb-4">
-              Vérification de votre email
-            </h2>
-            <label class="block font-semibold mb-8 text-brand-green text-center">
-              Un code a été envoyé à votre adresse email.
-            </label>
-            <div class="flex items-center gap-2 justify-center">
-              <input
-                v-for="i in 6"
-                :key="i"
-                maxlength="1"
-                class="w-12 h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
-                v-model="digits[i - 1]"
-                @input="onInput(i - 1)"
-                @paste.prevent="handlePaste"
-                @keydown.ctrl.v.prevent="handleKeyboardPaste"
-              />
-            </div>
-            <div class="mt-8 flex items-center justify-center gap-3">
-              <!-- <button class="btn btn-secondary" @click="step = 1">Retour</button> -->
-              <button class="btn btn-primary" @click="verifyEmail">Confirmer</button>
-            </div>
-          </div>
-        </overlay-block>
+        <auth-code :loading="userStore.isLoading" @verification="verifyEmail" />
       </div>
     </transition>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
+import AuthCode from '@/components/auth/AuthCode.vue'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -128,66 +104,17 @@ const registerData = ref<{ nickName: string; email: string; password: string }>(
 
 const error = ref<Record<string, string[]> | null>(null)
 
-const digits = reactive<string[]>(['', '', '', '', '', ''])
-
-function onInput(idx: number) {
-  const el = document.activeElement as HTMLInputElement
-  if (el && el.value) el.value = el.value.toUpperCase()
-  if (idx < 5) {
-    const next = el?.nextElementSibling as HTMLInputElement | null
-    next?.focus()
-  }
-}
-
 const registerAuth = async () => {
   error.value = await userStore.register(registerData.value)
   if (typeof error.value === 'boolean' && error.value) step.value = 2
 }
 
-const verifyEmail = async () => {
+const verifyEmail = async (code: string) => {
   error.value = await userStore.verifyEmail({
     login: registerData.value.email,
-    code: digits.join(''),
+    code: code,
   })
   // If token exists in error, redirect to home
   if (error.value && error.value.token) router.push({ name: 'Home' })
-}
-
-const fillDigits = (code: string) => {
-  // Empty all inputs first
-  for (let i = 0; i < 6; i++) {
-    digits[i] = ''
-  }
-  // Then fill with the new code
-  for (let i = 0; i < 6; i++) {
-    digits[i] = code[i].toUpperCase()
-  }
-  // Focus the last input
-  setTimeout(() => {
-    const inputs = document.querySelectorAll('input[maxlength="1"]')
-    const lastInput = inputs[5] as HTMLInputElement
-    lastInput?.focus()
-  }, 10)
-}
-
-const handlePaste = async (event: ClipboardEvent) => {
-  try {
-    const code = event.clipboardData?.getData('text')?.replace(/\s|-/g, '') || ''
-
-    if (/^[0-9]{6}$/.test(code)) {
-      fillDigits(code)
-    }
-  } catch {}
-}
-
-const handleKeyboardPaste = async () => {
-  try {
-    const code = await navigator.clipboard.readText()
-    const cleanCode = code.replace(/\s|-/g, '')
-
-    if (/^[0-9]{6}$/.test(cleanCode)) {
-      fillDigits(cleanCode)
-    }
-  } catch {}
 }
 </script>
