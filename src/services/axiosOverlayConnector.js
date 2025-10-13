@@ -2,35 +2,34 @@ import axiosOverlay from './axiosOverlay'
 import useUserStore from '@/stores/user'
 
 export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
-  // let userStore = useUserStore()
+  let userStore = useUserStore()
 
   let functionConfig = {
     getToken: () => {
-      // return userStore.token
+      return userStore.token
     },
     setToken: (token) => {
-      // userManager.setToken(token)
-      // userStore.token = token
+      userStore.token = token
     },
     logout() {
-      // userManager.logout()
+      userStore.logout()
     },
     errorsHandlers: {
       default: ({ error, reject }) => {
         console.log(error)
-        // if (overlayConfig.allowRedirect) router.push({ name: 'login' })
+        if (overlayConfig.allowRedirect) router.push({ name: 'Home' })
 
         reject(error)
       },
       401: ({ error, overlayConfig, reject }) => {
         if (overlayConfig.allowRedirect)
-          //cas de connection en boucle en attente de validation du mail
-          // userManager.goToLoginPage()
+          // cas de connection en boucle en attente de validation du mail
+          router.push({ name: 'Home' })
 
-          reject(error)
+        reject(error)
       },
       498: ({ error, overlayConfig, reject }) => {
-        // if (overlayConfig.allowRedirect) userManager.goToLoginPage()
+        if (overlayConfig.allowRedirect) router.push({ name: 'Home' })
 
         reject(error)
       },

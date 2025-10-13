@@ -21,14 +21,14 @@
           </p>
           <div class="flex flex-wrap gap-3">
             <button
-              v-for="cat in categories"
+              v-for="cat in themesList"
               :key="cat.id"
               @click="toggle(cat.id)"
               class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
               :class="selected.has(cat.id) ? 'selected' : ''"
             >
               <font-awesome-icon :icon="cat.icon" class="text-lg" />
-              <span>{{ cat.name }}</span>
+              <span>{{ cat.label }}</span>
             </button>
           </div>
           <div class="mt-6">
@@ -134,7 +134,7 @@
           <strong class="text-brand-lightGray">Catégories:</strong>
           <span class="text-brand-gray">{{
             Array.from(selected)
-              .map((id) => categoriesMap.get(id)?.name)
+              .map((id) => themesMap.get(id)?.label)
               .join(', ')
           }}</span>
         </p>
@@ -159,34 +159,33 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import useUserStore from '@/stores/user.js'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
+import useThemeStore from '@/stores/theme.js'
 
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
-interface Category {
+interface Theme {
   id: string
-  name: string
+  label: string
   icon: string
 }
 
-const categories = reactive<Category[]>([
-  { id: 'general', name: 'Général', icon: 'wand-magic-sparkles' },
-  { id: 'histoire', name: 'Histoire', icon: 'university' },
-  { id: 'science', name: 'Science', icon: 'flask' },
-  { id: 'sport', name: 'Sport', icon: 'medal' },
-  { id: 'musique', name: 'Musique', icon: 'music' },
-  { id: 'cinema', name: 'Cinéma', icon: 'film' },
-  { id: 'art', name: 'Art', icon: 'palette' },
-  { id: 'geo', name: 'Géographie', icon: 'globe' },
-  { id: 'tech', name: 'Technologie', icon: 'laptop-code' },
-  { id: 'jeux', name: 'Jeux vidéo', icon: 'gamepad' },
-])
+// Récupération des stores
+onMounted(async () => {
+  if (userStore.isLogged) await themeStore.loadThemes()
+})
 
-const categoriesMap = computed(() => new Map(categories.map((c) => [c.id, c])))
-const selected = reactive<Set<string>>(new Set(['general']))
+const themesList = computed<Array<Theme>>(() => {
+  if (themeStore.isLoading || !themeStore.list) return []
+  return themeStore.list
+})
+
+const themesMap = computed(() => new Map(themesList.value.map((c) => [c.id, c])))
+const selected = reactive<Set<string>>(new Set())
 
 const questions = ref(10)
 const shuffle = ref(true)
@@ -205,14 +204,14 @@ function dec() {
 }
 
 const emit = defineEmits<{
-  (e: 'start', payload: { categories: string[]; questions: number; shuffle: boolean }): void
+  (e: 'start', payload: { themes: string[]; questions: number; shuffle: boolean }): void
   (e: 'back'): void
 }>()
 
 function confirm() {
   open.value = false
   emit('start', {
-    categories: Array.from(selected),
+    themes: Array.from(selected),
     questions: questions.value,
     shuffle: shuffle.value,
   })
