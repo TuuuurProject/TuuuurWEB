@@ -122,18 +122,7 @@
           </div>
         </div>
         <!-- Not logged in -->
-        <div v-else class="text-center p-6 text-brand-gray">
-          <p class="mb-4">Vous n'êtes pas connecté.</p>
-          <div class="flex items-center justify-center gap-6">
-            <button class="btn btn-primary" @click="router.push({ name: 'Login' })">
-              <font-awesome-icon icon="lock" class="mr-2" /> Se connecter
-            </button>
-
-            <button class="btn btn-secondary ml-2" @click="router.push({ name: 'Register' })">
-              <font-awesome-icon icon="user-plus" class="mr-2" /> Créer un compte
-            </button>
-          </div>
-        </div>
+        <logged-in-block v-else />
       </div>
     </div>
   </section>
@@ -141,11 +130,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import ModalDialog from '../ModalDialog.vue'
+import ModalDialog from '@/components/ModalDialog.vue'
 import AvatarPicker from './AvatarPicker.vue'
+import LoggedInBlock from '@/components/LoggedInBlock.vue'
 
 import useUserStore from '@/stores/user.js'
-import router from '@/router'
 
 const userStore = useUserStore()
 
