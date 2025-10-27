@@ -46,6 +46,10 @@ import {
   faUserPlus,
   faLock,
   faSignOutAlt,
+  faCheckCircle,
+  faSeedling,
+  faBolt,
+  faSkull,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -80,6 +84,10 @@ library.add(
   faUserPlus,
   faLock,
   faSignOutAlt,
+  faCheckCircle,
+  faSeedling,
+  faBolt,
+  faSkull,
 )
 
 // Functions
