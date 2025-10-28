@@ -1,6 +1,8 @@
 import axiosOverlay from './axiosOverlay'
 import useUserStore from '@/stores/user'
 
+import router from '@/router'
+
 export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
   let userStore = useUserStore()
 
@@ -22,9 +24,9 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
         reject(error)
       },
       401: ({ error, overlayConfig, reject }) => {
-        if (overlayConfig.allowRedirect)
-          // cas de connection en boucle en attente de validation du mail
-          router.push({ name: 'Home' })
+        if (overlayConfig.allowRedirect) reject(error)
+        // cas de connection en boucle en attente de validation du mail
+        // router.push({ name: 'Home' })
 
         reject(error)
       },
