@@ -6,7 +6,9 @@
         <h2 class="font-branding text-3xl">Quiz Solo</h2>
       </div>
       <div class="flex items-center gap-3">
-        <span class="pill">Question {{ index + 1 }} / {{ deck.length }}</span>
+        <span class="pill"
+          >Question {{ index + 1 }} / {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}</span
+        >
         <span class="pill"
           >Score: <strong>{{ score }}</strong></span
         >
@@ -26,36 +28,37 @@
       </div>
       <div class="px-6 py-3 flex items-center justify-between text-sm text-brand-lightGray">
         <span>Temps restant: {{ remaining.toFixed(1) }}s</span>
-        <span>+{{ previewPoints }} pts si correct</span>
       </div>
     </div>
 
     <!-- Question card -->
     <div v-if="!finished" class="gaming-card">
-      <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ current.question }}</h3>
-      <div class="grid gap-3 sm:grid-cols-2">
-        <button
-          v-for="opt in current.options"
-          :key="opt"
-          class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250"
-          :disabled="answered"
-          :class="buttonClass(opt)"
-          @click="answer(opt)"
-        >
-          {{ opt }}
-        </button>
-      </div>
+      <overlay-block :loading="soloStore.isLoading">
+        <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <button
+            v-for="opt in currentAnswer"
+            :key="opt"
+            class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250"
+            :disabled="answered"
+            :class="buttonClass(opt.valid)"
+            @click="answer(opt)"
+          >
+            {{ opt?.value }}
+          </button>
+        </div>
 
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-sm" v-if="answered">
-          <span v-if="wasCorrect" class="badge-green">Correct +{{ lastPoints }} pts</span>
-          <span v-else class="badge-orange">Mauvaise réponse</span>
+        <div class="mt-6 flex items-center justify-between">
+          <div class="text-sm" v-if="answered">
+            <span v-if="wasCorrect" class="badge-green">Correct +{{ lastPoints }} pts</span>
+            <span v-else class="badge-orange">Mauvaise réponse</span>
+          </div>
+          <div class="flex items-center gap-3 ml-auto">
+            <button class="btn btn-secondary" @click="skip" :disabled="answered">Passer</button>
+            <button class="btn btn-primary" @click="next" :disabled="!answered">Suivant</button>
+          </div>
         </div>
-        <div class="flex items-center gap-3 ml-auto">
-          <button class="btn btn-secondary" @click="skip" :disabled="answered">Passer</button>
-          <button class="btn btn-primary" @click="next" :disabled="!answered">Suivant</button>
-        </div>
-      </div>
+      </overlay-block>
     </div>
 
     <!-- Results -->
@@ -73,11 +76,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import useSoloStore from '@/stores/solo.js'
+import OverlayBlock from '@/components/OverlayBlock.vue'
+
+const soloStore = useSoloStore()
 
 const TOTAL_TIME = 15 // seconds per question
 
-const deck = reactive([])
+interface PartyInfo {
+  nbQuestions: number
+  score: number
+}
+
 const index = ref(0)
 const score = ref(0)
 const answered = ref(false)
@@ -88,9 +99,7 @@ const finished = ref(false)
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
 
-const current = computed(() => [])
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
-const previewPoints = computed(() => Math.round(30 + 70 * remainingRatio.value))
 
 function startTimer() {
   clearTimer()
@@ -112,16 +121,25 @@ function clearTimer() {
   }
 }
 
-function answer(opt: string) {
+const answer = async (opt: { id: string }) => {
   if (answered.value) return
   answered.value = true
+
   clearTimer()
-  if (opt === current.value.correct) {
-    wasCorrect.value = true
-    lastPoints.value = Math.round(30 + 70 * remainingRatio.value)
-    score.value += lastPoints.value
+
+  // Load the answer by ID
+  await soloStore.loadAnswerById(parseInt(opt.id))
+
+  // Test if correct
+  wasCorrect.value = isUserAnswerIsCorrect(parseInt(opt.id))
+
+  let newScore = 0
+  if (wasCorrect.value) {
+    // lastPoints.value = Math.round(30 + 70 * remainingRatio.value)
+    newScore = getScoreAfterAnswer()
+    lastPoints.value = Math.abs(score.value - newScore)
+    score.value = newScore
   } else {
-    wasCorrect.value = false
     lastPoints.value = 0
   }
 }
@@ -135,43 +153,85 @@ function skip() {
   }
 }
 
-function next() {
+const soloPartyInfoComputed = computed(() => {
+  if (soloStore.isLoading) return null
+  return soloStore.partyInfo
+})
+
+const next = async () => {
   if (!answered.value) return
-  if (index.value + 1 >= deck.length) {
+
+  await soloStore.loadPartyInfo()
+
+  if (index.value + 1 >= (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions) {
     finished.value = true
     clearTimer()
     return
   }
   index.value++
   answered.value = false
-  wasCorrect.value = false
-  lastPoints.value = 0
+  // wasCorrect.value = false
+  // lastPoints.value = 0
   startTimer()
 }
 
 function restart() {
-  const newDeck = buildDeck()
-  deck.splice(0, deck.length, ...newDeck)
+  answered.value = false
   index.value = 0
   score.value = 0
-  answered.value = false
   wasCorrect.value = false
   lastPoints.value = 0
   finished.value = false
   startTimer()
 }
 
-function buttonClass(opt: string) {
+function buttonClass(valid: boolean) {
   if (!answered.value) {
     return 'bg-brand-darkGray/50 border-brand-purple/30 text-brand-lightGray hover:bg-brand-purple/20 hover:border-brand-purple'
   }
-  const correct = opt === current.value.correct
-  return correct
+
+  if (valid === null) return
+
+  return valid
     ? 'bg-brand-green/20 border-brand-green text-brand-green'
     : 'bg-brand-orange/20 border-brand-orange text-brand-orange'
 }
 
-onMounted(() => {
+const allQuestionsParty = computed(() => {
+  if (soloStore.partyInfo) {
+    return soloStore.getQuestions
+  }
+  return []
+})
+
+const lastQuestionIndex = computed(() => allQuestionsParty.value.length - 1)
+
+const currentQuestion = computed(() => {
+  return allQuestionsParty.value[lastQuestionIndex.value]?.question?.label ?? ''
+})
+
+const currentAnswer = computed(() => {
+  return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? ''
+})
+
+const isUserAnswerIsCorrect = (answerId: number) => {
+  const currentQuestionData = allQuestionsParty.value[lastQuestionIndex.value]
+  if (!currentQuestionData) return false
+
+  const answer = currentQuestionData.question.answer.find(
+    (ans: { id: number }) => ans.id === answerId,
+  )
+  return answer ? answer.valid : false
+}
+
+const getScoreAfterAnswer = () => {
+  return soloStore.partyInfo ? (soloStore.partyInfo as PartyInfo).score : 0
+}
+
+onMounted(async () => {
+  // Load party info and get questions
+  await soloStore.loadPartyInfo()
+
   startTimer()
 })
 onBeforeUnmount(clearTimer)

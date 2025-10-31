@@ -52,7 +52,28 @@ export default defineStore('solo', {
           method: 'GET',
         }
         const response = await axiosOverlayConnector(config)
-        return response.data
+        this.partyInfo = response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async loadAnswerById(answerId: number) {
+      if (!this.partyId) return null
+
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + `Party/${this.partyId}`
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { answerId: answerId },
+        }
+        const response = await axiosOverlayConnector(config)
+        this.partyInfo = response.data
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
