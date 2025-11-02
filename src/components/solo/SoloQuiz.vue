@@ -5,7 +5,7 @@
         <button class="pill" @click="$emit('exit')">← Accueil</button>
         <h2 class="font-branding text-3xl">Quiz Solo</h2>
       </div>
-      <div class="flex items-center gap-3">
+      <div v-if="!finished" class="flex items-center gap-3">
         <span class="pill"
           >Question {{ index + 1 }} / {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}</span
         >
@@ -17,6 +17,7 @@
 
     <!-- Timer / progress -->
     <div
+      v-if="!finished"
       class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
     >
       <div class="h-2 w-full bg-brand-dark/30">
@@ -62,14 +63,131 @@
     </div>
 
     <!-- Results -->
-    <div v-else class="gaming-card text-center">
-      <h3 class="font-branding text-3xl mb-3 text-brand-lightGray">Terminé !</h3>
-      <p class="text-brand-gray">
-        Score final: <strong class="text-brand-lightGray">{{ score }}</strong> pts
-      </p>
-      <div class="mt-6 flex items-center justify-center gap-3">
-        <button class="btn btn-secondary" @click="$emit('exit')">Accueil</button>
-        <button class="btn btn-primary" @click="restart">Rejouer</button>
+    <div v-else class="space-y-6">
+      <!-- Header avec score final -->
+      <div
+        class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
+      >
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4 animate-pulse-slow"
+        >
+          <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
+        </div>
+        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">Quiz Terminé !</h3>
+        <div class="flex items-center justify-center gap-6 mt-4">
+          <div class="text-center">
+            <div class="text-sm text-brand-gray mb-1">Score Final</div>
+            <div class="font-branding text-3xl text-brand-yellow">{{ score }}</div>
+          </div>
+          <div class="h-12 w-px bg-brand-purple/30"></div>
+          <div class="text-center">
+            <div class="text-sm text-brand-gray mb-1">Questions</div>
+            <div class="font-branding text-3xl text-brand-lightGray">
+              {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
+            </div>
+          </div>
+          <div class="h-12 w-px bg-brand-purple/30"></div>
+          <div class="text-center">
+            <div class="text-sm text-brand-gray mb-1">Réussite</div>
+            <div class="font-branding text-3xl text-brand-green">
+              {{
+                Math.round(
+                  (correctAnswersCount / (soloPartyInfoComputed as PartyInfo)?.nbQuestions) * 100,
+                )
+              }}%
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistiques rapides -->
+        <div class="flex items-center justify-center gap-3 mt-6">
+          <div class="badge-success">
+            <font-awesome-icon icon="check-circle" class="mr-1" />
+            {{ correctAnswersCount }} Correctes
+          </div>
+          <div class="badge-warning">
+            <font-awesome-icon icon="times-circle" class="mr-1" />
+            {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions - correctAnswersCount }}
+            Incorrectes
+          </div>
+        </div>
+      </div>
+
+      <!-- Récapitulatif des questions -->
+      <div class="gaming-card">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
+          >
+            <font-awesome-icon icon="list-check" />
+          </div>
+          <h3 class="font-branding text-2xl text-brand-lightGray">Récapitulatif des Réponses</h3>
+        </div>
+
+        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+          <div
+            v-for="(questionData, idx) in allQuestionsParty"
+            :key="idx"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
+          >
+            <!-- En-tête de la question -->
+            <div class="flex items-start gap-3 mb-3">
+              <div
+                class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                :class="
+                  isQuestionCorrect(questionData)
+                    ? 'bg-brand-green/20 text-brand-green border border-brand-green/40'
+                    : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
+                "
+              >
+                {{ idx + 1 }}
+              </div>
+              <div class="flex-1">
+                <p class="font-semibold text-brand-lightGray mb-2">
+                  {{ questionData?.question?.label }}
+                </p>
+                <div v-if="isQuestionCorrect(questionData)" class="badge-success text-xs">
+                  <font-awesome-icon icon="check" class="mr-1" /> Bonne réponse +{{
+                    getQuestionPoints(questionData)
+                  }}
+                  pts
+                </div>
+                <div v-else class="badge-warning text-xs">
+                  <font-awesome-icon icon="times" class="mr-1" /> Mauvaise réponse
+                </div>
+              </div>
+            </div>
+
+            <!-- Liste des réponses -->
+            <div class="grid gap-2 sm:grid-cols-2 mt-3">
+              <div
+                v-for="answer in questionData?.question?.answer"
+                :key="answer.id"
+                class="rounded-xl px-3 py-2 text-sm border transition-all duration-200"
+                :class="getAnswerClass(questionData, answer)"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="flex-shrink-0">
+                    <font-awesome-icon v-if="answer.valid" icon="check" />
+                    <font-awesome-icon v-else-if="isUserAnswer(questionData)" icon="times" />
+                    <font-awesome-icon v-else icon="circle" class="text-xs" />
+                  </span>
+                  <span class="flex-1">{{ answer.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions finales -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour à l'accueil
+        </button>
+        <button class="btn btn-primary w-full sm:w-auto" @click="restart">
+          <font-awesome-icon icon="rotate-right" class="mr-2" /> Rejouer
+        </button>
       </div>
     </div>
   </section>
@@ -227,6 +345,44 @@ const getScoreAfterAnswer = () => {
   return soloStore.partyInfo ? (soloStore.partyInfo as PartyInfo).score : 0
 }
 
+// Fonctions pour le récapitulatif
+const correctAnswersCount = computed(() => {
+  return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
+})
+
+const isQuestionCorrect = (questionData: any) => {
+  if (!questionData?.userPartyQuestion?.correct) return false
+  return questionData?.userPartyQuestion?.correct
+}
+
+const getQuestionPoints = (questionData: any) => {
+  // Simuler les points gagnés (à adapter selon votre logique)
+  return questionData?.userPartyQuestion?.score || 100
+}
+
+const isUserAnswer = (questionData: any) => {
+  return questionData?.userPartyQuestion?.idAnswer !== null
+}
+
+const getAnswerClass = (questionData: any, answer: any) => {
+  const isCorrect = answer.valid
+  const isUserChoice = isUserAnswer(questionData)
+
+  if (isCorrect && isUserChoice) {
+    // Bonne réponse sélectionnée
+    return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
+  } else if (isCorrect) {
+    // Bonne réponse non sélectionnée
+    return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
+  } else if (isUserChoice) {
+    // Mauvaise réponse sélectionnée
+    return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
+  } else {
+    // Autre réponse
+    return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'
+  }
+}
+
 onMounted(async () => {
   // Load party info and get questions
   await soloStore.loadPartyInfo()
@@ -235,3 +391,21 @@ onMounted(async () => {
 })
 onBeforeUnmount(clearTimer)
 </script>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-brand-dark/50 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-brand-purple/40 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-purple/60;
+}
+</style>
