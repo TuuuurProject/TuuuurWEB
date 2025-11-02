@@ -2,7 +2,10 @@
   <section class="space-y-6">
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <button class="pill" @click="$emit('exit')">← Accueil</button>
+        <button class="pill" @click="($emit('exit'), soloStore.resetSoloParty())">
+          <font-awesome-icon icon="arrow-left" class="mr-2" />
+          Accueil
+        </button>
         <h2 class="font-branding text-3xl">Quiz Solo</h2>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
@@ -197,6 +200,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import useSoloStore from '@/stores/solo.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
+import solo from '@/stores/solo.js'
 
 const soloStore = useSoloStore()
 
@@ -292,7 +296,10 @@ const next = async () => {
   startTimer()
 }
 
-function restart() {
+const restart = async () => {
+  await soloStore.createSoloParty()
+  await soloStore.loadPartyInfo()
+
   answered.value = false
   index.value = 0
   score.value = 0

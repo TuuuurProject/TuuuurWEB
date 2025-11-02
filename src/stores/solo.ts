@@ -12,6 +12,12 @@ export default defineStore('solo', {
     partyId: null as string | null,
     partyInfo: null as object | null,
     loading: 0 as number,
+
+    partySetup: {
+      themes: [] as Array<number>,
+      difficulties: [] as Array<number>,
+      nbQuestions: 0 as number,
+    },
   }),
 
   getters: {
@@ -22,14 +28,30 @@ export default defineStore('solo', {
   },
 
   actions: {
-    async createSoloParty(data: SoloPartyData) {
+    resetSoloParty() {
+      this.partyId = null
+      this.partyInfo = null
+      this.partySetup = {
+        themes: [],
+        difficulties: [],
+        nbQuestions: 0,
+      }
+    },
+
+    setPartySetup(data: SoloPartyData) {
+      this.partySetup.themes = data.themes
+      this.partySetup.difficulties = data.difficulties
+      this.partySetup.nbQuestions = data.nbQuestions
+    },
+
+    async createSoloParty() {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'Party/Solo'
       try {
         const config = {
           url,
           method: 'POST',
-          data: data,
+          data: this.partySetup,
         }
         const response = await axiosOverlayConnector(config)
         this.partyId = response.data

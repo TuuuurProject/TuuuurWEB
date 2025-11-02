@@ -164,6 +164,7 @@ import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import useThemeStore from '@/stores/theme.js'
 import useSoloStore from '@/stores/solo.js'
 import { useRouter } from 'vue-router'
+import solo from '@/stores/solo.js'
 
 const router = useRouter()
 const soloStore = useSoloStore()
@@ -254,11 +255,13 @@ const emit = defineEmits<{
 const confirm = async () => {
   open.value = false
 
-  await soloStore.createSoloParty({
+  soloStore.setPartySetup({
     themes: Array.from(selected).map((id) => parseInt(id)),
     difficulties: Array.from(selectedDifficulty.value),
     nbQuestions: questions.value,
   })
+
+  await soloStore.createSoloParty()
 
   router.push({ name: 'SoloQuiz' })
 }
