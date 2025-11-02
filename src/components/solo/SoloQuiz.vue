@@ -135,7 +135,6 @@ const answer = async (opt: { id: string }) => {
 
   let newScore = 0
   if (wasCorrect.value) {
-    // lastPoints.value = Math.round(30 + 70 * remainingRatio.value)
     newScore = getScoreAfterAnswer()
     lastPoints.value = Math.abs(score.value - newScore)
     score.value = newScore
@@ -170,8 +169,8 @@ const next = async () => {
   }
   index.value++
   answered.value = false
-  // wasCorrect.value = false
-  // lastPoints.value = 0
+  wasCorrect.value = false
+  lastPoints.value = 0
   startTimer()
 }
 
