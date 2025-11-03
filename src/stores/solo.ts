@@ -83,7 +83,7 @@ export default defineStore('solo', {
       }
     },
 
-    async loadAnswerById(answerId: number) {
+    async loadAnswerById(answerId: number | null) {
       if (!this.partyId) return null
 
       this.loading++

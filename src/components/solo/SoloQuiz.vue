@@ -200,7 +200,6 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import useSoloStore from '@/stores/solo.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
-import solo from '@/stores/solo.js'
 
 const soloStore = useSoloStore()
 
@@ -223,12 +222,15 @@ let timer: number | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
-function startTimer() {
+const startTimer = () => {
   clearTimer()
   remaining.value = TOTAL_TIME
-  timer = window.setInterval(() => {
+  timer = window.setInterval(async () => {
     remaining.value = Math.max(0, +(remaining.value - 0.1).toFixed(1))
     if (remaining.value <= 0) {
+      // Load the answer by ID, set to null to indicate timeout
+      await soloStore.loadAnswerById(null)
+
       clearTimer()
       answered.value = true
       wasCorrect.value = false
@@ -265,8 +267,11 @@ const answer = async (opt: { id: string }) => {
   }
 }
 
-function skip() {
+const skip = async () => {
   if (!answered.value) {
+    // Load the answer by ID, set to null to indicate skip
+    await soloStore.loadAnswerById(null)
+
     answered.value = true
     clearTimer()
     wasCorrect.value = false
