@@ -11,12 +11,13 @@ export default defineStore('user', {
   state: () => ({
     token: null as string | null,
     loading: 0 as number,
+    comeFrom: null as string | null, // To store the route before login
   }),
 
   persist: {
     key: 'user-store',
     storage: localStorage,
-    pick: ['token'],
+    pick: ['token', 'comeFrom'],
   },
 
   getters: {

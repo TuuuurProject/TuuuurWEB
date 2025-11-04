@@ -115,6 +115,7 @@ const verifyEmail = async (code: string) => {
     code: code,
   })
   // If token exists in error, redirect to home
-  if (error.value && error.value.token) router.push({ name: 'Home' })
+  if (error.value && error.value.token && userStore.comeFrom) router.push(userStore.comeFrom)
+  else if (error.value && error.value.token) router.push({ name: 'Home' })
 }
 </script>
