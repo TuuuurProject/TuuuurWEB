@@ -50,12 +50,14 @@
 
           <div v-if="error" class="my-5">
             <div
-              v-for="field in Object.keys(error)"
-              :key="field"
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
               role="alert"
             >
-              <ul class="mt-1 list-disc list-inside">
+              <ul
+                v-for="field in Object.keys(error)"
+                :key="field"
+                class="mt-1 list-disc list-inside"
+              >
                 <li>{{ error[field]?.description }}</li>
               </ul>
             </div>

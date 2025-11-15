@@ -56,6 +56,8 @@ import {
   faRotateRight,
   faTimesCircle,
   faCheck,
+  faKey,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -101,6 +103,8 @@ library.add(
   faRotateRight,
   faTimesCircle,
   faCheck,
+  faKey,
+  faTrash,
 )
 
 // Functions

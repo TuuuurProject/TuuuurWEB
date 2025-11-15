@@ -164,7 +164,6 @@ import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import useThemeStore from '@/stores/theme.js'
 import useSoloStore from '@/stores/solo.js'
 import { useRouter } from 'vue-router'
-import solo from '@/stores/solo.js'
 
 const router = useRouter()
 const soloStore = useSoloStore()

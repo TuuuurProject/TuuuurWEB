@@ -54,6 +54,47 @@ export default defineStore('user', {
       this.token = null
     },
 
+    async changePassword(currentPassword: string, newPassword: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me/change-password'
+      try {
+        const data = {
+          currentPassword,
+          newPassword,
+        }
+        const config = {
+          url,
+          method: 'PUT',
+          data,
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async deleteAccount() {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me'
+      try {
+        const config = {
+          url,
+          method: 'DELETE',
+        }
+        await axiosOverlayConnector(config)
+        this.logout()
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async getUserInfo() {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'me'

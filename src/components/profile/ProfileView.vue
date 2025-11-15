@@ -1,8 +1,7 @@
 <template>
   <section class="space-y-6">
-    <header class="flex items-center justify-between">
+    <header class="flex items-center">
       <h2 class="font-display text-3xl text-brand-lightGray glow-text">👤 Profil Joueur</h2>
-      <div class="badge-info">Aperçu — UI uniquement</div>
     </header>
 
     <div class="gaming-card justify-self-center w-full">
