@@ -124,11 +124,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, getCurrentInstance } from 'vue'
 import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
+
+const { proxy } = getCurrentInstance()
 
 import useUserStore from '@/stores/user.js'
 
@@ -168,8 +170,6 @@ const changePassword = async () => {
     changePasswordInfo.value.newPassword,
   )
 
-  console.log('errorsPasswords.value', errorsPasswords.value)
-
   // If email exist in errors, close the modal and reset
   if (typeof errorsPasswords.value === 'object' && errorsPasswords.value?.email) {
     changePasswordInfo.value = {
@@ -178,15 +178,20 @@ const changePassword = async () => {
       confirmNewPassword: '',
     }
     showModalChangePassword.value = false
+
+    // Toast to notify user
+    proxy.$toast.success('Mot de passe changé avec succès !')
   }
 }
 
 const deleteAccount = async () => {
-  await userStore.deleteAccount()
+  const res = await userStore.deleteAccount()
   showModalCompte.value = false
 
   // Redirect to home page after account deletion
-  router.push('/')
+  if (res) {
+    router.push({ name: 'Home' })
+  }
 }
 
 onMounted(() => {

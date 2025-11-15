@@ -6,6 +6,10 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
+// Toaster
+import Vue3Toastify, { toast } from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
+
 // Daysjs
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
@@ -132,10 +136,16 @@ const app = createApp(App)
 
 app.config.globalProperties.$unixToDate = unixToDate
 app.config.globalProperties.$dayjs = dayjs
+app.config.globalProperties.$toast = toast
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
+app.use(Vue3Toastify, {
+  theme: 'dark',
+  autoClose: 3000,
+  position: toast.POSITION.TOP_RIGHT,
+})
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
