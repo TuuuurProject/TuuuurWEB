@@ -62,6 +62,7 @@ import {
   faCheck,
   faKey,
   faTrash,
+  faCamera,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -109,6 +110,7 @@ library.add(
   faCheck,
   faKey,
   faTrash,
+  faCamera,
 )
 
 // Functions

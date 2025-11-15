@@ -113,6 +113,29 @@ export default defineStore('user', {
       }
     },
 
+    async updateAvatar(avatarBase64: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me/avatar'
+      try {
+        const config = {
+          url,
+          method: 'PUT',
+          data: { avatar: avatarBase64 },
+        }
+        const response = await axiosOverlayConnector(config)
+        // Update local userInfo with new avatar
+        if (this.userInfo) {
+          this.userInfo.avatar = avatarBase64
+        }
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async register(data: object) {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'Auth/Register'

@@ -3,7 +3,7 @@
     <div
       class="flex items-center gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20"
     >
-      <div class="relative">
+      <div class="relative group cursor-pointer" @click="triggerFileInput">
         <img
           v-if="userStore.userInfo?.avatar"
           :src="userStore.userInfo?.avatar"
@@ -18,6 +18,20 @@
             {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
           </span>
         </div>
+        <!-- Camera overlay on hover -->
+        <div
+          class="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+        >
+          <font-awesome-icon icon="camera" class="text-white text-xl" />
+        </div>
+        <!-- Hidden file input -->
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+          @change="handleFileChange"
+        />
       </div>
       <div class="flex-1">
         <div class="font-branding text-2xl text-brand-lightGray">
@@ -129,6 +143,7 @@ import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
+import { resizeImage } from '@/services/fileUtils.js'
 
 const { proxy } = getCurrentInstance()
 
@@ -137,6 +152,7 @@ import useUserStore from '@/stores/user.js'
 const userStore = useUserStore()
 const showModalCompte = ref(false)
 const showModalChangePassword = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const changePasswordInfo = ref({
   currentPassword: '',
@@ -191,6 +207,44 @@ const deleteAccount = async () => {
   // Redirect to home page after account deletion
   if (res) {
     router.push({ name: 'Home' })
+  }
+}
+
+const triggerFileInput = () => {
+  fileInput.value?.click()
+}
+
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (!file) return
+
+  try {
+    // Compress and convert to base64
+    const compressedBase64 = await resizeImage({
+      file,
+      maxWidth: 500,
+      maxHeight: 500,
+      quality: 0.8,
+    })
+
+    // Update avatar via API
+    const result = await userStore.updateAvatar(compressedBase64)
+
+    if (result?.email) {
+      // Success - avatar updated
+      proxy.$toast.success('Avatar mis à jour avec succès !')
+    } else {
+      // Error occurred
+      proxy.$toast.error("Erreur lors de la mise à jour de l'avatar")
+    }
+  } catch (error) {
+    console.error('Error processing avatar:', error)
+    proxy.$toast.error("Erreur lors du traitement de l'image")
+  } finally {
+    // Reset file input
+    target.value = ''
   }
 }
 
