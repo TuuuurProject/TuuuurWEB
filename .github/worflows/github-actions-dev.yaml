@@ -1,0 +1,11 @@
+name: Test, Build and Deploy dev branch
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build_preprod:
+    uses: ./.github/workflows/job_build.yaml
+    secrets: inherit
