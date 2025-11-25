@@ -46,7 +46,7 @@ export default defineStore('solo', {
 
     async createSoloParty() {
       this.loading++
-      const url = import.meta.env.VITE_API_URL + 'Party/Solo'
+      const url = import.meta.env.VITE_API_URL + 'solo'
       try {
         const config = {
           url,
@@ -67,7 +67,7 @@ export default defineStore('solo', {
       if (!this.partyId) return null
 
       this.loading++
-      const url = import.meta.env.VITE_API_URL + `Party/${this.partyId}`
+      const url = import.meta.env.VITE_API_URL + `solo/${this.partyId}`
       try {
         const config = {
           url,
@@ -87,7 +87,7 @@ export default defineStore('solo', {
       if (!this.partyId) return null
 
       this.loading++
-      const url = import.meta.env.VITE_API_URL + `Party/${this.partyId}`
+      const url = import.meta.env.VITE_API_URL + `solo/${this.partyId}`
       try {
         const config = {
           url,

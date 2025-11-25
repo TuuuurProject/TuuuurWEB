@@ -59,7 +59,7 @@
         </button>
         <div class="flex gap-5">
           <button
-            class="btn text-brand-orange hover:bg-brand-orange/10 hover:border hover:border-brand-orange"
+            class="btn text-brand-orange hover:bg-brand-orange/10 border border-transparent hover:border-brand-orange"
             @click="showModalCompte = true"
           >
             <font-awesome-icon icon="trash" class="mr-2" /> Supprimer mon compte
