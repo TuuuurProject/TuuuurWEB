@@ -63,6 +63,16 @@ import {
   faKey,
   faTrash,
   faCamera,
+  faArrowDown,
+  faChevronRight,
+  faArrowUp,
+  faClockRotateLeft,
+  faClock,
+  faTags,
+  faCircleQuestion,
+  faPercent,
+  faInbox,
+  faHourglassHalf,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -111,6 +121,16 @@ library.add(
   faKey,
   faTrash,
   faCamera,
+  faArrowDown,
+  faChevronRight,
+  faArrowUp,
+  faClockRotateLeft,
+  faClock,
+  faTags,
+  faCircleQuestion,
+  faPercent,
+  faInbox,
+  faHourglassHalf,
 )
 
 // Functions

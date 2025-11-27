@@ -186,9 +186,9 @@
       <!-- Actions finales -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
-          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour à l'accueil
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour
         </button>
-        <button class="btn btn-primary w-full sm:w-auto" @click="restart">
+        <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
           <font-awesome-icon icon="rotate-right" class="mr-2" /> Rejouer
         </button>
       </div>
@@ -208,6 +208,7 @@ const TOTAL_TIME = 15 // seconds per question
 interface PartyInfo {
   nbQuestions: number
   score: number
+  finish: boolean
 }
 
 const index = ref(0)
@@ -216,6 +217,7 @@ const answered = ref(false)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
+const comeFromHistory = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
@@ -398,6 +400,12 @@ const getAnswerClass = (questionData: any, answer: any) => {
 onMounted(async () => {
   // Load party info and get questions
   await soloStore.loadPartyInfo()
+
+  // If onMounted, the partyId exist, display the recap
+  if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
+    finished.value = true
+    comeFromHistory.value = true
+  }
 
   startTimer()
 })
