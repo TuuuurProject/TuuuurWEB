@@ -10,11 +10,14 @@
         <div class="flex gap-3">
           <div class="pill bg-brand-purple/20 border-brand-purple/40 text-brand-purple">
             <font-awesome-icon icon="gamepad" class="mr-1" />
-            {{ stats.totalMatches }} Partie{{ stats.totalMatches > 1 ? 's' : '' }}
+            {{ historyStore.nbParties }} Partie{{ (historyStore?.nbParties ?? 0) > 1 ? 's' : '' }}
           </div>
-          <!-- <div class="pill bg-brand-green/20 border-brand-green/40 text-brand-green">
-            <font-awesome-icon icon="percent" class="mr-1" /> {{ stats.successRate }}% Réussite
-          </div> -->
+          <div
+            v-if="stats.avgPercent !== null"
+            class="pill bg-brand-green/20 border-brand-green/40 text-brand-green"
+          >
+            <font-awesome-icon icon="percent" class="mr-1" /> {{ stats.avgPercent }}% Réussite
+          </div>
         </div>
       </div>
 
@@ -36,18 +39,19 @@
       </div>
 
       <!-- Match history list -->
-      <div class="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar">
+      <div class="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar relative">
         <div
           v-for="match in filteredMatches"
-          :key="match.id"
-          class="p-3 mx-1 rounded-lg border transition-all duration-200 cursor-pointer bg-brand-darkGray/30 border-brand-purple/20 hover:border-brand-purple/40 hover:bg-brand-purple/5"
+          :key="match.filterKey"
+          class="match-item p-3 mx-1 rounded-lg border cursor-pointer bg-brand-darkGray/30 border-brand-purple/20"
+          :class="{ 'opacity-50 pointer-events-none': historyStore.isLoading }"
           @click="showMatchDetails(match)"
         >
           <div class="flex items-center gap-3">
             <!-- Score badge -->
             <div
               class="flex-shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center font-bold border-2 bg-gradient-to-br"
-              :class="getScoreColor()"
+              :class="getScoreColor(match.percent)"
             >
               <div class="text-xl">{{ match.score }}</div>
               <div class="text-[10px] opacity-80">pts</div>
@@ -71,12 +75,12 @@
                   <span
                     v-if="match.partyDifficulty.length > 0"
                     class="pill text-xs py-1 px-2"
-                    :class="getDifficultyColor(match.partyDifficulty[0].difficulty.label)"
+                    :class="match.difficultyColor"
                   >
                     {{ match.partyDifficulty[0].difficulty.label }}
                   </span>
                 </div>
-                <div class="text-sm text-brand-gray">{{ formatDate(match.dt) }}</div>
+                <div class="text-sm text-brand-gray">{{ match.formattedDate }}</div>
               </div>
 
               <!-- Stats line -->
@@ -88,22 +92,29 @@
                     {{ match.nbQuestions }}
                   </span>
                 </div>
-                <!-- <div class="flex items-center gap-1.5">
+                <div v-if="match.percent !== undefined" class="flex items-center gap-1.5">
                   <font-awesome-icon icon="percent" class="text-brand-cyan" />
                   <span class="text-brand-gray">Réussite:</span>
                   <span
                     class="font-bold"
                     :class="
-                      getSuccessRate(match.score, match.nbQuestions) >= 70
+                      match.percent >= 70
                         ? 'text-brand-green'
-                        : getSuccessRate(match.score, match.nbQuestions) >= 50
+                        : match.percent >= 50
                           ? 'text-brand-orange'
                           : 'text-brand-red'
                     "
                   >
-                    {{ getSuccessRate(match.score, match.nbQuestions) }}%
+                    {{ match.percent }}%
                   </span>
-                </div> -->
+                </div>
+                <div v-if="match.time !== undefined" class="flex items-center gap-1.5">
+                  <font-awesome-icon icon="clock" class="text-brand-orange" />
+                  <span class="text-brand-gray">Temps:</span>
+                  <span class="font-bold text-brand-lightGray">
+                    {{ formatTime(match.time) }}
+                  </span>
+                </div>
               </div>
 
               <!-- Themes line -->
@@ -137,30 +148,100 @@
         </div>
       </div>
 
+      <!-- Pagination info -->
+      <div v-if="historyStore.totalPages > 0" class="text-center text-sm text-brand-gray mb-4">
+        Affichage de {{ (historyStore.currentPage - 1) * 10 + 1 }} à
+        {{ Math.min(historyStore.currentPage * 10, historyStore.nbParties || 0) }} sur
+        {{ historyStore.nbParties }} partie{{ (historyStore.nbParties || 0) > 1 ? 's' : '' }}
+      </div>
+
       <!-- Pagination -->
-      <!-- <div v-if="totalPages > 1" class="flex items-center justify-center gap-2">
+      <div
+        v-if="historyStore.totalPages > 1"
+        class="flex flex-wrap items-center justify-center gap-2"
+      >
+        <!-- First page -->
         <button
           class="pill text-sm"
-          :disabled="currentPage === 1"
-          :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-brand-purple/10'"
-          @click="currentPage--"
-        >
-          <font-awesome-icon icon="chevron-left" />
-        </button>
-        <span class="text-brand-gray text-sm">Page {{ currentPage }} / {{ totalPages }}</span>
-        <button
-          class="pill text-sm"
-          :disabled="currentPage === totalPages"
+          :disabled="historyStore.currentPage === 1 || historyStore.isLoading"
           :class="
-            currentPage === totalPages
+            historyStore.currentPage === 1 || historyStore.isLoading
               ? 'opacity-50 cursor-not-allowed'
               : 'hover:bg-brand-purple/10'
           "
-          @click="currentPage++"
+          @click="goToPage(1)"
+          title="Première page"
+        >
+          <font-awesome-icon icon="angles-left" />
+        </button>
+
+        <!-- Previous page -->
+        <button
+          class="pill text-sm"
+          :disabled="historyStore.currentPage === 1 || historyStore.isLoading"
+          :class="
+            historyStore.currentPage === 1 || historyStore.isLoading
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-brand-purple/10'
+          "
+          @click="goToPage(historyStore.currentPage - 1)"
+          title="Page précédente"
+        >
+          <font-awesome-icon icon="chevron-left" />
+        </button>
+
+        <!-- Page numbers -->
+        <div class="flex items-center gap-2">
+          <template v-for="page in visiblePages" :key="page">
+            <span v-if="page === -1" class="pill text-sm min-w-[2.5rem] opacity-50 cursor-default">
+              ...
+            </span>
+            <button
+              v-else
+              class="pill text-sm min-w-[2.5rem]"
+              :disabled="historyStore.isLoading"
+              :class="
+                page === historyStore.currentPage
+                  ? 'bg-brand-purple/30 border-brand-purple text-brand-purple'
+                  : 'hover:bg-brand-purple/10'
+              "
+              @click="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </template>
+        </div>
+
+        <!-- Next page -->
+        <button
+          class="pill text-sm"
+          :disabled="historyStore.currentPage === historyStore.totalPages || historyStore.isLoading"
+          :class="
+            historyStore.currentPage === historyStore.totalPages || historyStore.isLoading
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-brand-purple/10'
+          "
+          @click="goToPage(historyStore.currentPage + 1)"
+          title="Page suivante"
         >
           <font-awesome-icon icon="chevron-right" />
         </button>
-      </div> -->
+
+        <!-- Last page -->
+        <button
+          class="pill text-sm"
+          :disabled="historyStore.currentPage === historyStore.totalPages || historyStore.isLoading"
+          :class="
+            historyStore.currentPage === historyStore.totalPages || historyStore.isLoading
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-brand-purple/10'
+          "
+          @click="goToPage(historyStore.totalPages)"
+          title="Dernière page"
+        >
+          <font-awesome-icon icon="angles-right" />
+        </button>
+      </div>
     </div>
   </overlay-block>
 </template>
@@ -178,8 +259,18 @@ import type { Match } from '@/stores/history'
 dayjs.extend(relativeTime)
 dayjs.locale('fr')
 
+// Cache pour les dates formatées
+const dateCache = new Map<string, string>()
+
+// Cache pour les couleurs de difficulté
+const difficultyColorMap: Record<string, string> = {
+  facile: 'bg-[#10b981]/20 border-[#10b981]/40 text-[#10b981]',
+  moyen: 'bg-[#f59e0b]/20 border-[#f59e0b]/40 text-[#f59e0b]',
+  difficile: 'bg-[#f97316]/20 border-[#f97316]/40 text-[#f97316]',
+  hardcore: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
+}
+
 const isLoading = ref(false)
-const currentPage = ref(1)
 const selectedFilter = ref('all')
 const historyStore = useHistoryStore()
 
@@ -200,85 +291,139 @@ const matches = computed(() => {
 const stats = computed(() => {
   const finishedMatches = matches.value.filter((m: Match) => m.finish)
   const totalMatches = finishedMatches.length
-  const totalQuestions = finishedMatches.reduce((sum: number, m: Match) => sum + m.nbQuestions, 0)
-  const totalScore = finishedMatches.reduce((sum: number, m: Match) => sum + m.score, 0)
 
-  // Estimation du taux de réussite basé sur le score moyen par question
-  // En supposant qu'une bonne réponse vaut ~100 points
-  const avgScorePerQuestion = totalQuestions > 0 ? totalScore / totalQuestions : 0
-  const successRate = Math.min(100, Math.round(avgScorePerQuestion))
+  // Calcul du pourcentage moyen si les données percent sont disponibles
+  const matchesWithPercent = finishedMatches.filter((m: Match) => m.percent !== undefined)
+  let avgPercent: number | null = null
+
+  if (matchesWithPercent.length > 0) {
+    const totalPercent = matchesWithPercent.reduce(
+      (sum: number, m: Match) => sum + (m.percent || 0),
+      0,
+    )
+    avgPercent = Math.round(totalPercent / matchesWithPercent.length)
+  }
 
   return {
     totalMatches,
-    successRate,
+    avgPercent,
   }
 })
+
+// Type enrichi pour les matches avec données précalculées
+interface EnrichedMatch extends Match {
+  formattedDate: string
+  difficultyColor: string
+  filterKey: string
+}
 
 const filteredMatches = computed(() => {
   let filtered = matches.value
 
-  switch (selectedFilter.value) {
-    case 'solo':
-      filtered = filtered.filter((m: Match) => m.partyType.label === 'Solo')
-      break
-    case 'all':
-      break
+  // Filtrage
+  if (selectedFilter.value === 'solo') {
+    filtered = filtered.filter((m: Match) => m.partyType.label === 'Solo')
   }
 
-  // Trier: parties en cours en premier, puis les plus récentes
-  return filtered.sort((a: Match, b: Match) => {
-    if (a.finish !== b.finish) {
-      return a.finish ? 1 : -1
-    }
-    return new Date(b.dt).getTime() - new Date(a.dt).getTime()
-  })
+  // Tri et enrichissement des données en une seule passe
+  const sortedAndEnriched = [...filtered]
+    .sort((a: Match, b: Match) => {
+      // Trier: parties en cours en premier, puis les plus récentes
+      if (a.finish !== b.finish) {
+        return a.finish ? 1 : -1
+      }
+      return new Date(b.dt).getTime() - new Date(a.dt).getTime()
+    })
+    .map((match: Match): EnrichedMatch => {
+      // Formater la date avec cache
+      let formattedDate = dateCache.get(match.dt)
+      if (!formattedDate) {
+        formattedDate = dayjs(match.dt).fromNow()
+        dateCache.set(match.dt, formattedDate)
+      }
+
+      // Obtenir la couleur de difficulté
+      const difficulty = match.partyDifficulty[0]?.difficulty.label.toLowerCase() || ''
+      const difficultyColor =
+        difficultyColorMap[difficulty] || 'bg-brand-gray/20 border-brand-gray/40 text-brand-gray'
+
+      return {
+        ...match,
+        formattedDate,
+        difficultyColor,
+        filterKey: `${match.id}-${match.dt}`,
+      }
+    })
+
+  return sortedAndEnriched
 })
 
-const formatDate = (date: string) => {
-  return dayjs(date).fromNow()
-}
+const getScoreColor = (percent?: number) => {
+  if (percent === undefined) {
+    // Couleur par défaut si pas de pourcentage
+    return 'from-brand-purple/20 to-brand-purple/10 border-brand-purple text-brand-purple'
+  }
 
-// const getSuccessRate = (score: number, nbQuestions: number) => {
-//   if (nbQuestions === 0) return 0
-//   // Estimation: une question parfaite vaut ~100 points
-//   const maxPossibleScore = nbQuestions * 100
-//   return Math.min(100, Math.round((score / maxPossibleScore) * 100))
-// }
-
-// const getScoreColor = (score: number, nbQuestions: number) => {
-//   const rate = getSuccessRate(score, nbQuestions)
-//   if (rate >= 80) {
-//     return 'from-brand-green/20 to-brand-green/10 border-brand-green text-brand-green'
-//   } else if (rate >= 60) {
-//     return 'from-brand-cyan/20 to-brand-cyan/10 border-brand-cyan text-brand-cyan'
-//   } else if (rate >= 40) {
-//     return 'from-brand-orange/20 to-brand-orange/10 border-brand-orange text-brand-orange'
-//   } else {
-//     return 'from-red-500/20 to-red-500/10 border-red-500 text-red-500'
-//   }
-// }
-
-const getScoreColor = () => {
-  return 'from-brand-green/20 to-brand-green/10 border-brand-green text-brand-green'
-}
-
-const getDifficultyColor = (difficulty: string) => {
-  switch (difficulty.toLowerCase()) {
-    case 'facile':
-      return 'bg-[#10b981]/20 border-[#10b981]/40 text-[#10b981]'
-    case 'moyen':
-      return 'bg-[#f59e0b]/20 border-[#f59e0b]/40 text-[#f59e0b]'
-    case 'difficile':
-      return 'bg-[#f97316]/20 border-[#f97316]/40 text-[#f97316]'
-    case 'hardcore':
-      return 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]'
-    default:
-      return 'bg-brand-gray/20 border-brand-gray/40 text-brand-gray'
+  if (percent >= 80) {
+    return 'from-brand-green/20 to-brand-green/10 border-brand-green text-brand-green'
+  } else if (percent >= 60) {
+    return 'from-brand-cyan/20 to-brand-cyan/10 border-brand-cyan text-brand-cyan'
+  } else if (percent >= 40) {
+    return 'from-brand-orange/20 to-brand-orange/10 border-brand-orange text-brand-orange'
+  } else {
+    return 'from-red-500/20 to-red-500/10 border-red-500 text-red-500'
   }
 }
+
+const formatTime = (seconds: number) => {
+  if (seconds < 60) {
+    return `${seconds}s`
+  }
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`
+}
+
+// Calcul des pages visibles pour la pagination (toujours 3 éléments)
+const visiblePages = computed(() => {
+  const current = historyStore.currentPage
+  const total = historyStore.totalPages
+  const pages: number[] = []
+
+  if (total <= 3) {
+    // Si 3 pages ou moins, afficher toutes les pages
+    for (let i = 1; i <= total; i++) {
+      pages.push(i)
+    }
+  } else {
+    // Afficher toujours 3 pages
+    if (current === 1) {
+      // Au début : 1, 2, 3
+      pages.push(1, 2, 3)
+    } else if (current === total) {
+      // À la fin : total-2, total-1, total
+      pages.push(total - 2, total - 1, total)
+    } else {
+      // Au milieu : current-1, current, current+1
+      pages.push(current - 1, current, current + 1)
+    }
+  }
+
+  return pages
+})
 
 const showMatchDetails = (match: Match) => {
   router.push({ name: 'SoloQuizId', params: { id: match.id } })
+}
+
+const goToPage = async (page: number) => {
+  if (page < 1 || page > historyStore.totalPages || historyStore.isLoading) return
+
+  // Vider le cache des dates lors du changement de page
+  dateCache.clear()
+
+  // Charger la nouvelle page
+  await historyStore.getHistory(page)
 }
 
 onMounted(async () => {
@@ -288,11 +433,47 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.custom-scrollbar {
+  /* Optimisation du scroll avec will-change */
+  will-change: scroll-position;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-brand-darkGray/30 rounded-full;
+  background: rgba(28, 28, 40, 0.3);
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-brand-purple/50 rounded-full hover:bg-brand-purple/70;
+  background: rgba(108, 92, 231, 0.5);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 92, 231, 0.7);
+}
+
+/* Optimisation du hover avec GPU acceleration */
+.match-item {
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+  will-change: border-color, background-color;
+}
+
+.match-item:hover {
+  border-color: rgba(108, 92, 231, 0.4);
+  background-color: rgba(108, 92, 231, 0.05);
+}
+
+/* Force GPU acceleration pour les animations */
+.match-item,
+.custom-scrollbar {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 </style>

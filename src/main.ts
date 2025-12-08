@@ -73,6 +73,9 @@ import {
   faPercent,
   faInbox,
   faHourglassHalf,
+  faAnglesLeft,
+  faChevronLeft,
+  faAnglesRight,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -131,6 +134,9 @@ library.add(
   faPercent,
   faInbox,
   faHourglassHalf,
+  faAnglesLeft,
+  faChevronLeft,
+  faAnglesRight,
 )
 
 // Functions

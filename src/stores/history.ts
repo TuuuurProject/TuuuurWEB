@@ -40,6 +40,8 @@ interface Match {
   finish: boolean
   score: number
   nbQuestions: number
+  percent?: number
+  time?: number
   partyType: PartyType
   partyDifficulty: PartyDifficulty[]
   partyTheme: PartyTheme[]
@@ -48,6 +50,9 @@ interface Match {
 export default defineStore('history', {
   state: () => ({
     historyList: null as Match[] | null,
+    nbParties: null as number | null,
+    currentPage: 1 as number,
+    totalPages: 1 as number,
     loading: 0 as number,
   }),
 
@@ -56,16 +61,19 @@ export default defineStore('history', {
   },
 
   actions: {
-    async getHistory(page = 1, size = 10) {
+    async getHistory(page = 1, size = 7) {
       this.loading++
-      const url = import.meta.env.VITE_API_URL + 'solo/history?page=' + page + '&size=' + size
+      const url = import.meta.env.VITE_API_URL + 'history?page=' + page + '&size=' + size
       try {
         const config = {
           url,
           method: 'GET',
         }
         const response = await axiosOverlayConnector(config)
-        this.historyList = response.data
+        this.historyList = response.data.history
+        this.nbParties = response.data.totalParties
+        this.currentPage = response.data.currentPage
+        this.totalPages = response.data.totalPages
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error

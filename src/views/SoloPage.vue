@@ -1,12 +1,12 @@
 <template>
   <div class="mx-auto max-w-5xl px-6 py-10">
-    <SoloSelect v-if="!soloStore.partyId" @back="router.go(-1)" />
-    <SoloQuiz v-if="soloStore.partyId" @exit="router.go(-1)" />
+    <SoloSelect v-if="!soloStore.partyId" @back="handleBack" />
+    <SoloQuiz v-if="soloStore.partyId" @exit="handleExit" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import { onMounted } from 'vue'
 import SoloSelect from '@/components/solo/SoloSelect.vue'
 import SoloQuiz from '@/components/solo/SoloQuiz.vue'
@@ -23,4 +23,23 @@ onMounted(() => {
     soloStore.partyId = partyId
   }
 })
+
+// Nettoyer le state après avoir quitté la page
+onBeforeRouteLeave(() => {
+  // Nettoyer seulement après que la navigation soit complète
+  setTimeout(() => {
+    soloStore.resetSoloParty()
+  }, 0)
+  return true
+})
+
+const handleBack = () => {
+  router.go(-1)
+}
+
+const handleExit = () => {
+  // Naviguer immédiatement sans nettoyer le state
+  // Le nettoyage sera fait par onBeforeRouteLeave
+  router.go(-1)
+}
 </script>
