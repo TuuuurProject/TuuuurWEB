@@ -2,7 +2,7 @@
   <section class="space-y-6">
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <button class="pill" @click="($emit('exit'), soloStore.resetSoloParty())">
+        <button class="pill" @click="$emit('exit')">
           <font-awesome-icon icon="arrow-left" class="mr-2" />
           Accueil
         </button>
@@ -41,13 +41,18 @@
         <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
         <div class="grid gap-3 sm:grid-cols-2">
           <button
-            v-for="opt in currentAnswer"
+            v-for="(opt, idx) in currentAnswer"
             :key="opt"
-            class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250"
+            class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
             :class="buttonClass(opt.valid)"
             @click="answer(opt)"
           >
+            <span
+              class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
+            >
+              {{ idx + 1 }}
+            </span>
             {{ opt?.value }}
           </button>
         </div>
@@ -58,8 +63,24 @@
             <span v-else class="badge-orange">Mauvaise réponse</span>
           </div>
           <div class="flex items-center gap-3 ml-auto">
-            <button class="btn btn-secondary" @click="skip" :disabled="answered">Passer</button>
-            <button class="btn btn-primary" @click="next" :disabled="!answered">Suivant</button>
+            <button class="btn btn-secondary" @click="skip" :disabled="answered">
+              Passer
+              <span
+                v-if="!answered"
+                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
+              >
+                S
+              </span>
+            </button>
+            <button class="btn btn-primary relative" @click="next" :disabled="!answered">
+              Suivant
+              <span
+                v-if="answered"
+                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
+              >
+                ↵
+              </span>
+            </button>
           </div>
         </div>
       </overlay-block>
@@ -186,9 +207,9 @@
       <!-- Actions finales -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
-          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour à l'accueil
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour
         </button>
-        <button class="btn btn-primary w-full sm:w-auto" @click="restart">
+        <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
           <font-awesome-icon icon="rotate-right" class="mr-2" /> Rejouer
         </button>
       </div>
@@ -208,6 +229,7 @@ const TOTAL_TIME = 15 // seconds per question
 interface PartyInfo {
   nbQuestions: number
   score: number
+  finish: boolean
 }
 
 const index = ref(0)
@@ -216,11 +238,56 @@ const answered = ref(false)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
+const comeFromHistory = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
+
+// Gestion du clavier
+const handleKeyPress = async (event: KeyboardEvent) => {
+  // Si le quiz est terminé, ne rien faire
+  if (finished.value) return
+
+  // Touche Enter pour passer à la question suivante
+  if (event.key === 'Enter') {
+    if (answered.value) {
+      await next()
+    }
+    return
+  }
+
+  // Touche S pour skip la question
+  if (event.key === 's' || event.key === 'S') {
+    if (!answered.value) {
+      await skip()
+    }
+    return
+  }
+
+  // Mapping des touches clavier français (AZERTY) et international (QWERTY)
+  const keyMap: Record<string, number> = {
+    // QWERTY
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    // AZERTY (français)
+    '&': 1,
+    é: 2,
+    '"': 3,
+    "'": 4,
+  }
+
+  const answerNumber = keyMap[event.key]
+  if (answerNumber && !answered.value) {
+    const answerIndex = answerNumber - 1
+    if (currentAnswer.value && currentAnswer.value[answerIndex]) {
+      await answer(currentAnswer.value[answerIndex])
+    }
+  }
+}
 
 const startTimer = () => {
   clearTimer()
@@ -399,9 +466,23 @@ onMounted(async () => {
   // Load party info and get questions
   await soloStore.loadPartyInfo()
 
+  // If onMounted, the partyId exist, display the recap
+  if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
+    finished.value = true
+    comeFromHistory.value = true
+  }
+
   startTimer()
+
+  // Ajouter l'écouteur d'événements clavier
+  window.addEventListener('keydown', handleKeyPress)
 })
-onBeforeUnmount(clearTimer)
+
+onBeforeUnmount(() => {
+  clearTimer()
+  // Retirer l'écouteur d'événements clavier
+  window.removeEventListener('keydown', handleKeyPress)
+})
 </script>
 
 <style scoped>
@@ -410,14 +491,16 @@ onBeforeUnmount(clearTimer)
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-brand-dark/50 rounded-full;
+  background: rgba(10, 11, 30, 0.5);
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-brand-purple/40 rounded-full;
+  background: rgba(108, 92, 231, 0.4);
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-brand-purple/60;
+  background: rgba(108, 92, 231, 0.6);
 }
 </style>

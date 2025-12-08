@@ -7,11 +7,18 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 dayjs.locale('fr')
 
+interface UserInfo {
+  nickName: string
+  avatar: string
+  email: string
+}
+
 export default defineStore('user', {
   state: () => ({
     token: null as string | null,
     loading: 0 as number,
     comeFrom: null as string | null, // To store the route before login
+    userInfo: null as UserInfo | null,
   }),
 
   persist: {
@@ -45,6 +52,88 @@ export default defineStore('user', {
   actions: {
     logout() {
       this.token = null
+    },
+
+    async changePassword(currentPassword: string, newPassword: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me/change-password'
+      try {
+        const data = {
+          currentPassword,
+          newPassword,
+        }
+        const config = {
+          url,
+          method: 'PUT',
+          data,
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async deleteAccount() {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me'
+      try {
+        const config = {
+          url,
+          method: 'DELETE',
+        }
+        await axiosOverlayConnector(config)
+        this.logout()
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async getUserInfo() {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me'
+      try {
+        const config = {
+          url,
+          method: 'GET',
+        }
+        const response = await axiosOverlayConnector(config)
+        this.userInfo = response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async updateAvatar(avatarBase64: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me/avatar'
+      try {
+        const config = {
+          url,
+          method: 'PUT',
+          data: { avatar: avatarBase64 },
+        }
+        const response = await axiosOverlayConnector(config)
+        // Update local userInfo with new avatar
+        if (this.userInfo) {
+          this.userInfo.avatar = avatarBase64
+        }
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
     },
 
     async register(data: object) {

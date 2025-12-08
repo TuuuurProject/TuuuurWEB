@@ -13,6 +13,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/SoloPage.vue'),
   },
   {
+    path: '/solo/:id',
+    name: 'SoloQuizId',
+    component: () => import('../views/SoloPage.vue'),
+  },
+  {
     path: '/groupe',
     name: 'GroupMode',
     component: () => import('../views/GroupModePage.vue'),

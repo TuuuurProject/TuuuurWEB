@@ -9,7 +9,7 @@
     <div class="grid gap-4 md:grid-cols-3 items-end">
       <!-- 2ème place -->
       <div
-        class="order-2 md:order-1 gaming-card flex flex-col items-center transform hover:scale-105 transition-transform"
+        class="order-2 md:order-1 gaming-card flex flex-col items-center transform transition-transform"
       >
         <div class="text-brand-orange mb-3 animate-bounce-slow">
           <svg viewBox="0 0 24 24" class="h-8 w-8" fill="currentColor">
@@ -40,7 +40,7 @@
 
       <!-- 1ère place -->
       <div
-        class="order-1 md:order-2 gaming-card flex flex-col items-center scale-110 shadow-neon transform hover:scale-115 transition-transform"
+        class="order-1 md:order-2 gaming-card flex flex-col items-center scale-110 shadow-neon transform transition-transform"
       >
         <div class="text-brand-yellow mb-3 animate-float">
           <svg viewBox="0 0 24 24" class="h-12 w-12" fill="currentColor">
@@ -75,9 +75,7 @@
       </div>
 
       <!-- 3ème place -->
-      <div
-        class="order-3 gaming-card flex flex-col items-center transform hover:scale-105 transition-transform"
-      >
+      <div class="order-3 gaming-card flex flex-col items-center transform transition-transform">
         <div class="text-brand-gray mb-3 animate-wiggle">
           <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor">
             <path
