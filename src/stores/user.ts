@@ -138,7 +138,7 @@ export default defineStore('user', {
 
     async register(data: object) {
       this.loading++
-      const url = import.meta.env.VITE_API_URL + 'Auth/Register'
+      const url = import.meta.env.VITE_API_URL + 'auth/register'
       try {
         const config = {
           url,
@@ -157,7 +157,7 @@ export default defineStore('user', {
 
     async verifyEmail(data: object) {
       this.loading++
-      const url = import.meta.env.VITE_API_URL + 'Auth/2fa/Verify'
+      const url = import.meta.env.VITE_API_URL + 'auth/2fa/verify'
       try {
         const config = {
           url,
@@ -180,7 +180,7 @@ export default defineStore('user', {
 
     async login(data: object) {
       this.loading++
-      const url = import.meta.env.VITE_API_URL + 'Auth/Login'
+      const url = import.meta.env.VITE_API_URL + 'auth/login'
       try {
         const config = {
           url,
@@ -189,6 +189,31 @@ export default defineStore('user', {
         }
         const response = await axiosOverlayConnector(config)
         return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async googleLogin(token: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/google'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { token },
+        }
+        const response = await axiosOverlayConnector(config)
+        const responseData = response.data
+
+        if (responseData.token) {
+          this.token = responseData.token.token
+        }
+
+        return responseData
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error

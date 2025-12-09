@@ -47,7 +47,6 @@
               <button type="submit" class="btn btn-primary">Se connecter</button>
             </div>
           </form>
-
           <div v-if="error" class="my-5">
             <div
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
@@ -61,6 +60,16 @@
                 <li>{{ error[field]?.description }}</li>
               </ul>
             </div>
+          </div>
+
+          <div class="mt-6 text-center space-y-4">
+            <div class="flex items-center justify-center gap-4">
+              <div class="h-px bg-brand-purple/30 flex-1"></div>
+              <span class="text-sm text-brand-gray">OU</span>
+              <div class="h-px bg-brand-purple/30 flex-1"></div>
+            </div>
+
+            <google-login :callback="handleGoogleLogin" />
           </div>
 
           <div class="mt-6 text-sm text-brand-gray text-center">
@@ -96,7 +105,12 @@ const userStore = useUserStore()
 const loginUser = async () => {
   if (!login.value || !password.value) return
   error.value = await userStore.login({ login: login.value, password: password.value })
-  if (typeof error.value === 'boolean' && error.value) step.value = 2
+  if (typeof error.value === 'boolean' && error.value) {
+    step.value = 2
+  } else if (error.value === null) {
+    // Login successful without email verification
+    redirectAfterLogin()
+  }
 }
 
 const verifyEmail = async (code: string) => {
@@ -104,8 +118,45 @@ const verifyEmail = async (code: string) => {
     login: login.value,
     code: code,
   })
-  // If token exists in error, redirect to home
-  if (error.value && error.value.token && userStore.comeFrom) router.push(userStore.comeFrom)
-  else if (error.value && error.value.token) router.push({ name: 'Home' })
+  // If token exists in error, redirect
+  if (error.value && error.value.token) {
+    redirectAfterLogin()
+  }
+}
+
+// Google login handler
+const handleGoogleLogin = (response: any) => {
+  // The backend expects the credential (ID token), not the access token
+  const idToken = response.credential
+  if (idToken) {
+    loginWithGoogle(idToken)
+  }
+}
+
+const loginWithGoogle = async (token: string) => {
+  const result = await userStore.googleLogin(token)
+
+  if (result && result.token) {
+    // Successfully logged in, redirect
+    redirectAfterLogin()
+  } else {
+    error.value = result || [
+      {
+        code: 'Google',
+        description: 'Erreur lors de la connexion avec Google',
+      },
+    ]
+  }
+}
+
+// Fonction de redirection après connexion
+const redirectAfterLogin = () => {
+  if (userStore.comeFrom) {
+    const destination = userStore.comeFrom
+    userStore.comeFrom = null // Nettoyer après utilisation
+    router.push(destination)
+  } else {
+    router.push({ name: 'Home' })
+  }
 }
 </script>

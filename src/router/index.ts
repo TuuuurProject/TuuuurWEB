@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-// import useUserStore from '@/stores/user'
+import useUserStore from '@/stores/user'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -58,15 +58,19 @@ const router = createRouter({
   routes,
 })
 
-// router.beforeEach((to, from, next) => {
-//   const user = useUserStore()
-//   if (to.meta.mustBeAuthenticated && !user.isLogged) {
-//     // window.localStorage.setItem("afterLoginRoute", JSON.stringify(to))
-//     // next({name: 'login'})
-//     userManager.goToLoginPage();
-//   }
+router.beforeEach((to, from, next) => {
+  const user = useUserStore()
 
-//   next()
-// })
+  // Liste des routes qui nécessitent une connexion
+  const protectedRoutes = ['Profile', 'SoloQuiz', 'SoloQuizId']
+
+  // Sauvegarder la route uniquement si l'utilisateur n'est pas connecté
+  // et tente d'accéder à une page protégée
+  if (!user.isLogged && protectedRoutes.includes(to.name as string)) {
+    user.comeFrom = to.fullPath
+  }
+
+  next()
+})
 
 export default router

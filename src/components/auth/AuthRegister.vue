@@ -114,8 +114,15 @@ const verifyEmail = async (code: string) => {
     login: registerData.value.email,
     code: code,
   })
-  // If token exists in error, redirect to home
-  if (error.value && error.value.token && userStore.comeFrom) router.push(userStore.comeFrom)
-  else if (error.value && error.value.token) router.push({ name: 'Home' })
+  // If token exists in error, redirect
+  if (error.value && error.value.token) {
+    if (userStore.comeFrom) {
+      const destination = userStore.comeFrom
+      userStore.comeFrom = null // Nettoyer après utilisation
+      router.push(destination)
+    } else {
+      router.push({ name: 'Home' })
+    }
+  }
 }
 </script>
