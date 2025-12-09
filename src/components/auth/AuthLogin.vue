@@ -47,8 +47,6 @@
               <button type="submit" class="btn btn-primary">Se connecter</button>
             </div>
           </form>
-          {{ error }}
-
           <div v-if="error" class="my-5">
             <div
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
