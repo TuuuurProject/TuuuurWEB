@@ -27,9 +27,10 @@ const props = defineProps<{
 }>()
 
 // Store the current route to redirect after login
+// Seulement si on a un comeFrom explicite via props et qu'il n'existe pas déjà
 onMounted(() => {
-  if (!userStore.comeFrom) {
-    userStore.comeFrom = props.comeFrom || router.currentRoute.value.fullPath
+  if (!userStore.comeFrom && props.comeFrom) {
+    userStore.comeFrom = props.comeFrom
   }
 })
 </script>

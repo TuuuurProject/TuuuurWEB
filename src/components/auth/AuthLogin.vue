@@ -105,7 +105,12 @@ const userStore = useUserStore()
 const loginUser = async () => {
   if (!login.value || !password.value) return
   error.value = await userStore.login({ login: login.value, password: password.value })
-  if (typeof error.value === 'boolean' && error.value) step.value = 2
+  if (typeof error.value === 'boolean' && error.value) {
+    step.value = 2
+  } else if (error.value === null) {
+    // Login successful without email verification
+    redirectAfterLogin()
+  }
 }
 
 const verifyEmail = async (code: string) => {
@@ -113,9 +118,10 @@ const verifyEmail = async (code: string) => {
     login: login.value,
     code: code,
   })
-  // If token exists in error, redirect to home
-  if (error.value && error.value.token && userStore.comeFrom) router.push(userStore.comeFrom)
-  else if (error.value && error.value.token) router.push({ name: 'Home' })
+  // If token exists in error, redirect
+  if (error.value && error.value.token) {
+    redirectAfterLogin()
+  }
 }
 
 // Google login handler
@@ -132,11 +138,7 @@ const loginWithGoogle = async (token: string) => {
 
   if (result && result.token) {
     // Successfully logged in, redirect
-    if (userStore.comeFrom) {
-      router.push(userStore.comeFrom)
-    } else {
-      router.push({ name: 'Home' })
-    }
+    redirectAfterLogin()
   } else {
     error.value = result || [
       {
@@ -144,6 +146,17 @@ const loginWithGoogle = async (token: string) => {
         description: 'Erreur lors de la connexion avec Google',
       },
     ]
+  }
+}
+
+// Fonction de redirection après connexion
+const redirectAfterLogin = () => {
+  if (userStore.comeFrom) {
+    const destination = userStore.comeFrom
+    userStore.comeFrom = null // Nettoyer après utilisation
+    router.push(destination)
+  } else {
+    router.push({ name: 'Home' })
   }
 }
 </script>
