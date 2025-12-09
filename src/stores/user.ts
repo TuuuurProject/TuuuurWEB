@@ -196,5 +196,30 @@ export default defineStore('user', {
         this.loading--
       }
     },
+
+    async googleLogin(token: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'Auth/Google'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { token },
+        }
+        const response = await axiosOverlayConnector(config)
+        const responseData = response.data
+
+        if (responseData.token) {
+          this.token = responseData.token.token
+        }
+
+        return responseData
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
   },
 })

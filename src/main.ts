@@ -6,6 +6,9 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 
+// Google Login
+import vue3GoogleLogin from 'vue3-google-login'
+
 // Toaster
 import Vue3Toastify, { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -174,6 +177,9 @@ app.use(Vue3Toastify, {
   theme: 'dark',
   autoClose: 3000,
   position: toast.POSITION.TOP_RIGHT,
+})
+app.use(vue3GoogleLogin, {
+  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
 })
 app.component('font-awesome-icon', FontAwesomeIcon)
 app.mount('#app')
