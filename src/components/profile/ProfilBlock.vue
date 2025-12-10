@@ -145,7 +145,8 @@ import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
 import { resizeImage } from '@/services/fileUtils.js'
 
-const { proxy } = getCurrentInstance()
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
 
 import useUserStore from '@/stores/user.js'
 
@@ -196,7 +197,7 @@ const changePassword = async () => {
     showModalChangePassword.value = false
 
     // Toast to notify user
-    proxy.$toast.success('Mot de passe changé avec succès !')
+    proxy?.$toast.success('Mot de passe changé avec succès !')
   }
 }
 
@@ -234,14 +235,14 @@ const handleFileChange = async (event: Event) => {
 
     if (result?.email) {
       // Success - avatar updated
-      proxy.$toast.success('Avatar mis à jour avec succès !')
+      proxy?.$toast.success('Avatar mis à jour avec succès !')
     } else {
       // Error occurred
-      proxy.$toast.error("Erreur lors de la mise à jour de l'avatar")
+      proxy?.$toast.error("Erreur lors de la mise à jour de l'avatar")
     }
   } catch (error) {
     console.error('Error processing avatar:', error)
-    proxy.$toast.error("Erreur lors du traitement de l'image")
+    proxy?.$toast.error("Erreur lors du traitement de l'image")
   } finally {
     // Reset file input
     target.value = ''

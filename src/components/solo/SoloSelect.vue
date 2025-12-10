@@ -31,7 +31,7 @@
               <span>{{ cat.label }}</span>
             </button>
           </div>
-          <div class="mt-6">
+          <!-- <div class="mt-6">
             <label class="block font-semibold mb-2 text-brand-lightGray"
               >⚡ Catégories spécifiques (champ libre)</label
             >
@@ -44,7 +44,7 @@
             <p class="text-xs text-brand-gray mt-1">
               Facultatif — ajoutez du contexte précis pour des questions personnalisées.
             </p>
-          </div>
+          </div> -->
         </div>
 
         <!-- Sidebar des paramètres -->
