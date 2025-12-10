@@ -6,13 +6,6 @@
         <h2 class="font-branding text-3xl text-brand-lightGray">Lobby</h2>
         <span class="badge-green">En attente d'hôte</span>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="pill">Code</span>
-        <span
-          class="font-branding text-2xl tracking-widest rounded-2xl bg-brand-darkGray/50 border border-brand-purple/30 px-3 py-1 shadow-neon text-brand-lightGray"
-          >{{ code }}</span
-        >
-      </div>
     </header>
 
     <!-- Readonly quiz parameters as quick chips -->
@@ -58,37 +51,36 @@
       <!-- Right rail with QR and actions -->
       <aside class="md:col-span-4 space-y-4">
         <div class="gaming-card">
-          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">Rejoindre via code</h3>
-          <div class="mb-4 flex items-center justify-between">
-            <div>
-              <div class="text-sm text-brand-gray">Code</div>
-              <div class="font-branding text-3xl tracking-wider text-brand-lightGray">
-                {{ code }}
-              </div>
-            </div>
-            <button class="btn btn-secondary">Copier</button>
+          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">Pour rejoindre</h3>
+          <div
+            class="text-center font-branding text-2xl tracking-wider text-brand-lightGray hover:underline cursor-pointer mb-4"
+            type="button"
+            @click.prevent.stop="copyCode"
+          >
+            {{ code }}
           </div>
-          <QRPreview :text="code" :size="220" />
-        </div>
 
-        <div class="gaming-card">
-          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">Actions</h3>
-          <div class="flex items-center justify-end gap-3">
-            <button class="btn btn-secondary" @click="$emit('back')">Quitter</button>
-            <button class="btn btn-primary" disabled>Lancer la partie</button>
+          <div class="flex justify-center">
+            <QRPreview :text="code" :size="180" />
           </div>
-          <p class="text-xs text-brand-gray mt-2">
-            Lecture seule (démo) — l'hôte peut lancer lorsqu'il sera prêt.
-          </p>
         </div>
       </aside>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-end gap-3">
+      <button class="btn btn-ghost" @click="$emit('back')">← Quitter</button>
+      <button class="btn btn-primary" :disabled="canCreateGame" @click="open = true">
+        <font-awesome-icon icon="rocket" class="mr-2" /> Lancer la partie
+      </button>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed, getCurrentInstance } from 'vue'
 import QRPreview from './QRPreview.vue'
-withDefaults(
+
+const props = withDefaults(
   defineProps<{
     code: string
     categories: string[]
@@ -109,6 +101,19 @@ withDefaults(
     ],
   },
 )
+
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
+
+const copyCode = async () => {
+  navigator.clipboard.writeText(props.code).then(() => {
+    proxy?.$toast.success('Copié dans le presse-papier')
+  })
+}
+
+const canCreateGame = computed(() => {
+  return props.players.length < 1
+})
 </script>
 
 <style scoped>

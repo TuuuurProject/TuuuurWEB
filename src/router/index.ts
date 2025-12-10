@@ -62,7 +62,7 @@ router.beforeEach((to, from, next) => {
   const user = useUserStore()
 
   // Liste des routes qui nécessitent une connexion
-  const protectedRoutes = ['Profile', 'SoloQuiz', 'SoloQuizId']
+  const protectedRoutes = ['Profile', 'SoloQuiz', 'SoloQuizId', 'GroupMode']
 
   // Sauvegarder la route uniquement si l'utilisateur n'est pas connecté
   // et tente d'accéder à une page protégée
