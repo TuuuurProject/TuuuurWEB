@@ -129,7 +129,9 @@
             :key="field"
             class="mt-1 list-disc list-inside"
           >
-            <li>{{ errorsPasswords[field]?.description }}</li>
+            <li v-for="(msg, idx) in errorsPasswords[field]" :key="idx">
+              {{ typeof msg === 'string' ? msg : (msg as any)?.description }}
+            </li>
           </ul>
         </div>
       </div>
@@ -145,7 +147,8 @@ import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
 import { resizeImage } from '@/services/fileUtils.js'
 
-const { proxy } = getCurrentInstance()
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
 
 import useUserStore from '@/stores/user.js'
 
@@ -172,12 +175,9 @@ const canConfirmPasswordChange = computed(() => {
 
 const changePassword = async () => {
   if (changePasswordInfo.value.newPassword !== changePasswordInfo.value.confirmNewPassword) {
-    errorsPasswords.value = [
-      {
-        code: '',
-        description: 'Le nouveau mot de passe et sa confirmation ne correspondent pas.',
-      },
-    ]
+    errorsPasswords.value = {
+      password: ['Le nouveau mot de passe et sa confirmation ne correspondent pas.'],
+    }
     return
   }
 
@@ -196,7 +196,9 @@ const changePassword = async () => {
     showModalChangePassword.value = false
 
     // Toast to notify user
-    proxy.$toast.success('Mot de passe changé avec succès !')
+    if (proxy) {
+      ;(proxy as any).$toast.success('Mot de passe changé avec succès !')
+    }
   }
 }
 
@@ -234,14 +236,20 @@ const handleFileChange = async (event: Event) => {
 
     if (result?.email) {
       // Success - avatar updated
-      proxy.$toast.success('Avatar mis à jour avec succès !')
+      if (proxy) {
+        ;(proxy as any).$toast.success('Avatar mis à jour avec succès !')
+      }
     } else {
       // Error occurred
-      proxy.$toast.error("Erreur lors de la mise à jour de l'avatar")
+      if (proxy) {
+        ;(proxy as any).$toast.error("Erreur lors de la mise à jour de l'avatar")
+      }
     }
   } catch (error) {
     console.error('Error processing avatar:', error)
-    proxy.$toast.error("Erreur lors du traitement de l'image")
+    if (proxy) {
+      ;(proxy as any).$toast.error("Erreur lors du traitement de l'image")
+    }
   } finally {
     // Reset file input
     target.value = ''
