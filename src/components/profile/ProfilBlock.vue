@@ -129,7 +129,9 @@
             :key="field"
             class="mt-1 list-disc list-inside"
           >
-            <li>{{ errorsPasswords[field]?.description }}</li>
+            <li v-for="(msg, idx) in errorsPasswords[field]" :key="idx">
+              {{ typeof msg === 'string' ? msg : (msg as any)?.description }}
+            </li>
           </ul>
         </div>
       </div>
@@ -173,12 +175,9 @@ const canConfirmPasswordChange = computed(() => {
 
 const changePassword = async () => {
   if (changePasswordInfo.value.newPassword !== changePasswordInfo.value.confirmNewPassword) {
-    errorsPasswords.value = [
-      {
-        code: '',
-        description: 'Le nouveau mot de passe et sa confirmation ne correspondent pas.',
-      },
-    ]
+    errorsPasswords.value = {
+      password: ['Le nouveau mot de passe et sa confirmation ne correspondent pas.'],
+    }
     return
   }
 
@@ -197,7 +196,13 @@ const changePassword = async () => {
     showModalChangePassword.value = false
 
     // Toast to notify user
+<<<<<<< HEAD
     proxy?.$toast.success('Mot de passe changé avec succès !')
+=======
+    if (proxy) {
+      ;(proxy as any).$toast.success('Mot de passe changé avec succès !')
+    }
+>>>>>>> ff9607ab991d9c61bfff75acea25ead00f9c2e04
   }
 }
 
@@ -235,6 +240,7 @@ const handleFileChange = async (event: Event) => {
 
     if (result?.email) {
       // Success - avatar updated
+<<<<<<< HEAD
       proxy?.$toast.success('Avatar mis à jour avec succès !')
     } else {
       // Error occurred
@@ -243,6 +249,22 @@ const handleFileChange = async (event: Event) => {
   } catch (error) {
     console.error('Error processing avatar:', error)
     proxy?.$toast.error("Erreur lors du traitement de l'image")
+=======
+      if (proxy) {
+        ;(proxy as any).$toast.success('Avatar mis à jour avec succès !')
+      }
+    } else {
+      // Error occurred
+      if (proxy) {
+        ;(proxy as any).$toast.error("Erreur lors de la mise à jour de l'avatar")
+      }
+    }
+  } catch (error) {
+    console.error('Error processing avatar:', error)
+    if (proxy) {
+      ;(proxy as any).$toast.error("Erreur lors du traitement de l'image")
+    }
+>>>>>>> ff9607ab991d9c61bfff75acea25ead00f9c2e04
   } finally {
     // Reset file input
     target.value = ''

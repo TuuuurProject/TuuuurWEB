@@ -1,5 +1,8 @@
 name: Build Workflow
 
+on:
+  workflow_call:
+
 jobs:
   build:
     name: Build

@@ -1,12 +1,13 @@
-name: Test, Build and Deploy dev branch
+name: Test and Build develop branch
 
 on:
-  pull_request:
+  push:
     branches:
       - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
-    if: github.event.pull_request.merged == true
     uses: ./.github/workflows/job_build.yaml
     secrets: inherit

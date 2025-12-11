@@ -92,7 +92,28 @@
             </button>
           </div>
         </div>
+<<<<<<< HEAD
       </div>
+=======
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button class="btn btn-secondary" @click="$emit('back')">Retour</button>
+          <button
+            class="btn btn-primary"
+            @click="
+              $emit('created', {
+                categories: Array.from(selected),
+                questions: questions,
+                shuffle: shuffle,
+                specifics,
+              })
+            "
+          >
+            Créer
+          </button>
+        </div>
+      </aside>
+>>>>>>> ff9607ab991d9c61bfff75acea25ead00f9c2e04
     </div>
 
     <footer class="flex flex-wrap items-center justify-end gap-3">
