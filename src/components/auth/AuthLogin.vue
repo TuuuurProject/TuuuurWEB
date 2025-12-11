@@ -57,7 +57,9 @@
                 :key="field"
                 class="mt-1 list-disc list-inside"
               >
-                <li>{{ error[field]?.description }}</li>
+                <li v-for="(msg, idx) in error[field]" :key="idx">
+                  {{ typeof msg === 'string' ? msg : msg?.description }}
+                </li>
               </ul>
             </div>
           </div>
@@ -96,7 +98,14 @@ import AuthCode from '@/components/auth/AuthCode.vue'
 
 const login = ref('')
 const password = ref('')
-const error = ref<Record<string, string[]> | null>(null)
+
+interface ErrorMessage {
+  description?: string
+}
+
+type ErrorField = string | ErrorMessage
+
+const error = ref<Record<string, ErrorField[]> | null>(null)
 const step = ref(1) // 1: login, 2: verify email
 
 const userStore = useUserStore()

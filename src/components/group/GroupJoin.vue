@@ -33,7 +33,10 @@
 import { reactive } from 'vue'
 const digits = reactive<string[]>(['', '', '', '', '', ''])
 
-const emit = defineEmits<{ (e: 'joined', payload: { code: string }): void }>()
+const emit = defineEmits<{
+  (e: 'joined', payload: { code: string }): void
+  (e: 'back'): void
+}>()
 
 function onInput(idx: number) {
   const el = document.activeElement as HTMLInputElement

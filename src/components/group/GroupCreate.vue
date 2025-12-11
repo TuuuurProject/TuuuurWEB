@@ -107,8 +107,8 @@
             @click="
               $emit('created', {
                 categories: Array.from(selected),
-                questions: questions.value,
-                shuffle: shuffle.value,
+                questions: questions,
+                shuffle: shuffle,
                 specifics,
               })
             "

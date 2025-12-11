@@ -32,7 +32,7 @@ export default defineStore('user', {
 
     isLogged() {
       if (this.token) {
-        const payload = this.decodedPayloadToken
+        const payload = this.decodedPayloadToken as any
         if (!payload) return false
 
         // TODO : payload.exp is in UTC but Date.now() is in local time UTC + 1, need to set payload.exp in local time too
