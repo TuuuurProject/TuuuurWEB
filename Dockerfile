@@ -3,5 +3,4 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN rm -rf dist/
-RUN npm run build
+RUN rm -rf dist/ && npm run build
