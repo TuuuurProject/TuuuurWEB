@@ -1,0 +1,13 @@
+name: Build release branch
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build:
+    uses: ./.github/workflows/job_build_release.yaml
+    secrets:
+      DOCKER_LOGIN: ${{ secrets.DOCKER_LOGIN }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
