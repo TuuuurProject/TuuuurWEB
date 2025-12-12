@@ -37,17 +37,17 @@
           >
             <div class="relative shrink-0">
               <div
-                class="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-brand-purple/10 flex items-center justify-center text-2xl text-brand-purple"
+                class="rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple"
               >
                 <img
                   v-if="p?.user?.avatar"
                   :src="p.user.avatar"
                   alt="avatar"
-                  class="h-16 w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
+                  class="h-12 w-12 rounded-full border-2 border-brand-purple shadow-neon object-cover"
                 />
                 <div
                   v-else
-                  class="h-16 w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
+                  class="h-12 w-12 rounded-full border-2 border-brand-purple flex items-center justify-center"
                 >
                   <span class="text-2xl font-bold text-brand-purple">
                     {{ p?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
@@ -97,12 +97,14 @@ import { computed, getCurrentInstance, onMounted, onUnmounted } from 'vue'
 import QRPreview from './QRPreview.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
-import { useRouter } from 'vue-router'
 import useUserStore from '@/stores/user'
+
+const emit = defineEmits<{
+  (e: 'goTo', newStep: 'mode' | 'create' | 'join' | 'lobby'): void
+}>()
 
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
-const router = useRouter()
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
@@ -119,41 +121,48 @@ const canCreateGame = computed(() => {
 
 const leaveGroupe = async () => {
   await groupeStore.leaveGroupe()
+  emit('goTo', 'mode')
 }
 
 // SignalR event handlers
-const handleJoinEvent = (data: unknown) => {
+const handleJoinEvent = (data: any) => {
   console.log('User joined:', data)
   // Refresh group info when someone joins
-  if (groupeStore.groupePartyInfo?.code) {
-    // You could add a method to refresh party info or update directly
-    proxy?.$toast.info('Un joueur a rejoint le lobby')
+  if (groupeStore.groupeId) {
+    groupeStore?.groupePartyInfo?.partyUsers.push({
+      id: data.id,
+      user: { ...data, idUser: data.id },
+    } as any)
+    proxy?.$toast.info(`${data.nickName} a rejoint le lobby`)
   }
 }
 
-const handleLeaveEvent = (data: unknown) => {
+const handleLeaveEvent = (data: any) => {
   console.log('User left:', data)
   // Refresh group info when someone leaves
-  if (groupeStore.groupePartyInfo?.code) {
-    proxy?.$toast.info('Un joueur a quitté le lobby')
+  if (groupeStore.groupeId) {
+    groupeStore.groupePartyInfo!.partyUsers = groupeStore.groupePartyInfo!.partyUsers.filter(
+      (u: any) => (u.user.idUser ?? u.user.id) !== data.id,
+    )
+    proxy?.$toast.info(`${data.nickName} a quitté le lobby`)
   }
 }
 
-const handleStartEvent = (data: unknown) => {
+const handleStartEvent = (data: any) => {
   console.log('Game started:', data)
   // Navigate to game or update state
-  proxy?.$toast.success('La partie commence !')
+  // proxy?.$toast.success('La partie commence !')
   // You might want to navigate to a game view here
   // router.push({ name: 'game', params: { id: groupeStore.groupeId } })
 }
 
-const handleDeleteEvent = (data: unknown) => {
+const handleDeleteEvent = (data: any) => {
   console.log('Lobby deleted:', data)
   proxy?.$toast.warning('Le lobby a été supprimé')
   // Clear store and navigate away
   groupeStore.groupeId = null
   groupeStore.groupePartyInfo = null
-  router.push({ name: 'home' })
+  emit('goTo', 'mode')
 }
 
 // Setup SignalR connection
@@ -170,22 +179,22 @@ onMounted(async () => {
         try {
           const notification = JSON.parse(message)
 
-          switch (notification.event || notification.type) {
+          switch (notification.action) {
             case GroupEvent.Join:
             case 'Join':
-              handleJoinEvent(notification.data)
+              handleJoinEvent(notification.user)
               break
             case GroupEvent.Leave:
             case 'Leave':
-              handleLeaveEvent(notification.data)
+              handleLeaveEvent(notification.user)
               break
             case GroupEvent.Start:
             case 'Start':
-              handleStartEvent(notification.data)
+              handleStartEvent(notification.user)
               break
             case GroupEvent.Delete:
             case 'Delete':
-              handleDeleteEvent(notification.data)
+              handleDeleteEvent(notification.user)
               break
             default:
               console.log('Unknown event:', notification)

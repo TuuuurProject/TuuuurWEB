@@ -74,7 +74,7 @@
     <GroupCreate v-else-if="step === 'create'" @back="step = 'mode'" @created="goLobbyFromCreate" />
     <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
 
-    <GroupLobby v-else-if="step === 'lobby'" @back="step = 'mode'" />
+    <GroupLobby v-else-if="step === 'lobby'" @back="step = 'mode'" @go-to="goTo" />
   </section>
 </template>
 
@@ -85,13 +85,15 @@ import GroupJoin from './GroupJoin.vue'
 import GroupLobby from './GroupLobby.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import useUserStore from '@/stores/user.js'
-import useGroupeStore from '@/stores/groupe'
 
 const userStore = useUserStore()
-const groupeStore = useGroupeStore()
 
 type Step = 'mode' | 'create' | 'join' | 'lobby'
 const step = ref<Step>('mode')
+
+function goTo(newStep: Step) {
+  step.value = newStep
+}
 
 function goLobbyFromCreate() {
   step.value = 'lobby'

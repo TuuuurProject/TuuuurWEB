@@ -1,4 +1,10 @@
-import * as signalR from '@microsoft/signalr'
+import {
+  HttpTransportType,
+  HubConnectionBuilder,
+  LogLevel,
+  HubConnectionState,
+  HubConnection,
+} from '@microsoft/signalr'
 
 export enum GroupEvent {
   Join = 1,
@@ -10,37 +16,35 @@ export enum GroupEvent {
 type EventHandler = (...args: unknown[]) => void
 
 class SignalRService {
-  private connection: signalR.HubConnection | null = null
+  private connection: HubConnection | null = null
   private handlers: Map<string, Set<EventHandler>> = new Map()
 
   async connect(token?: string): Promise<void> {
-    if (this.connection?.state === signalR.HubConnectionState.Connected) {
+    if (this.connection?.state === HubConnectionState.Connected) {
       return
     }
 
-    const url = import.meta.env.VITE_API_URL + 'notifications'
+    const url = import.meta.env.VITE_BASE_API_URL + 'notifications'
 
-    this.connection = new signalR.HubConnectionBuilder()
+    this.connection = new HubConnectionBuilder()
       .withUrl(url, {
         accessTokenFactory: () => token || '',
-        transport:
-          signalR.HttpTransportType.WebSockets |
-          signalR.HttpTransportType.ServerSentEvents |
-          signalR.HttpTransportType.LongPolling,
+        withCredentials: false,
+        transport: HttpTransportType.LongPolling,
       })
       .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
+      .configureLogging(LogLevel.Critical)
       .build()
 
-    this.connection.onreconnecting((error) => {
+    this.connection.onreconnecting((error: Error | undefined) => {
       console.warn('SignalR reconnecting...', error)
     })
 
-    this.connection.onreconnected((connectionId) => {
+    this.connection.onreconnected((connectionId: string | undefined) => {
       console.log('SignalR reconnected:', connectionId)
     })
 
-    this.connection.onclose((error) => {
+    this.connection.onclose((error: Error | undefined) => {
       console.log('SignalR connection closed:', error)
     })
 
@@ -93,10 +97,10 @@ class SignalRService {
   }
 
   isConnected(): boolean {
-    return this.connection?.state === signalR.HubConnectionState.Connected
+    return this.connection?.state === HubConnectionState.Connected
   }
 
-  getConnectionState(): signalR.HubConnectionState | null {
+  getConnectionState(): HubConnectionState | null {
     return this.connection?.state || null
   }
 }
