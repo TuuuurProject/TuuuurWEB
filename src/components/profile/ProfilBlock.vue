@@ -196,13 +196,9 @@ const changePassword = async () => {
     showModalChangePassword.value = false
 
     // Toast to notify user
-<<<<<<< HEAD
-    proxy?.$toast.success('Mot de passe changé avec succès !')
-=======
     if (proxy) {
       ;(proxy as any).$toast.success('Mot de passe changé avec succès !')
     }
->>>>>>> ff9607ab991d9c61bfff75acea25ead00f9c2e04
   }
 }
 
@@ -240,16 +236,6 @@ const handleFileChange = async (event: Event) => {
 
     if (result?.email) {
       // Success - avatar updated
-<<<<<<< HEAD
-      proxy?.$toast.success('Avatar mis à jour avec succès !')
-    } else {
-      // Error occurred
-      proxy?.$toast.error("Erreur lors de la mise à jour de l'avatar")
-    }
-  } catch (error) {
-    console.error('Error processing avatar:', error)
-    proxy?.$toast.error("Erreur lors du traitement de l'image")
-=======
       if (proxy) {
         ;(proxy as any).$toast.success('Avatar mis à jour avec succès !')
       }
@@ -264,7 +250,6 @@ const handleFileChange = async (event: Event) => {
     if (proxy) {
       ;(proxy as any).$toast.error("Erreur lors du traitement de l'image")
     }
->>>>>>> ff9607ab991d9c61bfff75acea25ead00f9c2e04
   } finally {
     // Reset file input
     target.value = ''
