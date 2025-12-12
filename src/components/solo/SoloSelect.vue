@@ -31,20 +31,6 @@
               <span>{{ cat.label }}</span>
             </button>
           </div>
-          <!-- <div class="mt-6">
-            <label class="block font-semibold mb-2 text-brand-lightGray"
-              >⚡ Catégories spécifiques (champ libre)</label
-            >
-            <input
-              type="text"
-              v-model="specifics"
-              class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 backdrop-blur px-4 py-3 shadow-card focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple text-brand-lightGray placeholder-brand-gray"
-              placeholder="Ex: Capitales d'Afrique, Histoire de l'art moderne…"
-            />
-            <p class="text-xs text-brand-gray mt-1">
-              Facultatif — ajoutez du contexte précis pour des questions personnalisées.
-            </p>
-          </div> -->
         </div>
 
         <!-- Sidebar des paramètres -->
@@ -145,11 +131,6 @@
           <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
           <strong class="text-brand-lightGray">Questions:</strong>
           <span class="text-brand-gray">{{ questions }}</span>
-        </p>
-        <p v-if="specifics" class="flex items-start gap-2">
-          <span class="text-brand-cyan">✨</span>
-          <strong class="text-brand-lightGray">Spécifiques:</strong>
-          <span class="text-brand-gray">{{ specifics }}</span>
         </p>
       </div>
     </ModalDialog>

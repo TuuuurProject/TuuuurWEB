@@ -107,7 +107,7 @@
       title="Créer la partie multijoueur"
       @close="open = false"
       @confirm="confirm"
-      :loading="false"
+      :loading="groupeStore.isLoading"
     >
       <div class="space-y-3">
         <p class="flex items-center gap-2">
@@ -136,11 +136,6 @@
               .join(', ')
           }}</span>
         </p>
-        <p v-if="specifics" class="flex items-start gap-2">
-          <span class="text-brand-cyan">✨</span>
-          <strong class="text-brand-lightGray">Spécifiques:</strong>
-          <span class="text-brand-gray">{{ specifics }}</span>
-        </p>
       </div>
     </ModalDialog>
   </section>
@@ -150,8 +145,10 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import useThemeStore from '@/stores/theme'
+import useGroupeStore from '@/stores/groupe'
 
 const themeStore = useThemeStore()
+const groupeStore = useGroupeStore()
 
 const selectedDifficulty = ref([2]) // Moyen par défaut
 
@@ -159,13 +156,6 @@ interface Theme {
   id: string
   label: string
   icon: string
-}
-
-interface GroupPayload {
-  themes: number[]
-  difficulties: number[]
-  nbQuestions: number
-  specifics: string
 }
 
 const difficulties = [
@@ -214,7 +204,6 @@ const selected = reactive<Set<string>>(new Set())
 
 const questions = ref(10)
 const open = ref(false)
-const specifics = ref('')
 
 const toggle = (id: string) => {
   if (selected.has(id)) {
@@ -244,22 +233,15 @@ const canCreateGame = computed(() => selected.size === 0 || selectedDifficulty.v
 
 const emit = defineEmits<{
   (e: 'back'): void
-  (e: 'created', payload: GroupPayload): void
+  (e: 'created', isCreated: boolean): void
 }>()
 
 const confirm = async () => {
   open.value = false
 
-  const payload: GroupPayload = {
-    themes: Array.from(selected).map((id) => parseInt(id)),
-    difficulties: Array.from(selectedDifficulty.value),
-    nbQuestions: questions.value,
-    specifics: specifics.value,
-  }
+  await groupeStore.createGroupe()
 
-  // TODO: Implémenter l'appel API pour créer la partie groupe
-  // Similaire à soloStore.createSoloParty()
-  emit('created', payload)
+  if (groupeStore.groupeId) emit('created', true)
 }
 </script>
 

@@ -71,62 +71,41 @@
       </div>
     </div>
 
-    <GroupCreate v-else-if="step === 'create'" @back="step = 'mode'" @created="goLobbyFromCreate" />
-    <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
-
-    <GroupLobby
-      v-else-if="step === 'lobby'"
-      :code="lobby.code"
-      :categories="lobby.categories"
-      :questions="lobby.questions"
-      :shuffle="lobby.shuffle"
-      :players="lobby.players"
-      :specifics="lobby.specifics"
+    <GroupCreate
+      v-else-if="step === 'create' && !groupeStore.groupeId"
       @back="step = 'mode'"
+      @created="goLobbyFromCreate"
     />
+    <GroupJoin
+      v-else-if="step === 'join' && !groupeStore.groupeId"
+      @back="step = 'mode'"
+      @joined="goLobbyFromJoin"
+    />
+
+    <GroupLobby v-else-if="step === 'lobby' && groupeStore.groupeId" @back="step = 'mode'" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import GroupCreate from './GroupCreate.vue'
 import GroupJoin from './GroupJoin.vue'
 import GroupLobby from './GroupLobby.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import useUserStore from '@/stores/user.js'
+import useGroupeStore from '@/stores/groupe'
 
 const userStore = useUserStore()
+const groupeStore = useGroupeStore()
 
 type Step = 'mode' | 'create' | 'join' | 'lobby'
 const step = ref<Step>('mode')
 
-const lobby = reactive({
-  code: 'TUR-0000',
-  categories: ['Général'],
-  questions: 10,
-  shuffle: true,
-  specifics: '',
-  players: [
-    { id: 1, name: 'Alice', emoji: '🦊', status: 'Prêt' },
-    { id: 2, name: 'Ben', emoji: '🐼', status: 'Prêt' },
-  ],
-})
-
-function goLobbyFromCreate(payload: {
-  categories: string[]
-  questions: number
-  shuffle: boolean
-  specifics?: string
-}) {
-  lobby.categories = payload.categories
-  lobby.questions = payload.questions
-  lobby.shuffle = payload.shuffle
-  lobby.specifics = payload.specifics || ''
-  lobby.code = 'TUR-' + Math.floor(1000 + Math.random() * 9000)
-  step.value = 'lobby'
+function goLobbyFromCreate(isCreated: boolean) {
+  if (isCreated) step.value = 'lobby'
 }
-function goLobbyFromJoin(payload: { code: string }) {
-  lobby.code = payload.code || 'TUR-0000'
+
+function goLobbyFromJoin() {
   step.value = 'lobby'
 }
 </script>
