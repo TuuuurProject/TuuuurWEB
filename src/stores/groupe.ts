@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import axiosOverlayConnector from '@/services/axiosOverlayConnector.js'
 
 export interface PartyUser {
+  id: number | string
+  user: User
   [key: string]: unknown
 }
 
@@ -22,6 +24,11 @@ export interface PartyType {
 }
 
 export interface User {
+  id?: number | string
+  idUser?: number | string
+  nickName?: string
+  avatar?: string
+  email?: string
   [key: string]: unknown
 }
 
