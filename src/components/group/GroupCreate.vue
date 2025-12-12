@@ -233,7 +233,7 @@ const canCreateGame = computed(() => selected.size === 0 || selectedDifficulty.v
 
 const emit = defineEmits<{
   (e: 'back'): void
-  (e: 'created', isCreated: boolean): void
+  (e: 'created'): void
 }>()
 
 const confirm = async () => {
@@ -241,7 +241,7 @@ const confirm = async () => {
 
   await groupeStore.createGroupe()
 
-  if (groupeStore.groupeId) emit('created', true)
+  if (groupeStore.groupeId) emit('created')
 }
 </script>
 

@@ -70,8 +70,8 @@ export default defineStore('groupe', {
         const response = await axiosOverlayConnector(config)
         this.groupeId = response.data.id
         this.groupePartyInfo = response.data
-      } catch (error: unknown) {
-        const errData = (error as { response?: { data?: unknown } })?.response?.data
+      } catch (error: any) {
+        const errData = error?.response?.data
         return errData ?? error
       } finally {
         this.loading--

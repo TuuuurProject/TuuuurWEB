@@ -71,18 +71,10 @@
       </div>
     </div>
 
-    <GroupCreate
-      v-else-if="step === 'create' && !groupeStore.groupeId"
-      @back="step = 'mode'"
-      @created="goLobbyFromCreate"
-    />
-    <GroupJoin
-      v-else-if="step === 'join' && !groupeStore.groupeId"
-      @back="step = 'mode'"
-      @joined="goLobbyFromJoin"
-    />
+    <GroupCreate v-else-if="step === 'create'" @back="step = 'mode'" @created="goLobbyFromCreate" />
+    <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
 
-    <GroupLobby v-else-if="step === 'lobby' && groupeStore.groupeId" @back="step = 'mode'" />
+    <GroupLobby v-else-if="step === 'lobby'" @back="step = 'mode'" />
   </section>
 </template>
 
@@ -101,8 +93,8 @@ const groupeStore = useGroupeStore()
 type Step = 'mode' | 'create' | 'join' | 'lobby'
 const step = ref<Step>('mode')
 
-function goLobbyFromCreate(isCreated: boolean) {
-  if (isCreated) step.value = 'lobby'
+function goLobbyFromCreate() {
+  step.value = 'lobby'
 }
 
 function goLobbyFromJoin() {
