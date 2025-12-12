@@ -93,11 +93,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted } from 'vue'
 import QRPreview from './QRPreview.vue'
 import useGroupeStore from '@/stores/groupe'
+import signalrService, { GroupEvent } from '@/services/signalrService'
+import { useRouter } from 'vue-router'
+import useUserStore from '@/stores/user'
 
 const groupeStore = useGroupeStore()
+const userStore = useUserStore()
+const router = useRouter()
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
@@ -115,6 +120,94 @@ const canCreateGame = computed(() => {
 const leaveGroupe = async () => {
   await groupeStore.leaveGroupe()
 }
+
+// SignalR event handlers
+const handleJoinEvent = (data: unknown) => {
+  console.log('User joined:', data)
+  // Refresh group info when someone joins
+  if (groupeStore.groupePartyInfo?.code) {
+    // You could add a method to refresh party info or update directly
+    proxy?.$toast.info('Un joueur a rejoint le lobby')
+  }
+}
+
+const handleLeaveEvent = (data: unknown) => {
+  console.log('User left:', data)
+  // Refresh group info when someone leaves
+  if (groupeStore.groupePartyInfo?.code) {
+    proxy?.$toast.info('Un joueur a quitté le lobby')
+  }
+}
+
+const handleStartEvent = (data: unknown) => {
+  console.log('Game started:', data)
+  // Navigate to game or update state
+  proxy?.$toast.success('La partie commence !')
+  // You might want to navigate to a game view here
+  // router.push({ name: 'game', params: { id: groupeStore.groupeId } })
+}
+
+const handleDeleteEvent = (data: unknown) => {
+  console.log('Lobby deleted:', data)
+  proxy?.$toast.warning('Le lobby a été supprimé')
+  // Clear store and navigate away
+  groupeStore.groupeId = null
+  groupeStore.groupePartyInfo = null
+  router.push({ name: 'home' })
+}
+
+// Setup SignalR connection
+onMounted(async () => {
+  try {
+    await signalrService.connect(userStore.token || '')
+
+    // Subscribe to events
+    signalrService.on('Notify', (message: unknown) => {
+      console.log('Notification received:', message)
+
+      // Parse the notification if it's structured
+      if (typeof message === 'string') {
+        try {
+          const notification = JSON.parse(message)
+
+          switch (notification.event || notification.type) {
+            case GroupEvent.Join:
+            case 'Join':
+              handleJoinEvent(notification.data)
+              break
+            case GroupEvent.Leave:
+            case 'Leave':
+              handleLeaveEvent(notification.data)
+              break
+            case GroupEvent.Start:
+            case 'Start':
+              handleStartEvent(notification.data)
+              break
+            case GroupEvent.Delete:
+            case 'Delete':
+              handleDeleteEvent(notification.data)
+              break
+            default:
+              console.log('Unknown event:', notification)
+          }
+        } catch {
+          // If not JSON, just log the message
+          console.log('Notification:', message)
+        }
+      }
+    })
+
+    console.log('SignalR connected in GroupLobby')
+  } catch (error) {
+    console.error('Failed to connect to SignalR:', error)
+    proxy?.$toast.error('Erreur de connexion temps réel')
+  }
+})
+
+// Cleanup SignalR connection
+onUnmounted(() => {
+  signalrService.off('Notify')
+})
 </script>
 
 <style scoped>
