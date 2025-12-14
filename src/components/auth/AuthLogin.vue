@@ -17,6 +17,7 @@
               }}</label>
               <input
                 id="username"
+                data-testid="login-username"
                 v-model="login"
                 type="text"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
@@ -29,6 +30,7 @@
               }}</label>
               <input
                 id="password"
+                data-testid="login-password"
                 v-model="password"
                 type="password"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"

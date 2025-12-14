@@ -1,57 +1,66 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
-Cypress.Commands.add(
-  'login',
-  ({
-    username = Cypress.env('login'),
-    password = Cypress.env('password'),
-    goToLogin = true,
-  } = {}) => {
-    cy.intercept('POST', '/login').as('login')
 
-    if (goToLogin) cy.visit('/login')
+// Custom command to get element by data-testid
+Cypress.Commands.add('getByTestId', (testId: string) => {
+  return cy.get(`[data-testid="${testId}"]`)
+})
 
-    cy.get('input#input-identifiant').type(username)
-    cy.get('input#input-password').type(password)
-    cy.get("form>button[type='submit']").click()
+Cypress.Commands.add('getById', (id: string) => {
+  return cy.get(`#${id}`)
+})
 
-    cy.wait('@login')
-    //login should be successful
-    cy.get('@login').its('response.statusCode').should('eq', 200)
-  },
-)
+// Custom command to login
+Cypress.Commands.add('login', (username = 'testuser', password = 'password123') => {
+  // Clear storage first
+  cy.clearLocalStorage()
+  cy.clearCookies()
+
+  // Clik on btn to go to login
+  cy.getById('btnSeConnecter').should('be.visible').click()
+
+  // Fill login form
+  cy.getByTestId('login-username').clear().type(username)
+  cy.getByTestId('login-password').clear().type(password)
+  cy.getByTestId('login-submit').click()
+
+  // Handle 2FA verification code
+  cy.getByTestId('auth-code-container', { timeout: 10000 }).should('be.visible')
+
+  // Fill in the verification code (any 6-digit code works in E2E mode)
+  for (let i = 1; i <= 6; i++) {
+    cy.getByTestId(`auth-code-input-${i}`).type(i.toString())
+  }
+
+  cy.getByTestId('auth-code-submit').click()
+
+  // Wait for token in localStorage (indicating successful login)
+  cy.window().its('localStorage').invoke('getItem', 'user-store').should('exist')
+  cy.window()
+    .its('localStorage')
+    .invoke('getItem', 'user-store')
+    .then((stored) => {
+      const data = JSON.parse(stored as string)
+      expect(data.token).to.exist
+    })
+})
+
+// Extend Cypress namespace for TypeScript
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to select element by data-testid attribute
+       * @example cy.getByTestId('submit-button')
+       */
+      getByTestId(testId: string): Chainable<JQuery<HTMLElement>>
+
+      /**
+       * Custom command to login a user
+       * @example cy.login('testuser', 'password123')
+       */
+      login(username?: string, password?: string): Chainable<void>
+    }
+  }
+}
+
+export {}

@@ -123,7 +123,7 @@
       @confirm="confirm"
       :loading="soloStore.isLoading"
     >
-      <div class="space-y-3">
+      <div data-testid="solo-confirm-modal" class="space-y-3">
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="bullseye" class="text-brand-purple" />
           <strong class="text-brand-lightGray">{{ $t('solo.startQuizModal.categories') }}</strong>

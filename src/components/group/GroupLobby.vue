@@ -1,5 +1,5 @@
 <template>
-  <section class="space-y-6">
+  <section data-testid="group-lobby" class="space-y-6">
     <!-- Top header with code emphasis -->
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">

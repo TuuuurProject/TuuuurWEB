@@ -47,12 +47,14 @@
       <!-- Boutons principaux avec effets gaming -->
       <div class="grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
         <button
+          data-testid="home-solo"
           class="btn btn-primary text-lg py-4 shadow-neon hover:shadow-glow-hover"
           @click="router.push({ name: 'SoloQuiz' })"
         >
           <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('home.playSolo') }}
         </button>
         <button
+          data-testid="home-group"
           class="btn btn-secondary text-lg py-4 shadow-neon-orange hover:shadow-glow-hover"
           @click="router.push({ name: 'GroupMode' })"
         >
@@ -68,7 +70,11 @@
 
       <!-- Cartes de navigation redesignées -->
       <div class="mt-10 grid grid-cols-2 sm:grid-cols-2 gap-3 max-w-4xl mx-auto">
-        <button class="gaming-card group" @click="router.push({ name: 'Profile' })">
+        <button
+          data-testid="home-profile"
+          class="gaming-card group"
+          @click="router.push({ name: 'Profile' })"
+        >
           <div class="flex items-center gap-3">
             <span
               class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple/20 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-all duration-300"

@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - develop
+      - cypress
 
 jobs:
   build:
     uses: ./.github/workflows/job_build.yaml
     secrets:
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+
+  test:
+    needs: build
+    uses: ./.github/workflows/job_test.yaml

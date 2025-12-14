@@ -1,6 +1,7 @@
 <template>
   <overlay-block :loading="userStore.isLoading">
     <div
+      data-testid="profile-info"
       class="flex items-center gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20"
     >
       <div class="relative group cursor-pointer" @click="triggerFileInput">

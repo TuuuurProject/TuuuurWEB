@@ -9,11 +9,16 @@ module.exports = defineConfig({
   screenshotOnRunFailure: false,
   fixturesFolder: 'cypress/fixtures',
   e2e: {
-    setupNodeEvents(on, _config) {
+    setupNodeEvents(on, config) {
       on('file:preprocessor', vitePreprocessor())
+
+      // Code coverage
+      require('@cypress/code-coverage/task')(on, config)
+      return config
     },
     baseUrl: 'http://localhost:5173',
-    specPattern: 'cypress/specs/**/*.cy.{js,jsx,ts,tsx}',
+    specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'cypress/support/index.ts',
+    defaultCommandTimeout: 10000,
   },
 })

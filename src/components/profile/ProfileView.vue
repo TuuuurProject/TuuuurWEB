@@ -8,7 +8,7 @@
 
     <div class="gaming-card justify-self-center w-full">
       <!-- Logged in -->
-      <div v-if="userStore.isLogged" class="space-y-6">
+      <div data-testid="profile-logged" v-if="userStore.isLogged" class="space-y-6">
         <profil-block />
       </div>
       <!-- Not logged in -->
@@ -16,7 +16,11 @@
     </div>
 
     <!-- Match History -->
-    <div v-if="userStore.isLogged" class="gaming-card justify-self-center w-full">
+    <div
+      data-testid="profile-history"
+      v-if="userStore.isLogged"
+      class="gaming-card justify-self-center w-full"
+    >
       <match-history-block />
     </div>
   </section>
