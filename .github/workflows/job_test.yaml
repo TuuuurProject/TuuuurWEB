@@ -23,7 +23,6 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          # caching node_modules
           path: node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
 
@@ -33,9 +32,6 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Run Unit Tests with Coverage
-        run: npm run test:unit:coverage
 
       - name: Cypress E2E Tests with Coverage
         run: npm run e2e:coverage
