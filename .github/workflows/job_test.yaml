@@ -30,9 +30,6 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
       - name: Cypress E2E Tests with Coverage
         run: npm run e2e:coverage
 
