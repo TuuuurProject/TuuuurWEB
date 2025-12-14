@@ -18,9 +18,12 @@ Cypress.Commands.add('login', (username = 'testuser', password = 'password123') 
   // Clik on btn to go to login
   cy.getById('btnSeConnecter').should('be.visible').click()
 
+  // Wait for the login effect
+  cy.wait(300)
+
   // Fill login form
-  cy.getByTestId('login-username').should('be.visible').clear().type(username)
-  cy.getByTestId('login-password').should('be.visible').clear().type(password)
+  cy.getByTestId('login-username').clear().type(username)
+  cy.getByTestId('login-password').clear().type(password)
 
   cy.getByTestId('login-submit').click()
 
