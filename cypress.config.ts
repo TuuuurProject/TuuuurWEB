@@ -9,7 +9,7 @@ module.exports = defineConfig({
   screenshotOnRunFailure: false,
   fixturesFolder: 'cypress/fixtures',
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on: any, config: any) {
       on('file:preprocessor', vitePreprocessor())
 
       // Code coverage
