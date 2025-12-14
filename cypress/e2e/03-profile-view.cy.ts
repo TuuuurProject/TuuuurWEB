@@ -3,6 +3,8 @@
 describe('Parcours 3: Profil - Voir infos profil et historique', () => {
   beforeEach(() => {
     cy.visit('/')
+    // Wait for MSW to initialize
+    cy.wait(1000)
   })
 
   it("devrait afficher les informations du profil et l'historique après connexion", () => {

@@ -3,6 +3,8 @@
 describe('Parcours 4: Profil - Se déconnecter et voir état non connecté', () => {
   beforeEach(() => {
     cy.visit('/')
+    // Wait for MSW to initialize
+    cy.wait(1000)
   })
 
   it("devrait permettre de se déconnecter et revenir à l'état non connecté", () => {

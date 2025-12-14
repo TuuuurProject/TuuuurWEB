@@ -3,6 +3,8 @@
 describe('Parcours 2: Groupe - Créer une partie et arriver dans un lobby', () => {
   beforeEach(() => {
     cy.visit('/')
+    // Wait for MSW to initialize
+    cy.wait(1000)
   })
 
   it.skip('devrait permettre de créer une partie groupe et arriver dans le lobby', () => {

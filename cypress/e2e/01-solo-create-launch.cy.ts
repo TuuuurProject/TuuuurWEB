@@ -3,6 +3,8 @@
 describe('Parcours 1: Solo - Créer et lancer une partie', () => {
   beforeEach(() => {
     cy.visit('/')
+    // Wait for MSW to initialize
+    cy.wait(1000)
   })
 
   it('devrait permettre de créer et lancer une partie solo après connexion', () => {

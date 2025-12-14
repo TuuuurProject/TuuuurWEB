@@ -19,25 +19,32 @@ Cypress.Commands.add('login', (username = 'testuser', password = 'password123') 
   cy.getById('btnSeConnecter').should('be.visible').click()
 
   // Fill login form
-  cy.getByTestId('login-username').clear().type(username)
-  cy.getByTestId('login-password').clear().type(password)
+  cy.getByTestId('login-username').should('be.visible').clear().type(username)
+  cy.getByTestId('login-password').should('be.visible').clear().type(password)
+
   cy.getByTestId('login-submit').click()
 
+  // Wait a bit for the request to be processed
+  cy.wait(500)
+
   // Handle 2FA verification code
-  cy.getByTestId('auth-code-container', { timeout: 10000 }).should('be.visible')
+  cy.getByTestId('auth-code-container').should('be.visible')
 
   // Fill in the verification code (any 6-digit code works in E2E mode)
   for (let i = 1; i <= 6; i++) {
-    cy.getByTestId(`auth-code-input-${i}`).type(i.toString())
+    cy.getByTestId(`auth-code-input-${i}`).should('be.visible').type(i.toString())
   }
 
-  cy.getByTestId('auth-code-submit').click()
+  cy.getByTestId('auth-code-submit').should('be.visible').click()
+
+  // Wait for the modal to disappear
+  cy.getByTestId('auth-code-container').should('not.exist')
 
   // Wait for token in localStorage (indicating successful login)
-  cy.window().its('localStorage').invoke('getItem', 'user-store').should('exist')
   cy.window()
     .its('localStorage')
     .invoke('getItem', 'user-store')
+    .should('exist')
     .then((stored) => {
       const data = JSON.parse(stored as string)
       expect(data.token).to.exist
@@ -46,6 +53,7 @@ Cypress.Commands.add('login', (username = 'testuser', password = 'password123') 
 
 // Extend Cypress namespace for TypeScript
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       /**
@@ -53,6 +61,12 @@ declare global {
        * @example cy.getByTestId('submit-button')
        */
       getByTestId(testId: string): Chainable<JQuery<HTMLElement>>
+
+      /**
+       * Custom command to select element by id attribute
+       * @example cy.getById('submit-button')
+       */
+      getById(id: string): Chainable<JQuery<HTMLElement>>
 
       /**
        * Custom command to login a user

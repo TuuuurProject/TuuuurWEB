@@ -4,9 +4,10 @@ const { vitePreprocessor } = require('cypress-vite')
 
 module.exports = defineConfig({
   requestTimeout: 30000,
+  responseTimeout: 30000,
   video: false,
   videoUploadOnPasses: false,
-  screenshotOnRunFailure: false,
+  screenshotOnRunFailure: true,
   fixturesFolder: 'cypress/fixtures',
   e2e: {
     setupNodeEvents(on: any, config: any) {
@@ -19,6 +20,7 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:5173',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'cypress/support/index.ts',
-    defaultCommandTimeout: 10000,
+    defaultCommandTimeout: 15000,
+    pageLoadTimeout: 60000,
   },
 })

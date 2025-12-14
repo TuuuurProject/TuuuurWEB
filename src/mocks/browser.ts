@@ -19,6 +19,11 @@ export async function startMockServiceWorker() {
     quiet: false, // Show MSW logs
   })
 
+  // Expose worker to window for Cypress to check
+  if (typeof window !== 'undefined') {
+    ;(window as any).msw = { worker, ready: true }
+  }
+
   console.log('[MSW] ✅ Mock Service Worker started successfully in E2E mode')
   console.log('[MSW] Ready to intercept requests')
 }
