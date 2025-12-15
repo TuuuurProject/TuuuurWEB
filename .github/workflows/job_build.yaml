@@ -2,11 +2,17 @@ name: Build Workflow
 
 on:
   workflow_call:
+<<<<<<< Updated upstream
     inputs:
       image_tag:
         required: true
         type: string
         description: 'Docker image tag (e.g., preprod, latest)'
+=======
+    secrets:
+      VITE_GOOGLE_CLIENT_ID:
+        required: true
+>>>>>>> Stashed changes
 
 jobs:
   build:
