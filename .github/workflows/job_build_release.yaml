@@ -52,6 +52,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          build-args: |
+            BUILD_ENV=${{ inputs.image_tag }}
+            VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }}
           tags: |
             ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tuuuur/web:${{ inputs.image_tag }}
             ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tuuuur/web:${{ inputs.image_tag }}-${{ github.sha }}
