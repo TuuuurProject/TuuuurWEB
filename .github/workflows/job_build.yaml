@@ -2,11 +2,6 @@ name: Build Workflow
 
 on:
   workflow_call:
-    inputs:
-      image_tag:
-        required: true
-        type: string
-        description: 'Docker image tag (e.g., preprod, latest)'
 
 jobs:
   build:
