@@ -10,9 +10,7 @@ RUN npm install
 COPY . .
 
 # Copier le fichier .env correspondant à l'environnement
-RUN cp ".env.${BUILD_ENV}" .env 
-
-RUN echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env
+RUN cp ".env.${BUILD_ENV}" .env && echo "" >> .env && echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env
 
 RUN rm -rf dist/ && npm run build
 
