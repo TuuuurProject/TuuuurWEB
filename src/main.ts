@@ -79,6 +79,8 @@ import {
   faAnglesLeft,
   faChevronLeft,
   faAnglesRight,
+  faCopy,
+  faDoorOpen,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -140,6 +142,8 @@ library.add(
   faAnglesLeft,
   faChevronLeft,
   faAnglesRight,
+  faCopy,
+  faDoorOpen,
 )
 
 // Functions
@@ -168,6 +172,14 @@ const app = createApp(App)
 app.config.globalProperties.$unixToDate = unixToDate
 app.config.globalProperties.$dayjs = dayjs
 app.config.globalProperties.$toast = toast
+
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $unixToDate: typeof unixToDate
+    $dayjs: typeof dayjs
+    $toast: typeof toast
+  }
+}
 
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
