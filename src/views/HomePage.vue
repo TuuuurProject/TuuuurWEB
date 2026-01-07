@@ -28,36 +28,14 @@
     <div class="text-center space-y-8 z-10">
       <div class="flex flex-col items-center gap-4">
         <div class="flex items-center gap-3">
-          <!-- Logo redesigné avec effets de glow -->
-          <svg width="80" height="80" viewBox="0 0 64 64" class="drop-shadow-2xl animate-glow">
-            <defs>
-              <linearGradient id="gamingGradient" x1="0" x2="1">
-                <stop offset="0" stop-color="#6C5CE7" />
-                <stop offset="0.5" stop-color="#FF6B35" />
-                <stop offset="1" stop-color="#00D084" />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-            <circle
-              cx="32"
-              cy="32"
-              r="28"
-              fill="url(#gamingGradient)"
-              opacity="0.9"
-              filter="url(#glow)"
-            />
-            <path
-              d="M20 38c8-2 12-10 12-18 6 4 10 10 12 18 2 8-4 12-12 12s-14-4-12-12z"
-              fill="#E1E5E9"
-              opacity="0.9"
-            />
-          </svg>
+          <!-- Logo -->
+          <img
+            src="@/assets/logo.png"
+            alt="Tuuuur Logo"
+            width="150"
+            height="150"
+            class="drop-shadow-2xl animate-glow"
+          />
           <!-- Titre avec gradient animé -->
           <h1 class="title-gaming tracking-tight animate-float">Tuuuur</h1>
         </div>
@@ -128,7 +106,9 @@
     </div>
 
     <!-- Footer avec effet glow -->
-    <footer class="absolute bottom-6 text-xs text-brand-gray glow-text">© 2025 Tuuuur</footer>
+    <footer class="absolute bottom-6 text-xs text-brand-gray glow-text">
+      © {{ currentYear }} Tuuuur
+    </footer>
   </div>
 </template>
 
@@ -136,4 +116,5 @@
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const currentYear = new Date().getFullYear()
 </script>

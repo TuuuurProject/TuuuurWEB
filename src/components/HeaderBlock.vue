@@ -7,15 +7,13 @@
         class="inline-flex items-center gap-2 text-brand-lightGray hover:text-brand-purple transition group"
         @click="router.push({ name: 'Home' })"
       >
-        <svg width="28" height="28" viewBox="0 0 64 64" class="group-hover:animate-glow">
-          <defs>
-            <linearGradient id="headerGradient" x1="0" x2="1">
-              <stop offset="0" stop-color="#6C5CE7" />
-              <stop offset="1" stop-color="#FF6B35" />
-            </linearGradient>
-          </defs>
-          <circle cx="32" cy="32" r="28" fill="url(#headerGradient)" opacity="0.85" />
-        </svg>
+        <img
+          src="@/assets/logo.png"
+          alt="Tuuuur Logo"
+          width="50"
+          height="50"
+          class="group-hover:animate-glow"
+        />
         <span class="font-display text-2xl">Tuuuur</span>
       </button>
       <nav class="hidden sm:flex gap-3">
