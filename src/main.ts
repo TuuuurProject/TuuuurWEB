@@ -82,6 +82,14 @@ import {
   faAnglesRight,
   faCopy,
   faDoorOpen,
+  faUser,
+  faMagnifyingGlass,
+  faChartColumn,
+  faXmark,
+  faGear,
+  faTurnDown,
+  faPaw,
+  faUserNinja,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -145,6 +153,14 @@ library.add(
   faAnglesRight,
   faCopy,
   faDoorOpen,
+  faUser,
+  faMagnifyingGlass,
+  faChartColumn,
+  faXmark,
+  faGear,
+  faTurnDown,
+  faPaw,
+  faUserNinja,
 )
 
 // Functions

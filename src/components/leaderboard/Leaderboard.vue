@@ -2,7 +2,7 @@
   <section class="space-y-8">
     <header class="flex items-center justify-between">
       <h2 class="font-display text-3xl text-brand-lightGray glow-text">
-        🏆 {{ $t('leaderboard.title') }}
+        <font-awesome-icon icon="trophy" /> {{ $t('leaderboard.title') }}
       </h2>
       <div class="badge-warning animate-pulse-slow">{{ $t('leaderboard.badge') }}</div>
     </header>
@@ -36,7 +36,7 @@
         <div
           class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold mt-2"
         >
-          🔥 {{ top[1].elo }} Élo
+          <font-awesome-icon icon="fire" /> {{ top[1].elo }} Élo
         </div>
       </div>
 
@@ -63,16 +63,16 @@
             1
           </div>
           <div
-            class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-brand-green rounded-full border-2 border-brand-darkGray"
+            class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-brand-green rounded-full border-2 border-brand-darkGray flex items-center justify-center"
           >
-            <span class="text-xs">👑</span>
+            <font-awesome-icon icon="crown" class="text-xs text-brand-yellow" />
           </div>
         </div>
         <div class="font-display text-3xl text-brand-lightGray glow-text">#1 {{ top[0].name }}</div>
         <div
           class="pill bg-brand-yellow/20 border-brand-yellow/40 text-brand-yellow font-bold mt-2"
         >
-          ⭐ {{ top[0].elo }} Élo
+          <font-awesome-icon icon="star" /> {{ top[0].elo }} Élo
         </div>
       </div>
 
@@ -99,7 +99,7 @@
         </div>
         <div class="font-display text-xl text-brand-lightGray">#3 {{ top[2].name }}</div>
         <div class="pill bg-brand-gray/20 border-brand-gray/40 text-brand-gray font-bold mt-2">
-          🥉 {{ top[2].elo }} Élo
+          <font-awesome-icon icon="medal" /> {{ top[2].elo }} Élo
         </div>
       </div>
     </div>
@@ -110,7 +110,7 @@
         <div
           class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
         >
-          📊
+          <font-awesome-icon icon="chart-column" />
         </div>
         <h3 class="font-display text-xl text-brand-lightGray">
           {{ $t('leaderboard.ranking.title') }}
@@ -142,7 +142,7 @@
               v-if="p.rank <= 5"
               class="absolute -top-1 -right-1 w-4 h-4 bg-brand-green rounded-full flex items-center justify-center"
             >
-              <span class="text-xs">🔥</span>
+              <font-awesome-icon icon="fire" class="text-xs" />
             </div>
           </div>
           <div class="flex-1">
@@ -171,7 +171,7 @@
                   : 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple'
             "
           >
-            ⚡ {{ p.elo }}
+            <font-awesome-icon icon="bolt" /> {{ p.elo }}
           </div>
         </li>
       </ul>

@@ -90,7 +90,9 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="leaveGroupe">← {{ $t('group.lobby.leave') }}</button>
+      <button class="btn btn-ghost" @click="leaveGroupe">
+        <font-awesome-icon icon="arrow-left" /> {{ $t('group.lobby.leave') }}
+      </button>
       <button class="btn btn-primary" :disabled="canCreateGame">
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
       </button>

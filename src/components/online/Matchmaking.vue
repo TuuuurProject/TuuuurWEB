@@ -24,7 +24,7 @@
             <div
               class="h-12 w-12 rounded-full bg-brand-light/20 flex items-center justify-center text-2xl"
             >
-              🦊
+              <font-awesome-icon icon="paw" class="text-brand-purple" />
             </div>
             <span class="font-semibold">{{ $t('competitive.matchmaking.you') }}</span>
           </div>
@@ -33,7 +33,7 @@
             <div
               class="h-12 w-12 rounded-full bg-brand-orange/20 flex items-center justify-center text-2xl"
             >
-              🐯
+              <font-awesome-icon icon="user-ninja" class="text-brand-orange" />
             </div>
             <span class="font-semibold">{{ $t('competitive.matchmaking.opponent') }}</span>
           </div>

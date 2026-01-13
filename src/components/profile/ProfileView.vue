@@ -2,7 +2,7 @@
   <section class="space-y-6">
     <header class="flex items-center">
       <h2 class="font-display text-3xl text-brand-lightGray glow-text">
-        👤 {{ $t('profile.title') }}
+        <font-awesome-icon icon="user" /> {{ $t('profile.title') }}
       </h2>
     </header>
 

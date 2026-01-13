@@ -80,7 +80,7 @@
                 v-if="answered"
                 class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
               >
-                ↵
+                <font-awesome-icon icon="turn-down" />
               </span>
             </button>
           </div>

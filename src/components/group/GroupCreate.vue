@@ -33,7 +33,7 @@
       <!-- Sidebar des paramètres -->
       <div class="gaming-card">
         <h3 class="font-display text-xl mb-2 text-brand-lightGray">
-          ⚙️ {{ $t('solo.settings.title') }}
+          <font-awesome-icon icon="gear" /> {{ $t('solo.settings.title') }}
         </h3>
         <div class="space-y-5">
           <div>
@@ -100,7 +100,9 @@
     </div>
 
     <footer class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="$emit('back')">← {{ $t('common.back') }}</button>
+      <button class="btn btn-ghost" @click="$emit('back')">
+        <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
+      </button>
       <button class="btn btn-primary" :disabled="canCreateGame" @click="open = true">
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.create.startAdventure') }}
       </button>

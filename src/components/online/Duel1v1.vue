@@ -11,7 +11,7 @@
           <div
             class="h-12 w-12 rounded-full bg-brand-light/20 flex items-center justify-center text-2xl"
           >
-            🦊
+            <font-awesome-icon icon="paw" class="text-brand-purple" />
           </div>
           <div>
             <div class="font-semibold">{{ $t('competitive.duel.you') }}</div>
@@ -24,7 +24,7 @@
           <div
             class="h-12 w-12 rounded-full bg-brand-orange/20 flex items-center justify-center text-2xl"
           >
-            🐯
+            <font-awesome-icon icon="user-ninja" class="text-brand-orange" />
           </div>
           <div class="text-right">
             <div class="font-semibold">{{ $t('competitive.duel.opponent') }}</div>

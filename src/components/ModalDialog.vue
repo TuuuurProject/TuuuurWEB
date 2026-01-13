@@ -18,7 +18,7 @@
                 :aria-label="$t('common.close')"
                 @click="$emit('close')"
               >
-                ✕
+                <font-awesome-icon icon="xmark" />
               </button>
             </header>
             <div class="text-brand-gray">

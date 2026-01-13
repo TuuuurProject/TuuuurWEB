@@ -20,7 +20,6 @@
         />
       </div>
       <div class="mt-8 flex items-center justify-center gap-3">
-        <!-- <button class="btn btn-secondary" @click="step = 1">Retour</button> -->
         <button class="btn btn-primary" @click="emit('verification', digits.join(''))">
           {{ $t('auth.verification.submit') }}
         </button>

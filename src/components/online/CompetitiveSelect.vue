@@ -41,7 +41,7 @@
       <!-- Section d'information compétitive -->
       <div class="mt-6 p-4 rounded-2xl bg-brand-orange/10 border border-brand-orange/20">
         <div class="flex items-center gap-2 mb-2">
-          <span class="text-brand-orange">⚡</span>
+          <font-awesome-icon icon="bolt" class="text-brand-orange" />
           <span class="text-sm font-semibold text-brand-orange">{{
             $t('competitive.info.title')
           }}</span>
@@ -62,9 +62,11 @@
       </div>
 
       <div class="mt-8 flex items-center justify-end gap-3">
-        <button class="btn btn-ghost" @click="$emit('back')">← {{ $t('common.back') }}</button>
+        <button class="btn btn-ghost" @click="$emit('back')">
+          <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
+        </button>
         <button class="btn btn-secondary" :disabled="selected.size === 0" @click="proceed">
-          🔍 {{ $t('competitive.startSearch') }}
+          <font-awesome-icon icon="magnifying-glass" /> {{ $t('competitive.startSearch') }}
         </button>
       </div>
     </div>

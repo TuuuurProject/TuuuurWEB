@@ -42,7 +42,7 @@
 
         <div class="mt-8">
           <button class="btn btn-ghost hover:shadow-glow" @click="$emit('back')">
-            ← {{ $t('common.back') }}
+            <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
           </button>
         </div>
       </div>
