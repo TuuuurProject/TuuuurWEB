@@ -14,7 +14,7 @@
           v-else
           class="h-16 w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
         >
-          <span class="text-2xl font-bold text-brand-purple">
+          <span id="nickaname" class="text-2xl font-bold text-brand-purple">
             {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
           </span>
         </div>
@@ -34,8 +34,36 @@
         />
       </div>
       <div class="flex-1">
-        <div class="font-branding text-2xl text-brand-lightGray">
-          {{ userStore.userInfo?.nickName }}
+        <div v-if="!isEditingNickname" class="flex items-center gap-2">
+          <div
+            id="nickname"
+            class="font-branding text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors"
+            @click="startEditingNickname"
+          >
+            {{ userStore.userInfo?.nickName }}
+          </div>
+        </div>
+        <div v-else class="flex items-center gap-2">
+          <input
+            ref="nicknameInput"
+            v-model="newNickname"
+            type="text"
+            class="font-branding text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
+            @keydown.enter="saveNickname"
+            @keydown.escape="cancelEditingNickname"
+          />
+          <button
+            class="text-green-400 hover:text-green-300 transition-colors"
+            @click="saveNickname"
+          >
+            <font-awesome-icon icon="check" />
+          </button>
+          <button
+            class="text-red-400 hover:text-red-300 transition-colors"
+            @click="cancelEditingNickname"
+          >
+            <font-awesome-icon icon="xmark" />
+          </button>
         </div>
         <div class="text-sm text-brand-gray">{{ userStore.userInfo?.email }}</div>
       </div>
@@ -140,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, getCurrentInstance } from 'vue'
+import { ref, onMounted, computed, getCurrentInstance, nextTick } from 'vue'
 import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
@@ -156,6 +184,9 @@ const userStore = useUserStore()
 const showModalCompte = ref(false)
 const showModalChangePassword = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
+const isEditingNickname = ref(false)
+const newNickname = ref('')
+const nicknameInput = ref<HTMLInputElement | null>(null)
 
 const changePasswordInfo = ref({
   currentPassword: '',
@@ -253,6 +284,45 @@ const handleFileChange = async (event: Event) => {
   } finally {
     // Reset file input
     target.value = ''
+  }
+}
+
+const startEditingNickname = () => {
+  newNickname.value = userStore.userInfo?.nickName || ''
+  isEditingNickname.value = true
+  nextTick(() => {
+    nicknameInput.value?.focus()
+    nicknameInput.value?.select()
+  })
+}
+
+const cancelEditingNickname = () => {
+  isEditingNickname.value = false
+  newNickname.value = ''
+}
+
+const saveNickname = async () => {
+  if (!newNickname.value.trim()) {
+    if (proxy) {
+      ;(proxy as any).$toast.error("Le nom d'utilisateur ne peut pas être vide")
+    }
+    return
+  }
+
+  const result = await userStore.updateNickname(newNickname.value.trim())
+
+  if (result?.email) {
+    isEditingNickname.value = false
+    if (proxy) {
+      ;(proxy as any).$toast.success("Nom d'utilisateur mis à jour avec succès !")
+    }
+
+    // Attribution des nouvelles valeurs
+    userStore.userInfo = result
+  } else {
+    if (proxy) {
+      ;(proxy as any).$toast.error("Erreur lors de la mise à jour du nom d'utilisateur")
+    }
   }
 }
 
