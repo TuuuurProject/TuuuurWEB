@@ -93,7 +93,11 @@ const categories: Category[] = [
 const selected = reactive<Set<string>>(new Set(['general']))
 
 function toggle(id: string) {
-  selected.has(id) ? selected.delete(id) : selected.add(id)
+  if (selected.has(id)) {
+    selected.delete(id)
+  } else {
+    selected.add(id)
+  }
 }
 
 const emit = defineEmits<{

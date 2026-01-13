@@ -307,7 +307,7 @@ const cancelEditingNickname = () => {
 const saveNickname = async () => {
   if (!newNickname.value.trim()) {
     if (proxy) {
-      ;(proxy as any).$toast.error("Le nom d'utilisateur ne peut pas être vide")
+      ;(proxy as any).$toast.error(t('profile.nickname.emptyError'))
     }
     return
   }
@@ -317,14 +317,14 @@ const saveNickname = async () => {
   if (result?.email) {
     isEditingNickname.value = false
     if (proxy) {
-      ;(proxy as any).$toast.success("Nom d'utilisateur mis à jour avec succès !")
+      ;(proxy as any).$toast.success(t('profile.nickname.updateSuccess'))
     }
 
     // Attribution des nouvelles valeurs
     userStore.userInfo = result
   } else {
     if (proxy) {
-      ;(proxy as any).$toast.error("Erreur lors de la mise à jour du nom d'utilisateur")
+      ;(proxy as any).$toast.error(t('profile.nickname.updateError'))
     }
   }
 }

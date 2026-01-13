@@ -91,6 +91,11 @@
       "updateError": "Error updating avatar",
       "processingError": "Error processing image"
     },
+    "nickname": {
+      "emptyError": "Username cannot be empty",
+      "updateSuccess": "Username updated successfully!",
+      "updateError": "Error updating username"
+    },
     "matchHistory": {
       "title": "Match History",
       "parties": "{count} Game | {count} Games",

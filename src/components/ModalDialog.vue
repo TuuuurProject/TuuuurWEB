@@ -15,7 +15,7 @@
               <h3 class="font-display text-2xl text-brand-lightGray glow-text">{{ title }}</h3>
               <button
                 class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200 hover:rotate-90"
-                aria-label="Fermer"
+                :aria-label="$t('common.close')"
                 @click="$emit('close')"
               >
                 ✕
