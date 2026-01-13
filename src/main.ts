@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 
 // Google Login
 import vue3GoogleLogin from 'vue3-google-login'
@@ -81,6 +82,14 @@ import {
   faAnglesRight,
   faCopy,
   faDoorOpen,
+  faUser,
+  faMagnifyingGlass,
+  faChartColumn,
+  faXmark,
+  faGear,
+  faTurnDown,
+  faPaw,
+  faUserNinja,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -144,6 +153,14 @@ library.add(
   faAnglesRight,
   faCopy,
   faDoorOpen,
+  faUser,
+  faMagnifyingGlass,
+  faChartColumn,
+  faXmark,
+  faGear,
+  faTurnDown,
+  faPaw,
+  faUserNinja,
 )
 
 // Functions
@@ -185,6 +202,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 app.use(Vue3Toastify, {
   theme: 'dark',
   autoClose: 3000,

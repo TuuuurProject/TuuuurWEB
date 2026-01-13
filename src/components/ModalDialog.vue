@@ -15,23 +15,25 @@
               <h3 class="font-display text-2xl text-brand-lightGray glow-text">{{ title }}</h3>
               <button
                 class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200 hover:rotate-90"
-                aria-label="Fermer"
+                :aria-label="$t('common.close')"
                 @click="$emit('close')"
               >
-                ✕
+                <font-awesome-icon icon="xmark" />
               </button>
             </header>
             <div class="text-brand-gray">
               <slot />
             </div>
             <footer class="mt-6 flex items-center justify-end gap-3">
-              <button class="btn btn-ghost" @click="$emit('close')">Annuler</button>
+              <button class="btn btn-ghost" @click="$emit('close')">
+                {{ $t('modal.cancel') }}
+              </button>
               <button
                 class="btn btn-primary"
                 :disabled="props.disabledConfirm"
                 @click="$emit('confirm')"
               >
-                Confirmer
+                {{ $t('modal.confirm') }}
               </button>
             </footer>
           </overlay-block>

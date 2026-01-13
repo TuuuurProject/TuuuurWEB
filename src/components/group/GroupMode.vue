@@ -3,7 +3,7 @@
     <div v-if="step === 'mode'" class="space-y-8">
       <header class="flex items-center justify-between">
         <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-          <font-awesome-icon icon="users" class="mr-2" /> Mode Groupe
+          <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.title') }}
         </h2>
       </header>
 
@@ -24,10 +24,10 @@
                 <h3
                   class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
                 >
-                  Créer une partie
+                  {{ $t('group.create.title') }}
                 </h3>
                 <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
-                  Définissez les paramètres et partagez le code/QR avec vos amis.
+                  {{ $t('group.create.subtitle') }}
                 </p>
                 <!-- Ligne d'accent animée -->
                 <div
@@ -51,10 +51,10 @@
                 <h3
                   class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
                 >
-                  Rejoindre une partie
+                  {{ $t('group.join.title') }}
                 </h3>
                 <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
-                  Entrez un code pour rejoindre le lobby et commencer l'aventure.
+                  {{ $t('group.join.subtitle') }}
                 </p>
                 <!-- Ligne d'accent animée -->
                 <div
@@ -67,7 +67,7 @@
       </template>
 
       <div v-else class="gaming-card justify-self-center w-full">
-        <logged-in-block message="Connectez ou créez vous un compte pour accéder à votre profil" />
+        <logged-in-block :message="$t('group.notLoggedIn')" />
       </div>
     </div>
 

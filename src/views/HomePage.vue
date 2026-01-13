@@ -40,7 +40,7 @@
           <h1 class="title-gaming tracking-tight animate-float">Tuuuur</h1>
         </div>
         <p class="max-w-xl text-brand-gray text-base md:text-lg">
-          Quiz fun et compétitif. Jouez en solo, en groupe ou en duel en ligne.
+          {{ $t('home.subtitle') }}
         </p>
       </div>
 
@@ -50,19 +50,19 @@
           class="btn btn-primary text-lg py-4 shadow-neon hover:shadow-glow-hover"
           @click="router.push({ name: 'SoloQuiz' })"
         >
-          <font-awesome-icon icon="bullseye" class="mr-2" /> Jouer en solo
+          <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('home.playSolo') }}
         </button>
         <button
           class="btn btn-secondary text-lg py-4 shadow-neon-orange hover:shadow-glow-hover"
           @click="router.push({ name: 'GroupMode' })"
         >
-          <font-awesome-icon icon="users" class="mr-2" /> Jouer en groupe
+          <font-awesome-icon icon="users" class="mr-2" /> {{ $t('home.playGroup') }}
         </button>
         <button
           class="btn btn-ghost text-lg py-4"
           @click="router.push({ name: 'CompetitiveMode' })"
         >
-          <font-awesome-icon icon="fire" class="mr-2" /> Mode compétitif
+          <font-awesome-icon icon="fire" class="mr-2" /> {{ $t('home.competitiveMode') }}
         </button>
       </div>
 
@@ -81,7 +81,7 @@
             </span>
             <span
               class="font-semibold text-brand-lightGray group-hover:text-white transition-colors"
-              >Profil</span
+              >{{ $t('nav.profile') }}</span
             >
           </div>
         </button>
@@ -98,7 +98,7 @@
             </span>
             <span
               class="font-semibold text-brand-lightGray group-hover:text-white transition-colors"
-              >Classement</span
+              >{{ $t('nav.ranking') }}</span
             >
           </div>
         </button>
@@ -107,7 +107,7 @@
 
     <!-- Footer avec effet glow -->
     <footer class="absolute bottom-6 text-xs text-brand-gray glow-text">
-      © {{ currentYear }} Tuuuur
+      {{ $t('home.footer', { year: currentYear }) }}
     </footer>
   </div>
 </template>

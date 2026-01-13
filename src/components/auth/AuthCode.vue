@@ -2,10 +2,10 @@
   <overlay-block :loading="loading">
     <div class="max-w-md mx-auto">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text text-center mb-4">
-        Vérification de votre email
+        {{ $t('auth.verification.title') }}
       </h2>
       <label class="block font-semibold mb-8 text-brand-green text-center">
-        Un code a été envoyé à votre adresse email.
+        {{ $t('auth.verification.message') }}
       </label>
       <div class="flex items-center gap-2 justify-center">
         <input
@@ -20,9 +20,8 @@
         />
       </div>
       <div class="mt-8 flex items-center justify-center gap-3">
-        <!-- <button class="btn btn-secondary" @click="step = 1">Retour</button> -->
         <button class="btn btn-primary" @click="emit('verification', digits.join(''))">
-          Confirmer
+          {{ $t('auth.verification.submit') }}
         </button>
       </div>
     </div>

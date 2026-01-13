@@ -1,7 +1,9 @@
 <template>
   <section class="space-y-6">
     <header class="flex items-center">
-      <h2 class="font-display text-3xl text-brand-lightGray glow-text">👤 Profil Joueur</h2>
+      <h2 class="font-display text-3xl text-brand-lightGray glow-text">
+        <font-awesome-icon icon="user" /> {{ $t('profile.title') }}
+      </h2>
     </header>
 
     <div class="gaming-card justify-self-center w-full">
@@ -10,10 +12,7 @@
         <profil-block />
       </div>
       <!-- Not logged in -->
-      <logged-in-block
-        v-else
-        message="Connectez ou créez vous un compte pour accéder à votre profil"
-      />
+      <logged-in-block v-else :message="$t('profile.notLoggedIn')" />
     </div>
 
     <!-- Match History -->

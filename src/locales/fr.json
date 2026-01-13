@@ -1,0 +1,276 @@
+{
+  "common": {
+    "back": "Retour",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "loading": "Chargement...",
+    "or": "OU",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "nav": {
+    "home": "Accueil",
+    "solo": "Solo",
+    "group": "Groupe",
+    "competitive": "Compétitif",
+    "profile": "Profil",
+    "ranking": "Classement"
+  },
+  "home": {
+    "title": "Tuuuur",
+    "subtitle": "Quiz fun et compétitif. Jouez en solo, en groupe ou en duel en ligne.",
+    "playSolo": "Jouer en solo",
+    "playGroup": "Jouer en groupe",
+    "competitiveMode": "Mode compétitif",
+    "footer": "© {year} Tuuuur"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "badge": "Pseudo + mot de passe",
+      "username": "Pseudo",
+      "usernamePlaceholder": "Votre pseudo",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "noAccount": "Pas de compte ?",
+      "createAccount": "Créer un compte"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "badge": "Simple",
+      "nickname": "Pseudo",
+      "nicknamePlaceholder": "Choisissez un pseudo",
+      "email": "Email",
+      "emailPlaceholder": "vous@exemple.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "submit": "Créer le compte",
+      "alreadyRegistered": "Déjà inscrit ?",
+      "signIn": "Se connecter"
+    },
+    "verification": {
+      "title": "Vérification de votre email",
+      "message": "Un code a été envoyé à votre adresse email.",
+      "submit": "Confirmer"
+    },
+    "googleError": "Erreur lors de la connexion avec Google"
+  },
+  "profile": {
+    "title": "Profil Joueur",
+    "userProfile": "Profil joueur",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder à votre profil",
+    "elo": "Élo",
+    "changePassword": "Changer de mot de passe",
+    "deleteAccount": "Supprimer mon compte",
+    "logout": "Se déconnecter",
+    "changePasswordModal": {
+      "title": "Changement de votre mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "currentPasswordPlaceholder": "Entrez votre mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+      "confirmPassword": "Confirmez le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "passwordMismatch": "Le nouveau mot de passe et sa confirmation ne correspondent pas.",
+      "success": "Mot de passe changé avec succès !"
+    },
+    "deleteAccountModal": {
+      "title": "Suppression de votre compte",
+      "warning": "Attention !",
+      "message": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et entraînera la perte de toutes vos données.",
+      "confirmMessage": "Veuillez confirmer cette action en cliquant sur le bouton \"Confirmer\"."
+    },
+    "avatar": {
+      "updateSuccess": "Avatar mis à jour avec succès !",
+      "updateError": "Erreur lors de la mise à jour de l'avatar",
+      "processingError": "Erreur lors du traitement de l'image"
+    },
+    "nickname": {
+      "emptyError": "Le nom d'utilisateur ne peut pas être vide",
+      "updateSuccess": "Nom d'utilisateur mis à jour avec succès !",
+      "updateError": "Erreur lors de la mise à jour du nom d'utilisateur"
+    },
+    "matchHistory": {
+      "title": "Historique des parties",
+      "parties": "{count} Partie | {count} Parties",
+      "successRate": "{percent}% Réussite",
+      "filters": {
+        "all": "Tous",
+        "solo": "Solo",
+        "group": "Groupe",
+        "competitive": "Compétitif"
+      },
+      "inProgress": "En cours",
+      "questions": "Questions:",
+      "success": "Réussite:",
+      "time": "Temps:",
+      "noMatches": "Aucune partie trouvée",
+      "pagination": {
+        "showing": "Affichage de {from} à {to} sur {total} partie | Affichage de {from} à {to} sur {total} parties",
+        "firstPage": "Première page",
+        "previousPage": "Page précédente",
+        "nextPage": "Page suivante",
+        "lastPage": "Dernière page"
+      }
+    }
+  },
+  "solo": {
+    "title": "Mode Solo",
+    "selectBadge": "Sélectionnez au moins une catégorie",
+    "notLoggedIn": "Connectez ou créez vous un compte pour jouer en solo !",
+    "categories": {
+      "title": "Catégories",
+      "subtitle": "Choisissez une ou plusieurs catégories pour votre aventure."
+    },
+    "settings": {
+      "title": "Paramètres",
+      "questionsCount": "Nombre de questions",
+      "difficulty": "Difficulté"
+    },
+    "difficulties": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile",
+      "hardcore": "Hardcore"
+    },
+    "startAdventure": "Commencer l'aventure",
+    "startQuizModal": {
+      "title": "Démarrer le quiz",
+      "categories": "Catégories:",
+      "questions": "Questions:"
+    },
+    "quiz": {
+      "title": "Quiz Solo",
+      "home": "Accueil",
+      "question": "Question {current} / {total}",
+      "score": "Score:",
+      "timeRemaining": "Temps restant: {time}s",
+      "correct": "Correct +{points} pts",
+      "incorrect": "Mauvaise réponse",
+      "skip": "Passer",
+      "next": "Suivant",
+      "finished": "Quiz Terminé !",
+      "finalScore": "Score Final",
+      "questions": "Questions",
+      "successRate": "Réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des Réponses",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
+      "replay": "Rejouer"
+    }
+  },
+  "group": {
+    "title": "Mode Groupe",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder à votre profil",
+    "create": {
+      "title": "Créer une partie",
+      "subtitle": "Définissez les paramètres et partagez le code/QR avec vos amis.",
+      "badge": "Partagez le code avec vos amis",
+      "startAdventure": "Commencer l'aventure",
+      "modal": {
+        "title": "Créer la partie multijoueur",
+        "categories": "Catégories:",
+        "questions": "Questions:",
+        "difficulty": "Difficulté:"
+      }
+    },
+    "join": {
+      "title": "Rejoindre une partie",
+      "subtitle": "Entrez un code pour rejoindre le lobby et commencer l'aventure.",
+      "badge": "Entrez le code du salon",
+      "code": "Code de la partie",
+      "example": "Exemple: 538950",
+      "joinButton": "Rejoindre"
+    },
+    "lobby": {
+      "title": "Lobby",
+      "waitingBadge": "En attente d'hôte",
+      "categories": "Catégories:",
+      "questions": "Questions:",
+      "players": "Joueurs",
+      "playersConnected": "{count} connecté | {count} connectés",
+      "joinSection": "Pour rejoindre",
+      "leave": "Quitter",
+      "start": "Lancer la partie",
+      "copySuccess": "Copié dans le presse-papier",
+      "userJoined": "{name} a rejoint le lobby",
+      "userLeft": "{name} a quitté le lobby",
+      "lobbyDeleted": "Le lobby a été supprimé",
+      "connectionError": "Erreur de connexion temps réel"
+    }
+  },
+  "competitive": {
+    "title": "Mode Compétitif",
+    "badge": "Choisissez vos catégories favorites",
+    "categories": {
+      "title": "Catégories de Combat",
+      "subtitle": "Sélectionnez vos domaines d'expertise pour des duels équilibrés."
+    },
+    "info": {
+      "title": "Mode Compétitif",
+      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre rang augmente !",
+      "balancedMatchmaking": "Matchmaking équilibré",
+      "dynamicRank": "Rang dynamique"
+    },
+    "startSearch": "Lancer la recherche",
+    "matchmaking": {
+      "searching": "Recherche",
+      "searchingMessage": "Nous cherchons un adversaire…",
+      "found": "Adversaire trouvé !",
+      "you": "Vous",
+      "opponent": "Adversaire",
+      "vs": "VS",
+      "cancel": "Annuler",
+      "startDuel": "Commencer le duel"
+    },
+    "duel": {
+      "title": "Duel 1v1",
+      "badge": "Questions à difficulté croissante",
+      "you": "Vous",
+      "opponent": "Adversaire",
+      "elo": "Elo {value}",
+      "health": "Points de vie",
+      "healthYou": "Points de vie — Vous",
+      "healthOpponent": "Points de vie — Adversaire",
+      "ready": "Prêts ?",
+      "readyMessage": "Le quiz commencera dès que les deux joueurs seront prêts.",
+      "quit": "Quitter",
+      "startQuiz": "Lancer le quiz"
+    }
+  },
+  "leaderboard": {
+    "title": "Classement Gaming",
+    "badge": "Top 20 Légendes",
+    "podium": {
+      "first": "#1",
+      "second": "#2",
+      "third": "#3"
+    },
+    "ranking": {
+      "title": "Classement Complet",
+      "badge": "Mise à jour en temps réel"
+    },
+    "status": {
+      "currentChampion": "Champion actuel",
+      "challenger": "Challenger",
+      "confirmedPlayer": "Joueur confirmé"
+    }
+  },
+  "modal": {
+    "defaultTitle": "Confirmation",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "close": "Fermer"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite"
+  }
+}
