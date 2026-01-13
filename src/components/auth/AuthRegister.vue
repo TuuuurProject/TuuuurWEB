@@ -2,9 +2,9 @@
   <section class="space-y-6">
     <header class="flex items-center justify-between">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="user-plus" class="mr-2" /> Créer un compte
+        <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.register.title') }}
       </h2>
-      <div class="badge-success">Simple</div>
+      <div class="badge-success">{{ $t('auth.register.badge') }}</div>
     </header>
 
     <transition name="fade" mode="out-in">
@@ -13,46 +13,50 @@
           <form class="space-y-5" @submit.prevent="registerAuth">
             <div>
               <label class="block font-semibold mb-1 text-brand-lightGray" for="nickName">
-                Pseudo
+                {{ $t('auth.register.nickname') }}
               </label>
               <input
                 id="nickName"
                 v-model="registerData.nickName"
                 type="text"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                placeholder="Choisissez un pseudo"
+                :placeholder="$t('auth.register.nicknamePlaceholder')"
                 required
               />
             </div>
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="email">Email</label>
+              <label class="block font-semibold mb-1 text-brand-lightGray" for="email">{{
+                $t('auth.register.email')
+              }}</label>
               <input
                 id="email"
                 v-model="registerData.email"
                 type="email"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                placeholder="vous@exemple.com"
+                :placeholder="$t('auth.register.emailPlaceholder')"
                 required
               />
             </div>
             <div>
               <label class="block font-semibold mb-1 text-brand-lightGray" for="password">
-                Mot de passe
+                {{ $t('auth.register.password') }}
               </label>
               <input
                 id="password"
                 v-model="registerData.password"
                 type="password"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                placeholder="••••••••"
+                :placeholder="$t('auth.register.passwordPlaceholder')"
                 required
               />
             </div>
             <div class="pt-2 flex items-center justify-center gap-3">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                Annuler
+                {{ $t('common.cancel') }}
               </button>
-              <button type="submit" class="btn btn-primary">Créer le compte</button>
+              <button type="submit" class="btn btn-primary">
+                {{ $t('auth.register.submit') }}
+              </button>
             </div>
           </form>
 
@@ -72,9 +76,9 @@
           </div>
 
           <div class="mt-6 text-sm text-brand-gray text-center">
-            Déjà inscrit ?
+            {{ $t('auth.register.alreadyRegistered') }}
             <button class="pill hover:bg-brand-purple/10 ml-2" @click="$emit('goto-login')">
-              Se connecter
+              {{ $t('auth.register.signIn') }}
             </button>
           </div>
         </overlay-block>

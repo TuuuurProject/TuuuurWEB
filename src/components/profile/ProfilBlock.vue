@@ -69,7 +69,7 @@
       </div>
       <div class="text-right">
         <div class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold">
-          <font-awesome-icon icon="trophy" class="mr-1" /> Élo: 1210
+          <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}: 1210
         </div>
         <!-- <button class="btn btn-ghost mt-2 text-xs py-1 px-3" @click="openPicker = true">
           <font-awesome-icon icon="cog" class="mr-1" /> Modifier avatar
@@ -83,17 +83,17 @@
           class="btn btn-ghost border border-brand-purple hover:bg-brand-purple/10"
           @click="showModalChangePassword = true"
         >
-          <font-awesome-icon icon="key" class="mr-2" /> Changer de mot de passe
+          <font-awesome-icon icon="key" class="mr-2" /> {{ $t('profile.changePassword') }}
         </button>
         <div class="flex gap-5">
           <button
             class="btn text-brand-orange hover:bg-brand-orange/10 border border-transparent hover:border-brand-orange"
             @click="showModalCompte = true"
           >
-            <font-awesome-icon icon="trash" class="mr-2" /> Supprimer mon compte
+            <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
           </button>
           <button class="btn btn-ghost text-danger" @click="userStore.logout()">
-            <font-awesome-icon icon="sign-out-alt" class="mr-2" /> Se déconnecter
+            <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
           </button>
         </div>
       </div>
@@ -102,26 +102,27 @@
 
   <ModalDialog
     :open="showModalCompte"
-    title="Suppression de votre compte"
+    :title="$t('profile.deleteAccountModal.title')"
     :loading="userStore.isLoading"
     @close="showModalCompte = false"
     @confirm="deleteAccount"
   >
     <div class="space-y-3">
-      <p class="font-bold text-lg text-brand-orange">Attention !</p>
+      <p class="font-bold text-lg text-brand-orange">
+        {{ $t('profile.deleteAccountModal.warning') }}
+      </p>
       <p class="text-brand-lightGray">
-        Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et
-        entraînera la perte de toutes vos données.
+        {{ $t('profile.deleteAccountModal.message') }}
       </p>
       <p class="font-bold">
-        Veuillez confirmer cette action en cliquant sur le bouton "Confirmer".
+        {{ $t('profile.deleteAccountModal.confirmMessage') }}
       </p>
     </div>
   </ModalDialog>
 
   <ModalDialog
     :open="showModalChangePassword"
-    title="Changement de votre mot de passe"
+    :title="$t('profile.changePasswordModal.title')"
     :loading="userStore.isLoading"
     :disabledConfirm="!canConfirmPasswordChange"
     @close="showModalChangePassword = false"
@@ -131,20 +132,20 @@
       <input-component
         type="password"
         v-model="changePasswordInfo.currentPassword"
-        label="Mot de passe actuel"
-        placeholder="Entrez votre mot de passe actuel"
+        :label="$t('profile.changePasswordModal.currentPassword')"
+        :placeholder="$t('profile.changePasswordModal.currentPasswordPlaceholder')"
       />
       <input-component
         type="password"
         v-model="changePasswordInfo.newPassword"
-        label="Nouveau mot de passe"
-        placeholder="Entrez votre nouveau mot de passe"
+        :label="$t('profile.changePasswordModal.newPassword')"
+        :placeholder="$t('profile.changePasswordModal.newPasswordPlaceholder')"
       />
       <input-component
         type="password"
         v-model="changePasswordInfo.confirmNewPassword"
-        label="Confirmez le nouveau mot de passe"
-        placeholder="Confirmez votre nouveau mot de passe"
+        :label="$t('profile.changePasswordModal.confirmPassword')"
+        :placeholder="$t('profile.changePasswordModal.confirmPasswordPlaceholder')"
       />
 
       <div v-if="errorsPasswords" class="my-5">
@@ -169,12 +170,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, getCurrentInstance, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
 import { resizeImage } from '@/services/fileUtils.js'
 
+const { t } = useI18n()
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
 
@@ -207,7 +210,7 @@ const canConfirmPasswordChange = computed(() => {
 const changePassword = async () => {
   if (changePasswordInfo.value.newPassword !== changePasswordInfo.value.confirmNewPassword) {
     errorsPasswords.value = {
-      password: ['Le nouveau mot de passe et sa confirmation ne correspondent pas.'],
+      password: [t('profile.changePasswordModal.passwordMismatch')],
     }
     return
   }
@@ -228,7 +231,7 @@ const changePassword = async () => {
 
     // Toast to notify user
     if (proxy) {
-      ;(proxy as any).$toast.success('Mot de passe changé avec succès !')
+      ;(proxy as any).$toast.success(t('profile.changePasswordModal.success'))
     }
   }
 }
@@ -268,18 +271,18 @@ const handleFileChange = async (event: Event) => {
     if (result?.email) {
       // Success - avatar updated
       if (proxy) {
-        ;(proxy as any).$toast.success('Avatar mis à jour avec succès !')
+        ;(proxy as any).$toast.success(t('profile.avatar.updateSuccess'))
       }
     } else {
       // Error occurred
       if (proxy) {
-        ;(proxy as any).$toast.error("Erreur lors de la mise à jour de l'avatar")
+        ;(proxy as any).$toast.error(t('profile.avatar.updateError'))
       }
     }
   } catch (error) {
     console.error('Error processing avatar:', error)
     if (proxy) {
-      ;(proxy as any).$toast.error("Erreur lors du traitement de l'image")
+      ;(proxy as any).$toast.error(t('profile.avatar.processingError'))
     }
   } finally {
     // Reset file input

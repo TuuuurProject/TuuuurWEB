@@ -2,19 +2,19 @@
   <section class="space-y-6">
     <header class="flex items-center justify-between">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="users" class="mr-2" /> Créer une partie
+        <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.create.title') }}
       </h2>
-      <div class="pill animate-pulse-slow">Partagez le code avec vos amis</div>
+      <div class="pill animate-pulse-slow">{{ $t('group.create.badge') }}</div>
     </header>
 
     <div class="grid gap-6 md:grid-cols-3">
       <!-- Cartes gaming avec backdrop blur -->
       <div class="md:col-span-2 gaming-card">
         <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
-          <font-awesome-icon icon="gamepad" class="mr-2" /> Catégories
+          <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }}
         </h3>
         <p class="text-brand-gray mb-4">
-          Choisissez une ou plusieurs catégories pour votre aventure.
+          {{ $t('solo.categories.subtitle') }}
         </p>
         <div class="flex flex-wrap gap-3">
           <button
@@ -32,11 +32,15 @@
 
       <!-- Sidebar des paramètres -->
       <div class="gaming-card">
-        <h3 class="font-display text-xl mb-2 text-brand-lightGray">⚙️ Paramètres</h3>
+        <h3 class="font-display text-xl mb-2 text-brand-lightGray">
+          ⚙️ {{ $t('solo.settings.title') }}
+        </h3>
         <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <label class="font-semibold text-brand-lightGray">Nombre de questions</label>
+              <label class="font-semibold text-brand-lightGray">{{
+                $t('solo.settings.questionsCount')
+              }}</label>
               <span class="pill font-bold text-brand-purple">{{ questions }}</span>
             </div>
             <div class="mt-3 flex items-center gap-3">
@@ -68,7 +72,7 @@
         <div>
           <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
             <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-            Difficulté
+            {{ $t('solo.settings.difficulty') }}
           </label>
           <div class="space-y-2">
             <button
@@ -96,15 +100,15 @@
     </div>
 
     <footer class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="$emit('back')">← Retour</button>
+      <button class="btn btn-ghost" @click="$emit('back')">← {{ $t('common.back') }}</button>
       <button class="btn btn-primary" :disabled="canCreateGame" @click="open = true">
-        <font-awesome-icon icon="rocket" class="mr-2" /> Commencer l'aventure
+        <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.create.startAdventure') }}
       </button>
     </footer>
 
     <ModalDialog
       :open="open"
-      title="Créer la partie multijoueur"
+      :title="$t('group.create.modal.title')"
       @close="open = false"
       @confirm="confirm"
       :loading="groupeStore.isLoading"
@@ -112,7 +116,7 @@
       <div class="space-y-3">
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="bullseye" class="text-brand-purple" />
-          <strong class="text-brand-lightGray">Catégories:</strong>
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
           <span class="text-brand-gray">{{
             Array.from(selected)
               .map((id) => themesMap.get(id)?.label)
@@ -121,12 +125,12 @@
         </p>
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">Questions:</strong>
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
           <span class="text-brand-gray">{{ questions }}</span>
         </p>
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="fire" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">Difficulté:</strong>
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulty') }}</strong>
           <span class="text-brand-gray">{{
             selectedDifficulty
               .map(
@@ -143,10 +147,12 @@
 
 <script setup lang="ts">
 import { reactive, ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ModalDialog from '@/components/ModalDialog.vue'
 import useThemeStore from '@/stores/theme'
 import useGroupeStore from '@/stores/groupe'
 
+const { t } = useI18n()
 const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
 
@@ -158,36 +164,36 @@ interface Theme {
   icon: string
 }
 
-const difficulties = [
+const difficulties = computed(() => [
   {
     id: 1,
-    label: 'Facile',
+    label: t('solo.difficulties.easy'),
     icon: 'seedling',
     colorClass: 'diff-easy',
     glowClass: 'glow-green',
   },
   {
     id: 2,
-    label: 'Moyen',
+    label: t('solo.difficulties.medium'),
     icon: 'bolt',
     colorClass: 'diff-medium',
     glowClass: 'glow-yellow',
   },
   {
     id: 3,
-    label: 'Difficile',
+    label: t('solo.difficulties.hard'),
     icon: 'fire',
     colorClass: 'diff-hard',
     glowClass: 'glow-orange',
   },
   {
     id: 4,
-    label: 'Hardcore',
+    label: t('solo.difficulties.hardcore'),
     icon: 'skull',
     colorClass: 'diff-hardcore',
     glowClass: 'glow-red',
   },
-]
+])
 
 // Récupération des thèmes
 onMounted(async () => {

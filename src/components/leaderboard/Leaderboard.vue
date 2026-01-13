@@ -1,8 +1,10 @@
 <template>
   <section class="space-y-8">
     <header class="flex items-center justify-between">
-      <h2 class="font-display text-3xl text-brand-lightGray glow-text">🏆 Classement Gaming</h2>
-      <div class="badge-warning animate-pulse-slow">Top 20 Légendes</div>
+      <h2 class="font-display text-3xl text-brand-lightGray glow-text">
+        🏆 {{ $t('leaderboard.title') }}
+      </h2>
+      <div class="badge-warning animate-pulse-slow">{{ $t('leaderboard.badge') }}</div>
     </header>
 
     <!-- Podium top 3 avec effets gaming -->
@@ -110,8 +112,10 @@
         >
           📊
         </div>
-        <h3 class="font-display text-xl text-brand-lightGray">Classement Complet</h3>
-        <div class="ml-auto badge-info">Mise à jour en temps réel</div>
+        <h3 class="font-display text-xl text-brand-lightGray">
+          {{ $t('leaderboard.ranking.title') }}
+        </h3>
+        <div class="ml-auto badge-info">{{ $t('leaderboard.ranking.badge') }}</div>
       </div>
 
       <ul class="space-y-2">
@@ -147,9 +151,15 @@
             >
               {{ p.name }}
             </div>
-            <div v-if="p.rank <= 5" class="text-xs text-brand-green">Champion actuel</div>
-            <div v-else-if="p.rank <= 10" class="text-xs text-brand-orange">Challenger</div>
-            <div v-else class="text-xs text-brand-gray">Joueur confirmé</div>
+            <div v-if="p.rank <= 5" class="text-xs text-brand-green">
+              {{ $t('leaderboard.status.currentChampion') }}
+            </div>
+            <div v-else-if="p.rank <= 10" class="text-xs text-brand-orange">
+              {{ $t('leaderboard.status.challenger') }}
+            </div>
+            <div v-else class="text-xs text-brand-gray">
+              {{ $t('leaderboard.status.confirmedPlayer') }}
+            </div>
           </div>
           <div
             class="pill font-bold"

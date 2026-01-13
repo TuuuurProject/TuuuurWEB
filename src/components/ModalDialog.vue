@@ -25,13 +25,15 @@
               <slot />
             </div>
             <footer class="mt-6 flex items-center justify-end gap-3">
-              <button class="btn btn-ghost" @click="$emit('close')">Annuler</button>
+              <button class="btn btn-ghost" @click="$emit('close')">
+                {{ $t('modal.cancel') }}
+              </button>
               <button
                 class="btn btn-primary"
                 :disabled="props.disabledConfirm"
                 @click="$emit('confirm')"
               >
-                Confirmer
+                {{ $t('modal.confirm') }}
               </button>
             </footer>
           </overlay-block>

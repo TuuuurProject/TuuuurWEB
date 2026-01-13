@@ -3,11 +3,11 @@
     <p class="mb-4">{{ props.message }}</p>
     <div class="flex items-center justify-center gap-6">
       <button class="btn btn-primary" @click="router.push({ name: 'Login' })">
-        <font-awesome-icon icon="lock" class="mr-2" /> Se connecter
+        <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.submit') }}
       </button>
 
       <button class="btn btn-secondary ml-2" @click="router.push({ name: 'Register' })">
-        <font-awesome-icon icon="user-plus" class="mr-2" /> Créer un compte
+        <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.login.createAccount') }}
       </button>
     </div>
   </div>

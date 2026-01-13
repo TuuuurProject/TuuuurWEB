@@ -2,9 +2,9 @@
   <section class="space-y-6">
     <header class="flex items-center justify-between">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="lock" class="mr-2" /> Connexion
+        <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.title') }}
       </h2>
-      <div class="badge-info">Pseudo + mot de passe</div>
+      <div class="badge-info">{{ $t('auth.login.badge') }}</div>
     </header>
 
     <transition name="fade" mode="out-in">
@@ -12,39 +12,39 @@
         <overlay-block :loading="userStore.isLoading">
           <form class="space-y-5" @submit.prevent="loginUser">
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="username"
-                >Pseudo</label
-              >
+              <label class="block font-semibold mb-1 text-brand-lightGray" for="username">{{
+                $t('auth.login.username')
+              }}</label>
               <input
                 id="username"
                 v-model="login"
                 type="text"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                placeholder="Votre pseudo"
+                :placeholder="$t('auth.login.usernamePlaceholder')"
               />
             </div>
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="password"
-                >Mot de passe</label
-              >
+              <label class="block font-semibold mb-1 text-brand-lightGray" for="password">{{
+                $t('auth.login.password')
+              }}</label>
               <input
                 id="password"
                 v-model="password"
                 type="password"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                placeholder="••••••••"
+                :placeholder="$t('auth.login.passwordPlaceholder')"
               />
               <div class="mt-2 text-sm">
                 <button type="button" class="pill hover:bg-brand-purple/10">
-                  Mot de passe oublié ?
+                  {{ $t('auth.login.forgotPassword') }}
                 </button>
               </div>
             </div>
             <div class="pt-2 flex items-center justify-center gap-3">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                Annuler
+                {{ $t('common.cancel') }}
               </button>
-              <button type="submit" class="btn btn-primary">Se connecter</button>
+              <button type="submit" class="btn btn-primary">{{ $t('auth.login.submit') }}</button>
             </div>
           </form>
           <div v-if="error" class="my-5">
@@ -67,7 +67,7 @@
           <div class="mt-6 text-center space-y-4">
             <div class="flex items-center justify-center gap-4">
               <div class="h-px bg-brand-purple/30 flex-1"></div>
-              <span class="text-sm text-brand-gray">OU</span>
+              <span class="text-sm text-brand-gray">{{ $t('common.or') }}</span>
               <div class="h-px bg-brand-purple/30 flex-1"></div>
             </div>
 
@@ -75,9 +75,9 @@
           </div>
 
           <div class="mt-6 text-sm text-brand-gray text-center">
-            Pas de compte ?
+            {{ $t('auth.login.noAccount') }}
             <button class="pill hover:bg-brand-purple/10 ml-2" @click="$emit('goto-register')">
-              Créer un compte
+              {{ $t('auth.login.createAccount') }}
             </button>
           </div>
         </overlay-block>
@@ -91,11 +91,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import router from '@/router'
 import AuthCode from '@/components/auth/AuthCode.vue'
 
+const { t } = useI18n()
 const login = ref('')
 const password = ref('')
 
@@ -134,7 +136,7 @@ const verifyEmail = async (code: string) => {
 }
 
 // Google login handler
-const handleGoogleLogin = (response: any) => {
+const handleGoogleLogin = (response: { credential?: string }) => {
   // The backend expects the credential (ID token), not the access token
   const idToken = response.credential
   if (idToken) {
@@ -152,7 +154,7 @@ const loginWithGoogle = async (token: string) => {
     error.value = result || [
       {
         code: 'Google',
-        description: 'Erreur lors de la connexion avec Google',
+        description: t('auth.googleError'),
       },
     ]
   }

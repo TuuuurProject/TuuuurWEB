@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 
 // Google Login
 import vue3GoogleLogin from 'vue3-google-login'
@@ -185,6 +186,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 app.use(Vue3Toastify, {
   theme: 'dark',
   autoClose: 3000,

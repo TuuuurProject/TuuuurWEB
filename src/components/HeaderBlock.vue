@@ -21,20 +21,21 @@
           class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
           @click="router.push({ name: 'SoloQuiz' })"
         >
-          Solo
+          {{ $t('nav.solo') }}
         </button>
         <button
           class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
           @click="router.push({ name: 'GroupMode' })"
         >
-          Groupe
+          {{ $t('nav.group') }}
         </button>
         <button
           class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
           @click="router.push({ name: 'CompetitiveMode' })"
         >
-          Compétitif
+          {{ $t('nav.competitive') }}
         </button>
+        <language-switcher />
       </nav>
     </div>
   </header>
@@ -42,6 +43,7 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const router = useRouter()
 </script>
