@@ -9,12 +9,10 @@
         <h2 class="font-branding text-3xl">Quiz Solo</h2>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
-        <span class="pill"
-          >Question {{ index + 1 }} / {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}</span
-        >
-        <span class="pill"
-          >Score: <strong>{{ score }}</strong></span
-        >
+        <span class="pill">Question {{ index + 1 }} / {{ nbMaxQuestions }}</span>
+        <span class="pill">
+          Score: <strong>{{ score }}</strong>
+        </span>
       </div>
     </header>
 
@@ -233,6 +231,7 @@ interface PartyInfo {
 }
 
 const index = ref(0)
+const nbMaxQuestions = ref(0)
 const score = ref(0)
 const answered = ref(false)
 const wasCorrect = ref(false)
@@ -356,7 +355,7 @@ const next = async () => {
 
   await soloStore.loadPartyInfo()
 
-  if (index.value + 1 >= (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions) {
+  if (index.value + 1 >= nbMaxQuestions.value) {
     finished.value = true
     clearTimer()
     return
@@ -465,6 +464,8 @@ const getAnswerClass = (questionData: any, answer: any) => {
 onMounted(async () => {
   // Load party info and get questions
   await soloStore.loadPartyInfo()
+
+  nbMaxQuestions.value = (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions || 0
 
   // If onMounted, the partyId exist, display the recap
   if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
