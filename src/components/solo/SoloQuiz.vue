@@ -4,14 +4,16 @@
       <div class="flex items-center gap-3">
         <button class="pill" @click="$emit('exit')">
           <font-awesome-icon icon="arrow-left" class="mr-2" />
-          Accueil
+          {{ $t('solo.quiz.home') }}
         </button>
-        <h2 class="font-branding text-3xl">Quiz Solo</h2>
+        <h2 class="font-branding text-3xl">{{ $t('solo.quiz.title') }}</h2>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
-        <span class="pill">Question {{ index + 1 }} / {{ nbMaxQuestions }}</span>
+        <span class="pill">{{
+          $t('solo.quiz.question', { current: index + 1, total: nbMaxQuestions })
+        }}</span>
         <span class="pill">
-          Score: <strong>{{ score }}</strong>
+          {{ $t('solo.quiz.score') }} <strong>{{ score }}</strong>
         </span>
       </div>
     </header>
@@ -29,7 +31,7 @@
         />
       </div>
       <div class="px-6 py-3 flex items-center justify-between text-sm text-brand-lightGray">
-        <span>Temps restant: {{ remaining.toFixed(1) }}s</span>
+        <span>{{ $t('solo.quiz.timeRemaining', { time: remaining.toFixed(1) }) }}</span>
       </div>
     </div>
 
@@ -57,12 +59,14 @@
 
         <div class="mt-6 flex items-center justify-between">
           <div class="text-sm" v-if="answered">
-            <span v-if="wasCorrect" class="badge-green">Correct +{{ lastPoints }} pts</span>
-            <span v-else class="badge-orange">Mauvaise réponse</span>
+            <span v-if="wasCorrect" class="badge-green">{{
+              $t('solo.quiz.correct', { points: lastPoints })
+            }}</span>
+            <span v-else class="badge-orange">{{ $t('solo.quiz.incorrect') }}</span>
           </div>
           <div class="flex items-center gap-3 ml-auto">
             <button class="btn btn-secondary" @click="skip" :disabled="answered">
-              Passer
+              {{ $t('solo.quiz.skip') }}
               <span
                 v-if="!answered"
                 class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
@@ -71,7 +75,7 @@
               </span>
             </button>
             <button class="btn btn-primary relative" @click="next" :disabled="!answered">
-              Suivant
+              {{ $t('solo.quiz.next') }}
               <span
                 v-if="answered"
                 class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
@@ -95,22 +99,24 @@
         >
           <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
         </div>
-        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">Quiz Terminé !</h3>
+        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">
+          {{ $t('solo.quiz.finished') }}
+        </h3>
         <div class="flex items-center justify-center gap-6 mt-4">
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">Score Final</div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.finalScore') }}</div>
             <div class="font-branding text-3xl text-brand-yellow">{{ score }}</div>
           </div>
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">Questions</div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.questions') }}</div>
             <div class="font-branding text-3xl text-brand-lightGray">
               {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
             </div>
           </div>
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">Réussite</div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.successRate') }}</div>
             <div class="font-branding text-3xl text-brand-green">
               {{
                 Math.round(
@@ -125,12 +131,12 @@
         <div class="flex items-center justify-center gap-3 mt-6">
           <div class="badge-success">
             <font-awesome-icon icon="check-circle" class="mr-1" />
-            {{ correctAnswersCount }} Correctes
+            {{ correctAnswersCount }} {{ $t('solo.quiz.correctAnswers') }}
           </div>
           <div class="badge-warning">
             <font-awesome-icon icon="times-circle" class="mr-1" />
             {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions - correctAnswersCount }}
-            Incorrectes
+            {{ $t('solo.quiz.incorrectAnswers') }}
           </div>
         </div>
       </div>
@@ -143,7 +149,7 @@
           >
             <font-awesome-icon icon="list-check" />
           </div>
-          <h3 class="font-branding text-2xl text-brand-lightGray">Récapitulatif des Réponses</h3>
+          <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
         </div>
 
         <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -169,13 +175,12 @@
                   {{ questionData?.question?.label }}
                 </p>
                 <div v-if="isQuestionCorrect(questionData)" class="badge-success text-xs">
-                  <font-awesome-icon icon="check" class="mr-1" /> Bonne réponse +{{
-                    getQuestionPoints(questionData)
-                  }}
+                  <font-awesome-icon icon="check" class="mr-1" />
+                  {{ $t('solo.quiz.goodAnswer') }} +{{ getQuestionPoints(questionData) }}
                   pts
                 </div>
                 <div v-else class="badge-warning text-xs">
-                  <font-awesome-icon icon="times" class="mr-1" /> Mauvaise réponse
+                  <font-awesome-icon icon="times" class="mr-1" /> {{ $t('solo.quiz.badAnswer') }}
                 </div>
               </div>
             </div>
@@ -205,10 +210,10 @@
       <!-- Actions finales -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
-          <font-awesome-icon icon="arrow-left" class="mr-2" /> Retour
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
         </button>
         <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
-          <font-awesome-icon icon="rotate-right" class="mr-2" /> Rejouer
+          <font-awesome-icon icon="rotate-right" class="mr-2" /> {{ $t('solo.quiz.replay') }}
         </button>
       </div>
     </div>

@@ -5,18 +5,19 @@
       <div class="flex items-center justify-between">
         <h3 class="text-xl font-bold text-brand-lightGray">
           <font-awesome-icon icon="clock-rotate-left" class="mr-2 text-brand-purple" />
-          Historique des parties
+          {{ $t('profile.matchHistory.title') }}
         </h3>
         <div class="flex gap-3">
           <div class="pill bg-brand-purple/20 border-brand-purple/40 text-brand-purple">
             <font-awesome-icon icon="gamepad" class="mr-1" />
-            {{ historyStore.nbParties }} Partie{{ (historyStore?.nbParties ?? 0) > 1 ? 's' : '' }}
+            {{ $t('profile.matchHistory.parties', { count: historyStore.nbParties || 0 }) }}
           </div>
           <div
             v-if="stats.avgPercent !== null"
             class="pill bg-brand-green/20 border-brand-green/40 text-brand-green"
           >
-            <font-awesome-icon icon="percent" class="mr-1" /> {{ stats.avgPercent }}% Réussite
+            <font-awesome-icon icon="percent" class="mr-1" />
+            {{ $t('profile.matchHistory.successRate', { percent: stats.avgPercent }) }}
           </div>
         </div>
       </div>
@@ -70,7 +71,7 @@
                     class="pill text-xs py-1 px-2 bg-brand-cyan/20 border-brand-cyan/40 text-brand-cyan animate-pulse"
                   >
                     <font-awesome-icon icon="hourglass-half" class="mr-1" />
-                    En cours
+                    {{ $t('profile.matchHistory.inProgress') }}
                   </span>
                   <span
                     v-if="match.partyDifficulty.length > 0"
@@ -87,14 +88,14 @@
               <div class="flex items-center gap-4 text-sm">
                 <div class="flex items-center gap-1.5">
                   <font-awesome-icon icon="circle-question" class="text-brand-purple" />
-                  <span class="text-brand-gray">Questions:</span>
+                  <span class="text-brand-gray">{{ $t('profile.matchHistory.questions') }}</span>
                   <span class="font-bold text-brand-lightGray">
                     {{ match.nbQuestions }}
                   </span>
                 </div>
                 <div v-if="match.percent !== undefined" class="flex items-center gap-1.5">
                   <font-awesome-icon icon="percent" class="text-brand-cyan" />
-                  <span class="text-brand-gray">Réussite:</span>
+                  <span class="text-brand-gray">{{ $t('profile.matchHistory.success') }}</span>
                   <span
                     class="font-bold"
                     :class="
@@ -110,7 +111,7 @@
                 </div>
                 <div v-if="match.time !== undefined" class="flex items-center gap-1.5">
                   <font-awesome-icon icon="clock" class="text-brand-orange" />
-                  <span class="text-brand-gray">Temps:</span>
+                  <span class="text-brand-gray">{{ $t('profile.matchHistory.time') }}</span>
                   <span class="font-bold text-brand-lightGray">
                     {{ formatTime(match.time) }}
                   </span>
@@ -144,15 +145,19 @@
           class="text-center py-12 text-brand-gray border border-brand-gray/20 rounded-xl"
         >
           <font-awesome-icon icon="inbox" class="text-4xl mb-3 opacity-50" />
-          <p>Aucune partie trouvée</p>
+          <p>{{ $t('profile.matchHistory.noMatches') }}</p>
         </div>
       </div>
 
       <!-- Pagination info -->
       <div v-if="historyStore.totalPages > 0" class="text-center text-sm text-brand-gray mb-4">
-        Affichage de {{ (historyStore.currentPage - 1) * 10 + 1 }} à
-        {{ Math.min(historyStore.currentPage * 10, historyStore.nbParties || 0) }} sur
-        {{ historyStore.nbParties }} partie{{ (historyStore.nbParties || 0) > 1 ? 's' : '' }}
+        {{
+          $t('profile.matchHistory.pagination.showing', {
+            from: (historyStore.currentPage - 1) * 10 + 1,
+            to: Math.min(historyStore.currentPage * 10, historyStore.nbParties || 0),
+            total: historyStore.nbParties || 0,
+          })
+        }}
       </div>
 
       <!-- Pagination -->
@@ -170,7 +175,7 @@
               : 'hover:bg-brand-purple/10'
           "
           @click="goToPage(1)"
-          title="Première page"
+          :title="$t('profile.matchHistory.pagination.firstPage')"
         >
           <font-awesome-icon icon="angles-left" />
         </button>
@@ -185,7 +190,7 @@
               : 'hover:bg-brand-purple/10'
           "
           @click="goToPage(historyStore.currentPage - 1)"
-          title="Page précédente"
+          :title="$t('profile.matchHistory.pagination.previousPage')"
         >
           <font-awesome-icon icon="chevron-left" />
         </button>
@@ -222,7 +227,7 @@
               : 'hover:bg-brand-purple/10'
           "
           @click="goToPage(historyStore.currentPage + 1)"
-          title="Page suivante"
+          :title="$t('profile.matchHistory.pagination.nextPage')"
         >
           <font-awesome-icon icon="chevron-right" />
         </button>
@@ -237,7 +242,7 @@
               : 'hover:bg-brand-purple/10'
           "
           @click="goToPage(historyStore.totalPages)"
-          title="Dernière page"
+          :title="$t('profile.matchHistory.pagination.lastPage')"
         >
           <font-awesome-icon icon="angles-right" />
         </button>
@@ -248,6 +253,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import useHistoryStore from '@/stores/history'
@@ -256,6 +262,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/fr'
 import type { Match } from '@/stores/history'
 
+const { t } = useI18n()
 dayjs.extend(relativeTime)
 dayjs.locale('fr')
 
@@ -274,10 +281,10 @@ const isLoading = ref(false)
 const selectedFilter = ref('all')
 const historyStore = useHistoryStore()
 
-const filters = [
-  { label: 'Toutes', value: 'all' },
-  { label: 'Solo', value: 'solo' },
-]
+const filters = computed(() => [
+  { label: t('profile.matchHistory.filters.all'), value: 'all' },
+  { label: t('profile.matchHistory.filters.solo'), value: 'solo' },
+])
 
 const matches = computed(() => {
   if (!historyStore.historyList) return []

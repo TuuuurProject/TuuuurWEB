@@ -90,6 +90,29 @@
       "updateSuccess": "Avatar mis à jour avec succès !",
       "updateError": "Erreur lors de la mise à jour de l'avatar",
       "processingError": "Erreur lors du traitement de l'image"
+    },
+    "matchHistory": {
+      "title": "Historique des parties",
+      "parties": "{count} Partie | {count} Parties",
+      "successRate": "{percent}% Réussite",
+      "filters": {
+        "all": "Tous",
+        "solo": "Solo",
+        "group": "Groupe",
+        "competitive": "Compétitif"
+      },
+      "inProgress": "En cours",
+      "questions": "Questions:",
+      "success": "Réussite:",
+      "time": "Temps:",
+      "noMatches": "Aucune partie trouvée",
+      "pagination": {
+        "showing": "Affichage de {from} à {to} sur {total} partie | Affichage de {from} à {to} sur {total} parties",
+        "firstPage": "Première page",
+        "previousPage": "Page précédente",
+        "nextPage": "Page suivante",
+        "lastPage": "Dernière page"
+      }
     }
   },
   "solo": {
@@ -156,7 +179,66 @@
     },
     "join": {
       "title": "Rejoindre une partie",
-      "subtitle": "Entrez un code pour rejoindre le lobby et commencer l'aventure."
+      "subtitle": "Entrez un code pour rejoindre le lobby et commencer l'aventure.",
+      "badge": "Entrez le code du salon",
+      "code": "Code de la partie",
+      "example": "Exemple: 538950",
+      "joinButton": "Rejoindre"
+    },
+    "lobby": {
+      "title": "Lobby",
+      "waitingBadge": "En attente d'hôte",
+      "categories": "Catégories:",
+      "questions": "Questions:",
+      "players": "Joueurs",
+      "playersConnected": "{count} connecté | {count} connectés",
+      "joinSection": "Pour rejoindre",
+      "leave": "Quitter",
+      "start": "Lancer la partie",
+      "copySuccess": "Copié dans le presse-papier",
+      "userJoined": "{name} a rejoint le lobby",
+      "userLeft": "{name} a quitté le lobby",
+      "lobbyDeleted": "Le lobby a été supprimé",
+      "connectionError": "Erreur de connexion temps réel"
+    }
+  },
+  "competitive": {
+    "title": "Mode Compétitif",
+    "badge": "Choisissez vos catégories favorites",
+    "categories": {
+      "title": "Catégories de Combat",
+      "subtitle": "Sélectionnez vos domaines d'expertise pour des duels équilibrés."
+    },
+    "info": {
+      "title": "Mode Compétitif",
+      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre rang augmente !",
+      "balancedMatchmaking": "Matchmaking équilibré",
+      "dynamicRank": "Rang dynamique"
+    },
+    "startSearch": "Lancer la recherche",
+    "matchmaking": {
+      "searching": "Recherche",
+      "searchingMessage": "Nous cherchons un adversaire…",
+      "found": "Adversaire trouvé !",
+      "you": "Vous",
+      "opponent": "Adversaire",
+      "vs": "VS",
+      "cancel": "Annuler",
+      "startDuel": "Commencer le duel"
+    },
+    "duel": {
+      "title": "Duel 1v1",
+      "badge": "Questions à difficulté croissante",
+      "you": "Vous",
+      "opponent": "Adversaire",
+      "elo": "Elo {value}",
+      "health": "Points de vie",
+      "healthYou": "Points de vie — Vous",
+      "healthOpponent": "Points de vie — Adversaire",
+      "ready": "Prêts ?",
+      "readyMessage": "Le quiz commencera dès que les deux joueurs seront prêts.",
+      "quit": "Quitter",
+      "startQuiz": "Lancer le quiz"
     }
   },
   "leaderboard": {

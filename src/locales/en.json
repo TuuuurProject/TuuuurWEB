@@ -90,6 +90,29 @@
       "updateSuccess": "Avatar updated successfully!",
       "updateError": "Error updating avatar",
       "processingError": "Error processing image"
+    },
+    "matchHistory": {
+      "title": "Match History",
+      "parties": "{count} Game | {count} Games",
+      "successRate": "{percent}% Success",
+      "filters": {
+        "all": "All",
+        "solo": "Solo",
+        "group": "Group",
+        "competitive": "Competitive"
+      },
+      "inProgress": "In Progress",
+      "questions": "Questions:",
+      "success": "Success:",
+      "time": "Time:",
+      "noMatches": "No games found",
+      "pagination": {
+        "showing": "Showing {from} to {to} of {total} game | Showing {from} to {to} of {total} games",
+        "firstPage": "First page",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "lastPage": "Last page"
+      }
     }
   },
   "solo": {
@@ -156,7 +179,66 @@
     },
     "join": {
       "title": "Join a Game",
-      "subtitle": "Enter a code to join the lobby and start the adventure."
+      "subtitle": "Enter a code to join the lobby and start the adventure.",
+      "badge": "Enter the room code",
+      "code": "Game Code",
+      "example": "Example: 538950",
+      "joinButton": "Join"
+    },
+    "lobby": {
+      "title": "Lobby",
+      "waitingBadge": "Waiting for host",
+      "categories": "Categories:",
+      "questions": "Questions:",
+      "players": "Players",
+      "playersConnected": "{count} connected",
+      "joinSection": "To join",
+      "leave": "Leave",
+      "start": "Start Game",
+      "copySuccess": "Copied to clipboard",
+      "userJoined": "{name} joined the lobby",
+      "userLeft": "{name} left the lobby",
+      "lobbyDeleted": "Lobby has been deleted",
+      "connectionError": "Real-time connection error"
+    }
+  },
+  "competitive": {
+    "title": "Competitive Mode",
+    "badge": "Choose your favorite categories",
+    "categories": {
+      "title": "Battle Categories",
+      "subtitle": "Select your areas of expertise for balanced duels."
+    },
+    "info": {
+      "title": "Competitive Mode",
+      "description": "Face players of similar level in quick duels. The more you win, the higher your rank!",
+      "balancedMatchmaking": "Balanced matchmaking",
+      "dynamicRank": "Dynamic rank"
+    },
+    "startSearch": "Start Search",
+    "matchmaking": {
+      "searching": "Searching",
+      "searchingMessage": "We're looking for an opponent…",
+      "found": "Opponent found!",
+      "you": "You",
+      "opponent": "Opponent",
+      "vs": "VS",
+      "cancel": "Cancel",
+      "startDuel": "Start Duel"
+    },
+    "duel": {
+      "title": "1v1 Duel",
+      "badge": "Increasing difficulty questions",
+      "you": "You",
+      "opponent": "Opponent",
+      "elo": "Elo {value}",
+      "health": "Health points",
+      "healthYou": "Health points — You",
+      "healthOpponent": "Health points — Opponent",
+      "ready": "Ready?",
+      "readyMessage": "The quiz will start once both players are ready.",
+      "quit": "Quit",
+      "startQuiz": "Start Quiz"
     }
   },
   "leaderboard": {

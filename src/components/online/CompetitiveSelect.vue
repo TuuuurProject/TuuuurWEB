@@ -2,9 +2,9 @@
   <section class="space-y-6">
     <header class="flex items-center justify-between">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="fire" class="mr-2" /> Mode Compétitif
+        <font-awesome-icon icon="fire" class="mr-2" /> {{ $t('competitive.title') }}
       </h2>
-      <div class="badge-info animate-pulse-slow">Choisissez vos catégories favorites</div>
+      <div class="badge-info animate-pulse-slow">{{ $t('competitive.badge') }}</div>
     </header>
 
     <div class="gaming-card">
@@ -16,10 +16,11 @@
         </div>
         <div>
           <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
-            <font-awesome-icon icon="trophy" class="mr-2" /> Catégories de Combat
+            <font-awesome-icon icon="trophy" class="mr-2" />
+            {{ $t('competitive.categories.title') }}
           </h3>
           <p class="text-brand-gray">
-            Sélectionnez vos domaines d'expertise pour des duels équilibrés.
+            {{ $t('competitive.categories.subtitle') }}
           </p>
         </div>
       </div>
@@ -41,28 +42,29 @@
       <div class="mt-6 p-4 rounded-2xl bg-brand-orange/10 border border-brand-orange/20">
         <div class="flex items-center gap-2 mb-2">
           <span class="text-brand-orange">⚡</span>
-          <span class="text-sm font-semibold text-brand-orange">Mode Compétitif</span>
+          <span class="text-sm font-semibold text-brand-orange">{{
+            $t('competitive.info.title')
+          }}</span>
         </div>
         <p class="text-sm text-brand-gray">
-          Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus
-          votre rang augmente !
+          {{ $t('competitive.info.description') }}
         </p>
         <div class="flex items-center gap-4 mt-3 text-xs">
           <div class="flex items-center gap-1">
             <span class="w-2 h-2 bg-brand-green rounded-full"></span>
-            <span class="text-brand-gray">Matchmaking équilibré</span>
+            <span class="text-brand-gray">{{ $t('competitive.info.balancedMatchmaking') }}</span>
           </div>
           <div class="flex items-center gap-1">
             <span class="w-2 h-2 bg-brand-purple rounded-full"></span>
-            <span class="text-brand-gray">Rang dynamique</span>
+            <span class="text-brand-gray">{{ $t('competitive.info.dynamicRank') }}</span>
           </div>
         </div>
       </div>
 
       <div class="mt-8 flex items-center justify-end gap-3">
-        <button class="btn btn-ghost" @click="$emit('back')">← Retour</button>
+        <button class="btn btn-ghost" @click="$emit('back')">← {{ $t('common.back') }}</button>
         <button class="btn btn-secondary" :disabled="selected.size === 0" @click="proceed">
-          🔍 Lancer la recherche
+          🔍 {{ $t('competitive.startSearch') }}
         </button>
       </div>
     </div>

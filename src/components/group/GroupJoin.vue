@@ -1,13 +1,15 @@
 <template>
   <section class="space-y-8">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray">Rejoindre une partie</h2>
-      <div class="pill">Entrez le code du salon</div>
+      <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.join.title') }}</h2>
+      <div class="pill">{{ $t('group.join.badge') }}</div>
     </header>
 
     <div class="gaming-card">
       <div class="max-w-md mx-auto">
-        <label class="block font-semibold mb-3 text-brand-lightGray">Code de la partie</label>
+        <label class="block font-semibold mb-3 text-brand-lightGray">{{
+          $t('group.join.code')
+        }}</label>
         <div class="flex items-center gap-2 justify-center">
           <input
             v-for="i in 6"
@@ -20,11 +22,11 @@
             @keydown.ctrl.v.prevent="handleKeyboardPaste"
           />
         </div>
-        <p class="text-center text-brand-gray mt-4">Exemple: 538950</p>
+        <p class="text-center text-brand-gray mt-4">{{ $t('group.join.example') }}</p>
 
         <div class="mt-8 flex items-center justify-center gap-3">
-          <button class="btn btn-secondary" @click="$emit('back')">Retour</button>
-          <button class="btn btn-primary" @click="join">Rejoindre</button>
+          <button class="btn btn-secondary" @click="$emit('back')">{{ $t('common.back') }}</button>
+          <button class="btn btn-primary" @click="join">{{ $t('group.join.joinButton') }}</button>
         </div>
       </div>
 

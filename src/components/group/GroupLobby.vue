@@ -3,18 +3,20 @@
     <!-- Top header with code emphasis -->
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <h2 class="font-branding text-3xl text-brand-lightGray">Lobby</h2>
-        <span class="badge-green">En attente d'hôte</span>
+        <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.lobby.title') }}</h2>
+        <span class="badge-green">{{ $t('group.lobby.waitingBadge') }}</span>
       </div>
     </header>
 
     <!-- Readonly quiz parameters as quick chips -->
     <div class="flex flex-wrap gap-2">
       <span class="pill">
-        Catégories: {{ groupeStore?.groupePartyInfo?.partyDifficulty.join(', ') }}
+        {{ $t('group.lobby.categories') }}
+        {{ groupeStore?.groupePartyInfo?.partyDifficulty.join(', ') }}
       </span>
       <span class="pill">
-        Questions: {{ groupeStore?.groupePartyInfo?.partyQuestions.join(', ') }}
+        {{ $t('group.lobby.questions') }}
+        {{ groupeStore?.groupePartyInfo?.partyQuestions.join(', ') }}
       </span>
     </div>
 
@@ -22,12 +24,14 @@
       <!-- Players focus panel -->
       <div class="md:col-span-8 gaming-card">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="font-branding text-xl text-brand-lightGray">Joueurs</h3>
-          <span class="pill"
-            >{{ groupeStore.groupePartyInfo?.partyUsers.length }} connecté{{
-              (groupeStore?.groupePartyInfo?.partyUsers?.length ?? 0) > 1 ? 's' : ''
-            }}</span
-          >
+          <h3 class="font-branding text-xl text-brand-lightGray">
+            {{ $t('group.lobby.players') }}
+          </h3>
+          <span class="pill">{{
+            $t('group.lobby.playersConnected', {
+              count: groupeStore.groupePartyInfo?.partyUsers.length || 0,
+            })
+          }}</span>
         </div>
         <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
           <li
@@ -67,7 +71,9 @@
       <!-- Right rail with QR and actions -->
       <aside class="md:col-span-4 space-y-4">
         <div class="gaming-card">
-          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">Pour rejoindre</h3>
+          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">
+            {{ $t('group.lobby.joinSection') }}
+          </h3>
           <div
             class="text-center font-branding text-2xl tracking-wider text-brand-lightGray hover:underline cursor-pointer mb-4"
             type="button"
@@ -84,9 +90,9 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="leaveGroupe">← Quitter</button>
+      <button class="btn btn-ghost" @click="leaveGroupe">← {{ $t('group.lobby.leave') }}</button>
       <button class="btn btn-primary" :disabled="canCreateGame">
-        <font-awesome-icon icon="rocket" class="mr-2" /> Lancer la partie
+        <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
       </button>
     </div>
   </section>
@@ -94,11 +100,13 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import QRPreview from './QRPreview.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useUserStore from '@/stores/user'
 
+const { t } = useI18n()
 const emit = defineEmits<{
   (e: 'goTo', newStep: 'mode' | 'create' | 'join' | 'lobby'): void
 }>()
@@ -111,7 +119,7 @@ const proxy = instance?.proxy
 
 const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
-    proxy?.$toast.success('Copié dans le presse-papier')
+    proxy?.$toast.success(t('group.lobby.copySuccess'))
   })
 }
 
@@ -133,7 +141,7 @@ const handleJoinEvent = (data: any) => {
       id: data.id,
       user: { ...data, idUser: data.id },
     } as any)
-    proxy?.$toast.info(`${data.nickName} a rejoint le lobby`)
+    proxy?.$toast.info(t('group.lobby.userJoined', { name: data.nickName }))
   }
 }
 
@@ -144,7 +152,7 @@ const handleLeaveEvent = (data: any) => {
     groupeStore.groupePartyInfo!.partyUsers = groupeStore.groupePartyInfo!.partyUsers.filter(
       (u: any) => (u.user.idUser ?? u.user.id) !== data.id,
     )
-    proxy?.$toast.info(`${data.nickName} a quitté le lobby`)
+    proxy?.$toast.info(t('group.lobby.userLeft', { name: data.nickName }))
   }
 }
 
@@ -158,7 +166,7 @@ const handleStartEvent = (data: any) => {
 
 const handleDeleteEvent = (data: any) => {
   console.log('Lobby deleted:', data)
-  proxy?.$toast.warning('Le lobby a été supprimé')
+  proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
   // Clear store and navigate away
   groupeStore.groupeId = null
   groupeStore.groupePartyInfo = null
@@ -209,7 +217,7 @@ onMounted(async () => {
     console.log('SignalR connected in GroupLobby')
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
-    proxy?.$toast.error('Erreur de connexion temps réel')
+    proxy?.$toast.error(t('group.lobby.connectionError'))
   }
 })
 
