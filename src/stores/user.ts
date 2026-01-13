@@ -54,6 +54,27 @@ export default defineStore('user', {
       this.token = null
     },
 
+    async updateNickname(newNickname: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'me/nickname'
+      try {
+        const config = {
+          url,
+          method: 'PUT',
+          data: {
+            nickname: newNickname,
+          },
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async changePassword(currentPassword: string, newPassword: string) {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'me/change-password'

@@ -70,6 +70,14 @@ router.beforeEach((to, from, next) => {
     user.comeFrom = to.fullPath
   }
 
+  if (
+    user.isLogged &&
+    protectedRoutes.includes(from.name as string) &&
+    (to.name === 'Login' || to.name === 'Register')
+  ) {
+    return next({ name: 'Home' })
+  }
+
   next()
 })
 
