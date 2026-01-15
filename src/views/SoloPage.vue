@@ -7,7 +7,7 @@
 
 <script lang="ts" setup>
 import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import SoloSelect from '@/components/solo/SoloSelect.vue'
 import SoloQuiz from '@/components/solo/SoloQuiz.vue'
 import useSoloStore from '@/stores/solo.js'
@@ -23,6 +23,16 @@ onMounted(() => {
     soloStore.partyId = partyId
   }
 })
+
+// Si un ID est présent dans l'URL, l'assigner au store
+watch(
+  () => route.params.id,
+  (partyId) => {
+    if (partyId && typeof partyId === 'string') {
+      soloStore.partyId = partyId
+    }
+  },
+)
 
 // Nettoyer le state après avoir quitté la page
 onBeforeRouteLeave(() => {
