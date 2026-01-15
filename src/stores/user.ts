@@ -16,6 +16,7 @@ interface UserInfo {
 export default defineStore('user', {
   state: () => ({
     token: null as string | null,
+    refreshToken: null as string | null,
     loading: 0 as number,
     comeFrom: null as string | null, // To store the route before login
     userInfo: null as UserInfo | null,
@@ -24,7 +25,7 @@ export default defineStore('user', {
   persist: {
     key: 'user-store',
     storage: localStorage,
-    pick: ['token', 'comeFrom'],
+    pick: ['token', 'refreshToken', 'comeFrom'],
   },
 
   getters: {
@@ -35,7 +36,6 @@ export default defineStore('user', {
         const payload = this.decodedPayloadToken as any
         if (!payload) return false
 
-        // TODO : payload.exp is in UTC but Date.now() is in local time UTC + 1, need to set payload.exp in local time too
         const localExp = dayjs.unix(payload.exp).unix()
         const currentTimeInSeconds = Math.floor(Date.now() / 1000)
         return localExp > currentTimeInSeconds
@@ -47,11 +47,17 @@ export default defineStore('user', {
       if (!state.token) return null
       return jwtDecode(state.token)
     },
+
+    isRefreshTokenExist(): boolean {
+      if (this.refreshToken) return true
+      return false
+    },
   },
 
   actions: {
     logout() {
       this.token = null
+      this.refreshToken = null
     },
 
     async updateNickname(newNickname: string) {
@@ -188,7 +194,10 @@ export default defineStore('user', {
         const response = await axiosOverlayConnector(config)
         const responseData = response.data
 
-        this.token = responseData.token.token
+        if (responseData.token) {
+          this.token = responseData.token.token
+          this.refreshToken = responseData.token.refreshToken
+        }
 
         return responseData
       } catch (error: any) {
@@ -218,6 +227,34 @@ export default defineStore('user', {
       }
     },
 
+    async getRefreshToken() {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/refresh'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: {
+            bearer: this.token,
+            refreshToken: this.refreshToken,
+          },
+        }
+
+        const response = await axiosOverlayConnector(config)
+        const responseData = response.data
+
+        if (responseData.token) {
+          this.token = responseData.token.token
+          this.refreshToken = responseData.token.refreshToken
+        }
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async googleLogin(token: string) {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'auth/google'
@@ -232,6 +269,7 @@ export default defineStore('user', {
 
         if (responseData.token) {
           this.token = responseData.token.token
+          this.refreshToken = responseData.token.refreshToken
         }
 
         return responseData

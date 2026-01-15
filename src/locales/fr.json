@@ -47,7 +47,7 @@
       "nickname": "Pseudo",
       "nicknamePlaceholder": "Choisissez un pseudo",
       "email": "Email",
-      "emailPlaceholder": "vous@exemple.com",
+      "emailPlaceholder": "vous{'@'}exemple.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "••••••••",
       "submit": "Créer le compte",
