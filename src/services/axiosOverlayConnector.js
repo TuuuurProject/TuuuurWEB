@@ -7,13 +7,14 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
   let userStore = useUserStore()
 
   let functionConfig = {
-    getToken: () => {
+    getToken: async () => {
       return userStore.token
     },
     setToken: (token) => {
       userStore.token = token
     },
     logout() {
+      console.log('axiosOverlayConnector logout')
       userStore.logout()
     },
     errorsHandlers: {
@@ -23,17 +24,53 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
 
         reject(error)
       },
-      401: ({ error, overlayConfig, reject }) => {
-        if (overlayConfig.allowRedirect) reject(error)
-        // cas de connection en boucle en attente de validation du mail
-        // router.push({ name: 'Home' })
+      401: async ({ error, overlayConfig, resolve, reject, retry }) => {
+        if (userStore.isRefreshTokenExist) {
+          try {
+            // Appel du refresh token avec mustBeAuthenticated false pour éviter la boucle
+            const refreshUrl = import.meta.env.VITE_API_URL + 'auth/refresh'
+            const refreshConfig = {
+              url: refreshUrl,
+              method: 'POST',
+              data: {
+                bearer: userStore.token,
+                refreshToken: userStore.refreshToken,
+              },
+            }
 
-        reject(error)
-      },
-      498: ({ error, overlayConfig, reject }) => {
-        if (overlayConfig.allowRedirect) router.push({ name: 'Home' })
+            // Utilise axiosOverlay directement avec mustBeAuthenticated: false
+            // et sans les handlers personnalisés pour éviter la boucle
+            const response = await axiosOverlay(refreshConfig, {
+              retry: false,
+              functions: {
+                ...overlayConfig.functions,
+                errorsHandlers: {
+                  default: ({ error, reject }) => {
+                    reject(error)
+                  },
+                },
+              },
+            })
 
-        reject(error)
+            // Met à jour les tokens
+            userStore.token = response.data.token.token
+            userStore.refreshToken = response.data.token.refreshToken
+
+            // Retry la requête originale avec le nouveau token
+            const result = await retry()
+            resolve(result)
+          } catch (refreshError) {
+            // Le refresh token a échoué (401 ou autre), on déconnecte l'utilisateur
+            console.error('Erreur lors du refresh token:', refreshError)
+            userStore.logout()
+            reject(refreshError)
+          }
+        } else {
+          // Pas de refresh token valide, on déconnecte
+          console.log('No refresh token available, logging out.')
+          userStore.logout()
+          reject(error)
+        }
       },
     },
   }

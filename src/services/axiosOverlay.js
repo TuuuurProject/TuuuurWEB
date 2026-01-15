@@ -31,7 +31,7 @@ const defaultOverlayConfig = {
   },
 }
 
-export default function axiosOverlay(axiosConfig, overlayConfig = defaultOverlayConfig) {
+export default async function axiosOverlay(axiosConfig, overlayConfig = defaultOverlayConfig) {
   // if config missing in overlayConfig pick the default one
   overlayConfig = { ...defaultOverlayConfig, ...overlayConfig }
   overlayConfig.functions = { ...defaultOverlayConfig.functions, ...overlayConfig.functions }
@@ -44,12 +44,12 @@ export default function axiosOverlay(axiosConfig, overlayConfig = defaultOverlay
     ...overlayConfig.functions.errorsHandlers,
   }
 
-  let token = overlayConfig.functions.getToken()
+  let initialToken = await overlayConfig.functions.getToken()
 
   let instance = axios.create()
 
-  if (overlayConfig.mustBeAuthenticated) {
-    instance.defaults.headers.common['Authorization'] = 'Bearer ' + token
+  if (overlayConfig.mustBeAuthenticated && initialToken) {
+    instance.defaults.headers.common['Authorization'] = 'Bearer ' + initialToken
   }
 
   instance = overlayConfig.functions.setHeaders(instance)
@@ -67,27 +67,53 @@ export default function axiosOverlay(axiosConfig, overlayConfig = defaultOverlay
       })
       .catch(async (error) => {
         if (error.response && error.response.status === 449 && overlayConfig.retry) {
-          overlayConfig.functions.setToken(error.response.data.token)
+          try {
+            overlayConfig.functions.setToken(error.response.data.token)
+
+            // Vérifie que le token a bien été mis à jour
+            const newToken = overlayConfig.functions.getToken()
+            if (newToken && newToken !== initialToken) {
+              const retryConfig = {
+                ...overlayConfig,
+                retry: false,
+              }
+              return resolve(axiosOverlay(axiosConfig, retryConfig))
+            }
+          } catch (tokenError) {
+            console.error('Erreur lors du setToken:', tokenError)
+          }
         }
 
-        if (token !== overlayConfig.functions.getToken()) {
-          overlayConfig.retry = false
-          resolve(axiosOverlay(axiosConfig, overlayConfig))
+        // Fonction retry pour permettre la relance de la requête
+        // Récupère le token mis à jour et évite de repasser par les handlers personnalisés
+        const retry = async () => {
+          const retryConfig = {
+            ...overlayConfig,
+            retry: false,
+            mustBeAuthenticated: true,
+            functions: {
+              ...overlayConfig.functions,
+              errorsHandlers: {
+                default: overlayConfig.functions.errorsHandlers.default,
+              },
+            },
+          }
+          return axiosOverlay(axiosConfig, retryConfig)
         }
 
-        if (error.response && error.response.status === 401 && overlayConfig.mustBeAuthenticated) {
-          if (!overlayConfig.functions.errorsConfig[401]?.dontLogout)
-            overlayConfig.functions.logout()
+        // if (error.response && error.response.status === 401 && overlayConfig.mustBeAuthenticated) {
+        //   if (!overlayConfig.functions.errorsConfig[401]?.dontLogout) {
+        //     try {
+        //       overlayConfig.functions.logout()
+        //     } catch (logoutError) {
+        //       console.error('Erreur lors du logout:', logoutError)
+        //     }
+        //   }
 
-          if (!overlayConfig.functions.errorsConfig[401]?.dontStopAll) window.stop()
-        }
-
-        if (error.response && error.response.status === 498 && overlayConfig.mustBeAuthenticated) {
-          if (!overlayConfig.functions.errorsConfig[498]?.dontLogout)
-            overlayConfig.functions.logout()
-
-          if (!overlayConfig.functions.errorsConfig[498]?.dontStopAll) window.stop()
-        }
+        //   if (!overlayConfig.functions.errorsConfig[401]?.dontStopAll) {
+        //     window.stop()
+        //   }
+        // }
 
         if (error.response?.status && overlayConfig.functions.errorsHandlers[error.response.status])
           overlayConfig.functions.errorsHandlers[error.response.status]({
@@ -96,6 +122,7 @@ export default function axiosOverlay(axiosConfig, overlayConfig = defaultOverlay
             overlayConfig,
             resolve,
             reject,
+            retry,
           })
         else
           overlayConfig.functions.errorsHandlers.default({
@@ -104,6 +131,7 @@ export default function axiosOverlay(axiosConfig, overlayConfig = defaultOverlay
             overlayConfig,
             resolve,
             reject,
+            retry,
           })
       })
   })

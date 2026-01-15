@@ -15,13 +15,35 @@
 <script setup lang="ts">
 import HeaderBlock from './components/HeaderBlock.vue'
 import useUserStore from '@/stores/user.js'
+import { useRoute } from 'vue-router'
+import { onMounted } from 'vue'
 
 const userStore = useUserStore()
+const route = useRoute()
 
-// If token is expired, log out the user
-if (userStore.token && !userStore.isLogged) {
-  userStore.logout()
-}
+onMounted(async () => {
+  // On Mounted, if token is expired, try refreshToken
+  if (userStore.refreshToken && !userStore.isLogged) {
+    try {
+      await userStore.getRefreshToken()
+    } catch (error) {
+      console.error('Failed to refresh token on mount:', error)
+      // Si le refresh échoue, nettoyer les tokens
+      userStore.token = null
+      userStore.refreshToken = null
+      // Rediriger vers login si nécessaire
+      if (route.meta.mustBeAuthenticated) {
+        userStore.logout()
+      }
+      window.location.reload()
+    }
+  } else {
+    if (!userStore.isLogged && route.meta.mustBeAuthenticated) {
+      // Pas de refresh token et route protégée : rediriger vers login
+      userStore.logout()
+    }
+  }
+})
 </script>
 
 <style>
