@@ -19,22 +19,17 @@
       <nav class="hidden sm:flex gap-3">
         <button
           class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'SoloQuiz' })"
+          @click="router.push({ name: 'Home' })"
         >
-          {{ $t('nav.solo') }}
+          {{ $t('nav.home') }}
         </button>
         <button
           class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'GroupMode' })"
+          @click="router.push({ name: 'Profile' })"
         >
-          {{ $t('nav.group') }}
+          {{ $t('nav.profile') }}
         </button>
-        <button
-          class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'CompetitiveMode' })"
-        >
-          {{ $t('nav.competitive') }}
-        </button>
+        <mode-switcher />
         <language-switcher />
       </nav>
     </div>
@@ -44,6 +39,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import ModeSwitcher from './ModeSwitcher.vue'
 
 const router = useRouter()
 </script>

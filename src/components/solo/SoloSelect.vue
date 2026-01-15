@@ -213,7 +213,6 @@ const selected = reactive<Set<string>>(new Set())
 
 const questions = ref(10)
 const open = ref(false)
-const specifics = ref('')
 
 const toggle = (id: string) => {
   if (selected.has(id)) selected.delete(id)
@@ -251,7 +250,7 @@ const confirm = async () => {
 
   await soloStore.createSoloParty()
 
-  router.push({ name: 'SoloQuiz' })
+  router.push({ name: 'SoloQuizId', params: { id: soloStore.partyId } })
 }
 </script>
 
