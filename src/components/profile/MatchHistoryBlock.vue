@@ -420,7 +420,7 @@ const visiblePages = computed(() => {
 })
 
 const showMatchDetails = (match: Match) => {
-  router.push({ name: 'SoloQuizId', params: { id: match.id } })
+  router.push({ name: 'SoloQuiz', params: { id: match.id } })
 }
 
 const goToPage = async (page: number) => {

@@ -222,10 +222,12 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import useSoloStore from '@/stores/solo.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 
 const soloStore = useSoloStore()
+const router = useRouter()
 
 const TOTAL_TIME = 15 // seconds per question
 
@@ -375,6 +377,8 @@ const next = async () => {
 const restart = async () => {
   await soloStore.createSoloParty()
   await soloStore.loadPartyInfo()
+
+  router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 
   answered.value = false
   index.value = 0
