@@ -8,13 +8,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/HomePage.vue'),
   },
   {
-    path: '/solo',
+    path: '/solo/:id?',
     name: 'SoloQuiz',
-    component: () => import('../views/SoloPage.vue'),
-  },
-  {
-    path: '/solo/:id',
-    name: 'SoloQuizId',
     component: () => import('../views/SoloPage.vue'),
   },
   {
@@ -62,7 +57,7 @@ router.beforeEach((to, from, next) => {
   const user = useUserStore()
 
   // Liste des routes qui nécessitent une connexion
-  const protectedRoutes = ['Profile', 'SoloQuiz', 'SoloQuizId', 'GroupMode']
+  const protectedRoutes = ['Profile', 'SoloQuiz', 'GroupMode']
 
   // Sauvegarder la route uniquement si l'utilisateur n'est pas connecté
   // et tente d'accéder à une page protégée

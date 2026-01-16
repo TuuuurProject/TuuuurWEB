@@ -103,7 +103,7 @@
       </div>
 
       <footer class="flex flex-wrap items-center justify-end gap-3">
-        <button class="btn btn-ghost" @click="emit('back')">
+        <button class="btn btn-ghost" @click="$router.go(-1)">
           <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
         </button>
         <button class="btn btn-primary" :disabled="canStartGame" @click="open = true">
@@ -250,7 +250,7 @@ const confirm = async () => {
 
   await soloStore.createSoloParty()
 
-  router.push({ name: 'SoloQuizId', params: { id: soloStore.partyId } })
+  router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 }
 </script>
 
