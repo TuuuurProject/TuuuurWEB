@@ -21,7 +21,11 @@
         />
       </div>
       <div class="mt-8 flex items-center justify-center gap-3">
-        <button class="btn btn-primary" @click="emit('verification', digits.join(''))">
+        <button
+          data-testid="auth-code-submit"
+          class="btn btn-primary"
+          @click="emit('verification', digits.join(''))"
+        >
           {{ $t('auth.verification.submit') }}
         </button>
       </div>

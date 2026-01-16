@@ -93,7 +93,11 @@
           >
             <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
           </button>
-          <button class="btn btn-ghost text-danger" @click="userStore.logout()">
+          <button
+            data-testid="profile-logout"
+            class="btn btn-ghost text-danger"
+            @click="userStore.logout()"
+          >
             <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
           </button>
         </div>

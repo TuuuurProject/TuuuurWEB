@@ -1,8 +1,8 @@
 <template>
-  <div class="text-center p-6 text-brand-gray">
+  <div data-testid="profile-not-logged" class="text-center p-6 text-brand-gray">
     <p class="mb-4">{{ props.message }}</p>
     <div class="flex items-center justify-center gap-6">
-      <button class="btn btn-primary" @click="router.push({ name: 'Login' })">
+      <button id="btnSeConnecter" class="btn btn-primary" @click="router.push({ name: 'Login' })">
         <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.submit') }}
       </button>
 

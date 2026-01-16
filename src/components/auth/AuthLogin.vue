@@ -46,7 +46,9 @@
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
                 {{ $t('common.cancel') }}
               </button>
-              <button type="submit" class="btn btn-primary">{{ $t('auth.login.submit') }}</button>
+              <button data-testid="login-submit" type="submit" class="btn btn-primary">
+                {{ $t('auth.login.submit') }}
+              </button>
             </div>
           </form>
           <div v-if="error" class="my-5">

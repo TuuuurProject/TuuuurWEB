@@ -11,6 +11,7 @@
         <!-- Cartes interactives avec icônes gaming -->
         <div class="grid gap-6 md:grid-cols-2">
           <button
+            data-testid="group-create"
             class="gaming-card group p-8 text-left hover:shadow-neon transition-all duration-300"
             @click="step = 'create'"
           >

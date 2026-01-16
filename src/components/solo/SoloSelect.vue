@@ -106,7 +106,12 @@
         <button class="btn btn-ghost" @click="$router.go(-1)">
           <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
         </button>
-        <button class="btn btn-primary" :disabled="canStartGame" @click="open = true">
+        <button
+          data-testid="solo-start"
+          class="btn btn-primary"
+          :disabled="canStartGame"
+          @click="open = true"
+        >
           <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('solo.startAdventure') }}
         </button>
       </footer>
