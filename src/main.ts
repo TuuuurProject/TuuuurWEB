@@ -187,7 +187,7 @@ const unixToDate = function (unix: number | null, format = 'DD/MM/YYYY') {
 // Initialize MSW for E2E tests
 async function initApp() {
   // Check if we should start MSW
-  const isE2EMode = import.meta.env.MODE === 'e2e' || import.meta.env.VITE_E2E === 'true'
+  const isE2EMode = import.meta.env.VITE_MODE === 'e2e' || import.meta.env.VITE_E2E === 'true'
 
   if (isE2EMode) {
     try {

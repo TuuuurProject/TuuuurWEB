@@ -6,7 +6,7 @@ export const worker = setupWorker(...handlers)
 // Start the worker with specific configuration
 export async function startMockServiceWorker() {
   console.log('[MSW] Starting Mock Service Worker...')
-  console.log('[MSW] Current MODE:', import.meta.env.MODE)
+  console.log('[MSW] Current MODE:', import.meta.env.VITE_MODE)
   console.log('[MSW] VITE_E2E:', import.meta.env.VITE_E2E)
   console.log('[MSW] VITE_API_URL:', import.meta.env.VITE_API_URL)
   console.log('[MSW] Number of handlers registered:', handlers.length)
