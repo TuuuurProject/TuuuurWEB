@@ -1,11 +1,68 @@
 <template>
   <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.create.title') }}
-      </h2>
-      <div class="pill animate-pulse-slow">{{ $t('group.create.badge') }}</div>
+    <!-- Top header with code emphasis -->
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <font-awesome-icon icon="users" class="text-2xl text-brand-purple" />
+        <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.lobby.title') }}</h2>
+        <span class="badge-green">
+          <template v-if="currentUserIsHost">
+            {{ $t('group.lobby.hostBadge') }}
+          </template>
+          <template v-else>
+            {{ $t('group.lobby.waitingBadge') }}
+          </template>
+        </span>
+      </div>
     </header>
+
+    <!-- <template v-if="!currentUserIsHost"> -->
+    <div class="flex flex-wrap gap-2 items-center">
+      <h3 class="font-branding text-xl text-brand-lightGray">
+        <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }} :
+      </h3>
+
+      <template v-if="selectedThemes.length === 0">
+        <div class="text-brand-gray">{{ $t('group.lobby.noThemeSelected') }}</div>
+      </template>
+      <div v-else class="flex flex-wrap gap-3">
+        <div
+          v-for="cat in selectedThemes"
+          :key="cat.id"
+          class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+        >
+          <font-awesome-icon :icon="cat.icon" class="text-lg" />
+          <span>{{ cat.label }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2 items-center mb-4 mt-4">
+      <h3 class="font-branding text-xl text-brand-lightGray">
+        <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
+        {{ $t('solo.settings.difficulty') }} :
+      </h3>
+      <template v-if="selectedDifficultyList.length === 0">
+        <div class="text-brand-gray">{{ $t('group.lobby.noDifficultySelected') }}</div>
+      </template>
+      <div v-else class="flex flex-wrap gap-3">
+        <div
+          v-for="diff in selectedDifficultyList"
+          :key="diff.id"
+          class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+          :class="[diff.colorClass]"
+        >
+          <font-awesome-icon :icon="diff.icon" class="text-lg" />
+          <span>{{ diff.label }}</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 class="font-branding text-xl text-brand-lightGray">
+        <font-awesome-icon icon="gear" class="mr-2" /> {{ $t('solo.settings.questionsCount') }} :
+        {{ questions }}
+      </h3>
+    </div>
+    <!-- </template> -->
 
     <div class="grid gap-6 md:grid-cols-3">
       <!-- Cartes gaming avec backdrop blur -->
@@ -98,70 +155,20 @@
         </div>
       </div>
     </div>
-
-    <footer class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="$emit('back')">
-        <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
-      </button>
-      <button
-        data-testid="group-create-submit"
-        class="btn btn-primary"
-        :disabled="canCreateGame"
-        @click="open = true"
-      >
-        <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.create.startAdventure') }}
-      </button>
-    </footer>
-
-    <ModalDialog
-      :open="open"
-      :title="$t('group.create.modal.title')"
-      @close="open = false"
-      @confirm="confirm"
-      :loading="groupeStore.isLoading"
-    >
-      <div class="space-y-3">
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="bullseye" class="text-brand-purple" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
-          <span class="text-brand-gray">{{
-            Array.from(selected)
-              .map((id) => themesMap.get(id)?.label)
-              .join(', ')
-          }}</span>
-        </p>
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
-          <span class="text-brand-gray">{{ questions }}</span>
-        </p>
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="fire" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulty') }}</strong>
-          <span class="text-brand-gray">{{
-            selectedDifficulty
-              .map(
-                (id: number) =>
-                  difficulties.find((d: (typeof difficulties)[0]) => d.id === id)?.label,
-              )
-              .join(', ')
-          }}</span>
-        </p>
-      </div>
-    </ModalDialog>
   </section>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ModalDialog from '@/components/ModalDialog.vue'
 import useThemeStore from '@/stores/theme'
 import useGroupeStore from '@/stores/groupe'
+import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
+const userStore = useUserStore()
 
 const selectedDifficulty = ref([2]) // Moyen par défaut
 
@@ -202,6 +209,10 @@ const difficulties = computed(() => [
   },
 ])
 
+const currentUserIsHost = computed(
+  () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
+)
+
 // Récupération des thèmes
 onMounted(async () => {
   await themeStore.loadThemes()
@@ -214,9 +225,17 @@ const themesList = computed<Array<Theme>>(() => {
 
 const themesMap = computed(() => new Map(themesList.value.map((c: Theme) => [c.id, c])))
 const selected = reactive<Set<string>>(new Set())
+const selectedThemes = computed(() => {
+  return Array.from(selected)
+    .map((id) => themesMap.value.get(id))
+    .filter((t) => t !== undefined)
+})
+
+const selectedDifficultyList = computed(() => {
+  return difficulties.value.filter((d) => selectedDifficulty.value.includes(d.id))
+})
 
 const questions = ref(10)
-const open = ref(false)
 
 const toggle = (id: string) => {
   if (selected.has(id)) {
@@ -240,21 +259,6 @@ const toggleDifficulty = (id: number) => {
   } else {
     selectedDifficulty.value.push(id)
   }
-}
-
-const canCreateGame = computed(() => selected.size === 0 || selectedDifficulty.value.length === 0)
-
-const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'created'): void
-}>()
-
-const confirm = async () => {
-  open.value = false
-
-  await groupeStore.createGroupe()
-
-  if (groupeStore.groupeId) emit('created')
 }
 </script>
 

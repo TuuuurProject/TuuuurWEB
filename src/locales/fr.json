@@ -174,8 +174,7 @@
     "create": {
       "title": "Créer une partie",
       "subtitle": "Définissez les paramètres et partagez le code/QR avec vos amis.",
-      "badge": "Partagez le code avec vos amis",
-      "startAdventure": "Commencer l'aventure",
+      "editSettings": "Mettre à jour les paramètres",
       "modal": {
         "title": "Créer la partie multijoueur",
         "categories": "Catégories:",
@@ -192,8 +191,12 @@
       "joinButton": "Rejoindre"
     },
     "lobby": {
+      "noThemeSelected": "Aucun thème sélectionné",
+      "noDifficultySelected": "Aucune difficulté sélectionnée",
+      "difficulties": "Difficultés:",
       "title": "Lobby",
-      "waitingBadge": "En attente d'hôte",
+      "waitingBadge": "En attente de l'hôte",
+      "hostBadge": "Vous êtes l'hôte",
       "categories": "Catégories:",
       "questions": "Questions:",
       "players": "Joueurs",

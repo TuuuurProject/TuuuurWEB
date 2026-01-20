@@ -1,5 +1,5 @@
 <template>
-  <section data-testid="group-lobby" class="space-y-6">
+  <section data-testid="group-lobby" class="space-y-6 mt-6">
     <!-- Top header with code emphasis -->
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
@@ -91,12 +91,49 @@
 
     <div class="flex flex-wrap items-center justify-end gap-3">
       <button class="btn btn-ghost" @click="leaveGroupe">
-        <font-awesome-icon icon="arrow-left" /> {{ $t('group.lobby.leave') }}
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
       </button>
-      <button class="btn btn-primary" :disabled="canCreateGame">
+      <button v-if="currentUserIsHost" class="btn btn-primary" :disabled="canCreateGame">
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
       </button>
     </div>
+
+    <!-- <ModalDialog
+      :open="open"
+      :title="$t('group.create.modal.title')"
+      @close="open = false"
+      @confirm="confirm"
+      :loading="groupeStore.isLoading"
+    >
+      <div class="space-y-3">
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="bullseye" class="text-brand-purple" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
+          <span class="text-brand-gray">{{
+            Array.from(selected)
+              .map((id) => themesMap.get(id)?.label)
+              .join(', ')
+          }}</span>
+        </p>
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
+          <span class="text-brand-gray">{{ questions }}</span>
+        </p>
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="fire" class="text-brand-orange" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulty') }}</strong>
+          <span class="text-brand-gray">{{
+            selectedDifficulty
+              .map(
+                (id: number) =>
+                  difficulties.find((d: (typeof difficulties)[0]) => d.id === id)?.label,
+              )
+              .join(', ')
+          }}</span>
+        </p>
+      </div>
+    </ModalDialog> -->
   </section>
 </template>
 
@@ -110,7 +147,7 @@ import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
 const emit = defineEmits<{
-  (e: 'goTo', newStep: 'mode' | 'create' | 'join' | 'lobby'): void
+  (e: 'goTo', newStep: 'mode' | 'join' | 'lobby'): void
 }>()
 
 const groupeStore = useGroupeStore()
@@ -118,6 +155,10 @@ const userStore = useUserStore()
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
+
+const currentUserIsHost = computed(
+  () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
+)
 
 const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
@@ -175,48 +216,23 @@ const handleDeleteEvent = (data: any) => {
   emit('goTo', 'mode')
 }
 
+const allEvents = [
+  { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
+  { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
+  { name: GroupEvent.PartyStarted, handler: handleStartEvent },
+  { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
+]
+
 // Setup SignalR connection
 onMounted(async () => {
   try {
     await signalrService.connect(userStore.token || '')
 
-    // Subscribe to events
-    signalrService.on('Notify', (message: unknown) => {
-      console.log('Notification received:', message)
-
-      // Parse the notification if it's structured
-      if (typeof message === 'string') {
-        try {
-          const notification = JSON.parse(message)
-
-          switch (notification.action) {
-            case GroupEvent.Join:
-            case 'Join':
-              handleJoinEvent(notification.user)
-              break
-            case GroupEvent.Leave:
-            case 'Leave':
-              handleLeaveEvent(notification.user)
-              break
-            case GroupEvent.Start:
-            case 'Start':
-              handleStartEvent(notification.user)
-              break
-            case GroupEvent.Delete:
-            case 'Delete':
-              handleDeleteEvent(notification.user)
-              break
-            default:
-              console.log('Unknown event:', notification)
-          }
-        } catch {
-          // If not JSON, just log the message
-          console.log('Notification:', message)
-        }
-      }
+    allEvents.forEach((event) => {
+      signalrService.on(event.name, (data: unknown) => {
+        event.handler(data)
+      })
     })
-
-    console.log('SignalR connected in GroupLobby')
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
     proxy?.$toast.error(t('group.lobby.connectionError'))
@@ -225,7 +241,10 @@ onMounted(async () => {
 
 // Cleanup SignalR connection
 onUnmounted(() => {
-  signalrService.off('Notify')
+  allEvents.forEach((event) => {
+    signalrService.off(event.name, event.handler)
+  })
+  signalrService.disconnect()
 })
 </script>
 

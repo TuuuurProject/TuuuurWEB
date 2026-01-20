@@ -175,7 +175,7 @@
       "title": "Create a Game",
       "subtitle": "Set parameters and share the code/QR with your friends.",
       "badge": "Share the code with your friends",
-      "startAdventure": "Start Adventure",
+      "editSettings": "Update Settings",
       "modal": {
         "title": "Create Multiplayer Game",
         "categories": "Categories:",
@@ -186,14 +186,17 @@
     "join": {
       "title": "Join a Game",
       "subtitle": "Enter a code to join the lobby and start the adventure.",
-      "badge": "Enter the room code",
       "code": "Game Code",
       "example": "Example: 538950",
       "joinButton": "Join"
     },
     "lobby": {
+      "noThemeSelected": "No theme selected",
+      "noDifficultySelected": "No difficulty selected",
+      "difficulties": "Difficulties:",
       "title": "Lobby",
-      "waitingBadge": "Waiting for host",
+      "waitingBadge": "Waiting for the host",
+      "hostBadge": "You are the host",
       "categories": "Categories:",
       "questions": "Questions:",
       "players": "Players",
