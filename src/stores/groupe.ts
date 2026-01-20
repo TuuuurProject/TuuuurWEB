@@ -58,15 +58,35 @@ export default defineStore('groupe', {
     groupeId: null as string | null,
     groupePartyInfo: null as GroupePartyInfo | null,
     loading: 0 as number,
+    loadingCreationGroupe: 0 as number,
   }),
 
   getters: {
     isLoading: (state) => state.loading > 0,
+    isLoadingCreationGroupe: (state) => state.loadingCreationGroupe > 0,
   },
 
   actions: {
-    async createGroupe() {
+    async updateSettings(settings: any) {
       this.loading++
+      const url = import.meta.env.VITE_API_URL + 'group/settings'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: settings,
+        }
+        await axiosOverlayConnector(config)
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async createGroupe() {
+      this.loadingCreationGroupe++
       const url = import.meta.env.VITE_API_URL + 'group/create'
       try {
         const config = {
@@ -81,7 +101,7 @@ export default defineStore('groupe', {
         const errData = error?.response?.data
         return errData ?? error
       } finally {
-        this.loading--
+        this.loadingCreationGroupe--
       }
     },
 

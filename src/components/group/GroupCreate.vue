@@ -16,55 +16,55 @@
       </div>
     </header>
 
-    <!-- <template v-if="!currentUserIsHost"> -->
-    <div class="flex flex-wrap gap-2 items-center">
-      <h3 class="font-branding text-xl text-brand-lightGray">
-        <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }} :
-      </h3>
+    <template v-if="!currentUserIsHost">
+      <div class="flex flex-wrap gap-2 items-center">
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }} :
+        </h3>
 
-      <template v-if="selectedThemes.length === 0">
-        <div class="text-brand-gray">{{ $t('group.lobby.noThemeSelected') }}</div>
-      </template>
-      <div v-else class="flex flex-wrap gap-3">
-        <div
-          v-for="cat in selectedThemes"
-          :key="cat.id"
-          class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-        >
-          <font-awesome-icon :icon="cat.icon" class="text-lg" />
-          <span>{{ cat.label }}</span>
+        <template v-if="selectedThemes.length === 0">
+          <div class="text-brand-gray">{{ $t('group.lobby.noThemeSelected') }}</div>
+        </template>
+        <div v-else class="flex flex-wrap gap-3">
+          <div
+            v-for="cat in selectedThemes"
+            :key="cat.id"
+            class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+          >
+            <font-awesome-icon :icon="cat.icon" class="text-lg" />
+            <span>{{ cat.label }}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="flex flex-wrap gap-2 items-center mb-4 mt-4">
-      <h3 class="font-branding text-xl text-brand-lightGray">
-        <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-        {{ $t('solo.settings.difficulty') }} :
-      </h3>
-      <template v-if="selectedDifficultyList.length === 0">
-        <div class="text-brand-gray">{{ $t('group.lobby.noDifficultySelected') }}</div>
-      </template>
-      <div v-else class="flex flex-wrap gap-3">
-        <div
-          v-for="diff in selectedDifficultyList"
-          :key="diff.id"
-          class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-          :class="[diff.colorClass]"
-        >
-          <font-awesome-icon :icon="diff.icon" class="text-lg" />
-          <span>{{ diff.label }}</span>
+      <div class="flex flex-wrap gap-2 items-center mb-4 mt-4">
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
+          {{ $t('solo.settings.difficulty') }} :
+        </h3>
+        <template v-if="selectedDifficultyList.length === 0">
+          <div class="text-brand-gray">{{ $t('group.lobby.noDifficultySelected') }}</div>
+        </template>
+        <div v-else class="flex flex-wrap gap-3">
+          <div
+            v-for="diff in selectedDifficultyList"
+            :key="diff.id"
+            class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+            :class="[diff.colorClass]"
+          >
+            <font-awesome-icon :icon="diff.icon" class="text-lg" />
+            <span>{{ diff.label }}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      <h3 class="font-branding text-xl text-brand-lightGray">
-        <font-awesome-icon icon="gear" class="mr-2" /> {{ $t('solo.settings.questionsCount') }} :
-        {{ questions }}
-      </h3>
-    </div>
-    <!-- </template> -->
+      <div>
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="gear" class="mr-2" /> {{ $t('solo.settings.questionsCount') }} :
+          {{ questions }}
+        </h3>
+      </div>
+    </template>
 
-    <div class="grid gap-6 md:grid-cols-3">
+    <div v-if="currentUserIsHost" class="grid gap-6 md:grid-cols-3">
       <!-- Cartes gaming avec backdrop blur -->
       <div class="md:col-span-2 gaming-card">
         <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
@@ -159,10 +159,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useThemeStore from '@/stores/theme'
-import useGroupeStore from '@/stores/groupe'
+import useGroupeStore, { type PartyDifficulty } from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
@@ -213,8 +213,43 @@ const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
 )
 
-// Récupération des thèmes
+watch(
+  () => groupeStore.groupePartyInfo?.nbQuestions,
+  (newInfo) => {
+    if (newInfo) {
+      questions.value = newInfo
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.partyDifficulty,
+  (newDiff) => {
+    if (newDiff && Array.isArray(newDiff) && !currentUserIsHost.value) {
+      selectedDifficulty.value = newDiff.map((d: PartyDifficulty) => d.idDifficulty as number)
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.partyTheme,
+  (newThemes) => {
+    if (newThemes && Array.isArray(newThemes) && !currentUserIsHost.value) {
+      selected.clear()
+      newThemes.forEach((theme) => selected.add(theme.idTheme as string))
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.scoreEachRound,
+  (newValue) => {
+    if (!currentUserIsHost.value) scoreEachRound.value = newValue as boolean
+  },
+)
+
 onMounted(async () => {
+  // Récupération des thèmes
   await themeStore.loadThemes()
 })
 
@@ -237,12 +272,41 @@ const selectedDifficultyList = computed(() => {
 
 const questions = ref(10)
 
+const scoreEachRound = ref(false)
+
 const toggle = (id: string) => {
   if (selected.has(id)) {
     selected.delete(id)
   } else {
     selected.add(id)
   }
+}
+
+const groupSettingsComputed = computed(() => {
+  return {
+    themes: Array.from(selected),
+    difficulties: selectedDifficulty.value,
+    nbQuestions: questions.value,
+    scoreEachRound: scoreEachRound.value,
+  }
+})
+
+let updateTimerId = null as unknown as ReturnType<typeof setTimeout>
+
+watch(
+  groupSettingsComputed,
+  () => {
+    if (!currentUserIsHost.value) return
+    clearTimeout(updateTimerId)
+    updateTimerId = setTimeout(() => {
+      updateSettingsGroupe()
+    }, 500)
+  },
+  { deep: true },
+)
+
+const updateSettingsGroupe = async () => {
+  await groupeStore.updateSettings(groupSettingsComputed.value)
 }
 
 const inc = () => {

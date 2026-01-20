@@ -73,7 +73,7 @@
     </div>
 
     <template v-else-if="step === 'lobby'">
-      <overlay-block :loading="groupeStore.isLoading">
+      <overlay-block :loading="groupeStore.isLoadingCreationGroupe">
         <GroupCreate />
         <GroupLobby @back="step = 'mode'" @go-to="goTo" />
       </overlay-block>

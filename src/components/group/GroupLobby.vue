@@ -29,7 +29,7 @@
           </h3>
           <span class="pill">{{
             $t('group.lobby.playersConnected', {
-              count: groupeStore.groupePartyInfo?.partyUsers.length || 0,
+              count: groupeStore.groupePartyInfo?.partyUsers?.length || 0,
             })
           }}</span>
         </div>
@@ -216,11 +216,22 @@ const handleDeleteEvent = (data: any) => {
   emit('goTo', 'mode')
 }
 
+const handlePartyUpdateEvent = (data: any) => {
+  // Update party info
+  if (groupeStore.groupePartyInfo !== null) {
+    groupeStore.groupePartyInfo.partyDifficulty = data.partyDifficulty
+    groupeStore.groupePartyInfo.nbQuestions = data.nbQuestions
+    groupeStore.groupePartyInfo.partyTheme = data.partyTheme
+    groupeStore.groupePartyInfo.scoreEachRound = data.scoreEachRound
+  }
+}
+
 const allEvents = [
   { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
   { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
   { name: GroupEvent.PartyStarted, handler: handleStartEvent },
   { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
+  { name: GroupEvent.PartyUpdated, handler: handlePartyUpdateEvent },
 ]
 
 // Setup SignalR connection
