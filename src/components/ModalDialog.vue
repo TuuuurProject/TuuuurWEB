@@ -14,7 +14,7 @@
             <header class="mb-4 flex items-start justify-between gap-4">
               <h3 class="font-display text-2xl text-brand-lightGray glow-text">{{ title }}</h3>
               <button
-                class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200 hover:rotate-90"
+                class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 h-[40px] w-[40px] flex items-center justify-center"
                 :aria-label="$t('common.close')"
                 @click="$emit('close')"
               >

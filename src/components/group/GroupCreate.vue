@@ -300,7 +300,7 @@ watch(
     clearTimeout(updateTimerId)
     updateTimerId = setTimeout(() => {
       updateSettingsGroupe()
-    }, 500)
+    }, 300)
   },
   { deep: true },
 )

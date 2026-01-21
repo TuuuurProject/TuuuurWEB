@@ -19,6 +19,9 @@ export enum GroupEvent {
   /** Les paramètres/état du salon sont mis à jour. */
   PartyUpdated = 'OnPartyUpdated',
 
+  /** Lancer le démarrage de la partie */
+  StartGroupParty = 'StartGroupParty',
+
   /** La partie démarre officiellement pour le groupe. */
   PartyStarted = 'OnPartyStarted',
 
@@ -147,6 +150,17 @@ class SignalRService {
     }
 
     return this.connection.invoke<T>(methodName, ...args)
+  }
+
+  async send(methodName: string, ...args: any[]): Promise<void> {
+    if (!this.connection) {
+      throw new Error('SignalR connection is not initialized. Call connect() first.')
+    }
+    if (this.connection.state !== HubConnectionState.Connected) {
+      throw new Error(`SignalR is not connected (state: ${this.connection.state}).`)
+    }
+
+    return this.connection.send(methodName, ...args)
   }
 
   isConnected(): boolean {

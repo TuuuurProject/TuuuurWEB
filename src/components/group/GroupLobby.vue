@@ -93,54 +93,63 @@
       <button class="btn btn-ghost" @click="leaveGroupe">
         <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
       </button>
-      <button v-if="currentUserIsHost" class="btn btn-primary" :disabled="canCreateGame">
+      <button
+        v-if="currentUserIsHost"
+        class="btn btn-primary"
+        :disabled="canCreateGame"
+        @click="openModalStartGame = true"
+      >
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
       </button>
     </div>
 
-    <!-- <ModalDialog
-      :open="open"
+    <ModalDialog
+      :open="openModalStartGame"
       :title="$t('group.create.modal.title')"
-      @close="open = false"
-      @confirm="confirm"
       :loading="groupeStore.isLoading"
+      @confirm="confirmStartGame"
+      @close="openModalStartGame = false"
     >
       <div class="space-y-3">
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="bullseye" class="text-brand-purple" />
           <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
           <span class="text-brand-gray">{{
-            Array.from(selected)
-              .map((id) => themesMap.get(id)?.label)
+            Array.from(groupeStore?.groupePartyInfo?.partyTheme || [])
+              .map((theme: { theme?: { label?: string } }) => theme?.theme?.label)
               .join(', ')
           }}</span>
         </p>
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
           <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
-          <span class="text-brand-gray">{{ questions }}</span>
+          <span class="text-brand-gray">{{ groupeStore?.groupePartyInfo?.nbQuestions }}</span>
         </p>
+
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="fire" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulty') }}</strong>
-          <span class="text-brand-gray">{{
-            selectedDifficulty
-              .map(
-                (id: number) =>
-                  difficulties.find((d: (typeof difficulties)[0]) => d.id === id)?.label,
-              )
-              .join(', ')
-          }}</span>
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulties') }} </strong>
+          <span class="text-brand-gray">
+            {{
+              Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
+                .map(
+                  (difficulty: { difficulty?: { label?: string } }) =>
+                    difficulty?.difficulty?.label,
+                )
+                .join(', ')
+            }}</span
+          >
         </p>
       </div>
-    </ModalDialog> -->
+    </ModalDialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import QRPreview from './QRPreview.vue'
+import ModalDialog from '@/components/ModalDialog.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useUserStore from '@/stores/user'
@@ -156,6 +165,8 @@ const userStore = useUserStore()
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
 
+const openModalStartGame = ref(false)
+
 const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
 )
@@ -166,8 +177,18 @@ const copyCode = async () => {
   })
 }
 
+// Start game when :
+// The current user is the host
+// There is at least one more player in the lobby
+// There is at least one theme selected
+// There is at least one difficulty selected
 const canCreateGame = computed(() => {
-  return (groupeStore?.groupePartyInfo?.partyUsers.length ?? 0) < 1
+  return (
+    !currentUserIsHost.value ||
+    (groupeStore?.groupePartyInfo?.partyUsers.length ?? 0) < 1 ||
+    (groupeStore?.groupePartyInfo?.partyTheme.length ?? 0) < 1 ||
+    (groupeStore?.groupePartyInfo?.partyDifficulty.length ?? 0) < 1
+  )
 })
 
 const leaveGroupe = async () => {
@@ -226,6 +247,15 @@ const handlePartyUpdateEvent = (data: any) => {
   }
 }
 
+const confirmStartGame = async () => {
+  if (signalrService.isConnected()) {
+    await signalrService.send(GroupEvent.StartGroupParty, [])
+    // await signalrService.invoke(GroupEvent.StartGroupParty)
+    openModalStartGame.value = false
+  } else {
+    proxy?.$toast.error(t('group.lobby.connectionError'))
+  }
+}
 const allEvents = [
   { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
   { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
