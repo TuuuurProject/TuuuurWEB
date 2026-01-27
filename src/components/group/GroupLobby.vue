@@ -156,7 +156,7 @@ import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
 const emit = defineEmits<{
-  (e: 'goTo', newStep: 'mode' | 'join' | 'lobby'): void
+  (e: 'goTo', newStep: 'mode' | 'join' | 'lobby' | 'game'): void
 }>()
 
 const groupeStore = useGroupeStore()
@@ -198,7 +198,6 @@ const leaveGroupe = async () => {
 
 // SignalR event handlers
 const handleJoinEvent = (data: any) => {
-  console.log('User joined:', data)
   // Refresh group info when someone joins
   if (groupeStore.groupeId) {
     groupeStore?.groupePartyInfo?.partyUsers.push({
@@ -210,7 +209,6 @@ const handleJoinEvent = (data: any) => {
 }
 
 const handleLeaveEvent = (data: any) => {
-  console.log('User left:', data)
   // Refresh group info when someone leaves
   if (groupeStore.groupeId) {
     groupeStore.groupePartyInfo!.partyUsers = groupeStore.groupePartyInfo!.partyUsers.filter(
@@ -222,14 +220,15 @@ const handleLeaveEvent = (data: any) => {
 
 const handleStartEvent = (data: any) => {
   console.log('Game started:', data)
+  groupeStore.groupePartyInfo = data
+  emit('goTo', 'game')
   // Navigate to game or update state
   // proxy?.$toast.success('La partie commence !')
   // You might want to navigate to a game view here
   // router.push({ name: 'game', params: { id: groupeStore.groupeId } })
 }
 
-const handleDeleteEvent = (data: any) => {
-  console.log('Lobby deleted:', data)
+const handleDeleteEvent = () => {
   proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
   // Clear store and navigate away
   groupeStore.groupeId = null
@@ -249,19 +248,25 @@ const handlePartyUpdateEvent = (data: any) => {
 
 const confirmStartGame = async () => {
   if (signalrService.isConnected()) {
-    await signalrService.send(GroupEvent.StartGroupParty, [])
-    // await signalrService.invoke(GroupEvent.StartGroupParty)
+    await signalrService.send(GroupEvent.StartGroupParty)
     openModalStartGame.value = false
   } else {
     proxy?.$toast.error(t('group.lobby.connectionError'))
   }
 }
+
+const handleOnError = (error: any) => {
+  console.log('Lobby deleted:', error)
+  proxy?.$toast.error(error)
+}
+
 const allEvents = [
   { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
   { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
   { name: GroupEvent.PartyStarted, handler: handleStartEvent },
   { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
   { name: GroupEvent.PartyUpdated, handler: handlePartyUpdateEvent },
+  { name: GroupEvent.Error, handler: handleOnError },
 ]
 
 // Setup SignalR connection
@@ -285,7 +290,7 @@ onUnmounted(() => {
   allEvents.forEach((event) => {
     signalrService.off(event.name, event.handler)
   })
-  signalrService.disconnect()
+  // signalrService.disconnect()
 })
 </script>
 

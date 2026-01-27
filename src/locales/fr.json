@@ -209,6 +209,9 @@
       "userLeft": "{name} a quitté le lobby",
       "lobbyDeleted": "Le lobby a été supprimé",
       "connectionError": "Erreur de connexion temps réel"
+    },
+    "quiz": {
+      "getReady": "Préparez-vous…"
     }
   },
   "competitive": {

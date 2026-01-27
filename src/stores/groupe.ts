@@ -64,6 +64,9 @@ export default defineStore('groupe', {
   getters: {
     isLoading: (state) => state.loading > 0,
     isLoadingCreationGroupe: (state) => state.loadingCreationGroupe > 0,
+    getQuestions: (state) => {
+      return state.groupePartyInfo ? (state.groupePartyInfo as any).partyQuestions : []
+    },
   },
 
   actions: {

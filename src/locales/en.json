@@ -209,6 +209,9 @@
       "userLeft": "{name} left the lobby",
       "lobbyDeleted": "Lobby has been deleted",
       "connectionError": "Real-time connection error"
+    },
+    "quiz": {
+      "getReady": "Préparez-vous…"
     }
   },
   "competitive": {

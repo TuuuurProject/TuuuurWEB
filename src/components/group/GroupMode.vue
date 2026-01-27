@@ -80,6 +80,8 @@
     </template>
 
     <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
+
+    <GroupQuiz v-else-if="step === 'game'" @exit="step = 'mode'" />
   </section>
 </template>
 
@@ -92,11 +94,12 @@ import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import useUserStore from '@/stores/user.js'
 import useGroupeStore from '@/stores/groupe.js'
+import GroupQuiz from '@/components/group/GroupQuiz.vue'
 
 const userStore = useUserStore()
 const groupeStore = useGroupeStore()
 
-type Step = 'mode' | 'join' | 'lobby'
+type Step = 'mode' | 'join' | 'lobby' | 'game'
 const step = ref<Step>('mode')
 
 const setupGame = () => {
