@@ -31,6 +31,9 @@ export enum GroupEvent {
   /** Envoi de la question courante au joueur (unicast). */
   QuestionSend = 'OnQuestionSend',
 
+  /** Envoi d’une réponse par un joueur (unicast). */
+  SendAnswer = 'SendAnswer',
+
   /** Indique qu’un joueur a validé sa réponse (feedback UI). */
   UserAnswer = 'OnUserAnswer',
 
@@ -103,6 +106,8 @@ class SignalRService {
       await this.connection.stop()
       this.connection = null
       this.handlers.clear()
+
+      console.log('SignalR disconnected')
     }
   }
 

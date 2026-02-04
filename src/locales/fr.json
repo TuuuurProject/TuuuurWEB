@@ -1,5 +1,6 @@
 {
   "common": {
+    "leave": "Quitter",
     "back": "Retour",
     "cancel": "Annuler",
     "confirm": "Confirmer",
@@ -211,7 +212,27 @@
       "connectionError": "Erreur de connexion temps réel"
     },
     "quiz": {
-      "getReady": "Préparez-vous…"
+      "title": "Quiz en Groupe",
+      "getReady": "Préparez-vous…",
+      "home": "Accueil",
+      "question": "Question {current} / {total}",
+      "score": "Score:",
+      "timeRemaining": "Temps restant: {time}s",
+      "correct": "Correct +{points} pts",
+      "incorrect": "Mauvaise réponse",
+      "skip": "Passer",
+      "next": "Suivant",
+      "finished": "Quiz Terminé !",
+      "finalScore": "Score Final",
+      "questions": "Questions",
+      "successRate": "Réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des Réponses",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
+      "replay": "Rejouer",
+      "errorAnswering": "Erreur lors de la soumission de la réponse"
     }
   },
   "competitive": {

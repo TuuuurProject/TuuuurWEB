@@ -4,16 +4,16 @@
       <div class="flex items-center gap-3">
         <button class="pill" @click="exitQuizGame">
           <font-awesome-icon icon="arrow-left" class="mr-2" />
-          {{ $t('solo.quiz.home') }}
+          {{ $t('group.quiz.home') }}
         </button>
-        <h2 class="font-branding text-3xl">{{ $t('solo.quiz.title') }}</h2>
+        <h2 class="font-branding text-3xl">{{ $t('group.quiz.title') }}</h2>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
         <span class="pill">{{
-          $t('solo.quiz.question', { current: index + 1, total: nbMaxQuestions })
+          $t('group.quiz.question', { current: lastQuestionIndex + 1, total: nbMaxQuestions })
         }}</span>
         <span class="pill">
-          {{ $t('solo.quiz.score') }} <strong>{{ score }}</strong>
+          {{ $t('group.quiz.score') }} <strong>{{ globalUserScore }}</strong>
         </span>
       </div>
     </header>
@@ -31,7 +31,7 @@
         />
       </div>
       <div class="px-6 py-3 flex items-center justify-between text-sm text-brand-lightGray">
-        <span>{{ $t('solo.quiz.timeRemaining', { time: remaining.toFixed(1) }) }}</span>
+        <span>{{ $t('group.quiz.timeRemaining', { time: remaining.toFixed(1) }) }}</span>
       </div>
     </div>
 
@@ -60,13 +60,13 @@
         <div class="mt-6 flex items-center justify-between">
           <div class="text-sm" v-if="answered">
             <span v-if="wasCorrect" class="badge-green">{{
-              $t('solo.quiz.correct', { points: lastPoints })
+              $t('group.quiz.correct', { points: lastPoints })
             }}</span>
-            <span v-else class="badge-orange">{{ $t('solo.quiz.incorrect') }}</span>
+            <span v-else class="badge-orange">{{ $t('group.quiz.incorrect') }}</span>
           </div>
-          <div class="flex items-center gap-3 ml-auto">
+          <!-- <div class="flex items-center gap-3 ml-auto">
             <button class="btn btn-secondary" @click="skip" :disabled="answered">
-              {{ $t('solo.quiz.skip') }}
+              {{ $t('group.quiz.skip') }}
               <span
                 v-if="!answered"
                 class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
@@ -75,7 +75,7 @@
               </span>
             </button>
             <button class="btn btn-primary relative" @click="next" :disabled="!answered">
-              {{ $t('solo.quiz.next') }}
+              {{ $t('group.quiz.next') }}
               <span
                 v-if="answered"
                 class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
@@ -83,7 +83,7 @@
                 <font-awesome-icon icon="turn-down" />
               </span>
             </button>
-          </div>
+          </div> -->
         </div>
       </overlay-block>
     </div>
@@ -100,29 +100,23 @@
           <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
         </div>
         <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">
-          {{ $t('solo.quiz.finished') }}
+          {{ $t('group.quiz.finished') }}
         </h3>
         <div class="flex items-center justify-center gap-6 mt-4">
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.finalScore') }}</div>
-            <div class="font-branding text-3xl text-brand-yellow">{{ score }}</div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.finalScore') }}</div>
+            <div class="font-branding text-3xl text-brand-yellow">{{ globalUserScore }}</div>
           </div>
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.questions') }}</div>
-            <div class="font-branding text-3xl text-brand-lightGray">
-              {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
-            </div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.questions') }}</div>
+            <div class="font-branding text-3xl text-brand-lightGray">INFO</div>
           </div>
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.successRate') }}</div>
+            <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.successRate') }}</div>
             <div class="font-branding text-3xl text-brand-green">
-              {{
-                Math.round(
-                  (correctAnswersCount / (soloPartyInfoComputed as PartyInfo)?.nbQuestions) * 100,
-                )
-              }}%
+              {{ Math.round((correctAnswersCount / 10) * 100) }}%
             </div>
           </div>
         </div>
@@ -131,12 +125,12 @@
         <div class="flex items-center justify-center gap-3 mt-6">
           <div class="badge-success">
             <font-awesome-icon icon="check-circle" class="mr-1" />
-            {{ correctAnswersCount }} {{ $t('solo.quiz.correctAnswers') }}
+            {{ correctAnswersCount }} {{ $t('group.quiz.correctAnswers') }}
           </div>
           <div class="badge-warning">
             <font-awesome-icon icon="times-circle" class="mr-1" />
-            {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions - correctAnswersCount }}
-            {{ $t('solo.quiz.incorrectAnswers') }}
+            {{ 10 - correctAnswersCount }}
+            {{ $t('group.quiz.incorrectAnswers') }}
           </div>
         </div>
       </div>
@@ -149,7 +143,9 @@
           >
             <font-awesome-icon icon="list-check" />
           </div>
-          <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
+          <h3 class="font-branding text-2xl text-brand-lightGray">
+            {{ $t('group.quiz.summary') }}
+          </h3>
         </div>
 
         <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
@@ -158,6 +154,7 @@
             :key="idx"
             class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
           >
+            {{ questionData }}
             <!-- En-tête de la question -->
             <div class="flex items-start gap-3 mb-3">
               <div
@@ -176,11 +173,11 @@
                 </p>
                 <div v-if="isQuestionCorrect(questionData)" class="badge-success text-xs">
                   <font-awesome-icon icon="check" class="mr-1" />
-                  {{ $t('solo.quiz.goodAnswer') }} +{{ getQuestionPoints(questionData) }}
+                  {{ $t('group.quiz.goodAnswer') }} +{{ getQuestionPoints(questionData) }}
                   pts
                 </div>
                 <div v-else class="badge-warning text-xs">
-                  <font-awesome-icon icon="times" class="mr-1" /> {{ $t('solo.quiz.badAnswer') }}
+                  <font-awesome-icon icon="times" class="mr-1" /> {{ $t('group.quiz.badAnswer') }}
                 </div>
               </div>
             </div>
@@ -209,11 +206,8 @@
 
       <!-- Actions finales -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
-          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
-        </button>
-        <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
-          <font-awesome-icon icon="rotate-right" class="mr-2" /> {{ $t('solo.quiz.replay') }}
+        <button class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.leave') }}
         </button>
       </div>
     </div>
@@ -246,38 +240,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, getCurrentInstance, h } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useGroupeStore from '@/stores/groupe'
 
 const groupeStore = useGroupeStore()
 
-const router = useRouter()
 const { t } = useI18n()
 
 const TOTAL_TIME = 15 // seconds per question
-
-interface PartyInfo {
-  nbQuestions: number
-  score: number
-  finish: boolean
-}
 
 const emit = defineEmits<{
   (e: 'exit'): void
 }>()
 
-const index = ref(0)
 const nbMaxQuestions = ref(0)
-const score = ref(0)
 const answered = ref(false)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
-const comeFromHistory = ref(false)
+const globalUserScore = ref(0)
+const userAnswerId = ref(<number | null>null)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
@@ -354,25 +339,22 @@ function clearTimer() {
   }
 }
 
-const answer = async (opt: { id: string }) => {
+const answer = async (opt: { id: number }) => {
   if (answered.value) return
   answered.value = true
 
   clearTimer()
 
-  // Load the answer by ID
-  // await soloStore.loadAnswerById(parseInt(opt.id))
+  // Set user answer ID
+  userAnswerId.value = opt.id
 
-  // Test if correct
-  wasCorrect.value = isUserAnswerIsCorrect(parseInt(opt.id))
+  console.log('Answer selected answer ID:', opt.id)
 
-  let newScore = 0
-  if (wasCorrect.value) {
-    newScore = getScoreAfterAnswer()
-    lastPoints.value = Math.abs(score.value - newScore)
-    score.value = newScore
+  // Answer
+  if (signalrService.isConnected()) {
+    await signalrService.send(GroupEvent.SendAnswer, opt.id)
   } else {
-    lastPoints.value = 0
+    proxy?.$toast.error(t('group.quiz.errorAnswering'))
   }
 }
 
@@ -380,50 +362,28 @@ const skip = async () => {
   if (!answered.value) {
     // Load the answer by ID, set to null to indicate skip
     // await soloStore.loadAnswerById(null)
-
-    answered.value = true
-    clearTimer()
-    wasCorrect.value = false
-    lastPoints.value = 0
+    // answered.value = true
+    // clearTimer()
+    // wasCorrect.value = false
+    // lastPoints.value = 0
   }
 }
-
-const soloPartyInfoComputed = computed(() => {
-  // if (soloStore.isLoading) return null
-  // return soloStore.partyInfo
-  return null
-})
 
 const next = async () => {
   if (!answered.value) return
 
   // await soloStore.loadPartyInfo()
 
-  if (index.value + 1 >= nbMaxQuestions.value) {
-    finished.value = true
-    clearTimer()
-    return
-  }
-  index.value++
-  answered.value = false
-  wasCorrect.value = false
-  lastPoints.value = 0
-  startTimer()
-}
-
-const restart = async () => {
-  // await soloStore.createSoloParty()
-  // await soloStore.loadPartyInfo()
-
-  router.replace({ name: 'SoloQuiz', params: { id: null } })
-
-  answered.value = false
-  index.value = 0
-  score.value = 0
-  wasCorrect.value = false
-  lastPoints.value = 0
-  finished.value = false
-  startTimer()
+  // if (index.value + 1 >= nbMaxQuestions.value) {
+  //   finished.value = true
+  //   clearTimer()
+  //   return
+  // }
+  // // index.value++
+  // answered.value = false
+  // wasCorrect.value = false
+  // lastPoints.value = 0
+  // startTimer()
 }
 
 function buttonClass(valid: boolean) {
@@ -455,38 +415,29 @@ const currentAnswer = computed(() => {
   return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? ''
 })
 
-const isUserAnswerIsCorrect = (answerId: number) => {
-  const currentQuestionData = allQuestionsParty.value[lastQuestionIndex.value]
-  if (!currentQuestionData) return false
-
-  const answer = currentQuestionData.question.answer.find(
-    (ans: { id: number }) => ans.id === answerId,
-  )
-  return answer ? answer.valid : false
-}
-
-const getScoreAfterAnswer = () => {
-  // return soloStore.partyInfo ? (soloStore.partyInfo as PartyInfo).score : 0
-  return 0
-}
-
 // Fonctions pour le récapitulatif
 const correctAnswersCount = computed(() => {
   return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
 })
 
 const isQuestionCorrect = (questionData: any) => {
-  if (!questionData?.userPartyQuestion?.correct) return false
-  return questionData?.userPartyQuestion?.correct
+  if (!questionData?.correct) return false
+  return questionData?.correct
 }
 
 const getQuestionPoints = (questionData: any) => {
   // Simuler les points gagnés (à adapter selon votre logique)
-  return questionData?.userPartyQuestion?.score || 100
+  return questionData?.score || 100
 }
 
 const isUserAnswer = (questionData: any) => {
-  return questionData?.userPartyQuestion?.idAnswer !== null
+  return questionData?.idAnswer !== null
+}
+
+const isUserAnswerIsCorrect = (questions: any, answerId: number) => {
+  const answer = questions.answer.find((ans: { id: number }) => ans.id === answerId)
+
+  return answer ? answer.valid : false
 }
 
 const getAnswerClass = (questionData: any, answer: any) => {
@@ -525,6 +476,10 @@ const countdownTextClass = computed(() => {
   return 'text-brand-lightGray'
 })
 
+const handleOnUserAnswer = (data: any) => {
+  console.log('User answer received:', data)
+}
+
 const handleCountdownEvent = (data: any) => {
   console.log('Countdown event received:', data)
 
@@ -538,7 +493,7 @@ const handleCountdownEvent = (data: any) => {
     // Reset du timeout à chaque tick pour éviter un état “bloqué”
     if (countdownClearTimeout != null) clearTimeout(countdownClearTimeout)
 
-    // On masque un poil après le "1" (feel Mario Kart)
+    // On masque un poil après le "1"
     if (value === 1) {
       countdownClearTimeout = window.setTimeout(() => {
         clearCountdownOverlay()
@@ -561,23 +516,41 @@ function clearCountdownOverlay() {
 const handleQuestionSend = (data: any) => {
   console.log('New question received:', data)
 
+  // Reset user answer ID
+  userAnswerId.value = null
+
   // Start timer, reset for new question and get question data
   answered.value = false
   wasCorrect.value = false
   lastPoints.value = 0
   groupeStore.groupePartyInfo?.partyQuestions.push(data)
+
+  // Clear timer before start new one
+  clearTimer()
   startTimer()
 }
 
 const handleQuestionAnswerSend = (data: any) => {
   console.log('Answer received for question:', data)
 
-  const partyQuestions = groupeStore.groupePartyInfo!.partyQuestions as any[]
-  partyQuestions.splice(
-    lastQuestionIndex as unknown as number,
-    1,
-    Object.assign({}, partyQuestions[lastQuestionIndex as unknown as number], data),
-  )
+  // User good answered?
+  wasCorrect.value = isUserAnswerIsCorrect(data.question, userAnswerId.value!)
+
+  // Replace value of the question with the updated one containing user answer and correctness
+  groupeStore.groupePartyInfo!.partyQuestions.splice(lastQuestionIndex.value, 1, {
+    ...data,
+    correct: wasCorrect.value,
+    idAnswer: userAnswerId.value,
+  })
+
+  // Update score
+  lastPoints.value = data.score // Points wined for this question
+  globalUserScore.value += data.score
+}
+
+const handlePartyFinished = (data: any) => {
+  console.log('Party finished:', data)
+  finished.value = true
 }
 
 const handleOnError = (error: any) => {
@@ -589,6 +562,8 @@ const allEvents = [
   { name: GroupEvent.Countdown, handler: handleCountdownEvent },
   { name: GroupEvent.QuestionSend, handler: handleQuestionSend },
   { name: GroupEvent.QuestionAnswerSend, handler: handleQuestionAnswerSend },
+  { name: GroupEvent.UserAnswer, handler: handleOnUserAnswer },
+  { name: GroupEvent.PartyFinished, handler: handlePartyFinished },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 
@@ -605,18 +580,8 @@ onMounted(async () => {
     proxy?.$toast.error(t('group.lobby.connectionError'))
   }
 
-  // // Load party info and get questions
-  // await soloStore.loadPartyInfo()
-
-  // nbMaxQuestions.value = (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions || 0
-
-  // // If onMounted, the partyId exist, display the recap
-  // if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
-  //   finished.value = true
-  //   comeFromHistory.value = true
-  // }
-
-  // startTimer()
+  // Get max questions from party info
+  nbMaxQuestions.value = groupeStore.groupePartyInfo?.nbQuestions || 0
 
   // Ajouter l'écouteur d'événements clavier
   window.addEventListener('keydown', handleKeyPress)

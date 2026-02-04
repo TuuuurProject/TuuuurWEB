@@ -222,10 +222,6 @@ const handleStartEvent = (data: any) => {
   console.log('Game started:', data)
   groupeStore.groupePartyInfo = data
   emit('goTo', 'game')
-  // Navigate to game or update state
-  // proxy?.$toast.success('La partie commence !')
-  // You might want to navigate to a game view here
-  // router.push({ name: 'game', params: { id: groupeStore.groupeId } })
 }
 
 const handleDeleteEvent = () => {
