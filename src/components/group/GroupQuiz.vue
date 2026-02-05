@@ -88,8 +88,69 @@
       </overlay-block>
     </div>
 
+    <!-- Players status section -->
+    <div v-if="!finished" class="gaming-card">
+      <ul class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+        <li
+          v-for="p in groupeStore.groupePartyInfo?.partyUsers"
+          :key="String(p.id)"
+          class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
+          :class="
+            hasUserAnswered(p.user)
+              ? 'border-brand-green/40 bg-brand-green/5'
+              : 'border-brand-orange/40 bg-brand-orange/5'
+          "
+        >
+          <div class="relative shrink-0">
+            <div class="rounded-full bg-brand-purple/20 flex items-center justify-center">
+              <img
+                v-if="p?.user?.avatar"
+                :src="p.user.avatar"
+                alt="avatar"
+                class="h-10 w-10 rounded-full border-2 object-cover"
+                :class="hasUserAnswered(p.user) ? 'border-brand-green' : 'border-brand-orange'"
+              />
+              <div
+                v-else
+                class="h-10 w-10 rounded-full border-2 flex items-center justify-center"
+                :class="hasUserAnswered(p.user) ? 'border-brand-green' : 'border-brand-orange'"
+              >
+                <span
+                  class="text-lg font-bold"
+                  :class="hasUserAnswered(p.user) ? 'text-brand-green' : 'text-brand-orange'"
+                >
+                  {{ p?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                </span>
+              </div>
+            </div>
+            <!-- Status indicator badge -->
+            <div
+              class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center shadow-lg transition-all duration-300"
+              :class="hasUserAnswered(p.user) ? 'bg-brand-green' : 'bg-brand-orange animate-pulse'"
+            >
+              <font-awesome-icon
+                :icon="hasUserAnswered(p.user) ? 'check' : 'clock'"
+                class="text-[10px] text-white"
+              />
+            </div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div
+              class="text-sm font-semibold leading-tight truncate"
+              :class="hasUserAnswered(p.user) ? 'text-brand-green' : 'text-brand-orange'"
+            >
+              {{ p.user?.nickName }}
+            </div>
+            <div class="text-xs text-brand-gray">
+              {{ hasUserAnswered(p.user) ? $t('group.quiz.answered') : $t('group.quiz.waiting') }}
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
     <!-- Results -->
-    <div v-else class="space-y-6">
+    <div v-if="finished" class="space-y-6">
       <!-- Header avec score final -->
       <div
         class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
@@ -110,7 +171,9 @@
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
             <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.questions') }}</div>
-            <div class="font-branding text-3xl text-brand-lightGray">INFO</div>
+            <div class="font-branding text-3xl text-brand-lightGray">
+              {{ allQuestionsParty.length }}
+            </div>
           </div>
           <div class="h-12 w-px bg-brand-purple/30"></div>
           <div class="text-center">
@@ -135,6 +198,199 @@
         </div>
       </div>
 
+      <!-- Classement des joueurs -->
+      <div class="gaming-card">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
+          >
+            <font-awesome-icon icon="trophy" />
+          </div>
+          <h3 class="font-branding text-2xl text-brand-lightGray">
+            {{ $t('group.quiz.ranking') }}
+          </h3>
+        </div>
+
+        <!-- Podium Top 3 -->
+        <div class="mb-6">
+          <div class="grid grid-cols-3 gap-4 max-w-3xl mx-auto items-end">
+            <!-- 2nd place -->
+            <div
+              v-if="sortedPlayers[1]"
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
+              <div class="relative inline-block mb-3">
+                <div
+                  class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-gray/40 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                >
+                  <img
+                    v-if="sortedPlayers[1]?.user?.avatar"
+                    :src="sortedPlayers[1].user.avatar"
+                    alt="avatar"
+                    class="w-full h-full rounded-full object-cover"
+                  />
+                  <span v-else class="text-2xl sm:text-3xl font-bold text-brand-gray">
+                    {{ sortedPlayers[1]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <div
+                  class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-gray/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <span class="text-sm font-bold text-white">2</span>
+                </div>
+              </div>
+              <div class="font-semibold text-sm text-brand-lightGray truncate px-2">
+                {{ sortedPlayers[1].user?.nickName }}
+              </div>
+              <div class="text-2xl font-branding text-brand-gray mt-1">
+                {{ sortedPlayers[1].score }}
+              </div>
+              <div
+                class="mt-2 h-24 sm:h-32 bg-gradient-to-t from-brand-gray/30 to-brand-gray/10 border-2 border-brand-gray/30 rounded-t-xl"
+              ></div>
+            </div>
+
+            <!-- 1st place -->
+            <div
+              v-if="sortedPlayers[0]"
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
+              <div class="relative inline-block mb-3">
+                <div
+                  class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon animate-pulse-slow"
+                >
+                  <img
+                    v-if="sortedPlayers[0]?.user?.avatar"
+                    :src="sortedPlayers[0].user.avatar"
+                    alt="avatar"
+                    class="w-full h-full rounded-full object-cover"
+                  />
+                  <span v-else class="text-3xl sm:text-4xl font-bold text-brand-yellow">
+                    {{ sortedPlayers[0]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <div
+                  class="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <font-awesome-icon icon="crown" class="text-sm text-brand-dark" />
+                </div>
+                <div
+                  class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <span class="text-sm font-bold text-brand-dark">1</span>
+                </div>
+              </div>
+              <div class="font-bold text-brand-lightGray truncate px-2">
+                {{ sortedPlayers[0].user?.nickName }}
+              </div>
+              <div class="text-3xl font-branding text-brand-yellow mt-1 glow-text">
+                {{ sortedPlayers[0].score }}
+              </div>
+              <div
+                class="mt-2 h-32 sm:h-40 bg-gradient-to-t from-brand-yellow/30 to-brand-yellow/10 border-2 border-brand-yellow/40 rounded-t-xl"
+              ></div>
+            </div>
+
+            <!-- 3rd place -->
+            <div
+              v-if="sortedPlayers[2]"
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
+              <div class="relative inline-block mb-3">
+                <div
+                  class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-orange/40 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                >
+                  <img
+                    v-if="sortedPlayers[2]?.user?.avatar"
+                    :src="sortedPlayers[2].user.avatar"
+                    alt="avatar"
+                    class="w-full h-full rounded-full object-cover"
+                  />
+                  <span v-else class="text-2xl sm:text-3xl font-bold text-brand-orange">
+                    {{ sortedPlayers[2]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <div
+                  class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-orange/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <span class="text-sm font-bold text-white">3</span>
+                </div>
+              </div>
+              <div class="font-semibold text-sm text-brand-lightGray truncate px-2">
+                {{ sortedPlayers[2].user?.nickName }}
+              </div>
+              <div class="text-2xl font-branding text-brand-orange mt-1">
+                {{ sortedPlayers[2].score }}
+              </div>
+              <div
+                class="mt-2 h-20 sm:h-28 bg-gradient-to-t from-brand-orange/30 to-brand-orange/10 border-2 border-brand-orange/30 rounded-t-xl"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Autres joueurs (Accordion) -->
+        <div v-if="sortedPlayers.length > 3" class="mt-6">
+          <button
+            @click="showAllPlayers = !showAllPlayers"
+            class="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/20 bg-brand-darkGray/30 hover:bg-brand-purple/10 transition-all duration-300"
+          >
+            <span class="font-semibold text-brand-lightGray">
+              {{ $t('group.quiz.otherPlayers', { count: sortedPlayers.length - 3 }) }}
+            </span>
+            <font-awesome-icon
+              :icon="showAllPlayers ? 'chevron-up' : 'chevron-down'"
+              class="text-brand-purple transition-transform duration-300"
+              :class="{ 'rotate-180': showAllPlayers }"
+            />
+          </button>
+
+          <transition
+            enter-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 max-h-0"
+            enter-to-class="opacity-100 max-h-[500px]"
+            leave-active-class="transition-all duration-300 ease-in"
+            leave-from-class="opacity-100 max-h-[500px]"
+            leave-to-class="opacity-0 max-h-0"
+          >
+            <div v-show="showAllPlayers" class="overflow-hidden">
+              <div class="mt-3 space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                <div
+                  v-for="(player, index) in sortedPlayers.slice(3)"
+                  :key="player.user.id"
+                  class="flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/10 bg-brand-darkGray/20 hover:border-brand-purple/30 transition-all duration-200"
+                >
+                  <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <span class="text-brand-gray font-bold text-sm w-6 text-center shrink-0">
+                      {{ index + 4 }}
+                    </span>
+                    <div
+                      class="w-10 h-10 rounded-full border-2 border-brand-purple/30 bg-brand-darkGray/50 flex items-center justify-center shrink-0"
+                    >
+                      <img
+                        v-if="player?.user?.avatar"
+                        :src="player.user.avatar"
+                        alt="avatar"
+                        class="w-full h-full rounded-full object-cover"
+                      />
+                      <span v-else class="text-lg font-bold text-brand-purple">
+                        {{ player?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                      </span>
+                    </div>
+                    <span class="font-semibold text-brand-lightGray truncate">
+                      {{ player.user?.nickName }}
+                    </span>
+                  </div>
+                  <div class="font-branding text-xl text-brand-purple shrink-0 ml-3">
+                    {{ player.score }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
+      </div>
+
       <!-- Récapitulatif des questions -->
       <div class="gaming-card">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
@@ -154,7 +410,6 @@
             :key="idx"
             class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
           >
-            {{ questionData }}
             <!-- En-tête de la question -->
             <div class="flex items-start gap-3 mb-3">
               <div
@@ -245,8 +500,10 @@ import { useI18n } from 'vue-i18n'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useGroupeStore from '@/stores/groupe'
+import useUserStore from '@/stores/user'
 
 const groupeStore = useGroupeStore()
+const userStore = useUserStore()
 
 const { t } = useI18n()
 
@@ -264,6 +521,25 @@ const finished = ref(false)
 const globalUserScore = ref(0)
 const userAnswerId = ref(<number | null>null)
 
+// Track which users have answered the current question
+const usersAnswered = ref(new Set<number | string>())
+
+// Players ranking
+const playersRanking = ref<
+  Array<{
+    score: number
+    user: {
+      id?: number
+      nickName?: string
+      avatar?: string | null
+      email?: string
+      isAdmin?: boolean
+      isNew?: boolean
+    }
+  }>
+>([])
+const showAllPlayers = ref(false)
+
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
 
@@ -271,6 +547,12 @@ const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
+
+// Helper function to check if a user has answered
+const hasUserAnswered = (user: { id?: number | string; idUser?: number | string }) => {
+  const userId = user?.id ?? user?.idUser
+  return userId != null && usersAnswered.value.has(userId)
+}
 
 // Gestion du clavier
 const handleKeyPress = async (event: KeyboardEvent) => {
@@ -348,6 +630,11 @@ const answer = async (opt: { id: number }) => {
   // Set user answer ID
   userAnswerId.value = opt.id
 
+  // Add current user to answered set
+  if (userStore.userId) {
+    usersAnswered.value.add(userStore.userId)
+  }
+
   console.log('Answer selected answer ID:', opt.id)
 
   // Answer
@@ -415,6 +702,11 @@ const currentAnswer = computed(() => {
   return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? ''
 })
 
+// Sorted players by score (descending)
+const sortedPlayers = computed(() => {
+  return [...playersRanking.value].sort((a, b) => b.score - a.score)
+})
+
 // Fonctions pour le récapitulatif
 const correctAnswersCount = computed(() => {
   return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
@@ -478,6 +770,10 @@ const countdownTextClass = computed(() => {
 
 const handleOnUserAnswer = (data: any) => {
   console.log('User answer received:', data)
+  // Add user to the set of users who answered
+  if (data && (data.id || data.userId)) {
+    usersAnswered.value.add(data.id ?? data.userId)
+  }
 }
 
 const handleCountdownEvent = (data: any) => {
@@ -519,6 +815,9 @@ const handleQuestionSend = (data: any) => {
   // Reset user answer ID
   userAnswerId.value = null
 
+  // Reset users answered set for new question
+  usersAnswered.value.clear()
+
   // Start timer, reset for new question and get question data
   answered.value = false
   wasCorrect.value = false
@@ -550,6 +849,12 @@ const handleQuestionAnswerSend = (data: any) => {
 
 const handlePartyFinished = (data: any) => {
   console.log('Party finished:', data)
+
+  // Store players ranking data
+  if (Array.isArray(data)) {
+    playersRanking.value = data
+  }
+
   finished.value = true
 }
 

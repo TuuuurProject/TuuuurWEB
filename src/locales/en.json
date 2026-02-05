@@ -232,7 +232,12 @@
       "goodAnswer": "Correct answer",
       "badAnswer": "Wrong answer",
       "replay": "Replay",
-      "errorAnswering": "Error submitting answer"
+      "errorAnswering": "Error submitting answer",
+      "playersStatus": "Players Status",
+      "answered": "Answered",
+      "waiting": "Waiting...",
+      "ranking": "Final Ranking",
+      "otherPlayers": "{count} other player | {count} other players"
     }
   },
   "competitive": {

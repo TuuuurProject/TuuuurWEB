@@ -232,7 +232,12 @@
       "goodAnswer": "Bonne réponse",
       "badAnswer": "Mauvaise réponse",
       "replay": "Rejouer",
-      "errorAnswering": "Erreur lors de la soumission de la réponse"
+      "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "playersStatus": "Statut des joueurs",
+      "answered": "A répondu",
+      "waiting": "En attente...",
+      "ranking": "Classement Final",
+      "otherPlayers": "{count} autre joueur | {count} autres joueurs"
     }
   },
   "competitive": {

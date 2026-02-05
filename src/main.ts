@@ -90,6 +90,8 @@ import {
   faTurnDown,
   faPaw,
   faUserNinja,
+  faChevronUp,
+  faChevronDown,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -161,6 +163,8 @@ library.add(
   faTurnDown,
   faPaw,
   faUserNinja,
+  faChevronUp,
+  faChevronDown,
 )
 
 // Functions
