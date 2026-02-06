@@ -146,13 +146,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
+import { computed, getCurrentInstance, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { onBeforeRouteLeave } from 'vue-router'
 import QRPreview from './QRPreview.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useUserStore from '@/stores/user'
+import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
 
 const { t } = useI18n()
 const emit = defineEmits<{
@@ -161,6 +163,7 @@ const emit = defineEmits<{
 
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
+const { connectSignalR, cleanupGroup } = useGroupLifecycle()
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
@@ -192,7 +195,7 @@ const canCreateGame = computed(() => {
 })
 
 const leaveGroupe = async () => {
-  await groupeStore.leaveGroupe()
+  await cleanupGroup()
   emit('goTo', 'mode')
 }
 
@@ -224,11 +227,10 @@ const handleStartEvent = (data: any) => {
   emit('goTo', 'game')
 }
 
-const handleDeleteEvent = () => {
+const handleDeleteEvent = async () => {
   proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
-  // Clear store and navigate away
-  groupeStore.groupeId = null
-  groupeStore.groupePartyInfo = null
+  // Clear store and navigate away using the composable
+  await cleanupGroup(true) // Skip API call since party is already deleted
   emit('goTo', 'mode')
 }
 
@@ -252,7 +254,7 @@ const confirmStartGame = async () => {
 }
 
 const handleOnError = (error: any) => {
-  console.log('Lobby deleted:', error)
+  console.error('SignalR error:', error)
   proxy?.$toast.error(error)
 }
 
@@ -265,28 +267,55 @@ const allEvents = [
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 
+// Gestionnaire de fermeture de page
+const handleBeforeUnload = () => {
+  if (groupeStore.groupeId) {
+    // Utiliser la méthode synchrone du store qui utilise fetch + keepalive
+    groupeStore.leaveGroupeSync()
+  }
+}
+
 // Setup SignalR connection
 onMounted(async () => {
   try {
-    await signalrService.connect(userStore.token || '')
+    await connectSignalR()
 
     allEvents.forEach((event) => {
       signalrService.on(event.name, (data: unknown) => {
         event.handler(data)
       })
     })
+
+    // Ajouter le gestionnaire de fermeture de page
+    window.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
     proxy?.$toast.error(t('group.lobby.connectionError'))
   }
 })
 
-// Cleanup SignalR connection
-onUnmounted(() => {
+// Gérer la navigation (bouton retour du navigateur, changement de route)
+onBeforeRouteLeave(async (to, from, next) => {
+  // Si l'utilisateur change de route (bouton retour, navigation), nettoyer le groupe
+  if (groupeStore.groupeId) {
+    await cleanupGroup()
+  }
+  next()
+})
+
+// Cleanup SignalR listeners only (keep connection alive for the game)
+onBeforeUnmount(() => {
+  // Retirer le gestionnaire de fermeture de page
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+
+  // Nettoyer uniquement les écouteurs SignalR du lobby
+  // La connexion reste active pour GroupQuiz
   allEvents.forEach((event) => {
     signalrService.off(event.name, event.handler)
   })
-  // signalrService.disconnect()
+
+  // NE PAS appeler cleanupGroup() ici car on peut passer au jeu
+  // Le cleanup sera fait par GroupQuiz ou par le bouton "Leave"
 })
 </script>
 

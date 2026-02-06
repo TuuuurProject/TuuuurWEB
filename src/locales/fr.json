@@ -237,7 +237,11 @@
       "answered": "A répondu",
       "waiting": "En attente...",
       "ranking": "Classement Final",
-      "otherPlayers": "{count} autre joueur | {count} autres joueurs"
+      "otherPlayers": "{count} autre joueur | {count} autres joueurs",
+      "confirmLeave": {
+        "title": "Quitter la partie ?",
+        "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
+      }
     }
   },
   "competitive": {

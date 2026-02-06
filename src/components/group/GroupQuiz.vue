@@ -491,19 +491,34 @@
         </div>
       </div>
     </transition>
+
+    <!-- Modale de confirmation pour quitter la partie -->
+    <ModalDialog
+      :open="showConfirmLeaveModal"
+      :title="$t('group.quiz.confirmLeave.title')"
+      @confirm="confirmLeave"
+      @close="cancelLeave"
+    >
+      <p class="text-brand-lightGray">{{ $t('group.quiz.confirmLeave.message') }}</p>
+    </ModalDialog>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue-router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
+import ModalDialog from '@/components/ModalDialog.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useGroupeStore from '@/stores/groupe'
 import useUserStore from '@/stores/user'
+import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
 
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
+const { cleanupGroup } = useGroupLifecycle()
+const router = useRouter()
 
 const { t } = useI18n()
 
@@ -542,6 +557,10 @@ const showAllPlayers = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
+
+// Gestion de la modale de confirmation pour quitter
+const showConfirmLeaveModal = ref(false)
+let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormalized } | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
@@ -752,7 +771,14 @@ const getAnswerClass = (questionData: any, answer: any) => {
 }
 
 const exitQuizGame = async () => {
-  await groupeStore.leaveGroupe()
+  // Si la partie n'est pas terminée, demander confirmation
+  if (!finished.value && groupeStore.groupeId) {
+    showConfirmLeaveModal.value = true
+    return
+  }
+
+  // Si la partie est terminée, quitter directement
+  await cleanupGroup()
   emit('exit')
 }
 
@@ -872,6 +898,14 @@ const allEvents = [
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 
+// Gestionnaire de fermeture de page
+const handleBeforeUnload = () => {
+  if (groupeStore.groupeId) {
+    // Utiliser la méthode synchrone du store qui utilise fetch + keepalive
+    groupeStore.leaveGroupeSync()
+  }
+}
+
 onMounted(async () => {
   // Connection signalR
   try {
@@ -890,13 +924,73 @@ onMounted(async () => {
 
   // Ajouter l'écouteur d'événements clavier
   window.addEventListener('keydown', handleKeyPress)
+
+  // Ajouter le gestionnaire de fermeture de page
+  window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
-onBeforeUnmount(() => {
+// Gérer la navigation (bouton retour du navigateur, changement de route)
+onBeforeRouteLeave((to, from, next) => {
+  // Si la partie n'est pas terminée et qu'il y a un groupe actif, demander confirmation
+  if (groupeStore.groupeId && !finished.value) {
+    // Bloquer la navigation et afficher la modale
+    pendingNavigation = { to, from }
+    showConfirmLeaveModal.value = true
+    next(false) // Bloquer la navigation pour l'instant
+  } else {
+    // Si la partie est terminée ou pas de groupe, laisser partir
+    next()
+  }
+})
+
+// Confirmer le départ
+const confirmLeave = async () => {
+  showConfirmLeaveModal.value = false
+
+  if (groupeStore.groupeId) {
+    await cleanupGroup()
+  }
+
+  // Si c'est une navigation de route (bouton retour), naviguer vers la destination
+  if (pendingNavigation) {
+    await router.push(pendingNavigation.to)
+    pendingNavigation = null
+  } else {
+    // Sinon, c'est le bouton "Leave" qui a été cliqué, émettre l'événement
+    emit('exit')
+  }
+}
+
+// Annuler le départ
+const cancelLeave = () => {
+  showConfirmLeaveModal.value = false
+  pendingNavigation = null
+}
+
+onBeforeUnmount(async () => {
   clearTimer()
   clearCountdownOverlay()
+
   // Retirer l'écouteur d'événements clavier
   window.removeEventListener('keydown', handleKeyPress)
+
+  // Retirer le gestionnaire de fermeture de page
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+
+  // Nettoyer les écouteurs SignalR
+  allEvents.forEach((event) => {
+    signalrService.off(event.name, event.handler)
+  })
+
+  // Quitter le groupe et déconnecter SignalR uniquement si le jeu n'est pas terminé
+  // Si finished = true, l'utilisateur peut encore consulter les résultats
+  if (finished.value) {
+    // Si la partie est terminée, on nettoie seulement les listeners
+    // Le cleanup complet sera fait quand l'utilisateur clique sur "Leave"
+  } else {
+    // Si l'utilisateur quitte pendant le jeu, nettoyer complètement
+    await cleanupGroup()
+  }
 })
 </script>
 
