@@ -16,6 +16,7 @@
           class="w-12 h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
           v-model="digits[i - 1]"
           @input="onInput(i - 1)"
+          @keydown.backspace.prevent="onBackspace(i - 1)"
           @paste.prevent="handlePaste"
           @keydown.ctrl.v.prevent="handleKeyboardPaste"
         />
@@ -24,6 +25,7 @@
         <button
           data-testid="auth-code-submit"
           class="btn btn-primary"
+          :disabled="!canSendAuthCode"
           @click="emit('verification', digits.join(''))"
         >
           {{ $t('auth.verification.submit') }}
@@ -34,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 
 defineProps<{
@@ -52,6 +54,22 @@ function onInput(idx: number) {
   if (idx < 5) {
     const next = el?.nextElementSibling as HTMLInputElement | null
     next?.focus()
+  }
+}
+
+function onBackspace(idx: number) {
+  const el = document.activeElement as HTMLInputElement
+  if (!el) return
+
+  if (idx > 0) {
+    // Supprimer la valeur actuelle si elle existe
+    digits[idx] = ''
+    // Passer à l'input précédent
+    const prev = el.previousElementSibling as HTMLInputElement | null
+    prev?.focus()
+  } else {
+    // Premier input, on supprime juste la valeur
+    digits[idx] = ''
   }
 }
 
@@ -92,4 +110,8 @@ const handleKeyboardPaste = async () => {
     }
   } catch {}
 }
+
+const canSendAuthCode = computed(() => {
+  return digits.every((d) => d !== '')
+})
 </script>

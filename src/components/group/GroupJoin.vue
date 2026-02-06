@@ -18,6 +18,7 @@
             class="w-12 h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
             v-model="digits[i - 1]"
             @input="onInput(i - 1)"
+            @keydown.backspace.prevent="onBackspace(i - 1)"
             @paste.prevent="handlePaste"
             @keydown.ctrl.v.prevent="handleKeyboardPaste"
           />
@@ -26,7 +27,9 @@
 
         <div class="mt-8 flex items-center justify-center gap-3">
           <button class="btn btn-secondary" @click="$emit('back')">{{ $t('common.back') }}</button>
-          <button class="btn btn-primary" @click="join">{{ $t('group.join.joinButton') }}</button>
+          <button class="btn btn-primary" :disabled="!canJoin" @click="join">
+            {{ $t('group.join.joinButton') }}
+          </button>
         </div>
       </div>
 
@@ -45,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import useGroupeStore from '@/stores/groupe'
 
 const groupeStore = useGroupeStore()
@@ -71,6 +74,22 @@ function onInput(idx: number) {
   if (idx < 5) {
     const next = el?.nextElementSibling as HTMLInputElement | null
     next?.focus()
+  }
+}
+
+function onBackspace(idx: number) {
+  const el = document.activeElement as HTMLInputElement
+  if (!el) return
+
+  if (idx > 0) {
+    // Supprimer la valeur actuelle si elle existe
+    digits[idx] = ''
+    // Passer à l'input précédent
+    const prev = el.previousElementSibling as HTMLInputElement | null
+    prev?.focus()
+  } else {
+    // Premier input, on supprime juste la valeur
+    digits[idx] = ''
   }
 }
 
@@ -111,6 +130,10 @@ const handleKeyboardPaste = async () => {
     }
   } catch {}
 }
+
+const canJoin = computed(() => {
+  return digits.every((d) => d !== '')
+})
 
 const join = async () => {
   error.value = await groupeStore.joinGroupe(digits.join(''))
