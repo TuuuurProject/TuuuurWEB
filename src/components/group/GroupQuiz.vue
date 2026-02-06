@@ -889,12 +889,22 @@ const handleOnError = (error: any) => {
   proxy?.$toast.error(error)
 }
 
+const handlePartyDeleted = async () => {
+  console.log('Party deleted by host')
+  proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
+
+  // Nettoyer le groupe et rediriger
+  await cleanupGroup(true) // Skip API call car la partie est déjà supprimée
+  emit('exit')
+}
+
 const allEvents = [
   { name: GroupEvent.Countdown, handler: handleCountdownEvent },
   { name: GroupEvent.QuestionSend, handler: handleQuestionSend },
   { name: GroupEvent.QuestionAnswerSend, handler: handleQuestionAnswerSend },
   { name: GroupEvent.UserAnswer, handler: handleOnUserAnswer },
   { name: GroupEvent.PartyFinished, handler: handlePartyFinished },
+  { name: GroupEvent.PartyDeleted, handler: handlePartyDeleted },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 

@@ -169,6 +169,7 @@ const instance = getCurrentInstance()
 const proxy = instance?.proxy
 
 const openModalStartGame = ref(false)
+const gameStarted = ref(false)
 
 const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
@@ -223,11 +224,15 @@ const handleLeaveEvent = (data: any) => {
 
 const handleStartEvent = (data: any) => {
   console.log('Game started:', data)
+  gameStarted.value = true
   groupeStore.groupePartyInfo = data
   emit('goTo', 'game')
 }
 
 const handleDeleteEvent = async () => {
+  // Only handle this event if the game hasn't started yet (we're still in lobby)
+  if (gameStarted.value) return
+
   proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
   // Clear store and navigate away using the composable
   await cleanupGroup(true) // Skip API call since party is already deleted
