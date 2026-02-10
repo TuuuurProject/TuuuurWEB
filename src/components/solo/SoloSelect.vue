@@ -106,7 +106,12 @@
         <button class="btn btn-ghost" @click="$router.go(-1)">
           <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
         </button>
-        <button class="btn btn-primary" :disabled="canStartGame" @click="open = true">
+        <button
+          data-testid="solo-start"
+          class="btn btn-primary"
+          :disabled="canStartGame"
+          @click="open = true"
+        >
           <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('solo.startAdventure') }}
         </button>
       </footer>
@@ -123,7 +128,7 @@
       @confirm="confirm"
       :loading="soloStore.isLoading"
     >
-      <div class="space-y-3">
+      <div data-testid="solo-confirm-modal" class="space-y-3">
         <p class="flex items-center gap-2">
           <font-awesome-icon icon="bullseye" class="text-brand-purple" />
           <strong class="text-brand-lightGray">{{ $t('solo.startQuizModal.categories') }}</strong>
@@ -208,7 +213,7 @@ const themesList = computed<Array<Theme>>(() => {
   return themeStore.list
 })
 
-const themesMap = computed(() => new Map(themesList.value.map((c) => [c.id, c])))
+const themesMap = computed(() => new Map(themesList.value.map((c: Theme) => [c.id, c])))
 const selected = reactive<Set<string>>(new Set())
 
 const questions = ref(10)
@@ -227,7 +232,7 @@ const dec = () => {
 
 const toggleDifficulty = (id: number) => {
   if (selectedDifficulty.value.includes(id)) {
-    selectedDifficulty.value = selectedDifficulty.value.filter((d) => d !== id)
+    selectedDifficulty.value = selectedDifficulty.value.filter((d: number) => d !== id)
   } else {
     selectedDifficulty.value.push(id)
   }
@@ -243,7 +248,7 @@ const confirm = async () => {
   open.value = false
 
   soloStore.setPartySetup({
-    themes: Array.from(selected).map((id) => parseInt(id)),
+    themes: Array.from(selected).map((id) => parseInt(id as string)),
     difficulties: Array.from(selectedDifficulty.value),
     nbQuestions: questions.value,
   })

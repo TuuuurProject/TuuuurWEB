@@ -1,6 +1,6 @@
 <template>
   <overlay-block :loading="loading">
-    <div class="max-w-md mx-auto">
+    <div data-testid="auth-code-container" class="max-w-md mx-auto">
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text text-center mb-4">
         {{ $t('auth.verification.title') }}
       </h2>
@@ -11,6 +11,7 @@
         <input
           v-for="i in 6"
           :key="i"
+          :data-testid="`auth-code-input-${i}`"
           maxlength="1"
           class="w-12 h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
           v-model="digits[i - 1]"
@@ -20,7 +21,11 @@
         />
       </div>
       <div class="mt-8 flex items-center justify-center gap-3">
-        <button class="btn btn-primary" @click="emit('verification', digits.join(''))">
+        <button
+          data-testid="auth-code-submit"
+          class="btn btn-primary"
+          @click="emit('verification', digits.join(''))"
+        >
           {{ $t('auth.verification.submit') }}
         </button>
       </div>

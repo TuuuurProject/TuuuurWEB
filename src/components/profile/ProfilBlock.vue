@@ -1,6 +1,7 @@
 <template>
   <overlay-block :loading="userStore.isLoading">
     <div
+      data-testid="profile-info"
       class="flex items-center gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20"
     >
       <div class="relative group cursor-pointer" @click="triggerFileInput">
@@ -92,7 +93,11 @@
           >
             <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
           </button>
-          <button class="btn btn-ghost text-danger" @click="userStore.logout()">
+          <button
+            data-testid="profile-logout"
+            class="btn btn-ghost text-danger"
+            @click="userStore.logout()"
+          >
             <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
           </button>
         </div>

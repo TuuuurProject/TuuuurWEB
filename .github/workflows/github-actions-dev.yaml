@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - develop
+      - cypress
 
 jobs:
-  build:
+  test:
+    uses: ./.github/workflows/job_test.yaml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  test_build:
+    needs: test
     uses: ./.github/workflows/job_build.yaml
     secrets:
       VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}

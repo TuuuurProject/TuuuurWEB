@@ -103,7 +103,12 @@
       <button class="btn btn-ghost" @click="$emit('back')">
         <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
       </button>
-      <button class="btn btn-primary" :disabled="canCreateGame" @click="open = true">
+      <button
+        data-testid="group-create-submit"
+        class="btn btn-primary"
+        :disabled="canCreateGame"
+        @click="open = true"
+      >
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.create.startAdventure') }}
       </button>
     </footer>
@@ -207,7 +212,7 @@ const themesList = computed<Array<Theme>>(() => {
   return themeStore.list
 })
 
-const themesMap = computed(() => new Map(themesList.value.map((c) => [c.id, c])))
+const themesMap = computed(() => new Map(themesList.value.map((c: Theme) => [c.id, c])))
 const selected = reactive<Set<string>>(new Set())
 
 const questions = ref(10)

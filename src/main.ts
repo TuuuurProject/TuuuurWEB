@@ -184,32 +184,44 @@ const unixToDate = function (unix: number | null, format = 'DD/MM/YYYY') {
   return dateDayjs.format(format)
 }
 
-const app = createApp(App)
+// Initialize MSW for E2E tests
+async function initApp() {
+  // Check if we should start MSW
+  const isE2EMode = import.meta.env.VITE_MODE === 'e2e' || import.meta.env.VITE_E2E === 'true'
 
-app.config.globalProperties.$unixToDate = unixToDate
-app.config.globalProperties.$dayjs = dayjs
-app.config.globalProperties.$toast = toast
-
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $unixToDate: typeof unixToDate
-    $dayjs: typeof dayjs
-    $toast: typeof toast
+  if (isE2EMode) {
+    try {
+      console.log('[Main] Starting in E2E mode, initializing MSW...')
+      const { startMockServiceWorker } = await import('./mocks/browser')
+      await startMockServiceWorker()
+      console.log('[Main] ✅ MSW initialized successfully')
+    } catch (error) {
+      console.error('[Main] ❌ Error initializing MSW:', error)
+      // Continue anyway so the app still loads
+    }
   }
+
+  const app = createApp(App)
+
+  app.config.globalProperties.$unixToDate = unixToDate
+  app.config.globalProperties.$dayjs = dayjs
+  app.config.globalProperties.$toast = toast
+
+  const pinia = createPinia()
+  pinia.use(piniaPluginPersistedstate)
+  app.use(pinia)
+  app.use(router)
+  app.use(i18n)
+  app.use(Vue3Toastify, {
+    theme: 'dark',
+    autoClose: 3000,
+    position: toast.POSITION.TOP_RIGHT,
+  })
+  app.use(vue3GoogleLogin, {
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  })
+  app.component('font-awesome-icon', FontAwesomeIcon)
+  app.mount('#app')
 }
 
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-app.use(pinia)
-app.use(router)
-app.use(i18n)
-app.use(Vue3Toastify, {
-  theme: 'dark',
-  autoClose: 3000,
-  position: toast.POSITION.TOP_RIGHT,
-})
-app.use(vue3GoogleLogin, {
-  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-})
-app.component('font-awesome-icon', FontAwesomeIcon)
-app.mount('#app')
+initApp()
