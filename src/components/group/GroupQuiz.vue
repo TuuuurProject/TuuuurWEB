@@ -58,7 +58,7 @@
         </div>
 
         <div class="mt-6 flex items-center justify-between">
-          <div class="text-sm" v-if="answered">
+          <div class="text-sm" v-if="answered && scoreIsAvailable">
             <span v-if="wasCorrect" class="badge-green">{{
               $t('group.quiz.correct', { points: lastPoints })
             }}</span>
@@ -90,7 +90,127 @@
 
     <!-- Players status section -->
     <div v-if="!finished" class="gaming-card">
-      <ul class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+      <!-- Classement en temps réel (si scoreEachRound activé et tous ont répondu) -->
+      <div v-if="showCurrentRanking">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
+          >
+            <font-awesome-icon icon="trophy" />
+          </div>
+          <h3 class="font-branding text-xl text-brand-lightGray">
+            {{ $t('group.quiz.currentRanking') }}
+          </h3>
+        </div>
+
+        <div class="space-y-2">
+          <div
+            v-for="(player, index) in sortedCurrentPlayers"
+            :key="player.user.id"
+            class="flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-300"
+            :class="[
+              index === 0
+                ? 'border-brand-yellow/40 bg-brand-yellow/10'
+                : index === 1
+                  ? 'border-brand-gray/40 bg-brand-gray/5'
+                  : index === 2
+                    ? 'border-brand-orange/40 bg-brand-orange/5'
+                    : 'border-brand-purple/20 bg-brand-darkGray/30',
+            ]"
+          >
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <span
+                class="font-bold text-sm w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                :class="[
+                  index === 0
+                    ? 'bg-brand-yellow/20 text-brand-yellow'
+                    : index === 1
+                      ? 'bg-brand-gray/20 text-brand-gray'
+                      : index === 2
+                        ? 'bg-brand-orange/20 text-brand-orange'
+                        : 'bg-brand-purple/20 text-brand-purple',
+                ]"
+              >
+                {{ index + 1 }}
+              </span>
+              <div class="relative shrink-0">
+                <div
+                  class="w-10 h-10 rounded-full border-2 flex items-center justify-center"
+                  :class="[
+                    index === 0
+                      ? 'border-brand-yellow'
+                      : index === 1
+                        ? 'border-brand-gray'
+                        : index === 2
+                          ? 'border-brand-orange'
+                          : 'border-brand-purple',
+                  ]"
+                >
+                  <img
+                    v-if="player?.user?.avatar"
+                    :src="player.user.avatar"
+                    alt="avatar"
+                    class="w-full h-full rounded-full object-cover"
+                  />
+                  <span
+                    v-else
+                    class="text-lg font-bold"
+                    :class="[
+                      index === 0
+                        ? 'text-brand-yellow'
+                        : index === 1
+                          ? 'text-brand-gray'
+                          : index === 2
+                            ? 'text-brand-orange'
+                            : 'text-brand-purple',
+                    ]"
+                  >
+                    {{ player?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <div
+                  v-if="index < 3"
+                  class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center"
+                  :class="[
+                    index === 0
+                      ? 'bg-brand-yellow'
+                      : index === 1
+                        ? 'bg-brand-gray'
+                        : 'bg-brand-orange',
+                  ]"
+                >
+                  <font-awesome-icon
+                    v-if="index === 0"
+                    icon="crown"
+                    class="text-[10px] text-brand-dark"
+                  />
+                  <span v-else class="text-[10px] font-bold text-white">{{ index + 1 }}</span>
+                </div>
+              </div>
+              <span class="font-semibold text-brand-lightGray truncate">
+                {{ player.user?.nickName }}
+              </span>
+            </div>
+            <div
+              class="font-branding text-xl shrink-0 ml-3"
+              :class="[
+                index === 0
+                  ? 'text-brand-yellow'
+                  : index === 1
+                    ? 'text-brand-gray'
+                    : index === 2
+                      ? 'text-brand-orange'
+                      : 'text-brand-purple',
+              ]"
+            >
+              {{ player.score }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statut des joueurs (répondu ou non) -->
+      <ul v-else class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         <li
           v-for="p in groupeStore.groupePartyInfo?.partyUsers"
           :key="String(p.id)"
@@ -535,6 +655,7 @@ const lastPoints = ref(0)
 const finished = ref(false)
 const globalUserScore = ref(0)
 const userAnswerId = ref(<number | null>null)
+const scoreIsAvailable = ref(false)
 
 // Track which users have answered the current question
 const usersAnswered = ref(new Set<number | string>())
@@ -726,6 +847,36 @@ const sortedPlayers = computed(() => {
   return [...playersRanking.value].sort((a, b) => b.score - a.score)
 })
 
+// Sorted current players for real-time ranking
+const sortedCurrentPlayers = computed(() => {
+  return [...playersRanking.value].sort((a, b) => b.score - a.score)
+})
+
+// Check if scoreEachRound is enabled
+const scoreEachRound = computed(() => {
+  return groupeStore.groupePartyInfo?.scoreEachRound ?? false
+})
+
+// Total number of players
+const totalPlayers = computed(() => {
+  return groupeStore.groupePartyInfo?.partyUsers?.length ?? 0
+})
+
+// Check if all users have answered
+const allUsersAnswered = computed(() => {
+  return totalPlayers.value > 0 && usersAnswered.value.size >= totalPlayers.value
+})
+
+// Show current ranking when scoreEachRound is enabled and all answered
+const showCurrentRanking = computed(() => {
+  return (
+    scoreEachRound.value &&
+    answered.value &&
+    allUsersAnswered.value &&
+    playersRanking.value.length > 0
+  )
+})
+
 // Fonctions pour le récapitulatif
 const correctAnswersCount = computed(() => {
   return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
@@ -847,6 +998,7 @@ const handleQuestionSend = (data: any) => {
   // Start timer, reset for new question and get question data
   answered.value = false
   wasCorrect.value = false
+  scoreIsAvailable.value = false
   lastPoints.value = 0
   groupeStore.groupePartyInfo?.partyQuestions.push(data)
 
@@ -857,6 +1009,8 @@ const handleQuestionSend = (data: any) => {
 
 const handleQuestionAnswerSend = (data: any) => {
   console.log('Answer received for question:', data)
+
+  scoreIsAvailable.value = true
 
   // User good answered?
   wasCorrect.value = isUserAnswerIsCorrect(data.question, userAnswerId.value!)
@@ -884,6 +1038,15 @@ const handlePartyFinished = (data: any) => {
   finished.value = true
 }
 
+const handleScoreUpdate = (data: any) => {
+  console.log('Score update received:', data)
+
+  // Update players ranking data
+  if (Array.isArray(data)) {
+    playersRanking.value = data
+  }
+}
+
 const handleOnError = (error: any) => {
   console.log('Lobby deleted:', error)
   proxy?.$toast.error(error)
@@ -905,6 +1068,7 @@ const allEvents = [
   { name: GroupEvent.UserAnswer, handler: handleOnUserAnswer },
   { name: GroupEvent.PartyFinished, handler: handlePartyFinished },
   { name: GroupEvent.PartyDeleted, handler: handlePartyDeleted },
+  { name: GroupEvent.ScoreUpdate, handler: handleScoreUpdate },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 

@@ -42,6 +42,7 @@ export interface GroupePartyInfo {
   idPartyType: number
   idUserHost: number
   nbQuestions: number
+  scoreEachRound?: boolean
   partyDifficulty: PartyDifficulty[]
   partyQuestions: PartyQuestion[]
   partyTheme: PartyTheme[]

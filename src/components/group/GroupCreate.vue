@@ -62,6 +62,12 @@
           {{ questions }}
         </h3>
       </div>
+      <div>
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="trophy" class="mr-2" /> {{ $t('group.lobby.scoreEachRound') }} :
+          {{ scoreEachRound ? $t('common.yes') : $t('common.no') }}
+        </h3>
+      </div>
     </template>
 
     <div v-if="currentUserIsHost" class="grid gap-6 md:grid-cols-3">
@@ -84,6 +90,29 @@
             <font-awesome-icon :icon="cat.icon" class="text-lg" />
             <span>{{ cat.label }}</span>
           </button>
+        </div>
+
+        <div>
+          <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
+            <font-awesome-icon icon="trophy" class="mr-2 text-brand-purple" />
+            {{ $t('group.lobby.scoreEachRound') }}
+          </label>
+          <div
+            class="flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
+            @click="scoreEachRound = !scoreEachRound"
+          >
+            <div class="flex-1">
+              <p class="text-brand-lightGray text-sm">
+                {{ $t('group.lobby.scoreEachRoundDescription') }}
+              </p>
+            </div>
+            <div class="relative inline-flex items-center ml-4">
+              <input type="checkbox" v-model="scoreEachRound" class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-brand-darkGray rounded-full peer peer-focus:ring-2 peer-focus:ring-brand-purple peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple pointer-events-none"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
