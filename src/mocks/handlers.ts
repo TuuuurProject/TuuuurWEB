@@ -28,8 +28,10 @@ export const handlers = [
       )
     }
 
-    // Simulate 2FA requirement
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    // Simulate 2FA requirement - generate secure random 6-digit code
+    const array = new Uint32Array(1)
+    crypto.getRandomValues(array)
+    const code = (100000 + (array[0] % 900000)).toString()
     verificationCodes.set(body.login, code)
     console.log(`[MSW] 2FA code for ${body.login}: ${code}`)
 

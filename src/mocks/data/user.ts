@@ -15,7 +15,7 @@ export interface JWTPayload {
 export const mockUsers = {
   testuser: {
     login: 'testuser',
-    password: 'password123',
+    password: 'password123', // NOSONAR - Mock data for testing purposes only
     email: 'test@example.com',
     nickName: 'TestUser',
     avatar:

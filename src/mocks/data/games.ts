@@ -193,7 +193,10 @@ export interface GroupPlayer {
 }
 
 export function createGroupLobby(): GroupLobby {
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase()
+  // Generate a secure random code using crypto API
+  const array = new Uint32Array(1)
+  crypto.getRandomValues(array)
+  const code = array[0].toString(36).substring(0, 6).toUpperCase().padEnd(6, '0')
 
   return {
     code,
