@@ -8,3 +8,14 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $toast: {
+      success: (message: string) => void
+      error: (message: string) => void
+      info: (message: string) => void
+      warning: (message: string) => void
+    }
+  }
+}
