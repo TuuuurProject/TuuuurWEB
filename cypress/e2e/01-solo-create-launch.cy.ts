@@ -11,6 +11,8 @@ describe('Parcours 1: Solo - Créer et lancer une partie', () => {
     // Étape 1: Depuis la home, cliquer sur "Jouer en solo"
     cy.getByTestId('home-solo').should('be.visible').click()
 
+    cy.wait(1000) // Attendre la redirection
+
     // Étape 2: Se connecter
     cy.login()
 

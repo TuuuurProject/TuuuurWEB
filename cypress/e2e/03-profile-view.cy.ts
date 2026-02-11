@@ -11,6 +11,8 @@ describe('Parcours 3: Profil - Voir infos profil et historique', () => {
     // Étape 1: Depuis la home, cliquer sur "Profil"
     cy.getByTestId('home-profile').should('be.visible').click()
 
+    cy.wait(1000) // Attendre la redirection
+
     // Étape 3: Se connecter
     cy.login()
 

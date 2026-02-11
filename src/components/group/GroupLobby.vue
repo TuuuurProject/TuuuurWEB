@@ -1,25 +1,5 @@
 <template>
   <section data-testid="group-lobby" class="space-y-6 mt-6">
-    <!-- Top header with code emphasis -->
-    <header class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.lobby.title') }}</h2>
-        <span class="badge-green">{{ $t('group.lobby.waitingBadge') }}</span>
-      </div>
-    </header>
-
-    <!-- Readonly quiz parameters as quick chips -->
-    <div class="flex flex-wrap gap-2">
-      <span class="pill">
-        {{ $t('group.lobby.categories') }}
-        {{ groupeStore?.groupePartyInfo?.partyDifficulty.join(', ') }}
-      </span>
-      <span class="pill">
-        {{ $t('group.lobby.questions') }}
-        {{ groupeStore?.groupePartyInfo?.partyQuestions.join(', ') }}
-      </span>
-    </div>
-
     <div class="grid gap-6 md:grid-cols-12">
       <!-- Players focus panel -->
       <div class="md:col-span-8 gaming-card">
@@ -33,7 +13,7 @@
             })
           }}</span>
         </div>
-        <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))]">
+        <ul class="grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] sm:grid-cols-1">
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
