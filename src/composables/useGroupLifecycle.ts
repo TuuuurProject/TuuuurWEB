@@ -91,7 +91,7 @@ export function useGroupLifecycle() {
     if (!signalrService.isConnected()) {
       try {
         await signalrService.connect(userStore.token || '')
-        console.log('SignalR connected for group')
+        if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR connected for group')
       } catch (error) {
         console.error('Failed to connect to SignalR:', error)
         proxy?.$toast.error(t('group.lobby.connectionError'))

@@ -854,8 +854,6 @@ const answer = async (opt: { id: number }) => {
     usersAnswered.value.add(userStore.userId)
   }
 
-  console.log('Answer selected answer ID:', opt.id)
-
   // Answer
   if (signalrService.isConnected()) {
     await signalrService.send(GroupEvent.SendAnswer, opt.id)
@@ -1079,7 +1077,7 @@ const countdownTextClass = computed(() => {
 })
 
 const handleOnUserAnswer = (data: any) => {
-  console.log('User answer received:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('User answer received:', data)
   // Add user to the set of users who answered
   if (data && (data.id || data.userId)) {
     usersAnswered.value.add(data.id ?? data.userId)
@@ -1087,7 +1085,7 @@ const handleOnUserAnswer = (data: any) => {
 }
 
 const handleCountdownEvent = (data: any) => {
-  console.log('Countdown event received:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Countdown event received:', data)
 
   const value = Number(data)
   if (!Number.isFinite(value)) return
@@ -1120,7 +1118,7 @@ function clearCountdownOverlay() {
 }
 
 const handleQuestionSend = (data: any) => {
-  console.log('New question received:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('New question received:', data)
 
   // Reset user answer ID
   userAnswerId.value = null
@@ -1141,7 +1139,7 @@ const handleQuestionSend = (data: any) => {
 }
 
 const handleQuestionAnswerSend = (data: any) => {
-  console.log('Answer received for question:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Answer received for question:', data)
 
   scoreIsAvailable.value = true
 
@@ -1161,7 +1159,7 @@ const handleQuestionAnswerSend = (data: any) => {
 }
 
 const handlePartyFinished = (data: any) => {
-  console.log('Party finished:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Party finished:', data)
 
   // Store players ranking data
   if (Array.isArray(data)) {
@@ -1172,7 +1170,7 @@ const handlePartyFinished = (data: any) => {
 }
 
 const handleScoreUpdate = (data: any) => {
-  console.log('Score update received:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Score update received:', data)
 
   // Update players ranking data
   if (Array.isArray(data)) {
@@ -1181,12 +1179,12 @@ const handleScoreUpdate = (data: any) => {
 }
 
 const handleOnError = (error: any) => {
-  console.log('Lobby deleted:', error)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Lobby deleted:', error)
   proxy?.$toast.error(error)
 }
 
 const handlePartyDeleted = async () => {
-  console.log('Party deleted by host')
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Party deleted by host')
   proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
 
   // Nettoyer le groupe et rediriger

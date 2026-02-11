@@ -85,16 +85,16 @@ class SignalRService {
     })
 
     this.connection.onreconnected((connectionId: string | undefined) => {
-      console.log('SignalR reconnected:', connectionId)
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR reconnected:', connectionId)
     })
 
     this.connection.onclose(() => {
-      console.log('SignalR connection closed')
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR connection closed')
     })
 
     try {
       await this.connection.start()
-      console.log('SignalR connected successfully')
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR connected successfully')
     } catch (error) {
       console.error('Error connecting to SignalR:', error)
       throw error
@@ -107,7 +107,7 @@ class SignalRService {
       this.connection = null
       this.handlers.clear()
 
-      console.log('SignalR disconnected')
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR disconnected')
     }
   }
 

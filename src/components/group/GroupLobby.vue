@@ -215,7 +215,7 @@ const handleLeaveEvent = (data: any) => {
 }
 
 const handleStartEvent = (data: any) => {
-  console.log('Game started:', data)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Game started:', data)
   gameStarted.value = true
   groupeStore.groupePartyInfo = data
   emit('goTo', 'game')
