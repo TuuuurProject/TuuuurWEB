@@ -166,7 +166,12 @@
       "summary": "Récapitulatif des Réponses",
       "goodAnswer": "Bonne réponse",
       "badAnswer": "Mauvaise réponse",
-      "replay": "Rejouer"
+      "replay": "Rejouer",
+      "partyInfo": "Informations de la partie",
+      "themes": "Thèmes",
+      "allThemes": "Tous les thèmes",
+      "difficulties": "Difficultés",
+      "numberOfQuestions": "Nombre de questions"
     }
   },
   "group": {
@@ -241,6 +246,12 @@
       "waiting": "En attente...",
       "ranking": "Classement Final",
       "otherPlayers": "{count} autre joueur | {count} autres joueurs",
+      "partyInfo": "Informations de la partie",
+      "themes": "Thèmes",
+      "allThemes": "Tous les thèmes",
+      "difficulties": "Difficultés",
+      "numberOfQuestions": "Nombre de questions",
+      "scoreEachRound": "Score à chaque tour",
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."

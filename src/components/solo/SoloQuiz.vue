@@ -89,7 +89,7 @@
     </div>
 
     <!-- Results -->
-    <div v-else class="space-y-6">
+    <div v-if="finished" class="space-y-6">
       <!-- Header avec score final -->
       <div
         class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
@@ -137,6 +137,67 @@
             <font-awesome-icon icon="times-circle" class="mr-1" />
             {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions - correctAnswersCount }}
             {{ $t('solo.quiz.incorrectAnswers') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Informations de la partie -->
+      <div class="gaming-card">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
+          >
+            <font-awesome-icon icon="info-circle" />
+          </div>
+          <h3 class="font-branding text-2xl text-brand-lightGray">
+            {{ $t('solo.quiz.partyInfo') }}
+          </h3>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Thèmes -->
+          <div class="flex flex-wrap gap-2 items-center">
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="tag" class="mr-2" /> {{ $t('solo.quiz.themes') }} :
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              <div
+                v-for="theme in partyThemes"
+                :key="theme.id"
+                class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+              >
+                <font-awesome-icon :icon="theme.icon" class="text-lg" />
+                <span>{{ theme.label }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Difficultés -->
+          <div class="flex flex-wrap gap-2 items-center">
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
+              {{ $t('solo.quiz.difficulties') }} :
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              <div
+                v-for="diff in partyDifficulties"
+                :key="diff?.id"
+                class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+                :class="[diff?.colorClass]"
+              >
+                <font-awesome-icon :icon="diff?.icon" class="text-lg" />
+                <span>{{ diff?.label }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nombre de questions -->
+          <div>
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="list-ol" class="mr-2" />
+              {{ $t('solo.quiz.numberOfQuestions') }} :
+              {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
+            </h3>
           </div>
         </div>
       </div>
@@ -226,11 +287,15 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import useSoloStore from '@/stores/solo.js'
+import useThemeStore from '@/stores/theme.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 
 const soloStore = useSoloStore()
+const themeStore = useThemeStore()
 const router = useRouter()
+const { t } = useI18n()
 
 const TOTAL_TIME = 15 // seconds per question
 
@@ -454,6 +519,60 @@ const isUserAnswer = (questionData: any) => {
   return questionData?.userPartyQuestion?.idAnswer !== null
 }
 
+// Computed properties pour les informations de la partie
+const difficulties = computed(() => [
+  {
+    id: 1,
+    label: t('solo.difficulties.easy'),
+    icon: 'seedling',
+    colorClass: 'diff-easy',
+    glowClass: 'glow-green',
+  },
+  {
+    id: 2,
+    label: t('solo.difficulties.medium'),
+    icon: 'bolt',
+    colorClass: 'diff-medium',
+    glowClass: 'glow-yellow',
+  },
+  {
+    id: 3,
+    label: t('solo.difficulties.hard'),
+    icon: 'fire',
+    colorClass: 'diff-hard',
+    glowClass: 'glow-orange',
+  },
+  {
+    id: 4,
+    label: t('solo.difficulties.hardcore'),
+    icon: 'skull',
+    colorClass: 'diff-hardcore',
+    glowClass: 'glow-red',
+  },
+])
+
+const partyDifficulties = computed(() => {
+  const diffLabels =
+    (soloPartyInfoComputed.value as any)?.partyDifficulty.map((d: any) => {
+      const difficultyObj = difficulties.value.find(
+        (diff: any) => diff.label.toLowerCase() === d.difficulty.label.toLowerCase(),
+      )
+
+      if (difficultyObj) return difficultyObj
+    }) || []
+
+  if (!diffLabels || diffLabels.length === 0) return []
+
+  // Remove null values and duplicates
+  return diffLabels.filter(Boolean)
+})
+
+const partyThemes = computed(() => {
+  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.id) || []
+  if (!themeIds || themeIds.length === 0 || !themeStore.list) return []
+  return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
+})
+
 const getAnswerClass = (questionData: any, answer: any) => {
   const isCorrect = answer.valid
   const isUserChoice = isUserAnswer(questionData)
@@ -474,6 +593,11 @@ const getAnswerClass = (questionData: any, answer: any) => {
 }
 
 onMounted(async () => {
+  // Load themes if not already loaded
+  if (!themeStore.list) {
+    await themeStore.loadThemes()
+  }
+
   // Load party info and get questions
   await soloStore.loadPartyInfo()
 
@@ -525,5 +649,75 @@ onBeforeUnmount(() => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(108, 92, 231, 0.6);
+}
+
+/* Boutons de difficulté */
+.difficulty-button {
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--brand-lightGray);
+}
+
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
+}
+
+/* Couleurs par difficulté */
+.diff-easy {
+  --diff-color: #10b981;
+}
+.diff-medium {
+  --diff-color: #f59e0b;
+}
+.diff-hard {
+  --diff-color: #f97316;
+}
+.diff-hardcore {
+  --diff-color: #ef4444;
+}
+
+.difficulty-button {
+  color: var(--diff-color);
+}
+
+.difficulty-button.selected {
+  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
+}
+
+/* Effet de glow animé */
+.difficulty-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 0.75rem;
+}
+
+.difficulty-button:hover .difficulty-glow {
+  opacity: 0.1;
+}
+
+.glow-green {
+  background: radial-gradient(circle, #10b981 0%, transparent 70%);
+}
+.glow-yellow {
+  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+}
+.glow-orange {
+  background: radial-gradient(circle, #f97316 0%, transparent 70%);
+}
+.glow-red {
+  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
 }
 </style>

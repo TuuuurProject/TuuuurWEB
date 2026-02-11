@@ -93,6 +93,13 @@ import {
   faChevronUp,
   faChevronDown,
   faPen,
+  faFaceSmile,
+  faFaceMeh,
+  faFaceFrown,
+  faTag,
+  faListOl,
+  faInfoCircle,
+  faGaugeHigh,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -167,6 +174,13 @@ library.add(
   faChevronUp,
   faChevronDown,
   faPen,
+  faFaceSmile,
+  faFaceMeh,
+  faFaceFrown,
+  faTag,
+  faListOl,
+  faInfoCircle,
+  faGaugeHigh,
 )
 
 // Functions

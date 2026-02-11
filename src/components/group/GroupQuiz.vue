@@ -517,6 +517,79 @@
         </div>
       </div>
 
+      <!-- Informations de la partie -->
+      <div class="gaming-card">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
+          >
+            <font-awesome-icon icon="info-circle" />
+          </div>
+          <h3 class="font-branding text-2xl text-brand-lightGray">
+            {{ $t('group.quiz.partyInfo') }}
+          </h3>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Thèmes -->
+          <div class="flex flex-wrap gap-2 items-center">
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="tag" class="mr-2" /> {{ $t('group.quiz.themes') }} :
+            </h3>
+            <template v-if="partyThemes.length === 0">
+              <div class="text-brand-gray">{{ $t('group.quiz.allThemes') }}</div>
+            </template>
+            <div v-else class="flex flex-wrap gap-3">
+              <div
+                v-for="theme in partyThemes"
+                :key="theme.id"
+                class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+              >
+                <font-awesome-icon :icon="theme.icon" class="text-lg" />
+                <span>{{ theme.label }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Difficultés -->
+          <div class="flex flex-wrap gap-2 items-center">
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
+              {{ $t('group.quiz.difficulties') }} :
+            </h3>
+            <div class="flex flex-wrap gap-3">
+              <div
+                v-for="diff in partyDifficulties"
+                :key="diff.id"
+                class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+                :class="[diff.colorClass]"
+              >
+                <font-awesome-icon :icon="diff.icon" class="text-lg" />
+                <span>{{ diff.label }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nombre de questions -->
+          <div>
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="list-ol" class="mr-2" />
+              {{ $t('group.quiz.numberOfQuestions') }} :
+              {{ groupeStore.groupePartyInfo?.nbQuestions }}
+            </h3>
+          </div>
+
+          <!-- Score Each Round (uniquement en groupe) -->
+          <div v-if="groupeStore.groupePartyInfo?.scoreEachRound !== undefined">
+            <h3 class="font-branding text-xl text-brand-lightGray">
+              <font-awesome-icon icon="trophy" class="mr-2" />
+              {{ $t('group.quiz.scoreEachRound') }} :
+              {{ groupeStore.groupePartyInfo?.scoreEachRound ? $t('common.yes') : $t('common.no') }}
+            </h3>
+          </div>
+        </div>
+      </div>
+
       <!-- Récapitulatif des questions -->
       <div class="gaming-card">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
@@ -639,10 +712,12 @@ import ModalDialog from '@/components/ModalDialog.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useGroupeStore from '@/stores/groupe'
 import useUserStore from '@/stores/user'
+import useThemeStore from '@/stores/theme'
 import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
 
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 const { cleanupGroup } = useGroupLifecycle()
 const router = useRouter()
 
@@ -902,6 +977,60 @@ const isUserAnswer = (questionData: any) => {
   return questionData?.idAnswer !== null
 }
 
+// Computed properties pour les informations de la partie
+const difficulties = computed(() => [
+  {
+    id: 1,
+    label: t('solo.difficulties.easy'),
+    icon: 'seedling',
+    colorClass: 'diff-easy',
+    glowClass: 'glow-green',
+  },
+  {
+    id: 2,
+    label: t('solo.difficulties.medium'),
+    icon: 'bolt',
+    colorClass: 'diff-medium',
+    glowClass: 'glow-yellow',
+  },
+  {
+    id: 3,
+    label: t('solo.difficulties.hard'),
+    icon: 'fire',
+    colorClass: 'diff-hard',
+    glowClass: 'glow-orange',
+  },
+  {
+    id: 4,
+    label: t('solo.difficulties.hardcore'),
+    icon: 'skull',
+    colorClass: 'diff-hardcore',
+    glowClass: 'glow-red',
+  },
+])
+
+const partyDifficulties = computed(() => {
+  const diffLabels =
+    groupeStore.groupePartyInfo?.partyDifficulty.map((d: any) => {
+      const difficultyObj = difficulties.value.find(
+        (diff: any) => diff.label.toLowerCase() === d.difficulty.label.toLowerCase(),
+      )
+
+      if (difficultyObj) return difficultyObj
+    }) || []
+
+  if (!diffLabels || diffLabels.length === 0) return []
+
+  // Remove null values and duplicates
+  return diffLabels.filter(Boolean)
+})
+
+const partyThemes = computed(() => {
+  if (!groupeStore.groupePartyInfo?.partyTheme || !themeStore.list) return []
+  const themeIds = groupeStore.groupePartyInfo.partyTheme.map((t: any) => t.idTheme)
+  return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
+})
+
 const isUserAnswerIsCorrect = (questions: any, answerId: number) => {
   const answer = questions.answer.find((ans: { id: number }) => ans.id === answerId)
 
@@ -1087,6 +1216,11 @@ const handleBeforeUnload = () => {
 }
 
 onMounted(async () => {
+  // Load themes if not already loaded
+  if (!themeStore.list) {
+    await themeStore.loadThemes()
+  }
+
   // Connection signalR
   try {
     allEvents.forEach((event) => {
@@ -1259,5 +1393,75 @@ onBeforeUnmount(async () => {
 .countdown-swap-leave-to {
   transform: scale(1.08);
   opacity: 0;
+}
+
+/* Boutons de difficulté */
+.difficulty-button {
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--brand-lightGray);
+}
+
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
+}
+
+/* Couleurs par difficulté */
+.diff-easy {
+  --diff-color: #10b981;
+}
+.diff-medium {
+  --diff-color: #f59e0b;
+}
+.diff-hard {
+  --diff-color: #f97316;
+}
+.diff-hardcore {
+  --diff-color: #ef4444;
+}
+
+.difficulty-button {
+  color: var(--diff-color);
+}
+
+.difficulty-button.selected {
+  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
+}
+
+/* Effet de glow animé */
+.difficulty-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 0.75rem;
+}
+
+.difficulty-button:hover .difficulty-glow {
+  opacity: 0.1;
+}
+
+.glow-green {
+  background: radial-gradient(circle, #10b981 0%, transparent 70%);
+}
+.glow-yellow {
+  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+}
+.glow-orange {
+  background: radial-gradient(circle, #f97316 0%, transparent 70%);
+}
+.glow-red {
+  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
 }
 </style>

@@ -240,10 +240,6 @@ const toggleDifficulty = (id: number) => {
 
 const canStartGame = computed(() => selected.size === 0 || selectedDifficulty.value.length === 0)
 
-const emit = defineEmits<{
-  (e: 'back'): void
-}>()
-
 const confirm = async () => {
   open.value = false
 
