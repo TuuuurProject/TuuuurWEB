@@ -104,7 +104,7 @@
 
       <footer class="flex flex-wrap items-center justify-end gap-3">
         <button class="btn btn-ghost" @click="$router.go(-1)">
-          <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
         </button>
         <button
           data-testid="solo-start"

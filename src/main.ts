@@ -92,6 +92,7 @@ import {
   faUserNinja,
   faChevronUp,
   faChevronDown,
+  faPen,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -165,6 +166,7 @@ library.add(
   faUserNinja,
   faChevronUp,
   faChevronDown,
+  faPen,
 )
 
 // Functions

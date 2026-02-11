@@ -209,7 +209,10 @@
 
       <!-- Actions finales -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button class="btn btn-secondary w-full sm:w-auto" @click="$emit('exit')">
+        <button
+          class="btn btn-secondary w-full sm:w-auto"
+          @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"
+        >
           <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
         </button>
         <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
@@ -492,6 +495,16 @@ onBeforeUnmount(() => {
   clearTimer()
   // Retirer l'écouteur d'événements clavier
   window.removeEventListener('keydown', handleKeyPress)
+
+  // Reset des variables locales
+  index.value = 0
+  nbMaxQuestions.value = 0
+  score.value = 0
+  answered.value = false
+  wasCorrect.value = false
+  lastPoints.value = 0
+  finished.value = false
+  comeFromHistory.value = false
 })
 </script>
 

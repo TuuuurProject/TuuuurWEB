@@ -1,13 +1,13 @@
 <template>
   <overlay-block :loading="isLoading">
-    <div class="space-y-10">
+    <div class="space-y-5">
       <!-- Header with stats -->
-      <div class="flex items-center justify-between">
-        <h3 class="text-xl font-bold text-brand-lightGray">
+      <div class="grid md:grid-cols-2 sm:grid-cols-1 mx-auto">
+        <h3 class="flex items-center text-xl font-bold text-brand-lightGray mb-3 md:mb-0">
           <font-awesome-icon icon="clock-rotate-left" class="mr-2 text-brand-purple" />
           {{ $t('profile.matchHistory.title') }}
         </h3>
-        <div class="flex gap-3">
+        <div class="flex gap-3 md:justify-end sm:justify-start">
           <div class="pill bg-brand-purple/20 border-brand-purple/40 text-brand-purple">
             <font-awesome-icon icon="gamepad" class="mr-1" />
             {{ $t('profile.matchHistory.parties', { count: historyStore.nbParties || 0 }) }}
@@ -61,25 +61,33 @@
             <!-- Match info -->
             <div class="flex-1 space-y-2">
               <!-- Header line -->
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-brand-lightGray text-base">
-                    {{ match.partyType.label }}
-                  </span>
-                  <span
-                    v-if="!match.finish"
-                    class="pill text-xs py-1 px-2 bg-brand-cyan/20 border-brand-cyan/40 text-brand-cyan animate-pulse"
-                  >
-                    <font-awesome-icon icon="hourglass-half" class="mr-1" />
-                    {{ $t('profile.matchHistory.inProgress') }}
-                  </span>
-                  <span
-                    v-if="match.partyDifficulty.length > 0"
-                    class="pill text-xs py-1 px-2"
-                    :class="match.difficultyColor"
-                  >
-                    {{ match.partyDifficulty[0].difficulty.label }}
-                  </span>
+              <div class="flex items-center justify-between gap-2">
+                <div class="grid">
+                  <div class="gap-2 flex mb-2">
+                    <span class="font-bold text-brand-lightGray text-base">
+                      {{ match.partyType.label }}
+                    </span>
+                    <span
+                      v-if="!match.finish"
+                      class="pill text-xs py-1 px-2 bg-brand-cyan/20 border-brand-cyan/40 text-brand-cyan animate-pulse"
+                    >
+                      <font-awesome-icon icon="hourglass-half" class="mr-1" />
+                      {{ $t('profile.matchHistory.inProgress') }}
+                    </span>
+                  </div>
+
+                  <div class="flex gap-2">
+                    <template v-if="match.partyDifficulty.length > 0">
+                      <span
+                        v-for="pd in match.partyDifficulty"
+                        :key="pd.id"
+                        class="pill text-xs py-1 px-2"
+                        :class="match.difficultiesColor[pd.idDifficulty]"
+                      >
+                        {{ pd.difficulty.label }}
+                      </span>
+                    </template>
+                  </div>
                 </div>
                 <div class="text-sm text-brand-gray">{{ match.formattedDate }}</div>
               </div>
@@ -259,11 +267,13 @@ import OverlayBlock from '@/components/OverlayBlock.vue'
 import useHistoryStore from '@/stores/history'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import utc from 'dayjs/plugin/utc'
 import 'dayjs/locale/fr'
 import type { Match } from '@/stores/history'
 
 const { t } = useI18n()
 dayjs.extend(relativeTime)
+dayjs.extend(utc)
 dayjs.locale('fr')
 
 // Cache pour les dates formatées
@@ -284,6 +294,7 @@ const historyStore = useHistoryStore()
 const filters = computed(() => [
   { label: t('profile.matchHistory.filters.all'), value: 'all' },
   { label: t('profile.matchHistory.filters.solo'), value: 'solo' },
+  { label: t('profile.matchHistory.filters.group'), value: 'groupe' },
 ])
 
 const matches = computed(() => {
@@ -320,7 +331,7 @@ const stats = computed(() => {
 // Type enrichi pour les matches avec données précalculées
 interface EnrichedMatch extends Match {
   formattedDate: string
-  difficultyColor: string
+  difficultiesColor: string[]
   filterKey: string
 }
 
@@ -330,6 +341,8 @@ const filteredMatches = computed(() => {
   // Filtrage
   if (selectedFilter.value === 'solo') {
     filtered = filtered.filter((m: Match) => m.partyType.label === 'Solo')
+  } else if (selectedFilter.value === 'groupe') {
+    filtered = filtered.filter((m: Match) => m.partyType.label === 'Groupe')
   }
 
   // Tri et enrichissement des données en une seule passe
@@ -345,19 +358,22 @@ const filteredMatches = computed(() => {
       // Formater la date avec cache
       let formattedDate = dateCache.get(match.dt)
       if (!formattedDate) {
-        formattedDate = dayjs(match.dt).fromNow()
+        formattedDate = dayjs.utc(match.dt).local().fromNow()
         dateCache.set(match.dt, formattedDate)
       }
 
-      // Obtenir la couleur de difficulté
-      const difficulty = match.partyDifficulty[0]?.difficulty.label.toLowerCase() || ''
-      const difficultyColor =
-        difficultyColorMap[difficulty] || 'bg-brand-gray/20 border-brand-gray/40 text-brand-gray'
-
+      // Get difficulty colors
       return {
         ...match,
         formattedDate,
-        difficultyColor,
+        difficultiesColor: match.partyDifficulty
+          .sort((a, b) => a.idDifficulty - b.idDifficulty)
+          .map((pd) => {
+            const diff = pd.difficulty.label.toLowerCase()
+            return (
+              difficultyColorMap[diff] || 'bg-brand-gray/20 border-brand-gray/40 text-brand-gray'
+            )
+          }),
         filterKey: `${match.id}-${match.dt}`,
       }
     })
@@ -420,7 +436,12 @@ const visiblePages = computed(() => {
 })
 
 const showMatchDetails = (match: Match) => {
-  router.push({ name: 'SoloQuiz', params: { id: match.id } })
+  // Rediriger vers la page de détails du match en fonction du type de partie
+  if (match.partyType.label === 'Solo') {
+    router.push({ name: 'SoloQuiz', params: { id: match.id } })
+  } else if (match.partyType.label === 'Groupe') {
+    // router.push({ name: 'GroupMode', params: { id: match.id } })
+  }
 }
 
 const goToPage = async (page: number) => {
