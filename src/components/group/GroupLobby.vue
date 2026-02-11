@@ -33,7 +33,7 @@
             })
           }}</span>
         </div>
-        <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+        <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))]">
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"

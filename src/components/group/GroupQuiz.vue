@@ -206,7 +206,7 @@
       </div>
 
       <!-- Statut des joueurs (répondu ou non) -->
-      <ul v-else class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+      <ul v-else class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,0.5fr))]">
         <li
           v-for="p in groupeStore.groupePartyInfo?.partyUsers"
           :key="String(p.id)"
