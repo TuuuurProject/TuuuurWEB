@@ -81,15 +81,16 @@ function onBackspace(idx: number) {
   const el = document.activeElement as HTMLInputElement
   if (!el) return
 
-  if (idx > 0) {
-    // Supprimer la valeur actuelle si elle existe
+  if (digits[idx] !== '') {
+    // Si le champ actuel contient une valeur, on la supprime seulement
+    // Le focus reste sur le champ actuel pour pouvoir retaper immédiatement
     digits[idx] = ''
-    // Passer à l'input précédent
+  } else if (idx > 0) {
+    // Si le champ actuel est vide et qu'on n'est pas sur le premier,
+    // on recule au champ précédent et on supprime sa valeur
     const prev = el.previousElementSibling as HTMLInputElement | null
     prev?.focus()
-  } else {
-    // Premier input, on supprime juste la valeur
-    digits[idx] = ''
+    digits[idx - 1] = ''
   }
 }
 
