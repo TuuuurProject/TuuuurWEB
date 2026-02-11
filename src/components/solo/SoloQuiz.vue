@@ -289,6 +289,7 @@ import { useI18n } from 'vue-i18n'
 import useSoloStore from '@/stores/solo.js'
 import useThemeStore from '@/stores/theme.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
+import solo from '@/stores/solo.js'
 
 const soloStore = useSoloStore()
 const themeStore = useThemeStore()
@@ -627,6 +628,8 @@ onBeforeUnmount(() => {
   lastPoints.value = 0
   finished.value = false
   comeFromHistory.value = false
+  soloStore.partyInfo = null
+  soloStore.partyId = null
 })
 </script>
 
