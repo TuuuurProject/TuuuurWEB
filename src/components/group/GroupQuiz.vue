@@ -299,7 +299,7 @@
           <div class="text-center">
             <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.successRate') }}</div>
             <div class="font-branding text-3xl text-brand-green">
-              {{ Math.round((correctAnswersCount / 10) * 100) }}%
+              {{ Math.round((correctAnswersCount / allQuestionsParty.length) * 100) }}%
             </div>
           </div>
         </div>
@@ -312,7 +312,7 @@
           </div>
           <div class="badge-warning">
             <font-awesome-icon icon="times-circle" class="mr-1" />
-            {{ 10 - correctAnswersCount }}
+            {{ allQuestionsParty.length - correctAnswersCount }}
             {{ $t('group.quiz.incorrectAnswers') }}
           </div>
         </div>
@@ -333,7 +333,13 @@
 
         <!-- Podium Top 3 -->
         <div class="mb-6">
-          <div class="grid grid-cols-3 gap-4 max-w-3xl mx-auto items-end">
+          <div
+            class="grid gap-4 max-w-3xl mx-auto items-end"
+            :class="{
+              'grid-cols-1 max-w-xs': sortedPlayers.length === 1,
+              'grid-cols-3': sortedPlayers.length > 1,
+            }"
+          >
             <!-- 2nd place -->
             <div
               v-if="sortedPlayers[1]"
