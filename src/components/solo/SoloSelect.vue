@@ -4,9 +4,6 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('solo.title') }}
       </h2>
-      <div v-if="userStore.isLogged" class="badge-success animate-pulse-slow">
-        {{ $t('solo.selectBadge') }}
-      </div>
     </header>
 
     <template v-if="userStore.isLogged">

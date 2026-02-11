@@ -2,10 +2,6 @@
   <section class="space-y-6">
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <button class="pill" @click="exitQuizGame">
-          <font-awesome-icon icon="arrow-left" class="mr-2" />
-          {{ $t('group.quiz.home') }}
-        </button>
         <h2 class="font-branding text-3xl">{{ $t('group.quiz.title') }}</h2>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
