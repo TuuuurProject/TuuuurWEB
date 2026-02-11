@@ -265,7 +265,9 @@
       </div>
 
       <!-- Actions finales -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div
+        class="sticky bottom-0 left-0 right-0 flex flex-col sm:flex-row items-center justify-center gap-3 pb-3"
+      >
         <button
           class="btn btn-secondary w-full sm:w-auto"
           @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"

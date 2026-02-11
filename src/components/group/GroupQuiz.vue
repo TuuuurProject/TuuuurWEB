@@ -655,7 +655,9 @@
       </div>
 
       <!-- Actions finales -->
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <div
+        class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
+      >
         <button class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
           <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.leave') }}
         </button>
