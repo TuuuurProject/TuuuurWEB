@@ -1013,12 +1013,13 @@ const partyDifficulties = computed(() => {
       )
 
       if (difficultyObj) return difficultyObj
+      return null
     }) || []
 
   if (!diffLabels || diffLabels.length === 0) return []
 
   // Remove null values and duplicates
-  return diffLabels.filter(Boolean)
+  return diffLabels.filter((item): item is NonNullable<typeof item> => Boolean(item))
 })
 
 const partyThemes = computed(() => {
