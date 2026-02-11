@@ -2,105 +2,105 @@
   <overlay-block :loading="userStore.isLoading">
     <div
       data-testid="profile-info"
-      class="flex items-center gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20"
+      class="gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 grid sm:grid-cols-1 md:grid-cols-2"
     >
-      <div class="relative group cursor-pointer" @click="triggerFileInput">
-        <img
-          v-if="userStore.userInfo?.avatar"
-          :src="userStore.userInfo?.avatar"
-          alt="avatar"
-          class="h-16 w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
-        />
-        <div
-          v-else
-          class="h-16 w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
-        >
-          <span id="nickaname" class="text-2xl font-bold text-brand-purple">
-            {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
-          </span>
-        </div>
-        <!-- Camera overlay on hover -->
-        <div
-          class="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-        >
-          <font-awesome-icon icon="camera" class="text-white text-xl" />
-        </div>
-        <!-- Hidden file input -->
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
-          @change="handleFileChange"
-        />
-      </div>
-      <div class="flex-1">
-        <div v-if="!isEditingNickname" class="flex items-center gap-2">
-          <div
-            id="nickname"
-            class="font-branding text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors"
-            @click="startEditingNickname"
-          >
-            {{ userStore.userInfo?.nickName }}
-          </div>
-        </div>
-        <div v-else class="flex items-center gap-2">
-          <input
-            ref="nicknameInput"
-            v-model="newNickname"
-            type="text"
-            class="font-branding text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
-            @keydown.enter="saveNickname"
-            @keydown.escape="cancelEditingNickname"
+      <div class="flex items-center gap-4">
+        <div class="relative group cursor-pointer" @click="triggerFileInput">
+          <img
+            v-if="userStore.userInfo?.avatar"
+            :src="userStore.userInfo?.avatar"
+            alt="avatar"
+            class="h-16 w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
           />
-          <button
-            class="text-green-400 hover:text-green-300 transition-colors"
-            @click="saveNickname"
+          <div
+            v-else
+            class="h-16 w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
           >
-            <font-awesome-icon icon="check" />
-          </button>
-          <button
-            class="text-red-400 hover:text-red-300 transition-colors"
-            @click="cancelEditingNickname"
+            <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+              {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
+            </span>
+          </div>
+          <!-- Camera overlay on hover -->
+          <div
+            class="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
-            <font-awesome-icon icon="xmark" />
-          </button>
+            <font-awesome-icon icon="camera" class="text-white text-xl" />
+          </div>
+          <!-- Hidden file input -->
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            class="hidden"
+            @change="handleFileChange"
+          />
         </div>
-        <div class="text-sm text-brand-gray">{{ userStore.userInfo?.email }}</div>
+        <div class="flex-1">
+          <div v-if="!isEditingNickname" class="flex items-center gap-2">
+            <div
+              id="nickname"
+              class="font-branding text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors flex items-center"
+              @click="startEditingNickname"
+            >
+              {{ userStore.userInfo?.nickName }}
+              <font-awesome-icon icon="pen" class="ml-2 text-sm text-brand-purple" />
+            </div>
+          </div>
+          <div v-else class="flex items-center gap-2">
+            <input
+              ref="nicknameInput"
+              v-model="newNickname"
+              type="text"
+              class="font-branding text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
+              @keydown.enter="saveNickname"
+              @keydown.escape="cancelEditingNickname"
+            />
+            <button
+              class="text-green-400 hover:text-green-300 transition-colors"
+              @click="saveNickname"
+            >
+              <font-awesome-icon icon="check" />
+            </button>
+            <button
+              class="text-red-400 hover:text-red-300 transition-colors"
+              @click="cancelEditingNickname"
+            >
+              <font-awesome-icon icon="xmark" />
+            </button>
+          </div>
+          <div class="text-sm text-brand-gray">{{ userStore.userInfo?.email }}</div>
+        </div>
       </div>
-      <div class="text-right">
+      <div class="text-right flex items-center justify-start sm:justify-end">
         <div class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold">
           <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}: 1210
         </div>
-        <!-- <button class="btn btn-ghost mt-2 text-xs py-1 px-3" @click="openPicker = true">
-          <font-awesome-icon icon="cog" class="mr-1" /> Modifier avatar
-        </button> -->
       </div>
     </div>
 
-    <div>
-      <div class="mt-4 flex items-center justify-between gap-2">
+    <div class="mt-4 gap-5 md:gap-2 grid md:grid-cols-2 sm:grid-cols-1 mx-auto">
+      <div>
         <button
-          class="btn btn-ghost border border-brand-purple hover:bg-brand-purple/10"
+          class="btn btn-ghost border border-brand-purple hover:bg-brand-purple/10 h-full w-full md:w-auto"
           @click="showModalChangePassword = true"
         >
           <font-awesome-icon icon="key" class="mr-2" /> {{ $t('profile.changePassword') }}
         </button>
-        <div class="flex gap-5">
-          <button
-            class="btn text-brand-orange hover:bg-brand-orange/10 border border-transparent hover:border-brand-orange"
-            @click="showModalCompte = true"
-          >
-            <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
-          </button>
-          <button
-            data-testid="profile-logout"
-            class="btn btn-ghost text-danger"
-            @click="userStore.logout()"
-          >
-            <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
-          </button>
-        </div>
+      </div>
+      <div class="gap-5 grid md:grid-cols-2 sm:grid-cols-1">
+        <button
+          class="btn text-brand-orange hover:bg-brand-orange/10 border border-transparent hover:border-brand-orange"
+          @click="showModalCompte = true"
+        >
+          <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
+        </button>
+        <button
+          data-testid="profile-logout"
+          class="btn btn-ghost text-danger"
+          @click="userStore.logout()"
+        >
+          <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
+        </button>
       </div>
     </div>
   </overlay-block>

@@ -27,7 +27,7 @@ export default defineStore('theme', {
           method: 'GET',
         }
         const response = await axiosOverlayConnector(config)
-        this.list = response.data
+        this.list = response.data.sort((a: Theme, b: Theme) => a.label.localeCompare(b.label))
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error

@@ -1,5 +1,6 @@
 {
   "common": {
+    "leave": "Leave",
     "back": "Back",
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -165,7 +166,12 @@
       "summary": "Answer Summary",
       "goodAnswer": "Correct answer",
       "badAnswer": "Wrong answer",
-      "replay": "Replay"
+      "replay": "Replay",
+      "partyInfo": "Party Information",
+      "themes": "Themes",
+      "allThemes": "All themes",
+      "difficulties": "Difficulties",
+      "numberOfQuestions": "Number of questions"
     }
   },
   "group": {
@@ -175,27 +181,32 @@
       "title": "Create a Game",
       "subtitle": "Set parameters and share the code/QR with your friends.",
       "badge": "Share the code with your friends",
-      "startAdventure": "Start Adventure",
+      "editSettings": "Update Settings",
       "modal": {
         "title": "Create Multiplayer Game",
         "categories": "Categories:",
         "questions": "Questions:",
-        "difficulty": "Difficulty:"
+        "difficulties": "Difficulties:"
       }
     },
     "join": {
       "title": "Join a Game",
       "subtitle": "Enter a code to join the lobby and start the adventure.",
-      "badge": "Enter the room code",
       "code": "Game Code",
       "example": "Example: 538950",
       "joinButton": "Join"
     },
     "lobby": {
+      "noThemeSelected": "No theme selected",
+      "noDifficultySelected": "No difficulty selected",
+      "difficulties": "Difficulties:",
       "title": "Lobby",
-      "waitingBadge": "Waiting for host",
+      "waitingBadge": "Waiting for the host",
+      "hostBadge": "You are the host",
       "categories": "Categories:",
       "questions": "Questions:",
+      "scoreEachRound": "Score Each Round",
+      "scoreEachRoundDescription": "Display score after each question",
       "players": "Players",
       "playersConnected": "{count} connected",
       "joinSection": "To join",
@@ -206,6 +217,45 @@
       "userLeft": "{name} left the lobby",
       "lobbyDeleted": "Lobby has been deleted",
       "connectionError": "Real-time connection error"
+    },
+    "quiz": {
+      "title": "Group Quiz",
+      "getReady": "Préparez-vous…",
+      "home": "Home",
+      "question": "Question {current} / {total}",
+      "score": "Score:",
+      "timeRemaining": "Time remaining: {time}s",
+      "correct": "Correct +{points} pts",
+      "incorrect": "Wrong answer",
+      "currentRanking": "Current Ranking",
+      "skip": "Skip",
+      "next": "Next",
+      "finished": "Quiz Completed!",
+      "finalScore": "Final Score",
+      "questions": "Questions",
+      "successRate": "Success Rate",
+      "correctAnswers": "Correct",
+      "incorrectAnswers": "Incorrect",
+      "summary": "Answer Summary",
+      "goodAnswer": "Correct answer",
+      "badAnswer": "Wrong answer",
+      "replay": "Replay",
+      "errorAnswering": "Error submitting answer",
+      "playersStatus": "Players Status",
+      "answered": "Answered",
+      "waiting": "Waiting...",
+      "ranking": "Final Ranking",
+      "otherPlayers": "{count} other player | {count} other players",
+      "partyInfo": "Party Information",
+      "themes": "Themes",
+      "allThemes": "All themes",
+      "difficulties": "Difficulties",
+      "numberOfQuestions": "Number of questions",
+      "scoreEachRound": "Score each round",
+      "confirmLeave": {
+        "title": "Leave the game?",
+        "message": "Are you sure you want to leave the ongoing game? You will lose your progress and cannot return."
+      }
     }
   },
   "competitive": {

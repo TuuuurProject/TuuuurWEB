@@ -13,7 +13,7 @@
           <button
             data-testid="group-create"
             class="gaming-card group p-8 text-left hover:shadow-neon transition-all duration-300"
-            @click="step = 'create'"
+            @click="setupGame"
           >
             <div class="flex items-start gap-4">
               <div
@@ -72,10 +72,16 @@
       </div>
     </div>
 
-    <GroupCreate v-else-if="step === 'create'" @back="step = 'mode'" @created="goLobbyFromCreate" />
+    <template v-else-if="step === 'lobby'">
+      <overlay-block :loading="groupeStore.isLoadingCreationGroupe">
+        <GroupCreate />
+        <GroupLobby @back="step = 'mode'" @go-to="goTo" />
+      </overlay-block>
+    </template>
+
     <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
 
-    <GroupLobby v-else-if="step === 'lobby'" @back="step = 'mode'" @go-to="goTo" />
+    <GroupQuiz v-else-if="step === 'game'" @exit="step = 'mode'" />
   </section>
 </template>
 
@@ -85,19 +91,24 @@ import GroupCreate from './GroupCreate.vue'
 import GroupJoin from './GroupJoin.vue'
 import GroupLobby from './GroupLobby.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
+import OverlayBlock from '@/components/OverlayBlock.vue'
 import useUserStore from '@/stores/user.js'
+import useGroupeStore from '@/stores/groupe.js'
+import GroupQuiz from '@/components/group/GroupQuiz.vue'
 
 const userStore = useUserStore()
+const groupeStore = useGroupeStore()
 
-type Step = 'mode' | 'create' | 'join' | 'lobby'
+type Step = 'mode' | 'join' | 'lobby' | 'game'
 const step = ref<Step>('mode')
+
+const setupGame = () => {
+  step.value = 'lobby'
+  groupeStore.createGroupe()
+}
 
 function goTo(newStep: Step) {
   step.value = newStep
-}
-
-function goLobbyFromCreate() {
-  step.value = 'lobby'
 }
 
 function goLobbyFromJoin() {

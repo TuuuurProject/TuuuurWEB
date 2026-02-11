@@ -52,6 +52,14 @@ export default defineStore('user', {
       if (this.refreshToken) return true
       return false
     },
+
+    userId(): number {
+      const payload = this.decodedPayloadToken as any
+      if (payload && payload.id) {
+        return parseInt(payload.id)
+      }
+      return 0
+    },
   },
 
   actions: {

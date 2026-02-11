@@ -14,7 +14,6 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
       userStore.token = token
     },
     logout() {
-      console.log('axiosOverlayConnector logout')
       userStore.logout()
     },
     errorsHandlers: {
@@ -67,7 +66,6 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
           }
         } else {
           // Pas de refresh token valide, on déconnecte
-          console.log('No refresh token available, logging out.')
           userStore.logout()
           reject(error)
         }

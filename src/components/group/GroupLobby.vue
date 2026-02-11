@@ -1,5 +1,5 @@
 <template>
-  <section data-testid="group-lobby" class="space-y-6">
+  <section data-testid="group-lobby" class="space-y-6 mt-6">
     <!-- Top header with code emphasis -->
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
@@ -29,11 +29,11 @@
           </h3>
           <span class="pill">{{
             $t('group.lobby.playersConnected', {
-              count: groupeStore.groupePartyInfo?.partyUsers.length || 0,
+              count: groupeStore.groupePartyInfo?.partyUsers?.length || 0,
             })
           }}</span>
         </div>
-        <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+        <ul class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))]">
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
@@ -90,34 +90,87 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="leaveGroupe">
-        <font-awesome-icon icon="arrow-left" /> {{ $t('group.lobby.leave') }}
-      </button>
-      <button class="btn btn-primary" :disabled="canCreateGame">
+      <button
+        v-if="currentUserIsHost"
+        class="btn btn-primary"
+        :disabled="canCreateGame"
+        @click="openModalStartGame = true"
+      >
         <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
       </button>
     </div>
+
+    <ModalDialog
+      :open="openModalStartGame"
+      :title="$t('group.create.modal.title')"
+      :loading="groupeStore.isLoading"
+      @confirm="confirmStartGame"
+      @close="openModalStartGame = false"
+    >
+      <div class="space-y-3">
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="bullseye" class="text-brand-purple" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
+          <span class="text-brand-gray">{{
+            Array.from(groupeStore?.groupePartyInfo?.partyTheme || [])
+              .map((theme: { theme?: { label?: string } }) => theme?.theme?.label)
+              .join(', ')
+          }}</span>
+        </p>
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
+          <span class="text-brand-gray">{{ groupeStore?.groupePartyInfo?.nbQuestions }}</span>
+        </p>
+
+        <p class="flex items-center gap-2">
+          <font-awesome-icon icon="fire" class="text-brand-orange" />
+          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulties') }} </strong>
+          <span class="text-brand-gray">
+            {{
+              Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
+                .map(
+                  (difficulty: { difficulty?: { label?: string } }) =>
+                    difficulty?.difficulty?.label,
+                )
+                .join(', ')
+            }}</span
+          >
+        </p>
+      </div>
+    </ModalDialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { computed, getCurrentInstance, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { onBeforeRouteLeave } from 'vue-router'
 import QRPreview from './QRPreview.vue'
+import ModalDialog from '@/components/ModalDialog.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useUserStore from '@/stores/user'
+import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
 
 const { t } = useI18n()
 const emit = defineEmits<{
-  (e: 'goTo', newStep: 'mode' | 'create' | 'join' | 'lobby'): void
+  (e: 'goTo', newStep: 'mode' | 'join' | 'lobby' | 'game'): void
 }>()
 
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
+const { connectSignalR, cleanupGroup } = useGroupLifecycle()
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
+
+const openModalStartGame = ref(false)
+const gameStarted = ref(false)
+
+const currentUserIsHost = computed(
+  () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
+)
 
 const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
@@ -125,18 +178,22 @@ const copyCode = async () => {
   })
 }
 
+// Start game when :
+// The current user is the host
+// There is at least one more player in the lobby
+// There is at least one theme selected
+// There is at least one difficulty selected
 const canCreateGame = computed(() => {
-  return (groupeStore?.groupePartyInfo?.partyUsers.length ?? 0) < 1
+  return (
+    !currentUserIsHost.value ||
+    (groupeStore?.groupePartyInfo?.partyUsers.length ?? 0) < 1 ||
+    (groupeStore?.groupePartyInfo?.partyTheme.length ?? 0) < 1 ||
+    (groupeStore?.groupePartyInfo?.partyDifficulty.length ?? 0) < 1
+  )
 })
-
-const leaveGroupe = async () => {
-  await groupeStore.leaveGroupe()
-  emit('goTo', 'mode')
-}
 
 // SignalR event handlers
 const handleJoinEvent = (data: any) => {
-  console.log('User joined:', data)
   // Refresh group info when someone joins
   if (groupeStore.groupeId) {
     groupeStore?.groupePartyInfo?.partyUsers.push({
@@ -148,7 +205,6 @@ const handleJoinEvent = (data: any) => {
 }
 
 const handleLeaveEvent = (data: any) => {
-  console.log('User left:', data)
   // Refresh group info when someone leaves
   if (groupeStore.groupeId) {
     groupeStore.groupePartyInfo!.partyUsers = groupeStore.groupePartyInfo!.partyUsers.filter(
@@ -159,73 +215,104 @@ const handleLeaveEvent = (data: any) => {
 }
 
 const handleStartEvent = (data: any) => {
-  console.log('Game started:', data)
-  // Navigate to game or update state
-  // proxy?.$toast.success('La partie commence !')
-  // You might want to navigate to a game view here
-  // router.push({ name: 'game', params: { id: groupeStore.groupeId } })
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Game started:', data)
+  gameStarted.value = true
+  groupeStore.groupePartyInfo = data
+  emit('goTo', 'game')
 }
 
-const handleDeleteEvent = (data: any) => {
-  console.log('Lobby deleted:', data)
+const handleDeleteEvent = async () => {
+  // Only handle this event if the game hasn't started yet (we're still in lobby)
+  if (gameStarted.value) return
+
   proxy?.$toast.warning(t('group.lobby.lobbyDeleted'))
-  // Clear store and navigate away
-  groupeStore.groupeId = null
-  groupeStore.groupePartyInfo = null
+  // Clear store and navigate away using the composable
+  await cleanupGroup(true) // Skip API call since party is already deleted
   emit('goTo', 'mode')
+}
+
+const handlePartyUpdateEvent = (data: any) => {
+  // Update party info
+  if (groupeStore.groupePartyInfo !== null) {
+    groupeStore.groupePartyInfo.partyDifficulty = data.partyDifficulty
+    groupeStore.groupePartyInfo.nbQuestions = data.nbQuestions
+    groupeStore.groupePartyInfo.partyTheme = data.partyTheme
+    groupeStore.groupePartyInfo.scoreEachRound = data.scoreEachRound
+  }
+}
+
+const confirmStartGame = async () => {
+  if (signalrService.isConnected()) {
+    await signalrService.send(GroupEvent.StartGroupParty)
+    openModalStartGame.value = false
+  } else {
+    proxy?.$toast.error(t('group.lobby.connectionError'))
+  }
+}
+
+const handleOnError = (error: any) => {
+  console.error('SignalR error:', error)
+  proxy?.$toast.error(error)
+}
+
+const allEvents = [
+  { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
+  { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
+  { name: GroupEvent.PartyStarted, handler: handleStartEvent },
+  { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
+  { name: GroupEvent.PartyUpdated, handler: handlePartyUpdateEvent },
+  { name: GroupEvent.Error, handler: handleOnError },
+]
+
+// Gestionnaire de fermeture de page
+const handleBeforeUnload = () => {
+  if (groupeStore.groupeId) {
+    // Utiliser la méthode synchrone du store qui utilise fetch + keepalive
+    groupeStore.leaveGroupeSync()
+  }
 }
 
 // Setup SignalR connection
 onMounted(async () => {
   try {
-    await signalrService.connect(userStore.token || '')
+    await connectSignalR()
 
-    // Subscribe to events
-    signalrService.on('Notify', (message: unknown) => {
-      console.log('Notification received:', message)
-
-      // Parse the notification if it's structured
-      if (typeof message === 'string') {
-        try {
-          const notification = JSON.parse(message)
-
-          switch (notification.action) {
-            case GroupEvent.Join:
-            case 'Join':
-              handleJoinEvent(notification.user)
-              break
-            case GroupEvent.Leave:
-            case 'Leave':
-              handleLeaveEvent(notification.user)
-              break
-            case GroupEvent.Start:
-            case 'Start':
-              handleStartEvent(notification.user)
-              break
-            case GroupEvent.Delete:
-            case 'Delete':
-              handleDeleteEvent(notification.user)
-              break
-            default:
-              console.log('Unknown event:', notification)
-          }
-        } catch {
-          // If not JSON, just log the message
-          console.log('Notification:', message)
-        }
-      }
+    allEvents.forEach((event) => {
+      signalrService.on(event.name, (data: unknown) => {
+        event.handler(data)
+      })
     })
 
-    console.log('SignalR connected in GroupLobby')
+    // Ajouter le gestionnaire de fermeture de page
+    window.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
     proxy?.$toast.error(t('group.lobby.connectionError'))
   }
 })
 
-// Cleanup SignalR connection
-onUnmounted(() => {
-  signalrService.off('Notify')
+// Gérer la navigation (bouton retour du navigateur, changement de route)
+onBeforeRouteLeave(async (to, from, next) => {
+  // Si l'utilisateur change de route (bouton retour, navigation), nettoyer le groupe
+  if (groupeStore.groupeId) {
+    await cleanupGroup()
+  }
+  next()
+})
+
+// Cleanup SignalR listeners only (keep connection alive for the game)
+onBeforeUnmount(() => {
+  // Retirer le gestionnaire de fermeture de page
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+
+  // Nettoyer uniquement les écouteurs SignalR du lobby
+  // La connexion reste active pour GroupQuiz
+  allEvents.forEach((event) => {
+    signalrService.off(event.name, event.handler)
+  })
+
+  // NE PAS appeler cleanupGroup() ici car on peut passer au jeu
+  // Le cleanup sera fait par GroupQuiz ou par le bouton "Leave"
 })
 </script>
 

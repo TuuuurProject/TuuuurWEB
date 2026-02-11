@@ -1,13 +1,76 @@
 <template>
   <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.create.title') }}
-      </h2>
-      <div class="pill animate-pulse-slow">{{ $t('group.create.badge') }}</div>
+    <!-- Top header with code emphasis -->
+    <header class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <font-awesome-icon icon="users" class="text-2xl text-brand-purple" />
+        <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.lobby.title') }}</h2>
+        <span class="badge-green">
+          <template v-if="currentUserIsHost">
+            {{ $t('group.lobby.hostBadge') }}
+          </template>
+          <template v-else>
+            {{ $t('group.lobby.waitingBadge') }}
+          </template>
+        </span>
+      </div>
     </header>
 
-    <div class="grid gap-6 md:grid-cols-3">
+    <template v-if="!currentUserIsHost">
+      <div class="flex flex-wrap gap-2 items-center">
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }} :
+        </h3>
+
+        <template v-if="selectedThemes.length === 0">
+          <div class="text-brand-gray">{{ $t('group.lobby.noThemeSelected') }}</div>
+        </template>
+        <div v-else class="flex flex-wrap gap-3">
+          <div
+            v-for="cat in selectedThemes"
+            :key="cat.id"
+            class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+          >
+            <font-awesome-icon :icon="cat.icon" class="text-lg" />
+            <span>{{ cat.label }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 items-center mb-4 mt-4">
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
+          {{ $t('solo.settings.difficulty') }} :
+        </h3>
+        <template v-if="selectedDifficultyList.length === 0">
+          <div class="text-brand-gray">{{ $t('group.lobby.noDifficultySelected') }}</div>
+        </template>
+        <div v-else class="flex flex-wrap gap-3">
+          <div
+            v-for="diff in selectedDifficultyList"
+            :key="diff.id"
+            class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
+            :class="[diff.colorClass]"
+          >
+            <font-awesome-icon :icon="diff.icon" class="text-lg" />
+            <span>{{ diff.label }}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="gear" class="mr-2" /> {{ $t('solo.settings.questionsCount') }} :
+          {{ questions }}
+        </h3>
+      </div>
+      <div>
+        <h3 class="font-branding text-xl text-brand-lightGray">
+          <font-awesome-icon icon="trophy" class="mr-2" /> {{ $t('group.lobby.scoreEachRound') }} :
+          {{ scoreEachRound ? $t('common.yes') : $t('common.no') }}
+        </h3>
+      </div>
+    </template>
+
+    <div v-if="currentUserIsHost" class="grid gap-6 md:grid-cols-3">
       <!-- Cartes gaming avec backdrop blur -->
       <div class="md:col-span-2 gaming-card">
         <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
@@ -27,6 +90,29 @@
             <font-awesome-icon :icon="cat.icon" class="text-lg" />
             <span>{{ cat.label }}</span>
           </button>
+        </div>
+
+        <div>
+          <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
+            <font-awesome-icon icon="trophy" class="mr-2 text-brand-purple" />
+            {{ $t('group.lobby.scoreEachRound') }}
+          </label>
+          <div
+            class="flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
+            @click="scoreEachRound = !scoreEachRound"
+          >
+            <div class="flex-1">
+              <p class="text-brand-lightGray text-sm">
+                {{ $t('group.lobby.scoreEachRoundDescription') }}
+              </p>
+            </div>
+            <div class="relative inline-flex items-center ml-4">
+              <input type="checkbox" v-model="scoreEachRound" class="sr-only peer" />
+              <div
+                class="w-11 h-6 bg-brand-darkGray rounded-full peer peer-focus:ring-2 peer-focus:ring-brand-purple peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple pointer-events-none"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -98,70 +184,20 @@
         </div>
       </div>
     </div>
-
-    <footer class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="$emit('back')">
-        <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
-      </button>
-      <button
-        data-testid="group-create-submit"
-        class="btn btn-primary"
-        :disabled="canCreateGame"
-        @click="open = true"
-      >
-        <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.create.startAdventure') }}
-      </button>
-    </footer>
-
-    <ModalDialog
-      :open="open"
-      :title="$t('group.create.modal.title')"
-      @close="open = false"
-      @confirm="confirm"
-      :loading="groupeStore.isLoading"
-    >
-      <div class="space-y-3">
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="bullseye" class="text-brand-purple" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
-          <span class="text-brand-gray">{{
-            Array.from(selected)
-              .map((id) => themesMap.get(id)?.label)
-              .join(', ')
-          }}</span>
-        </p>
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
-          <span class="text-brand-gray">{{ questions }}</span>
-        </p>
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="fire" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulty') }}</strong>
-          <span class="text-brand-gray">{{
-            selectedDifficulty
-              .map(
-                (id: number) =>
-                  difficulties.find((d: (typeof difficulties)[0]) => d.id === id)?.label,
-              )
-              .join(', ')
-          }}</span>
-        </p>
-      </div>
-    </ModalDialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ModalDialog from '@/components/ModalDialog.vue'
 import useThemeStore from '@/stores/theme'
-import useGroupeStore from '@/stores/groupe'
+import useGroupeStore, { type PartyDifficulty } from '@/stores/groupe'
+import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
 const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
+const userStore = useUserStore()
 
 const selectedDifficulty = ref([2]) // Moyen par défaut
 
@@ -202,8 +238,47 @@ const difficulties = computed(() => [
   },
 ])
 
-// Récupération des thèmes
+const currentUserIsHost = computed(
+  () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.nbQuestions,
+  (newInfo) => {
+    if (newInfo) {
+      questions.value = newInfo
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.partyDifficulty,
+  (newDiff) => {
+    if (newDiff && Array.isArray(newDiff) && !currentUserIsHost.value) {
+      selectedDifficulty.value = newDiff.map((d: PartyDifficulty) => d.idDifficulty as number)
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.partyTheme,
+  (newThemes) => {
+    if (newThemes && Array.isArray(newThemes) && !currentUserIsHost.value) {
+      selected.clear()
+      newThemes.forEach((theme) => selected.add(theme.idTheme as string))
+    }
+  },
+)
+
+watch(
+  () => groupeStore.groupePartyInfo?.scoreEachRound,
+  (newValue) => {
+    if (!currentUserIsHost.value) scoreEachRound.value = newValue as boolean
+  },
+)
+
 onMounted(async () => {
+  // Récupération des thèmes
   await themeStore.loadThemes()
 })
 
@@ -214,9 +289,19 @@ const themesList = computed<Array<Theme>>(() => {
 
 const themesMap = computed(() => new Map(themesList.value.map((c: Theme) => [c.id, c])))
 const selected = reactive<Set<string>>(new Set())
+const selectedThemes = computed(() => {
+  return Array.from(selected)
+    .map((id) => themesMap.value.get(id))
+    .filter((t) => t !== undefined)
+})
+
+const selectedDifficultyList = computed(() => {
+  return difficulties.value.filter((d) => selectedDifficulty.value.includes(d.id))
+})
 
 const questions = ref(10)
-const open = ref(false)
+
+const scoreEachRound = ref(false)
 
 const toggle = (id: string) => {
   if (selected.has(id)) {
@@ -224,6 +309,33 @@ const toggle = (id: string) => {
   } else {
     selected.add(id)
   }
+}
+
+const groupSettingsComputed = computed(() => {
+  return {
+    themes: Array.from(selected),
+    difficulties: selectedDifficulty.value,
+    nbQuestions: questions.value,
+    scoreEachRound: scoreEachRound.value,
+  }
+})
+
+let updateTimerId = null as unknown as ReturnType<typeof setTimeout>
+
+watch(
+  groupSettingsComputed,
+  () => {
+    if (!currentUserIsHost.value) return
+    clearTimeout(updateTimerId)
+    updateTimerId = setTimeout(() => {
+      updateSettingsGroupe()
+    }, 300)
+  },
+  { deep: true },
+)
+
+const updateSettingsGroupe = async () => {
+  await groupeStore.updateSettings(groupSettingsComputed.value)
 }
 
 const inc = () => {
@@ -240,21 +352,6 @@ const toggleDifficulty = (id: number) => {
   } else {
     selectedDifficulty.value.push(id)
   }
-}
-
-const canCreateGame = computed(() => selected.size === 0 || selectedDifficulty.value.length === 0)
-
-const emit = defineEmits<{
-  (e: 'back'): void
-  (e: 'created'): void
-}>()
-
-const confirm = async () => {
-  open.value = false
-
-  await groupeStore.createGroupe()
-
-  if (groupeStore.groupeId) emit('created')
 }
 </script>
 

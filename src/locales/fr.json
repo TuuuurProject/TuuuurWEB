@@ -1,5 +1,6 @@
 {
   "common": {
+    "leave": "Quitter",
     "back": "Retour",
     "cancel": "Annuler",
     "confirm": "Confirmer",
@@ -165,7 +166,12 @@
       "summary": "Récapitulatif des Réponses",
       "goodAnswer": "Bonne réponse",
       "badAnswer": "Mauvaise réponse",
-      "replay": "Rejouer"
+      "replay": "Rejouer",
+      "partyInfo": "Informations de la partie",
+      "themes": "Thèmes",
+      "allThemes": "Tous les thèmes",
+      "difficulties": "Difficultés",
+      "numberOfQuestions": "Nombre de questions"
     }
   },
   "group": {
@@ -174,13 +180,12 @@
     "create": {
       "title": "Créer une partie",
       "subtitle": "Définissez les paramètres et partagez le code/QR avec vos amis.",
-      "badge": "Partagez le code avec vos amis",
-      "startAdventure": "Commencer l'aventure",
+      "editSettings": "Mettre à jour les paramètres",
       "modal": {
         "title": "Créer la partie multijoueur",
         "categories": "Catégories:",
         "questions": "Questions:",
-        "difficulty": "Difficulté:"
+        "difficulties": "Difficultés:"
       }
     },
     "join": {
@@ -192,10 +197,16 @@
       "joinButton": "Rejoindre"
     },
     "lobby": {
+      "noThemeSelected": "Aucun thème sélectionné",
+      "noDifficultySelected": "Aucune difficulté sélectionnée",
+      "difficulties": "Difficultés:",
       "title": "Lobby",
-      "waitingBadge": "En attente d'hôte",
+      "waitingBadge": "En attente de l'hôte",
+      "hostBadge": "Vous êtes l'hôte",
       "categories": "Catégories:",
       "questions": "Questions:",
+      "scoreEachRound": "Score à chaque tour",
+      "scoreEachRoundDescription": "Afficher le score après chaque question",
       "players": "Joueurs",
       "playersConnected": "{count} connecté | {count} connectés",
       "joinSection": "Pour rejoindre",
@@ -206,6 +217,45 @@
       "userLeft": "{name} a quitté le lobby",
       "lobbyDeleted": "Le lobby a été supprimé",
       "connectionError": "Erreur de connexion temps réel"
+    },
+    "quiz": {
+      "title": "Quiz en Groupe",
+      "getReady": "Préparez-vous…",
+      "home": "Accueil",
+      "question": "Question {current} / {total}",
+      "score": "Score:",
+      "timeRemaining": "Temps restant: {time}s",
+      "correct": "Correct +{points} pts",
+      "incorrect": "Mauvaise réponse",
+      "currentRanking": "Classement actuel",
+      "skip": "Passer",
+      "next": "Suivant",
+      "finished": "Quiz Terminé !",
+      "finalScore": "Score Final",
+      "questions": "Questions",
+      "successRate": "Réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des Réponses",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
+      "replay": "Rejouer",
+      "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "playersStatus": "Statut des joueurs",
+      "answered": "A répondu",
+      "waiting": "En attente...",
+      "ranking": "Classement Final",
+      "otherPlayers": "{count} autre joueur | {count} autres joueurs",
+      "partyInfo": "Informations de la partie",
+      "themes": "Thèmes",
+      "allThemes": "Tous les thèmes",
+      "difficulties": "Difficultés",
+      "numberOfQuestions": "Nombre de questions",
+      "scoreEachRound": "Score à chaque tour",
+      "confirmLeave": {
+        "title": "Quitter la partie ?",
+        "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
+      }
     }
   },
   "competitive": {

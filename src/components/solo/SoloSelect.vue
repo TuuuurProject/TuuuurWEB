@@ -4,9 +4,6 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('solo.title') }}
       </h2>
-      <div v-if="userStore.isLogged" class="badge-success animate-pulse-slow">
-        {{ $t('solo.selectBadge') }}
-      </div>
     </header>
 
     <template v-if="userStore.isLogged">
@@ -104,7 +101,7 @@
 
       <footer class="flex flex-wrap items-center justify-end gap-3">
         <button class="btn btn-ghost" @click="$router.go(-1)">
-          <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
         </button>
         <button
           data-testid="solo-start"
@@ -239,10 +236,6 @@ const toggleDifficulty = (id: number) => {
 }
 
 const canStartGame = computed(() => selected.size === 0 || selectedDifficulty.value.length === 0)
-
-const emit = defineEmits<{
-  (e: 'back'): void
-}>()
 
 const confirm = async () => {
   open.value = false

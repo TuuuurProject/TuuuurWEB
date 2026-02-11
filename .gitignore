@@ -34,3 +34,5 @@ coverage
 
 *.tsbuildinfo
 .nyc_output
+
+.nyc_output/out.json
