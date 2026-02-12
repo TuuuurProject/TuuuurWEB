@@ -93,7 +93,7 @@
           <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
           <span class="text-brand-gray">{{
             Array.from(groupeStore?.groupePartyInfo?.partyTheme || [])
-              .map((theme: { theme?: { label?: string } }) => theme?.theme?.label)
+              .map((theme: any) => theme?.theme?.label)
               .join(', ')
           }}</span>
         </p>
@@ -110,7 +110,7 @@
             {{
               Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
                 .map(
-                  (difficulty: { difficulty?: { label?: string } }) =>
+                  (difficulty: any) =>
                     difficulty?.difficulty?.label,
                 )
                 .join(', ')

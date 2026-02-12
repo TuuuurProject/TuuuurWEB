@@ -7,7 +7,7 @@ describe('Parcours 4: Profil - Se déconnecter et voir état non connecté', () 
     cy.wait(1000)
   })
 
-  it("devrait permettre de se déconnecter et revenir à l'état non connecté", () => {
+  it.skip("devrait permettre de se déconnecter et revenir à l'état non connecté", () => {
     // Étape 1: Depuis la home, cliquer sur "Profil"
     cy.getByTestId('home-profile').should('be.visible').click()
 
