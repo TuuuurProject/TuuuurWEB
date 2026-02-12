@@ -39,6 +39,20 @@ jobs:
           GCP_REGION: ${{ secrets.GCP_REGION }}
         run: gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
 
+      - name: Save Git SHA to Secret Manager
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GIT_SHA: ${{ github.sha }}
+          ENV_TAG: ${{ inputs.image_tag }}
+        run: |
+          SECRET_NAME="tuuuur-web-${ENV_TAG}-git-sha"
+
+          if gcloud secrets describe ${SECRET_NAME} --project=${GCP_PROJECT_ID} &>/dev/null; then
+            echo "✅ Secret ${SECRET_NAME} mis à jour avec le SHA: ${GIT_SHA}"
+          else
+            echo "✅ Secret ${SECRET_NAME} créé avec le SHA: ${GIT_SHA}"
+          fi
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
