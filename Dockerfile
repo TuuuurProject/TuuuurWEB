@@ -9,12 +9,13 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-# Copier le fichier .env correspondant à l'environnement
-RUN cp ".env.${BUILD_ENV}" .env && echo "" >> .env && echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env
+# Copier le bon fichier .env et supprimer tous les autres
+RUN cp ".env.${BUILD_ENV}" .env && \
+    echo "" >> .env && \
+    echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env && \
+    rm -f .env.*
 
 RUN rm -rf dist/ && npm run build
-
-RUN rm -f .env
 
 FROM nginx:stable-alpine AS production-stage
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
