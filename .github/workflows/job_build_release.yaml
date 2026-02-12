@@ -48,8 +48,10 @@ jobs:
           SECRET_NAME="tuuuur-web-${ENV_TAG}-git-sha"
 
           if gcloud secrets describe ${SECRET_NAME} --project=${GCP_PROJECT_ID} &>/dev/null; then
+            echo -n "${GIT_SHA}" | gcloud secrets versions add ${SECRET_NAME} --data-file=- --project=${GCP_PROJECT_ID}
             echo "✅ Secret ${SECRET_NAME} mis à jour avec le SHA: ${GIT_SHA}"
           else
+            echo -n "${GIT_SHA}" | gcloud secrets create ${SECRET_NAME} --data-file=- --replication-policy="automatic" --project=${GCP_PROJECT_ID}
             echo "✅ Secret ${SECRET_NAME} créé avec le SHA: ${GIT_SHA}"
           fi
 
