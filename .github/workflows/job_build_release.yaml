@@ -18,6 +18,8 @@ on:
         required: true
       GCP_REGION:
         required: true
+      VITE_GOOGLE_CLIENT_ID:
+        required: true
 
 jobs:
   docker-push:
