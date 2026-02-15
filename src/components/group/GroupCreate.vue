@@ -245,8 +245,6 @@ const currentUserIsHost = computed(
 onMounted(async () => {
   // Récupération des thèmes
   await themeStore.loadThemes()
-
-  console.log('Group info on mount:', groupeStore.groupePartyInfo)
 })
 
 const themesList = computed<Array<Theme>>(() => {

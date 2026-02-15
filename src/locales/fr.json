@@ -197,6 +197,7 @@
       "joinButton": "Rejoindre"
     },
     "lobby": {
+      "joinError": "Erreur lors de la tentative de rejoindre la partie",
       "noThemeSelected": "Aucun thème sélectionné",
       "noDifficultySelected": "Aucune difficulté sélectionnée",
       "difficulties": "Difficultés:",

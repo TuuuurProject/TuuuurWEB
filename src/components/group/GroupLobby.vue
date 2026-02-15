@@ -65,7 +65,7 @@
           </div>
 
           <div class="flex justify-center">
-            <QRPreview :text="groupeStore?.groupePartyInfo?.code || ''" :size="180" />
+            <QRPreview :code="groupeStore?.groupePartyInfo?.code || ''" />
           </div>
         </div>
       </aside>

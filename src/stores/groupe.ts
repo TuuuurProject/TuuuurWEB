@@ -196,10 +196,10 @@ export default defineStore('groupe', {
         this.groupeId = response.data.id
         this.groupePartyInfo = response.data
 
-        console.log('Joined group:', this.groupePartyInfo)
-
         // Persister l'état du groupe
         this.persistGroupState()
+
+        return true
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
