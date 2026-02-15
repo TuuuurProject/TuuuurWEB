@@ -98,7 +98,7 @@
             {{ $t('group.lobby.scoreEachRound') }}
           </label>
           <div
-            class="flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
+            class="select-none flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
             @click="scoreEachRound = !scoreEachRound"
           >
             <div class="flex-1">
@@ -242,44 +242,11 @@ const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
 )
 
-watch(
-  () => groupeStore.groupePartyInfo?.nbQuestions,
-  (newInfo) => {
-    if (newInfo) {
-      questions.value = newInfo
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.partyDifficulty,
-  (newDiff) => {
-    if (newDiff && Array.isArray(newDiff) && !currentUserIsHost.value) {
-      selectedDifficulty.value = newDiff.map((d: PartyDifficulty) => d.idDifficulty as number)
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.partyTheme,
-  (newThemes) => {
-    if (newThemes && Array.isArray(newThemes) && !currentUserIsHost.value) {
-      selected.clear()
-      newThemes.forEach((theme) => selected.add(theme.idTheme as string))
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.scoreEachRound,
-  (newValue) => {
-    if (!currentUserIsHost.value) scoreEachRound.value = newValue as boolean
-  },
-)
-
 onMounted(async () => {
   // Récupération des thèmes
   await themeStore.loadThemes()
+
+  console.log('Group info on mount:', groupeStore.groupePartyInfo)
 })
 
 const themesList = computed<Array<Theme>>(() => {
@@ -302,6 +269,33 @@ const selectedDifficultyList = computed(() => {
 const questions = ref(10)
 
 const scoreEachRound = ref(false)
+
+watch(
+  () => groupeStore.groupePartyInfo,
+  (newInfo) => {
+    if (!newInfo || currentUserIsHost.value) return
+
+    if (newInfo.nbQuestions) {
+      questions.value = newInfo.nbQuestions
+    }
+
+    if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
+      selectedDifficulty.value = newInfo.partyDifficulty.map(
+        (d: PartyDifficulty) => d.idDifficulty as number,
+      )
+    }
+
+    if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
+      selected.clear()
+      newInfo.partyTheme.forEach((theme) => selected.add(theme.idTheme as string))
+    }
+
+    if (newInfo.scoreEachRound !== undefined) {
+      scoreEachRound.value = newInfo.scoreEachRound
+    }
+  },
+  { deep: true, immediate: true },
+)
 
 const toggle = (id: string) => {
   if (selected.has(id)) {

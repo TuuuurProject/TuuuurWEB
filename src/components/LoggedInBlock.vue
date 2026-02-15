@@ -1,12 +1,12 @@
 <template>
   <div data-testid="profile-not-logged" class="text-center p-6 text-brand-gray">
     <p class="mb-4">{{ props.message }}</p>
-    <div class="flex items-center justify-center gap-6">
+    <div class="grid gap-6 sm:grid-cols-2 max-w-xl mx-auto">
       <button id="btnSeConnecter" class="btn btn-primary" @click="router.push({ name: 'Login' })">
         <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.submit') }}
       </button>
 
-      <button class="btn btn-secondary ml-2" @click="router.push({ name: 'Register' })">
+      <button class="btn btn-secondary sm:ml-2" @click="router.push({ name: 'Register' })">
         <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.login.createAccount') }}
       </button>
     </div>

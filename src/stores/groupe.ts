@@ -196,6 +196,8 @@ export default defineStore('groupe', {
         this.groupeId = response.data.id
         this.groupePartyInfo = response.data
 
+        console.log('Joined group:', this.groupePartyInfo)
+
         // Persister l'état du groupe
         this.persistGroupState()
       } catch (error: any) {

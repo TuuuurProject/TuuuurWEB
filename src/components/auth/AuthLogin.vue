@@ -56,15 +56,25 @@
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
               role="alert"
             >
-              <ul
-                v-for="field in Object.keys(error)"
-                :key="field"
-                class="mt-1 list-disc list-inside"
+              <template
+                v-if="
+                  typeof error === 'string' ||
+                  (typeof error === 'object' && error?.name.includes('Axios'))
+                "
               >
-                <li v-for="(msg, idx) in error[field]" :key="idx">
-                  {{ typeof msg === 'string' ? msg : msg?.description }}
-                </li>
-              </ul>
+                {{ error }}
+              </template>
+              <template v-else-if="error && typeof error === 'object'">
+                <ul
+                  v-for="field in Object.keys(error)"
+                  :key="field"
+                  class="mt-1 list-disc list-inside"
+                >
+                  <li v-for="(msg, idx) in error[field]" :key="idx">
+                    {{ typeof msg === 'string' ? msg : msg?.description }}
+                  </li>
+                </ul>
+              </template>
             </div>
           </div>
 
