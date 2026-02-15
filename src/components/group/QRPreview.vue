@@ -22,7 +22,6 @@ const props = defineProps({
 watch(
   () => props.code,
   async (newCode) => {
-    console.log('Received new code:', newCode)
     currentUrl.value = window.location + `?code=${newCode}`
     qrDataUrl.value = await QRCode.toDataURL(currentUrl.value, {
       width: 200,
