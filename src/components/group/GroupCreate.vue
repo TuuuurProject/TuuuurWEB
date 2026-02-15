@@ -199,7 +199,7 @@ const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
 
-const selectedDifficulty = ref([2]) // Moyen par défaut
+const selectedDifficulty = ref([]) // Moyen par défaut
 
 interface Theme {
   id: string

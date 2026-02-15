@@ -664,31 +664,6 @@
       </div>
     </div>
 
-    <!-- Mario Kart style Countdown Overlay -->
-    <transition name="countdown-fade">
-      <div
-        v-if="countdownValue !== null"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/80 backdrop-blur-sm"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="text-center select-none">
-          <transition name="countdown-swap" mode="out-in">
-            <div
-              :key="countdownValue"
-              class="countdown-pop drop-shadow-[0_0_30px_rgba(108,92,231,0.55)]"
-              :class="countdownTextClass"
-            >
-              {{ countdownValue }}
-            </div>
-          </transition>
-          <div class="countdown-message mt-4 text-sm text-brand-lightGray/80">
-            {{ $t('group.quiz.getReady') }}
-          </div>
-        </div>
-      </div>
-    </transition>
-
     <!-- Modale de confirmation pour quitter la partie -->
     <ModalDialog
       :open="showConfirmLeaveModal"
@@ -699,6 +674,30 @@
       <p class="text-brand-lightGray">{{ $t('group.quiz.confirmLeave.message') }}</p>
     </ModalDialog>
   </section>
+
+  <transition name="countdown-fade">
+    <div
+      v-if="countdownValue !== null"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/80 backdrop-blur-sm mt-0"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="text-center select-none">
+        <transition name="countdown-swap" mode="out-in">
+          <div
+            :key="countdownValue"
+            class="countdown-pop drop-shadow-[0_0_30px_rgba(108,92,231,0.55)]"
+            :class="countdownTextClass"
+          >
+            {{ countdownValue }}
+          </div>
+        </transition>
+        <div class="countdown-message mt-4 text-sm text-brand-lightGray/80">
+          {{ $t('group.quiz.getReady') }}
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">

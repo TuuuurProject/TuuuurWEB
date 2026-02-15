@@ -72,6 +72,10 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
+      <button class="btn btn-ghost" @click="emit('goTo', 'mode')">
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
+      </button>
+
       <button
         v-if="currentUserIsHost"
         class="btn btn-primary"
