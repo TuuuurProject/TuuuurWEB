@@ -40,7 +40,7 @@
       </div>
 
       <!-- Match history list -->
-      <div class="space-y-2 max-h-[600px] overflow-y-auto custom-scrollbar relative">
+      <div class="space-y-2 relative">
         <div
           v-for="match in filteredMatches"
           :key="match.filterKey"
@@ -461,30 +461,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.custom-scrollbar {
-  /* Optimisation du scroll avec will-change */
-  will-change: scroll-position;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(28, 28, 40, 0.3);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(108, 92, 231, 0.5);
-  border-radius: 9999px;
-  transition: background 0.2s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 92, 231, 0.7);
-}
-
 /* Optimisation du hover avec GPU acceleration */
 .match-item {
   transition:
@@ -499,8 +475,7 @@ onMounted(async () => {
 }
 
 /* Force GPU acceleration pour les animations */
-.match-item,
-.custom-scrollbar {
+.match-item {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
