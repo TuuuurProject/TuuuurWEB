@@ -197,6 +197,7 @@
       "joinButton": "Join"
     },
     "lobby": {
+      "joinError": "Error trying to join the game",
       "noThemeSelected": "No theme selected",
       "noDifficultySelected": "No difficulty selected",
       "difficulties": "Difficulties:",

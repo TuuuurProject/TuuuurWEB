@@ -13,11 +13,13 @@
             })
           }}</span>
         </div>
-        <ul class="grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] sm:grid-cols-1">
+        <ul
+          class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
+        >
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 hover:shadow-neon transition duration-250 overflow-hidden"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 items-start hover:shadow-neon transition duration-250 overflow-hidden grid grid-cols-[auto_1fr] gap-4 items-center"
           >
             <div class="relative shrink-0">
               <div
@@ -52,7 +54,7 @@
       <aside class="md:col-span-4 space-y-4">
         <div class="gaming-card">
           <h3 class="font-branding text-xl mb-3 text-brand-lightGray">
-            {{ $t('group.lobby.joinSection') }}
+            {{ $t('group.lobby.joinSection') }} !
           </h3>
           <div
             class="text-center font-branding text-2xl tracking-wider text-brand-lightGray hover:underline cursor-pointer mb-4"
@@ -63,13 +65,17 @@
           </div>
 
           <div class="flex justify-center">
-            <QRPreview :text="groupeStore?.groupePartyInfo?.code || ''" :size="180" />
+            <QRPreview :code="groupeStore?.groupePartyInfo?.code || ''" />
           </div>
         </div>
       </aside>
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
+      <button class="btn btn-ghost" @click="emit('goTo', 'mode')">
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
+      </button>
+
       <button
         v-if="currentUserIsHost"
         class="btn btn-primary"
@@ -109,10 +115,7 @@
           <span class="text-brand-gray">
             {{
               Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
-                .map(
-                  (difficulty: any) =>
-                    difficulty?.difficulty?.label,
-                )
+                .map((difficulty: any) => difficulty?.difficulty?.label)
                 .join(', ')
             }}</span
           >

@@ -1,57 +1,62 @@
 <template>
-  <svg :width="size" :height="size" :viewBox="`0 0 ${n} ${n}`" class="rounded-2xl bg-white border border-brand-dark/10 shadow-soft">
-    <rect :width="n" :height="n" fill="white" />
-    <template v-for="(row, y) in matrix" :key="y">
-      <template v-for="(val, x) in row" :key="x">
-        <rect v-if="val" :x="x" :y="y" width="1" height="1" fill="#000" />
-      </template>
-    </template>
-  </svg>
+  <div class="qrcode-card">
+    <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="qrcode-img" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import QRCode from 'qrcode'
 
-const props = withDefaults(defineProps<{ text: string; size?: number }>(), {
-  size: 160,
+const qrDataUrl = ref('')
+const currentUrl = ref('')
+
+const props = defineProps({
+  code: {
+    type: String,
+    default: null,
+    required: true,
+  },
 })
 
-// Simple pseudo-QR matrix (not scannable, for display only)
-const n = 25
-function hash(s: string) {
-  let h = 2166136261
-  for (let i = 0; i < s.length; i++) h = (h ^ s.charCodeAt(i)) * 16777619
-  return Math.abs(h >>> 0)
-}
-function rng(seed: number) {
-  let x = seed || 1
-  return () => (x = (x * 48271) % 0x7fffffff)
-}
+watch(
+  () => props.code,
+  async (newCode) => {
+    currentUrl.value = window.location + `?code=${newCode}`
+    qrDataUrl.value = await QRCode.toDataURL(currentUrl.value, {
+      width: 200,
+      margin: 2,
+    })
+  },
+)
 
-const matrix = computed(() => {
-  const mat: number[][] = Array.from({ length: n }, () => Array(n).fill(0))
-  const rnd = rng(hash(props.text))
-
-  // finder-like patterns
-  const fp = (ox: number, oy: number) => {
-    for (let y = 0; y < 7; y++) for (let x = 0; x < 7; x++) mat[oy + y][ox + x] = 1
-    for (let y = 1; y < 6; y++) for (let x = 1; x < 6; x++) mat[oy + y][ox + x] = 0
-    for (let y = 2; y < 5; y++) for (let x = 2; x < 5; x++) mat[oy + y][ox + x] = 1
+onMounted(() => {
+  if (props.code) {
+    currentUrl.value = window.location + `?code=${props.code}`
+    QRCode.toDataURL(currentUrl.value, { width: 200, margin: 2 }).then((url) => {
+      qrDataUrl.value = url
+    })
   }
-  fp(1, 1)
-  fp(n - 8, 1)
-  fp(1, n - 8)
-
-  // random modules
-  for (let y = 0; y < n; y++) {
-    for (let x = 0; x < n; x++) {
-      if (mat[y][x]) continue
-      if (x < 9 && y < 9) continue
-      if (x > n - 10 && y < 9) continue
-      if (x < 9 && y > n - 10) continue
-      mat[y][x] = rnd() % 3 === 0 ? 1 : 0
-    }
-  }
-  return mat
 })
 </script>
+
+<style scoped>
+.qrcode-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.qrcode-img {
+  width: 200px;
+  height: 200px;
+  border-radius: 1rem;
+}
+
+.qrcode-url {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #888;
+  word-break: break-all;
+}
+</style>

@@ -86,7 +86,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, getCurrentInstance, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import GroupCreate from './GroupCreate.vue'
 import GroupJoin from './GroupJoin.vue'
 import GroupLobby from './GroupLobby.vue'
@@ -98,6 +99,10 @@ import GroupQuiz from '@/components/group/GroupQuiz.vue'
 
 const userStore = useUserStore()
 const groupeStore = useGroupeStore()
+
+const { t } = useI18n()
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
 
 type Step = 'mode' | 'join' | 'lobby' | 'game'
 const step = ref<Step>('mode')
@@ -114,4 +119,32 @@ function goTo(newStep: Step) {
 function goLobbyFromJoin() {
   step.value = 'lobby'
 }
+
+onMounted(() => {
+  // If code is in url, try to join the group (handles page refresh and direct link with code)
+  const urlParams = new URLSearchParams(window.location.search)
+  const codeFromUrl = urlParams.get('code')
+  if (codeFromUrl && !groupeStore.groupeId) {
+    groupeStore
+      .joinGroupe(codeFromUrl)
+      .then((res) => {
+        if (res === true) {
+          step.value = 'lobby'
+        } else {
+          step.value = 'join'
+          proxy?.$nextTick(() => {
+            proxy?.$toast.error(t('group.lobby.joinError'))
+          })
+        }
+      })
+      .finally(() => {
+        // Go back to join step if join fails (invalid code, group full, etc.)
+        // emit('goTo', 'join')
+        // Remove code in url to prevent infinite loop on refresh
+        urlParams.delete('code')
+        const newUrl = `${window.location.pathname}`
+        window.history.replaceState({}, '', newUrl)
+      })
+  }
+})
 </script>
