@@ -41,7 +41,7 @@
             :key="opt"
             class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
-            :class="buttonClass(opt.valid)"
+            :class="buttonClass(opt.id, opt.valid)"
             @click="answer(opt)"
           >
             <span
@@ -53,8 +53,8 @@
           </button>
         </div>
 
-        <div class="mt-6 flex items-center justify-between">
-          <div class="text-sm" v-if="answered && scoreIsAvailable">
+        <div v-if="answered && scoreIsAvailable" class="mt-6 flex items-center justify-between">
+          <div class="text-sm">
             <span v-if="wasCorrect" class="badge-green">{{
               $t('group.quiz.correct', { points: lastPoints })
             }}</span>
@@ -206,7 +206,10 @@
       </div>
 
       <!-- Statut des joueurs (répondu ou non) -->
-      <ul v-else class="grid gap-3 grid-cols-[repeat(auto-fit,minmax(180px,0.5fr))]">
+      <ul
+        v-else
+        class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
+      >
         <li
           v-for="p in groupeStore.groupePartyInfo?.partyUsers"
           :key="String(p.id)"
@@ -889,9 +892,19 @@ const next = async () => {
   // startTimer()
 }
 
-function buttonClass(valid: boolean) {
+function buttonClass(answerId: number, valid: boolean) {
   if (!answered.value) {
     return 'bg-brand-darkGray/50 border-brand-purple/30 text-brand-lightGray hover:bg-brand-purple/20 hover:border-brand-purple'
+  }
+
+  // Si le joueur a répondu mais que la correction n'est pas encore disponible
+  if (!scoreIsAvailable.value) {
+    // Mettre en évidence la réponse sélectionnée
+    if (answerId === userAnswerId.value) {
+      return 'bg-brand-purple/30 border-brand-purple text-brand-lightGray font-semibold ring-2 ring-brand-purple/50'
+    }
+    // Les autres réponses restent grises
+    return 'bg-brand-darkGray/50 border-brand-purple/20 text-brand-gray'
   }
 
   if (valid === null) return
