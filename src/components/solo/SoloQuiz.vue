@@ -209,7 +209,7 @@
           <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
         </div>
 
-        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        <div class="space-y-4 pr-2">
           <div
             v-for="(questionData, idx) in allQuestionsParty"
             :key="idx"
@@ -289,7 +289,6 @@ import { useI18n } from 'vue-i18n'
 import useSoloStore from '@/stores/solo.js'
 import useThemeStore from '@/stores/theme.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
-import solo from '@/stores/solo.js'
 
 const soloStore = useSoloStore()
 const themeStore = useThemeStore()
@@ -302,6 +301,7 @@ interface PartyInfo {
   nbQuestions: number
   score: number
   finish: boolean
+  partyQuestions: any[]
 }
 
 const index = ref(0)
@@ -601,6 +601,8 @@ onMounted(async () => {
   await soloStore.loadPartyInfo()
 
   nbMaxQuestions.value = (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions || 0
+  score.value = (soloPartyInfoComputed.value as PartyInfo)?.score || 0
+  index.value = (soloPartyInfoComputed.value as PartyInfo)?.partyQuestions?.length - 1 || 0
 
   // If onMounted, the partyId exist, display the recap
   if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
@@ -634,24 +636,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(10, 11, 30, 0.5);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(108, 92, 231, 0.4);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 92, 231, 0.6);
-}
-
 /* Boutons de difficulté */
 .difficulty-button {
   position: relative;
