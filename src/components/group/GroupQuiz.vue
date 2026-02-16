@@ -599,7 +599,7 @@
           </h3>
         </div>
 
-        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        <div class="space-y-4 pr-2">
           <div
             v-for="(questionData, idx) in allQuestionsParty"
             :key="idx"
