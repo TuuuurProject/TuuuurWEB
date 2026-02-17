@@ -664,6 +664,12 @@
       </div>
     </Transition>
 
+    <div class="flex flex-wrap items-center justify-end gap-3 mt-4">
+      <button class="btn btn-ghost" @click="showConfirmLeaveModal = true">
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
+      </button>
+    </div>
+
     <!-- Modale de confirmation pour quitter la partie -->
     <ModalDialog
       :open="showConfirmLeaveModal"

@@ -72,7 +72,7 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="emit('goTo', 'mode')">
+      <button class="btn btn-ghost" @click="leaveGroupe">
         <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
       </button>
 
@@ -159,6 +159,12 @@ const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
     proxy?.$toast.success(t('group.lobby.copySuccess'))
   })
+}
+
+const leaveGroupe = async () => {
+  // Nettoyage complet de groupe
+  await cleanupGroup()
+  emit('goTo', 'mode')
 }
 
 // Start game when :
