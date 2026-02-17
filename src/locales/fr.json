@@ -257,7 +257,8 @@
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
-      }
+      },
+      "returnToLobby": "Retour au lobby"
     }
   },
   "competitive": {

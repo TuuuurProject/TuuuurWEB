@@ -266,13 +266,18 @@ onMounted(async () => {
   try {
     await connectSignalR()
 
+    // Nettoyer les anciens listeners avant d'en ajouter de nouveaux
+    allEvents.forEach((event) => {
+      signalrService.off(event.name) // Retire TOUS les handlers pour cet event
+    })
+
+    // Maintenant, ajouter nos nouveaux listeners
     allEvents.forEach((event) => {
       signalrService.on(event.name, (data: unknown) => {
         event.handler(data)
       })
     })
 
-    // Ajouter le gestionnaire de fermeture de page
     window.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)

@@ -658,13 +658,14 @@
           class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
         >
           <button class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
-            <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.leave') }}
+            <font-awesome-icon icon="arrow-left" class="mr-2" />
+            {{ $t('group.quiz.returnToLobby') }}
           </button>
         </div>
       </div>
     </Transition>
 
-    <div class="flex flex-wrap items-center justify-end gap-3 mt-4">
+    <div v-if="!finished" class="flex flex-wrap items-center justify-end gap-3 mt-4">
       <button class="btn btn-ghost" @click="showConfirmLeaveModal = true">
         <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
       </button>
@@ -730,6 +731,7 @@ const TOTAL_TIME = 15 // seconds per question
 
 const emit = defineEmits<{
   (e: 'exit'): void
+  (e: 'goToLobby'): void
 }>()
 
 const nbMaxQuestions = ref(0)
@@ -1144,9 +1146,13 @@ const exitQuizGame = async () => {
     return
   }
 
-  // Si la partie est terminée, quitter directement
-  await cleanupGroup()
-  emit('exit')
+  // Sinon retour au lobby
+  groupeStore.comeFromEndOfQuizGame = true
+
+  // Reset data du groupe pour éviter des futures
+  if (groupeStore.groupePartyInfo?.partyQuestions) groupeStore.groupePartyInfo.partyQuestions = []
+
+  emit('goToLobby')
 }
 
 // Handlers for SignalR events
@@ -1213,6 +1219,18 @@ const handleQuestionSend = (data: any) => {
 
   // Reset users answered set for new question
   usersAnswered.value.clear()
+
+  // Réinitialiser l'état "finished" si une nouvelle partie commence
+  if (finished.value) {
+    finished.value = false
+    globalUserScore.value = 0
+    showAllPlayers.value = false
+
+    // Réinitialiser les questions de la partie précédente
+    if (groupeStore.groupePartyInfo) {
+      groupeStore.groupePartyInfo.partyQuestions = []
+    }
+  }
 
   // Start timer, reset for new question and get question data
   answered.value = false
@@ -1308,6 +1326,10 @@ onMounted(async () => {
   // Connection signalR
   try {
     allEvents.forEach((event) => {
+      signalrService.off(event.name)
+    })
+
+    allEvents.forEach((event) => {
       signalrService.on(event.name, (data: unknown) => {
         event.handler(data)
       })
@@ -1369,26 +1391,22 @@ onBeforeUnmount(async () => {
   clearTimer()
   clearCountdownOverlay()
 
-  // Retirer l'écouteur d'événements clavier
   window.removeEventListener('keydown', handleKeyPress)
-
-  // Retirer le gestionnaire de fermeture de page
   window.removeEventListener('beforeunload', handleBeforeUnload)
 
-  // Nettoyer les écouteurs SignalR
+  // Nettoyer les listeners SignalR
   allEvents.forEach((event) => {
     signalrService.off(event.name, event.handler)
   })
 
-  // Quitter le groupe et déconnecter SignalR uniquement si le jeu n'est pas terminé
-  // Si finished = true, l'utilisateur peut encore consulter les résultats
-  if (finished.value) {
-    // Si la partie est terminée, on nettoie seulement les listeners
-    // Le cleanup complet sera fait quand l'utilisateur clique sur "Leave"
-  } else {
-    // Si l'utilisateur quitte pendant le jeu, nettoyer complètement
-    await cleanupGroup()
+  // Si on retourne au lobby, NE PAS déconnecter SignalR ni quitter le groupe
+  if (groupeStore.comeFromEndOfQuizGame) {
+    // Ne rien faire de plus, on garde la connexion et l'état du groupe
+    return
   }
+
+  // Sinon (sortie complète ou partie non terminée), cleanup total
+  await cleanupGroup()
 })
 </script>
 

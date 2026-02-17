@@ -63,6 +63,7 @@ export default defineStore('groupe', {
     groupePartyInfo: null as GroupePartyInfo | null,
     loading: 0 as number,
     loadingCreationGroupe: 0 as number,
+    comeFromEndOfQuizGame: false as boolean,
   }),
 
   getters: {
