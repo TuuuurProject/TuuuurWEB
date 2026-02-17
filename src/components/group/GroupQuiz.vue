@@ -95,11 +95,7 @@
               v-for="p in groupeStore.groupePartyInfo?.partyUsers"
               :key="String(p.id)"
               class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
-              :class="
-                hasUserAnswered(p.user)
-                  ? 'border-brand-green/40 bg-brand-green/5'
-                  : 'border-brand-orange/40 bg-brand-orange/5'
-              "
+              :class="getPlayerCardClass(p.user)"
             >
               <div class="relative shrink-0">
                 <div class="rounded-full bg-brand-purple/20 flex items-center justify-center">
@@ -108,17 +104,14 @@
                     :src="p.user.avatar"
                     alt="avatar"
                     class="h-10 w-10 rounded-full border-2 object-cover"
-                    :class="hasUserAnswered(p.user) ? 'border-brand-green' : 'border-brand-orange'"
+                    :class="getPlayerBorderClass(p.user)"
                   />
                   <div
                     v-else
                     class="h-10 w-10 rounded-full border-2 flex items-center justify-center"
-                    :class="hasUserAnswered(p.user) ? 'border-brand-green' : 'border-brand-orange'"
+                    :class="getPlayerBorderClass(p.user)"
                   >
-                    <span
-                      class="text-lg font-bold"
-                      :class="hasUserAnswered(p.user) ? 'text-brand-green' : 'text-brand-orange'"
-                    >
+                    <span class="text-lg font-bold" :class="getPlayerStatusColor(p.user)">
                       {{ p?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -126,12 +119,10 @@
                 <!-- Status indicator badge -->
                 <div
                   class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center shadow-lg transition-all duration-300"
-                  :class="
-                    hasUserAnswered(p.user) ? 'bg-brand-green' : 'bg-brand-orange animate-pulse'
-                  "
+                  :class="getPlayerBadgeClass(p.user)"
                 >
                   <font-awesome-icon
-                    :icon="hasUserAnswered(p.user) ? 'check' : 'clock'"
+                    :icon="getPlayerStatusIcon(p.user)"
                     class="text-[10px] text-white"
                   />
                 </div>
@@ -139,14 +130,12 @@
               <div class="min-w-0 flex-1">
                 <div
                   class="text-sm font-semibold leading-tight truncate"
-                  :class="hasUserAnswered(p.user) ? 'text-brand-green' : 'text-brand-orange'"
+                  :class="getPlayerStatusColor(p.user)"
                 >
                   {{ p.user?.nickName }}
                 </div>
                 <div class="text-xs text-brand-gray">
-                  {{
-                    hasUserAnswered(p.user) ? $t('group.quiz.answered') : $t('group.quiz.waiting')
-                  }}
+                  {{ getPlayerStatusText(p.user) }}
                 </div>
               </div>
             </li>
@@ -777,11 +766,95 @@ const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
 
-// Helper function to check if a user has answered
-const hasUserAnswered = (user: { id?: number | string; idUser?: number | string }) => {
+// Computed to calculate all players' status once
+const playersStatus = computed(() => {
+  const players = groupeStore.groupePartyInfo?.partyUsers || []
+  const statusMap = new Map()
+
+  players.forEach((p: any) => {
+    const userId = p.user?.id ?? p.user?.idUser
+    if (userId == null) return
+
+    const hasAnswered = usersAnswered.value.has(userId)
+    let status = 'waiting'
+    if (hasAnswered) {
+      status = 'answered'
+    } else if (scoreIsAvailable.value) {
+      status = 'noAnswer'
+    }
+
+    statusMap.set(userId, {
+      status,
+      colorClass:
+        status === 'answered'
+          ? 'text-brand-green'
+          : status === 'noAnswer'
+            ? 'text-brand-gray'
+            : 'text-brand-orange',
+      borderClass:
+        status === 'answered'
+          ? 'border-brand-green'
+          : status === 'noAnswer'
+            ? 'border-brand-gray'
+            : 'border-brand-orange',
+      cardClass:
+        status === 'answered'
+          ? 'border-brand-green/40 bg-brand-green/5'
+          : status === 'noAnswer'
+            ? 'border-brand-gray/40 bg-brand-gray/5'
+            : 'border-brand-orange/40 bg-brand-orange/5',
+      badgeClass:
+        status === 'answered'
+          ? 'bg-brand-green'
+          : status === 'noAnswer'
+            ? 'bg-brand-gray'
+            : 'bg-brand-orange animate-pulse',
+      icon: status === 'answered' ? 'check' : status === 'noAnswer' ? 'times' : 'clock',
+      text:
+        status === 'answered'
+          ? t('group.quiz.answered')
+          : status === 'noAnswer'
+            ? t('group.quiz.noAnswer')
+            : t('group.quiz.waiting'),
+    })
+  })
+
+  return statusMap
+})
+
+// Helper functions to get player status data
+const getPlayerStatusData = (user: { id?: number | string; idUser?: number | string }) => {
   const userId = user?.id ?? user?.idUser
-  return userId != null && usersAnswered.value.has(userId)
+  return (
+    playersStatus.value.get(userId) || {
+      status: 'waiting',
+      colorClass: 'text-brand-orange',
+      borderClass: 'border-brand-orange',
+      cardClass: 'border-brand-orange/40 bg-brand-orange/5',
+      badgeClass: 'bg-brand-orange animate-pulse',
+      icon: 'clock',
+      text: t('group.quiz.waiting'),
+    }
+  )
 }
+
+const getPlayerStatusColor = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).colorClass
+
+const getPlayerBorderClass = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).borderClass
+
+const getPlayerCardClass = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).cardClass
+
+const getPlayerStatusIcon = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).icon
+
+const getPlayerBadgeClass = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).badgeClass
+
+const getPlayerStatusText = (user: { id?: number | string; idUser?: number | string }) =>
+  getPlayerStatusData(user).text
 
 // Gestion du clavier
 const handleKeyPress = async (event: KeyboardEvent) => {

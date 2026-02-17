@@ -245,6 +245,7 @@
       "playersStatus": "Statut des joueurs",
       "answered": "A répondu",
       "waiting": "En attente...",
+      "noAnswer": "Pas répondu",
       "ranking": "Classement Final",
       "otherPlayers": "{count} autre joueur | {count} autres joueurs",
       "partyInfo": "Informations de la partie",
