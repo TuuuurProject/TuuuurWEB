@@ -76,7 +76,7 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-brand-orange to-brand-orangeDark text-white shadow-neon-orange hover:shadow-glow-hover;
+    @apply bg-gradient-to-r from-brand-orange to-brand-orangeDark text-white shadow-neon-orange hover:shadow-glow-hover-orange;
   }
 
   .btn-ghost {
@@ -85,7 +85,7 @@ body {
 
   /* Gaming Cards */
   .gaming-card {
-    @apply rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/20 p-6 shadow-card hover:shadow-neon transition-all duration-300 transform hover:border-brand-purple/10;
+    @apply rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/20 p-6 shadow-card transition-all duration-300 transform hover:border-brand-purple/30;
   }
 
   .menu-card {
