@@ -282,11 +282,12 @@ onMounted(async () => {
 
 // Gérer la navigation (bouton retour du navigateur, changement de route)
 onBeforeRouteLeave(async (to, from, next) => {
-  // Si l'utilisateur change de route (bouton retour, navigation), nettoyer le groupe
+  // Si l'utilisateur appuie sur retour, nettoyer le groupe et revenir au mode de sélection
   if (groupeStore.groupeId) {
     await cleanupGroup()
   }
-  next()
+  emit('goTo', 'mode')
+  next(false) // Bloquer la navigation pour rester dans le composant parent
 })
 
 // Cleanup SignalR listeners only (keep connection alive for the game)
