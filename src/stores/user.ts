@@ -11,6 +11,7 @@ interface UserInfo {
   nickName: string
   avatar: string
   email: string
+  isGoogleUser: boolean
 }
 
 export default defineStore('user', {
@@ -281,6 +282,44 @@ export default defineStore('user', {
         }
 
         return responseData
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async forgotPassword(login: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/password/forgot'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { login },
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async resetPassword(login: string, password: string, code: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/password/reset'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { login, password, code },
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
