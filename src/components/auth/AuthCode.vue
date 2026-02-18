@@ -7,13 +7,13 @@
       <label class="block font-semibold mb-8 text-brand-green text-center">
         {{ $t('auth.verification.message') }}
       </label>
-      <div class="flex items-center gap-2 justify-center">
+      <div class="flex items-center gap-1 sm:gap-2 justify-center">
         <input
           v-for="i in 6"
           :key="i"
           :data-testid="`auth-code-input-${i}`"
           maxlength="1"
-          class="w-12 h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
+          class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-xl sm:text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
           v-model="digits[i - 1]"
           @input="onInput(i - 1)"
           @keydown.backspace.prevent="onBackspace(i - 1)"

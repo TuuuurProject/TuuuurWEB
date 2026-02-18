@@ -81,7 +81,7 @@
 
     <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
 
-    <GroupQuiz v-else-if="step === 'game'" @exit="step = 'mode'" />
+    <GroupQuiz v-else-if="step === 'game'" @exit="step = 'mode'" @go-to-lobby="goTo('lobby')" />
   </section>
 </template>
 

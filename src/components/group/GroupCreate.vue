@@ -271,7 +271,33 @@ const scoreEachRound = ref(false)
 watch(
   () => groupeStore.groupePartyInfo,
   (newInfo) => {
-    if (!newInfo || currentUserIsHost.value) return
+    if (!newInfo) return
+
+    if (currentUserIsHost.value && !groupeStore.comeFromEndOfQuizGame) {
+      return
+    }
+
+    if (currentUserIsHost.value && groupeStore.comeFromEndOfQuizGame) {
+      if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
+        selected.clear()
+        newInfo.partyTheme.forEach((theme) => selected.add(theme.idTheme as string))
+      }
+      if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
+        selectedDifficulty.value = newInfo.partyDifficulty.map(
+          (d: PartyDifficulty) => d.idDifficulty as number,
+        )
+      }
+      if (newInfo.scoreEachRound !== undefined) {
+        scoreEachRound.value = newInfo.scoreEachRound
+      }
+      if (newInfo.nbQuestions) {
+        questions.value = newInfo.nbQuestions
+      }
+
+      groupeStore.comeFromEndOfQuizGame = false
+
+      return
+    }
 
     if (newInfo.nbQuestions) {
       questions.value = newInfo.nbQuestions

@@ -245,6 +245,7 @@
       "playersStatus": "Players Status",
       "answered": "Answered",
       "waiting": "Waiting...",
+      "noAnswer": "Did not answer",
       "ranking": "Final Ranking",
       "otherPlayers": "{count} other player | {count} other players",
       "partyInfo": "Party Information",
@@ -256,7 +257,8 @@
       "confirmLeave": {
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? You will lose your progress and cannot return."
-      }
+      },
+      "returnToLobby": "Return to lobby"
     }
   },
   "competitive": {

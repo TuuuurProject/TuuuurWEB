@@ -72,7 +72,7 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="emit('goTo', 'mode')">
+      <button class="btn btn-ghost" @click="leaveGroupe">
         <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
       </button>
 
@@ -159,6 +159,12 @@ const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
     proxy?.$toast.success(t('group.lobby.copySuccess'))
   })
+}
+
+const leaveGroupe = async () => {
+  // Nettoyage complet de groupe
+  await cleanupGroup()
+  emit('goTo', 'mode')
 }
 
 // Start game when :
@@ -260,13 +266,18 @@ onMounted(async () => {
   try {
     await connectSignalR()
 
+    // Nettoyer les anciens listeners avant d'en ajouter de nouveaux
+    allEvents.forEach((event) => {
+      signalrService.off(event.name) // Retire TOUS les handlers pour cet event
+    })
+
+    // Maintenant, ajouter nos nouveaux listeners
     allEvents.forEach((event) => {
       signalrService.on(event.name, (data: unknown) => {
         event.handler(data)
       })
     })
 
-    // Ajouter le gestionnaire de fermeture de page
     window.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
@@ -276,11 +287,12 @@ onMounted(async () => {
 
 // Gérer la navigation (bouton retour du navigateur, changement de route)
 onBeforeRouteLeave(async (to, from, next) => {
-  // Si l'utilisateur change de route (bouton retour, navigation), nettoyer le groupe
+  // Si l'utilisateur appuie sur retour, nettoyer le groupe et revenir au mode de sélection
   if (groupeStore.groupeId) {
     await cleanupGroup()
   }
-  next()
+  emit('goTo', 'mode')
+  next(false) // Bloquer la navigation pour rester dans le composant parent
 })
 
 // Cleanup SignalR listeners only (keep connection alive for the game)

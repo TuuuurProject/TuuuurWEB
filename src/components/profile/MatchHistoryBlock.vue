@@ -1,20 +1,25 @@
 <template>
   <overlay-block :loading="isLoading">
-    <div class="space-y-5">
+    <div class="space-y-4 sm:space-y-5">
       <!-- Header with stats -->
-      <div class="grid md:grid-cols-2 sm:grid-cols-1 mx-auto">
-        <h3 class="flex items-center text-xl font-bold text-brand-lightGray mb-3 md:mb-0">
-          <font-awesome-icon icon="clock-rotate-left" class="mr-2 text-brand-purple" />
-          {{ $t('profile.matchHistory.title') }}
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h3 class="flex items-center text-lg sm:text-xl font-bold text-brand-lightGray">
+          <font-awesome-icon
+            icon="clock-rotate-left"
+            class="mr-2 text-brand-purple text-sm sm:text-base"
+          />
+          <span class="truncate">{{ $t('profile.matchHistory.title') }}</span>
         </h3>
-        <div class="flex gap-3 md:justify-end sm:justify-start">
-          <div class="pill bg-brand-purple/20 border-brand-purple/40 text-brand-purple">
+        <div class="flex gap-2 flex-wrap">
+          <div
+            class="pill bg-brand-purple/20 border-brand-purple/40 text-brand-purple text-xs sm:text-sm"
+          >
             <font-awesome-icon icon="gamepad" class="mr-1" />
             {{ $t('profile.matchHistory.parties', { count: historyStore.nbParties || 0 }) }}
           </div>
           <div
             v-if="stats.avgPercent !== null"
-            class="pill bg-brand-green/20 border-brand-green/40 text-brand-green"
+            class="pill bg-brand-green/20 border-brand-green/40 text-brand-green text-xs sm:text-sm"
           >
             <font-awesome-icon icon="percent" class="mr-1" />
             {{ $t('profile.matchHistory.successRate', { percent: stats.avgPercent }) }}
@@ -23,12 +28,12 @@
       </div>
 
       <!-- Filters -->
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-wrap">
         <button
           v-for="filter in filters"
           :key="filter.value"
           :class="[
-            'pill text-sm',
+            'pill text-xs sm:text-sm whitespace-nowrap',
             selectedFilter === filter.value
               ? 'bg-brand-purple/30 border-brand-purple text-brand-purple'
               : 'bg-brand-darkGray/50 border-brand-gray/30 text-brand-gray hover:bg-brand-purple/10',
@@ -44,44 +49,49 @@
         <div
           v-for="match in filteredMatches"
           :key="match.filterKey"
-          class="match-item p-3 mx-1 rounded-lg border cursor-pointer bg-brand-darkGray/30 border-brand-purple/20"
+          class="match-item p-2 sm:p-3 rounded-lg border cursor-pointer bg-brand-darkGray/30 border-brand-purple/20"
           :class="{ 'opacity-50 pointer-events-none': historyStore.isLoading }"
           @click="showMatchDetails(match)"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-start gap-2 sm:gap-3">
             <!-- Score badge -->
             <div
-              class="flex-shrink-0 w-16 h-16 rounded-lg flex flex-col items-center justify-center font-bold border-2 bg-gradient-to-br"
+              class="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-lg flex flex-col items-center justify-center font-bold border-2 bg-gradient-to-br"
               :class="getScoreColor(match.percent)"
             >
-              <div class="text-xl">{{ match.score }}</div>
-              <div class="text-[10px] opacity-80">pts</div>
+              <div class="text-base sm:text-xl">{{ match.score }}</div>
+              <div class="text-[9px] sm:text-[10px] opacity-80">pts</div>
             </div>
 
             <!-- Match info -->
-            <div class="flex-1 space-y-2">
+            <div class="flex-1 min-w-0 space-y-1.5 sm:space-y-2">
               <!-- Header line -->
-              <div class="flex items-center justify-between gap-2">
-                <div class="grid">
-                  <div class="gap-2 flex mb-2">
-                    <span class="font-bold text-brand-lightGray text-base">
+              <div
+                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2"
+              >
+                <div class="flex flex-col gap-1">
+                  <div class="flex gap-2 items-center flex-wrap">
+                    <span class="font-bold text-brand-lightGray text-sm sm:text-base truncate">
                       {{ match.partyType.label }}
                     </span>
                     <span
                       v-if="!match.finish"
-                      class="pill text-xs py-1 px-2 bg-brand-cyan/20 border-brand-cyan/40 text-brand-cyan animate-pulse"
+                      class="pill text-[10px] sm:text-xs py-0.5 sm:py-1 px-1.5 sm:px-2 bg-brand-cyan/20 border-brand-cyan/40 text-brand-cyan animate-pulse whitespace-nowrap"
                     >
                       <font-awesome-icon icon="hourglass-half" class="mr-1" />
-                      {{ $t('profile.matchHistory.inProgress') }}
+                      <span class="hidden xs:inline">{{
+                        $t('profile.matchHistory.inProgress')
+                      }}</span>
+                      <span class="xs:hidden">En cours</span>
                     </span>
                   </div>
 
-                  <div class="flex gap-2">
+                  <div class="flex gap-1 sm:gap-2 flex-wrap">
                     <template v-if="match.partyDifficulty.length > 0">
                       <span
                         v-for="pd in match.partyDifficulty"
                         :key="pd.id"
-                        class="pill text-xs py-1 px-2"
+                        class="pill text-[10px] sm:text-xs py-0.5 sm:py-1 px-1.5 sm:px-2 whitespace-nowrap"
                         :class="match.difficultiesColor[pd.idDifficulty]"
                       >
                         {{ pd.difficulty.label }}
@@ -89,21 +99,30 @@
                     </template>
                   </div>
                 </div>
-                <div class="text-sm text-brand-gray">{{ match.formattedDate }}</div>
+                <div class="text-xs sm:text-sm text-brand-gray whitespace-nowrap">
+                  {{ match.formattedDate }}
+                </div>
               </div>
 
               <!-- Stats line -->
-              <div class="flex items-center gap-4 text-sm">
-                <div class="flex items-center gap-1.5">
-                  <font-awesome-icon icon="circle-question" class="text-brand-purple" />
-                  <span class="text-brand-gray">{{ $t('profile.matchHistory.questions') }}</span>
+              <div class="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm flex-wrap">
+                <div class="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap">
+                  <font-awesome-icon icon="circle-question" class="text-brand-purple text-xs" />
+                  <span class="text-brand-gray hidden xs:inline">{{
+                    $t('profile.matchHistory.questions')
+                  }}</span>
                   <span class="font-bold text-brand-lightGray">
                     {{ match.nbQuestions }}
                   </span>
                 </div>
-                <div v-if="match.percent !== undefined" class="flex items-center gap-1.5">
-                  <font-awesome-icon icon="percent" class="text-brand-cyan" />
-                  <span class="text-brand-gray">{{ $t('profile.matchHistory.success') }}</span>
+                <div
+                  v-if="match.percent !== undefined"
+                  class="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"
+                >
+                  <font-awesome-icon icon="percent" class="text-brand-cyan text-xs" />
+                  <span class="text-brand-gray hidden xs:inline">{{
+                    $t('profile.matchHistory.success')
+                  }}</span>
                   <span
                     class="font-bold"
                     :class="
@@ -117,9 +136,14 @@
                     {{ match.percent }}%
                   </span>
                 </div>
-                <div v-if="match.time !== undefined" class="flex items-center gap-1.5">
-                  <font-awesome-icon icon="clock" class="text-brand-orange" />
-                  <span class="text-brand-gray">{{ $t('profile.matchHistory.time') }}</span>
+                <div
+                  v-if="match.time !== undefined"
+                  class="flex items-center gap-1 sm:gap-1.5 whitespace-nowrap"
+                >
+                  <font-awesome-icon icon="clock" class="text-brand-orange text-xs" />
+                  <span class="text-brand-gray hidden xs:inline">{{
+                    $t('profile.matchHistory.time')
+                  }}</span>
                   <span class="font-bold text-brand-lightGray">
                     {{ formatTime(match.time) }}
                   </span>
@@ -127,22 +151,36 @@
               </div>
 
               <!-- Themes line -->
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <font-awesome-icon icon="tags" class="text-brand-purple text-xs" />
-                <span
-                  v-for="partyTheme in match.partyTheme"
-                  :key="partyTheme.id"
-                  class="pill text-xs py-0.5 px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple"
-                >
-                  <font-awesome-icon :icon="partyTheme.theme.icon" class="mr-1" />
-                  {{ partyTheme.theme.label }}
-                </span>
+              <div class="flex items-start gap-1 sm:gap-1.5">
+                <font-awesome-icon
+                  icon="tags"
+                  class="text-brand-purple text-xs mt-0.5 flex-shrink-0"
+                />
+                <div class="flex items-center gap-1 sm:gap-1.5 flex-wrap min-w-0">
+                  <span
+                    v-for="partyTheme in getVisibleThemes(match.partyTheme)"
+                    :key="partyTheme.id"
+                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple whitespace-nowrap"
+                  >
+                    <font-awesome-icon :icon="partyTheme.theme.icon" class="mr-1" />
+                    <span class="truncate max-w-[80px] sm:max-w-none inline-block">{{
+                      partyTheme.theme.label
+                    }}</span>
+                  </span>
+                  <span
+                    v-if="getRemainingThemesCount(match.partyTheme) > 0"
+                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple cursor-help whitespace-nowrap"
+                    :title="getRemainingThemesNames(match.partyTheme)"
+                  >
+                    +{{ getRemainingThemesCount(match.partyTheme) }}
+                  </span>
+                </div>
               </div>
             </div>
 
             <!-- Arrow icon -->
-            <div class="flex-shrink-0 text-brand-purple opacity-50">
-              <font-awesome-icon icon="chevron-right" class="text-lg" />
+            <div class="flex-shrink-0 text-brand-purple opacity-50 hidden xs:block">
+              <font-awesome-icon icon="chevron-right" class="text-base sm:text-lg" />
             </div>
           </div>
         </div>
@@ -158,24 +196,22 @@
       </div>
 
       <!-- Pagination info -->
-      <div v-if="historyStore.totalPages > 0" class="text-center text-sm text-brand-gray mb-4">
-        {{
-          $t('profile.matchHistory.pagination.showing', {
-            from: (historyStore.currentPage - 1) * 10 + 1,
-            to: Math.min(historyStore.currentPage * 10, historyStore.nbParties || 0),
-            total: historyStore.nbParties || 0,
-          })
-        }}
+      <div
+        v-if="historyStore.totalPages > 0"
+        class="text-center text-xs sm:text-sm text-brand-gray mb-3 sm:mb-4 px-2"
+      >
+        {{ paginationText }}
       </div>
 
       <!-- Pagination -->
       <div
         v-if="historyStore.totalPages > 1"
-        class="flex flex-wrap items-center justify-center gap-2"
+        class="flex items-center justify-center gap-1 sm:gap-2 px-2"
       >
-        <!-- First page -->
+        <!-- First page - Hidden on very small screens if many pages -->
         <button
-          class="pill text-sm"
+          v-if="showExtendedPagination"
+          class="hidden xs:inline-flex pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
           :disabled="historyStore.currentPage === 1 || historyStore.isLoading"
           :class="
             historyStore.currentPage === 1 || historyStore.isLoading
@@ -190,7 +226,7 @@
 
         <!-- Previous page -->
         <button
-          class="pill text-sm"
+          class="pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
           :disabled="historyStore.currentPage === 1 || historyStore.isLoading"
           :class="
             historyStore.currentPage === 1 || historyStore.isLoading
@@ -203,15 +239,26 @@
           <font-awesome-icon icon="chevron-left" />
         </button>
 
-        <!-- Page numbers -->
-        <div class="flex items-center gap-2">
+        <!-- Page numbers - Simplified on mobile -->
+        <div class="flex items-center gap-1 sm:gap-2">
+          <!-- Mobile: only current page (< 480px) - Utilise un span au lieu de div -->
+          <span
+            class="pill text-xs min-w-[2rem] bg-brand-purple/30 border-brand-purple text-brand-purple xs:hidden"
+          >
+            {{ historyStore.currentPage }}
+          </span>
+
+          <!-- Desktop: page range (>= 480px) -->
           <template v-for="page in visiblePages" :key="page">
-            <span v-if="page === -1" class="pill text-sm min-w-[2.5rem] opacity-50 cursor-default">
+            <span
+              v-if="page === -1"
+              class="hidden xs:inline-flex pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem] opacity-50 cursor-default"
+            >
               ...
             </span>
             <button
               v-else
-              class="pill text-sm min-w-[2.5rem]"
+              class="hidden xs:inline-flex pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
               :disabled="historyStore.isLoading"
               :class="
                 page === historyStore.currentPage
@@ -227,7 +274,7 @@
 
         <!-- Next page -->
         <button
-          class="pill text-sm"
+          class="pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
           :disabled="historyStore.currentPage === historyStore.totalPages || historyStore.isLoading"
           :class="
             historyStore.currentPage === historyStore.totalPages || historyStore.isLoading
@@ -240,9 +287,10 @@
           <font-awesome-icon icon="chevron-right" />
         </button>
 
-        <!-- Last page -->
+        <!-- Last page - Hidden on very small screens if many pages -->
         <button
-          class="pill text-sm"
+          v-if="showExtendedPagination"
+          class="hidden xs:inline-flex pill text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
           :disabled="historyStore.currentPage === historyStore.totalPages || historyStore.isLoading"
           :class="
             historyStore.currentPage === historyStore.totalPages || historyStore.isLoading
@@ -260,7 +308,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
@@ -285,11 +333,15 @@ const difficultyColorMap: Record<string, string> = {
   moyen: 'bg-[#f59e0b]/20 border-[#f59e0b]/40 text-[#f59e0b]',
   difficile: 'bg-[#f97316]/20 border-[#f97316]/40 text-[#f97316]',
   hardcore: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
+  extreme: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
 }
 
 const isLoading = ref(false)
 const selectedFilter = ref('all')
 const historyStore = useHistoryStore()
+
+// Nombre maximum de thèmes à afficher (responsive)
+const maxVisibleThemes = ref(3)
 
 const filters = computed(() => [
   { label: t('profile.matchHistory.filters.all'), value: 'all' },
@@ -435,6 +487,35 @@ const visiblePages = computed(() => {
   return pages
 })
 
+// Afficher les boutons first/last uniquement si plus de 3 pages
+const showExtendedPagination = computed(() => historyStore.totalPages > 3)
+
+// Calcul correct du texte de pagination basé sur les données réelles
+const paginationText = computed(() => {
+  const totalItems = historyStore.nbParties || 0
+  const currentItems = historyStore.historyList?.length || 0
+
+  if (currentItems === 0 || totalItems === 0) {
+    return t('profile.matchHistory.pagination.showing', {
+      from: 0,
+      to: 0,
+      total: totalItems,
+    })
+  }
+
+  // Calculer l'index réel de début basé sur les pages précédentes
+  // On doit compter combien d'éléments ont été affichés avant cette page
+  const itemsPerPage = 7 // Correspond au size par défaut du store
+  const fromIndex = (historyStore.currentPage - 1) * itemsPerPage + 1
+  const toIndex = fromIndex + currentItems - 1
+
+  return t('profile.matchHistory.pagination.showing', {
+    from: fromIndex,
+    to: toIndex,
+    total: totalItems,
+  })
+})
+
 const showMatchDetails = (match: Match) => {
   // Rediriger vers la page de détails du match en fonction du type de partie
   if (match.partyType.label === 'Solo') {
@@ -445,7 +526,15 @@ const showMatchDetails = (match: Match) => {
 }
 
 const goToPage = async (page: number) => {
-  if (page < 1 || page > historyStore.totalPages || historyStore.isLoading) return
+  // Validation stricte pour éviter les pages invalides
+  if (
+    page < 1 ||
+    page > historyStore.totalPages ||
+    historyStore.isLoading ||
+    page === historyStore.currentPage
+  ) {
+    return
+  }
 
   // Vider le cache des dates lors du changement de page
   dateCache.clear()
@@ -454,19 +543,61 @@ const goToPage = async (page: number) => {
   await historyStore.getHistory(page)
 }
 
+// Fonctions pour gérer l'affichage responsive des thèmes
+const getVisibleThemes = (partyTheme: any[]) => {
+  return partyTheme.slice(0, maxVisibleThemes.value)
+}
+
+const getRemainingThemesCount = (partyTheme: any[]) => {
+  return Math.max(0, partyTheme.length - maxVisibleThemes.value)
+}
+
+const getRemainingThemesNames = (partyTheme: any[]) => {
+  const remaining = partyTheme.slice(maxVisibleThemes.value)
+  return remaining.map((pt) => pt.theme.label).join(', ')
+}
+
+// Ajuster le nombre de thèmes visibles selon la largeur de l'écran
+const updateMaxVisibleThemes = () => {
+  const width = window.innerWidth
+  if (width >= 1024) {
+    // Desktop: afficher 4 thèmes
+    maxVisibleThemes.value = 4
+  } else if (width >= 640) {
+    // Tablet/sm: afficher 3 thèmes
+    maxVisibleThemes.value = 3
+  } else if (width >= 380) {
+    // Mobile: afficher 2 thèmes
+    maxVisibleThemes.value = 2
+  } else {
+    // Très petit écran: afficher 1 thème seulement
+    maxVisibleThemes.value = 1
+  }
+}
+
 onMounted(async () => {
+  // Initialiser le nombre de thèmes visibles
+  updateMaxVisibleThemes()
+
+  // Écouter les changements de taille d'écran
+  window.addEventListener('resize', updateMaxVisibleThemes)
+
   // First page of history
   await historyStore.getHistory()
+})
+
+onUnmounted(() => {
+  // Nettoyer le listener
+  window.removeEventListener('resize', updateMaxVisibleThemes)
 })
 </script>
 
 <style scoped>
-/* Optimisation du hover avec GPU acceleration */
+/* Optimisation du hover */
 .match-item {
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
-  will-change: border-color, background-color;
 }
 
 .match-item:hover {
@@ -474,9 +605,8 @@ onMounted(async () => {
   background-color: rgba(108, 92, 231, 0.05);
 }
 
-/* Force GPU acceleration pour les animations */
-.match-item {
-  transform: translateZ(0);
-  backface-visibility: hidden;
+/* Empêcher le débordement des flex containers */
+.match-item .flex-1 {
+  min-width: 0;
 }
 </style>
