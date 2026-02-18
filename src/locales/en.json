@@ -52,6 +52,9 @@
       "emailPlaceholder": "you{'@'}example.com",
       "password": "Password",
       "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "passwordMismatch": "Passwords do not match.",
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
       "signIn": "Sign in"

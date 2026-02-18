@@ -50,6 +50,25 @@
                 required
               />
             </div>
+            <div>
+              <label class="block font-semibold mb-1 text-brand-lightGray" for="confirmPassword">
+                {{ $t('auth.register.confirmPassword') }}
+              </label>
+              <input
+                id="confirmPassword"
+                v-model="registerData.confirmPassword"
+                type="password"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
+                required
+              />
+            </div>
+            <div
+              v-if="passwordMismatch"
+              class="rounded-lg p-3 text-sm text-red-400 bg-red-900/10 border border-red-400"
+            >
+              {{ $t('auth.register.passwordMismatch') }}
+            </div>
             <div class="pt-2 flex items-center justify-center gap-3">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
                 {{ $t('common.cancel') }}
@@ -102,11 +121,19 @@ const router = useRouter()
 
 const step = ref(1)
 
-const registerData = ref<{ nickName: string; email: string; password: string }>({
+const registerData = ref<{
+  nickName: string
+  email: string
+  password: string
+  confirmPassword: string
+}>({
   nickName: '',
   email: '',
   password: '',
+  confirmPassword: '',
 })
+
+const passwordMismatch = ref(false)
 
 interface ErrorMessage {
   description?: string
@@ -117,6 +144,13 @@ type ErrorField = string | ErrorMessage
 const error = ref<Record<string, ErrorField[]> | null>(null)
 
 const registerAuth = async () => {
+  passwordMismatch.value = false
+
+  if (registerData.value.password !== registerData.value.confirmPassword) {
+    passwordMismatch.value = true
+    return
+  }
+
   error.value = await userStore.register(registerData.value)
   if (typeof error.value === 'boolean' && error.value) step.value = 2
 }

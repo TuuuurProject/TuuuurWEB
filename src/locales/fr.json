@@ -52,6 +52,9 @@
       "emailPlaceholder": "vous{'@'}exemple.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Confirmez le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter"
