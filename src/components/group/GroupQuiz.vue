@@ -746,6 +746,9 @@ const scoreIsAvailable = ref(false)
 // Track which users have answered the current question
 const usersAnswered = ref(new Set<number | string>())
 
+// Track player answer results (userId -> correct)
+const playerAnswerResults = ref(new Map<number | string, boolean>())
+
 // Players ranking
 const playersRanking = ref<
   Array<{
@@ -764,6 +767,7 @@ const showAllPlayers = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
+let startTime: number | null = null
 
 // Gestion de la modale de confirmation pour quitter
 const showConfirmLeaveModal = ref(false)
@@ -784,46 +788,100 @@ const playersStatus = computed(() => {
     if (userId == null) return
 
     const hasAnswered = usersAnswered.value.has(userId)
+    const hasResult = playerAnswerResults.value.has(userId)
+    const isCurrentUser = userId === userStore.userId
+
     let status = 'waiting'
-    if (hasAnswered) {
-      status = 'answered'
-    } else if (scoreIsAvailable.value) {
-      status = 'noAnswer'
+
+    // Before score is available: show if player answered or is waiting
+    if (!scoreIsAvailable.value) {
+      status = hasAnswered ? 'answered' : 'waiting'
+    }
+    // After score is available: show correct/incorrect/noAnswer
+    else {
+      if (isCurrentUser) {
+        // For current user, use answered and wasCorrect
+        if (answered.value) {
+          status = wasCorrect.value ? 'correct' : 'incorrect'
+        } else {
+          status = 'noAnswer'
+        }
+      } else {
+        // For other players, use playerAnswerResults if available
+        if (hasResult) {
+          const isCorrect = playerAnswerResults.value.get(userId)
+          status = isCorrect ? 'correct' : 'incorrect'
+        } else if (hasAnswered) {
+          // Answered but result not received yet (transient state)
+          status = 'answered'
+        } else {
+          status = 'noAnswer'
+        }
+      }
     }
 
     statusMap.set(userId, {
       status,
       colorClass:
-        status === 'answered'
+        status === 'correct'
           ? 'text-brand-green'
-          : status === 'noAnswer'
-            ? 'text-brand-gray'
-            : 'text-brand-orange',
+          : status === 'incorrect'
+            ? 'text-red-500'
+            : status === 'answered'
+              ? 'text-brand-green'
+              : status === 'noAnswer'
+                ? 'text-brand-gray'
+                : 'text-brand-orange',
       borderClass:
-        status === 'answered'
+        status === 'correct'
           ? 'border-brand-green'
-          : status === 'noAnswer'
-            ? 'border-brand-gray'
-            : 'border-brand-orange',
+          : status === 'incorrect'
+            ? 'border-red-500'
+            : status === 'answered'
+              ? 'border-brand-green'
+              : status === 'noAnswer'
+                ? 'border-brand-gray'
+                : 'border-brand-orange',
       cardClass:
-        status === 'answered'
+        status === 'correct'
           ? 'border-brand-green/40 bg-brand-green/5'
-          : status === 'noAnswer'
-            ? 'border-brand-gray/40 bg-brand-gray/5'
-            : 'border-brand-orange/40 bg-brand-orange/5',
+          : status === 'incorrect'
+            ? 'border-red-500/40 bg-red-500/5'
+            : status === 'answered'
+              ? 'border-brand-green/40 bg-brand-green/5'
+              : status === 'noAnswer'
+                ? 'border-brand-gray/40 bg-brand-gray/5'
+                : 'border-brand-orange/40 bg-brand-orange/5',
       badgeClass:
-        status === 'answered'
+        status === 'correct'
           ? 'bg-brand-green'
-          : status === 'noAnswer'
-            ? 'bg-brand-gray'
-            : 'bg-brand-orange animate-pulse',
-      icon: status === 'answered' ? 'check' : status === 'noAnswer' ? 'times' : 'clock',
+          : status === 'incorrect'
+            ? 'bg-red-500'
+            : status === 'answered'
+              ? 'bg-brand-green'
+              : status === 'noAnswer'
+                ? 'bg-brand-gray'
+                : 'bg-brand-orange animate-pulse',
+      icon:
+        status === 'correct'
+          ? 'check'
+          : status === 'incorrect'
+            ? 'times'
+            : status === 'answered'
+              ? 'check'
+              : status === 'noAnswer'
+                ? 'times'
+                : 'clock',
       text:
-        status === 'answered'
-          ? t('group.quiz.answered')
-          : status === 'noAnswer'
-            ? t('group.quiz.noAnswer')
-            : t('group.quiz.waiting'),
+        status === 'correct'
+          ? t('group.quiz.goodAnswer')
+          : status === 'incorrect'
+            ? t('group.quiz.badAnswer')
+            : status === 'answered'
+              ? t('group.quiz.answered')
+              : status === 'noAnswer'
+                ? t('group.quiz.noAnswer')
+                : t('group.quiz.waiting'),
     })
   })
 
@@ -911,8 +969,12 @@ const handleKeyPress = async (event: KeyboardEvent) => {
 const startTimer = () => {
   clearTimer()
   remaining.value = TOTAL_TIME
+  startTime = Date.now()
+
   timer = window.setInterval(async () => {
-    remaining.value = Math.max(0, +(remaining.value - 0.1).toFixed(1))
+    const elapsed = (Date.now() - startTime!) / 1000 // temps écoulé en secondes
+    remaining.value = Math.max(0, +(TOTAL_TIME - elapsed).toFixed(1))
+
     if (remaining.value <= 0) {
       // Load the answer by ID, set to null to indicate timeout
       // await soloStore.loadAnswerById(null)
@@ -1220,6 +1282,9 @@ const handleQuestionSend = (data: any) => {
   // Reset users answered set for new question
   usersAnswered.value.clear()
 
+  // Reset player answer results for new question
+  playerAnswerResults.value.clear()
+
   // Réinitialiser l'état "finished" si une nouvelle partie commence
   if (finished.value) {
     finished.value = false
@@ -1298,6 +1363,21 @@ const handlePartyDeleted = async () => {
   emit('exit')
 }
 
+const handleAllPlayerAnswered = (data: any) => {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('All players answered the question : ', data)
+
+  // Store player answer results
+  if (Array.isArray(data)) {
+    data.forEach((playerResult: any) => {
+      const userId = playerResult.user?.id ?? playerResult.user?.idUser
+      if (userId != null) {
+        playerAnswerResults.value.set(userId, playerResult.correct)
+      }
+    })
+  }
+}
+
 const allEvents = [
   { name: GroupEvent.Countdown, handler: handleCountdownEvent },
   { name: GroupEvent.QuestionSend, handler: handleQuestionSend },
@@ -1306,6 +1386,7 @@ const allEvents = [
   { name: GroupEvent.PartyFinished, handler: handlePartyFinished },
   { name: GroupEvent.PartyDeleted, handler: handlePartyDeleted },
   { name: GroupEvent.ScoreUpdate, handler: handleScoreUpdate },
+  { name: GroupEvent.AllPlayerAnswered, handler: handleAllPlayerAnswered },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 

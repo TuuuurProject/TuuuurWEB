@@ -46,6 +46,9 @@ export enum GroupEvent {
   /** Fin de partie et classement final. */
   PartyFinished = 'OnPartyFinished',
 
+  /** Bonnes réponses ou non des autres joueurs à chaque fin de question */
+  AllPlayerAnswered = 'OnAllPlayerAnswered',
+
   /** Erreur côté serveur suite à une action client. */
   Error = 'OnError',
 }

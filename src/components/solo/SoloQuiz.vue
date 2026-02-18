@@ -315,6 +315,7 @@ const comeFromHistory = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: number | null = null
+let startTime: number | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
@@ -365,8 +366,12 @@ const handleKeyPress = async (event: KeyboardEvent) => {
 const startTimer = () => {
   clearTimer()
   remaining.value = TOTAL_TIME
+  startTime = Date.now()
+
   timer = window.setInterval(async () => {
-    remaining.value = Math.max(0, +(remaining.value - 0.1).toFixed(1))
+    const elapsed = (Date.now() - startTime!) / 1000 // temps écoulé en secondes
+    remaining.value = Math.max(0, +(TOTAL_TIME - elapsed).toFixed(1))
+
     if (remaining.value <= 0) {
       // Load the answer by ID, set to null to indicate timeout
       await soloStore.loadAnswerById(null)
@@ -567,7 +572,7 @@ const partyDifficulties = computed(() => {
 })
 
 const partyThemes = computed(() => {
-  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.id) || []
+  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.idTheme) || []
   if (!themeIds || themeIds.length === 0 || !themeStore.list) return []
   return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
 })
