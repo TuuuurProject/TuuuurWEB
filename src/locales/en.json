@@ -69,6 +69,25 @@
       "message": "A code has been sent to your email address.",
       "submit": "Confirm"
     },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Enter your username or email to receive a reset code.",
+      "loginLabel": "Email",
+      "loginPlaceholder": "Your email",
+      "sendCode": "Send code",
+      "codeTitle": "Verification Code",
+      "codeDescription": "A code has been sent to your email address.",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "••••••••",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "resetPassword": "Reset Password",
+      "codeSent": "Code sent successfully! Check your email.",
+      "codeError": "Error sending code. Check your information.",
+      "resetSuccess": "Password reset successfully!",
+      "resetError": "Error resetting password. Check the code and try again.",
+      "successMessage": "You can now log in with your new password."
+    },
     "googleError": "Error logging in with Google"
   },
   "profile": {

@@ -7,7 +7,10 @@
     </header>
 
     <transition name="fade" mode="out-in">
-      <div v-if="step === 1" class="max-w-lg gaming-card mx-auto">
+      <div v-if="step === 0" class="max-w-lg gaming-card mx-auto">
+        <auth-forgot-password @back="step = 1" @success="handleForgotPasswordSuccess" />
+      </div>
+      <div v-else-if="step === 1" class="max-w-lg gaming-card mx-auto">
         <overlay-block :loading="userStore.isLoading">
           <form class="space-y-5" @submit.prevent="loginUser">
             <div>
@@ -36,7 +39,7 @@
                 :placeholder="$t('auth.login.passwordPlaceholder')"
               />
               <div class="mt-2 text-sm">
-                <button type="button" class="pill hover:bg-brand-purple/10">
+                <button type="button" class="pill hover:bg-brand-purple/10" @click="step = 0">
                   {{ $t('auth.login.forgotPassword') }}
                 </button>
               </div>
@@ -105,14 +108,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import router from '@/router'
 import AuthCode from '@/components/auth/AuthCode.vue'
+import AuthForgotPassword from '@/components/auth/AuthForgotPassword.vue'
 
 const { t } = useI18n()
+const proxy = getCurrentInstance()?.proxy
 const login = ref('')
 const password = ref('')
 
@@ -123,7 +128,7 @@ interface ErrorMessage {
 type ErrorField = string | ErrorMessage
 
 const error = ref<Record<string, ErrorField[]> | null>(null)
-const step = ref(1) // 1: login, 2: verify email
+const step = ref(1) // 0: forgot password, 1: login, 2: verify email
 
 const userStore = useUserStore()
 
@@ -184,5 +189,13 @@ const redirectAfterLogin = () => {
   } else {
     router.push({ name: 'Home' })
   }
+}
+
+// Handle forgot password success
+const handleForgotPasswordSuccess = () => {
+  // if (proxy) {
+  //   ;(proxy as any).$toast.success(t('auth.forgotPassword.successMessage'))
+  // }
+  step.value = 1
 }
 </script>

@@ -69,6 +69,25 @@
       "message": "Un code a été envoyé à votre adresse email.",
       "submit": "Confirmer"
     },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "description": "Saisissez votre pseudo ou email pour recevoir un code de réinitialisation.",
+      "loginLabel": "Email",
+      "loginPlaceholder": "Votre email",
+      "sendCode": "Envoyer le code",
+      "codeTitle": "Code de vérification",
+      "codeDescription": "Un code a été envoyé à votre adresse email.",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "••••••••",
+      "confirmPassword": "Confirmez le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "codeSent": "Code envoyé avec succès ! Vérifiez votre email.",
+      "codeError": "Erreur lors de l'envoi du code. Vérifiez vos informations.",
+      "resetSuccess": "Mot de passe réinitialisé avec succès !",
+      "resetError": "Erreur lors de la réinitialisation. Vérifiez le code et réessayez.",
+      "successMessage": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+    },
     "googleError": "Erreur lors de la connexion avec Google"
   },
   "profile": {
