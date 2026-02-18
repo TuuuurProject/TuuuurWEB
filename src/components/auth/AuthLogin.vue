@@ -59,7 +59,7 @@
               <template
                 v-if="
                   typeof error === 'string' ||
-                  (typeof error === 'object' && error?.name.includes('Axios'))
+                  (typeof error === 'object' && error?.name?.includes('Axios'))
                 "
               >
                 {{ error }}

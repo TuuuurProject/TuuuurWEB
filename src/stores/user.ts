@@ -11,6 +11,7 @@ interface UserInfo {
   nickName: string
   avatar: string
   email: string
+  isGoogleUser: boolean
 }
 
 export default defineStore('user', {
