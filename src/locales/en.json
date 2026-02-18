@@ -55,6 +55,11 @@
       "confirmPassword": "Confirm Password",
       "confirmPasswordPlaceholder": "Confirm your password",
       "passwordMismatch": "Passwords do not match.",
+      "passwordMinLength": "Minimum 8 characters",
+      "passwordLowercase": "At least one lowercase letter",
+      "passwordUppercase": "At least one uppercase letter",
+      "passwordNumber": "At least one number",
+      "passwordsMatch": "Passwords match",
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
       "signIn": "Sign in"
