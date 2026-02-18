@@ -572,7 +572,7 @@ const partyDifficulties = computed(() => {
 })
 
 const partyThemes = computed(() => {
-  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.id) || []
+  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.idTheme) || []
   if (!themeIds || themeIds.length === 0 || !themeStore.list) return []
   return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
 })
