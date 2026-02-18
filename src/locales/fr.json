@@ -55,6 +55,11 @@
       "confirmPassword": "Confirmez le mot de passe",
       "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "passwordMinLength": "Minimum 8 caractères",
+      "passwordLowercase": "Au moins une minuscule",
+      "passwordUppercase": "Au moins une majuscule",
+      "passwordNumber": "Au moins un chiffre",
+      "passwordsMatch": "Les mots de passe correspondent",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter"
