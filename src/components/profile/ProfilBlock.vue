@@ -81,6 +81,7 @@
     <div class="mt-4 gap-5 md:gap-2 grid md:grid-cols-2 sm:grid-cols-1 mx-auto">
       <div>
         <button
+          v-if="!userStore.userInfo?.isGoogleUser"
           class="btn btn-ghost border border-brand-purple hover:bg-brand-purple/10 h-full w-full md:w-auto"
           @click="showModalChangePassword = true"
         >
