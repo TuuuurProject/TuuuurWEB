@@ -4,7 +4,6 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.title') }}
       </h2>
-      <div class="badge-info">{{ $t('auth.login.badge') }}</div>
     </header>
 
     <transition name="fade" mode="out-in">
@@ -42,7 +41,7 @@
                 </button>
               </div>
             </div>
-            <div class="pt-2 flex items-center justify-center gap-3">
+            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
                 {{ $t('common.cancel') }}
               </button>
@@ -88,9 +87,11 @@
             <google-login :callback="handleGoogleLogin" />
           </div>
 
-          <div class="mt-6 text-sm text-brand-gray text-center">
+          <div
+            class="mt-6 text-sm text-brand-gray text-center flex items-center justify-center gap-2 flex-col sm:flex-row"
+          >
             {{ $t('auth.login.noAccount') }}
-            <button class="pill hover:bg-brand-purple/10 ml-2" @click="$emit('goto-register')">
+            <button class="pill hover:bg-brand-purple/10 sm:ml-2" @click="$emit('goto-register')">
               {{ $t('auth.login.createAccount') }}
             </button>
           </div>

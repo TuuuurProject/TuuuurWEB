@@ -126,7 +126,7 @@
               </div>
             </transition>
 
-            <div class="pt-2 flex items-center justify-center gap-3">
+            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
                 {{ $t('common.cancel') }}
               </button>
@@ -156,9 +156,11 @@
             </div>
           </div>
 
-          <div class="mt-6 text-sm text-brand-gray text-center">
+          <div
+            class="mt-6 text-sm text-brand-gray text-center flex items-center justify-center gap-2 flex-col sm:flex-row"
+          >
             {{ $t('auth.register.alreadyRegistered') }}
-            <button class="pill hover:bg-brand-purple/10 ml-2" @click="$emit('goto-login')">
+            <button class="pill hover:bg-brand-purple/10 sm:ml-2" @click="$emit('goto-login')">
               {{ $t('auth.register.signIn') }}
             </button>
           </div>
