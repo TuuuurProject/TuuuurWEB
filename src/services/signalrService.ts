@@ -49,6 +49,9 @@ export enum GroupEvent {
   /** Bonnes réponses ou non des autres joueurs à chaque fin de question */
   AllPlayerAnswered = 'OnAllPlayerAnswered',
 
+  /** Ejecter le joueur */
+  PlayerExepelled = 'OnPlayerExpelled',
+
   /** Erreur côté serveur suite à une action client. */
   Error = 'OnError',
 }

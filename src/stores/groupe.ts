@@ -276,5 +276,24 @@ export default defineStore('groupe', {
         this.loading--
       }
     },
+
+    async expelledPlayer(idPlayer: number | string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'group/user/' + idPlayer
+      try {
+        const config = {
+          url,
+          method: 'DELETE',
+        }
+        const response = await axiosOverlayConnector(config)
+
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
   },
 })
