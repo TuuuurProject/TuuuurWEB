@@ -263,8 +263,6 @@ const handleOnError = (error: any) => {
 }
 
 const handlePlayerExpelledEvent = async (data: any) => {
-  console.log('Player expelled:', data)
-
   // Si c'est le joueur actuel qui a été expulsé, nettoyer et retourner au mode sélection
   if (data.id === userStore.userId) {
     proxy?.$toast.warning(t('group.lobby.youWereExpelled'))
