@@ -19,7 +19,7 @@
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 items-start hover:shadow-neon transition duration-250 overflow-hidden grid grid-cols-[auto_1fr] gap-4 items-center"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 items-start hover:shadow-neon transition duration-250 overflow-hidden flex gap-4 items-center"
           >
             <div class="relative shrink-0">
               <div
@@ -41,11 +41,19 @@
                 </div>
               </div>
             </div>
-            <div class="min-w-0">
+            <div class="min-w-0 flex-1">
               <div class="font-semibold leading-tight truncate text-brand-lightGray">
                 {{ p.user?.nickName }}
               </div>
             </div>
+            <button
+              v-if="currentUserIsHost && (p.user.idUser ?? p.user.id) !== userStore.userId"
+              @click="handleExpelPlayer(p)"
+              class="btn-icon text-brand-orange hover:text-red-500 transition-colors shrink-0"
+              :title="$t('group.lobby.expelPlayer')"
+            >
+              <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+            </button>
           </li>
         </ul>
       </div>
@@ -230,6 +238,16 @@ const handlePartyUpdateEvent = (data: any) => {
   }
 }
 
+const handleExpelPlayer = async (player: any) => {
+  try {
+    const playerId = player.user.idUser ?? player.user.id
+    await groupeStore.expelledPlayer(playerId)
+  } catch (error) {
+    console.error('Failed to expel player:', error)
+    proxy?.$toast.error(t('group.lobby.expelError'))
+  }
+}
+
 const confirmStartGame = async () => {
   if (signalrService.isConnected()) {
     await signalrService.send(GroupEvent.StartGroupParty)
@@ -244,12 +262,33 @@ const handleOnError = (error: any) => {
   proxy?.$toast.error(error)
 }
 
+const handlePlayerExpelledEvent = async (data: any) => {
+  // Si c'est le joueur actuel qui a été expulsé, nettoyer et retourner au mode sélection
+  if (data.id === userStore.userId) {
+    proxy?.$toast.warning(t('group.lobby.youWereExpelled'))
+    await cleanupGroup()
+    emit('goTo', 'mode')
+  } else {
+    // Retirer le joueur expulsé de la liste
+    if (groupeStore.groupePartyInfo) {
+      groupeStore.groupePartyInfo.partyUsers = groupeStore.groupePartyInfo.partyUsers.filter(
+        (u: any) => {
+          const userId = u.user.idUser ?? u.user.id
+          return userId !== data.id
+        },
+      )
+      proxy?.$toast.info(t('group.lobby.playerExpelled', { name: data.nickName }))
+    }
+  }
+}
+
 const allEvents = [
   { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
   { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
   { name: GroupEvent.PartyStarted, handler: handleStartEvent },
   { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
   { name: GroupEvent.PartyUpdated, handler: handlePartyUpdateEvent },
+  { name: GroupEvent.PlayerExepelled, handler: handlePlayerExpelledEvent },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 

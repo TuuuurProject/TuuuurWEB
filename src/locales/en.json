@@ -244,7 +244,11 @@
       "userJoined": "{name} joined the lobby",
       "userLeft": "{name} left the lobby",
       "lobbyDeleted": "Lobby has been deleted",
-      "connectionError": "Real-time connection error"
+      "connectionError": "Real-time connection error",
+      "expelPlayer": "Expel player",
+      "playerExpelled": "{name} was expelled from the lobby",
+      "youWereExpelled": "You were expelled from the lobby",
+      "expelError": "Error expelling player"
     },
     "quiz": {
       "title": "Group Quiz",

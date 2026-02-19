@@ -244,7 +244,11 @@
       "userJoined": "{name} a rejoint le lobby",
       "userLeft": "{name} a quitté le lobby",
       "lobbyDeleted": "Le lobby a été supprimé",
-      "connectionError": "Erreur de connexion temps réel"
+      "connectionError": "Erreur de connexion temps réel",
+      "expelPlayer": "Expulser le joueur",
+      "playerExpelled": "{name} a été expulsé(e) du lobby",
+      "youWereExpelled": "Vous avez été expulsé(e) du lobby",
+      "expelError": "Erreur lors de l'expulsion du joueur"
     },
     "quiz": {
       "title": "Quiz en Groupe",
