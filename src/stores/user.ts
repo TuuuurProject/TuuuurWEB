@@ -54,12 +54,12 @@ export default defineStore('user', {
       return false
     },
 
-    userId(): number {
+    userId(): string {
       const payload = this.decodedPayloadToken as any
       if (payload && payload.id) {
-        return parseInt(payload.id)
+        return payload.id
       }
-      return 0
+      return ''
     },
   },
 
