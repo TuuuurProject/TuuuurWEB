@@ -17,6 +17,7 @@ interface UserInfo {
 export default defineStore('user', {
   state: () => ({
     token: null as string | null,
+    invitedToken: null as string | null,
     refreshToken: null as string | null,
     loading: 0 as number,
     comeFrom: null as string | null, // To store the route before login
@@ -56,6 +57,31 @@ export default defineStore('user', {
 
     userId(): string {
       const payload = this.decodedPayloadToken as any
+      if (payload && payload.id) {
+        return payload.id
+      }
+      return ''
+    },
+
+    isLoggedAsInvited() {
+      if (this.invitedToken) {
+        const payload = this.decodedPayloadInvitedToken as any
+        if (!payload) return false
+
+        const localExp = dayjs.unix(payload.exp).unix()
+        const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+        return localExp > currentTimeInSeconds
+      }
+      return false
+    },
+
+    decodedPayloadInvitedToken: (state) => {
+      if (!state.invitedToken) return null
+      return jwtDecode(state.invitedToken)
+    },
+
+    userIdInvited(): string {
+      const payload = this.decodedPayloadInvitedToken as any
       if (payload && payload.id) {
         return payload.id
       }
@@ -228,6 +254,28 @@ export default defineStore('user', {
         }
         const response = await axiosOverlayConnector(config)
         return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async getInvitedToken(nickname: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/invited'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: {
+            nickname,
+          },
+        }
+        const response = await axiosOverlayConnector(config)
+        this.invitedToken = response.data.token.token
+        this.userInfo = response.data.user
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
