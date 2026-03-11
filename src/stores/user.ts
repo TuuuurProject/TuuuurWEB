@@ -63,6 +63,14 @@ export default defineStore('user', {
       return ''
     },
 
+    userInvitedId(): string {
+      const payload = this.decodedPayloadInvitedToken as any
+      if (payload && payload.id) {
+        return payload.id
+      }
+      return ''
+    },
+
     isLoggedAsInvited() {
       if (this.invitedToken) {
         const payload = this.decodedPayloadInvitedToken as any
