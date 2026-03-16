@@ -350,7 +350,11 @@
       "finalRanking": "Résultats du Duel",
       "replay": "Rejouer",
       "home": "Accueil",
-      "errorAnswering": "Erreur lors de la soumission de la réponse"
+      "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "confirmLeave": {
+        "title": "Quitter la partie ?",
+        "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
+      }
     }
   },
   "leaderboard": {

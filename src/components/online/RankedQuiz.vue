@@ -368,6 +368,16 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Confirmation de sortie en cours de partie -->
+    <ModalDialog
+      :open="showConfirmLeaveModal"
+      :title="$t('competitive.quiz.confirmLeave.title')"
+      @confirm="confirmLeave"
+      @close="cancelLeave"
+    >
+      <p class="text-brand-lightGray">{{ $t('competitive.quiz.confirmLeave.message') }}</p>
+    </ModalDialog>
   </section>
 </template>
 
@@ -375,9 +385,11 @@
 import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue3-toastify'
+import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue-router'
 import signalrService, { RankedEvent } from '@/services/signalrService'
 import useRankedStore from '@/stores/ranked'
 import type { RankedUser, RankedQuestion, UserAnswered, UserScore } from '@/stores/ranked'
+import ModalDialog from '@/components/ModalDialog.vue'
 
 const props = defineProps<{
   opponent: RankedUser
@@ -385,12 +397,17 @@ const props = defineProps<{
   initialCountdown?: number
 }>()
 
-defineEmits<{ home: []; replay: [] }>()
+const emit = defineEmits<{ home: []; replay: [] }>()
 
 const { t } = useI18n()
+const router = useRouter()
 const rankedStore = useRankedStore()
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
+
+// ─── Confirmation de sortie ───────────────────────────────────────────────────
+const showConfirmLeaveModal = ref(false)
+let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormalized } | null = null
 
 // ─── Phase ───────────────────────────────────────────────────────────────────
 type Phase = 'countdown' | 'question' | 'answered' | 'revealing' | 'finished'
@@ -604,11 +621,45 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   stopTimer()
-  // Nettoyer les listeners SignalR
+  // off(eventName) sans handler = supprime TOUS les listeners pour cet event
   allEvents.forEach((event) => {
-    signalrService.off(event.name, event.handler)
+    signalrService.off(event.name)
   })
 })
+
+// ─── Guard de navigation ──────────────────────────────────────────────────────
+onBeforeRouteLeave((to, from, next) => {
+  if (phase.value !== 'finished') {
+    pendingNavigation = { to, from }
+    showConfirmLeaveModal.value = true
+    next(false)
+  } else {
+    next()
+  }
+})
+
+async function confirmLeave() {
+  showConfirmLeaveModal.value = false
+
+  // Déconnexion SignalR (la partie s'arrête côté client)
+  if (signalrService.isConnected()) {
+    await signalrService.disconnect()
+  }
+  rankedStore.reset()
+
+  if (pendingNavigation) {
+    const destination = pendingNavigation.to
+    pendingNavigation = null
+    await router.push(destination)
+  } else {
+    emit('home')
+  }
+}
+
+function cancelLeave() {
+  showConfirmLeaveModal.value = false
+  pendingNavigation = null
+}
 </script>
 
 <style scoped>

@@ -350,7 +350,11 @@
       "finalRanking": "Duel Results",
       "replay": "Play again",
       "home": "Home",
-      "errorAnswering": "Error submitting answer"
+      "errorAnswering": "Error submitting answer",
+      "confirmLeave": {
+        "title": "Leave the game?",
+        "message": "Are you sure you want to leave the ongoing game? Your progress will be lost and ELO will not be updated."
+      }
     }
   },
   "leaderboard": {
