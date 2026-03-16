@@ -97,10 +97,6 @@
 
         <!-- Players status card -->
         <div class="gaming-card">
-          <h4 class="font-branding text-base text-brand-gray mb-3">
-            <font-awesome-icon icon="users" class="mr-2" />
-            {{ $t('competitive.quiz.playersStatus') }}
-          </h4>
           <div class="grid grid-cols-2 gap-3">
             <!-- Me -->
             <div
