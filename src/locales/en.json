@@ -221,7 +221,13 @@
       "subtitle": "Enter a code to join the lobby and start the adventure.",
       "code": "Game Code",
       "example": "Example: 538950",
-      "joinButton": "Join"
+      "joinButton": "Join",
+      "modal": {
+        "title": "Join Game",
+        "nickname": "Choose a nickname for the lobby",
+        "nicknamePlaceholder": "Your nickname",
+        "submit": "Join the game"
+      }
     },
     "lobby": {
       "joinError": "Error trying to join the game",

@@ -263,8 +263,12 @@ const handleOnError = (error: any) => {
 }
 
 const handlePlayerExpelledEvent = async (data: any) => {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Player expelled:', data)
   // Si c'est le joueur actuel qui a été expulsé, nettoyer et retourner au mode sélection
-  if (data.id === userStore.userId) {
+  if (
+    (data.id === userStore.userId && userStore.isLogged) ||
+    (data.id === userStore.userIdInvited && userStore.isLoggedAsInvited)
+  ) {
     proxy?.$toast.warning(t('group.lobby.youWereExpelled'))
     await cleanupGroup()
     emit('goTo', 'mode')
@@ -331,6 +335,7 @@ onBeforeRouteLeave(async (to, from, next) => {
     await cleanupGroup()
   }
   emit('goTo', 'mode')
+
   next(false) // Bloquer la navigation pour rester dans le composant parent
 })
 

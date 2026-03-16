@@ -33,7 +33,7 @@
                 :disabled="props.disabledConfirm"
                 @click="$emit('confirm')"
               >
-                {{ $t('modal.confirm') }}
+                {{ confirmationTitle.length === 0 ? $t('modal.confirm') : confirmationTitle }}
               </button>
             </footer>
           </overlay-block>
@@ -48,11 +48,18 @@ import { onMounted, onUnmounted } from 'vue'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 
 const props = withDefaults(
-  defineProps<{ open: boolean; title?: string; loading?: boolean; disabledConfirm?: boolean }>(),
+  defineProps<{
+    open: boolean
+    title?: string
+    loading?: boolean
+    disabledConfirm?: boolean
+    confirmationTitle?: string
+  }>(),
   {
     title: 'Confirmation',
     loading: false,
     disabledConfirm: false,
+    confirmationTitle: '',
   },
 )
 

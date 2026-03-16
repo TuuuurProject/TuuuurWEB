@@ -35,7 +35,7 @@ interface Match {
   id: string
   dt: string
   idPartyType: number
-  idUserHost: number
+  idUserHost: string
   active: boolean
   finish: boolean
   score: number
