@@ -294,10 +294,14 @@
   },
   "competitive": {
     "title": "Competitive Mode",
-    "badge": "Choose your favorite categories",
-    "categories": {
-      "title": "Battle Categories",
-      "subtitle": "Select your areas of expertise for balanced duels."
+    "badge": "Ranked",
+    "ranked": {
+      "title": "Ranked Mode",
+      "subtitle": "1v1 Duel — Dynamic ELO",
+      "description": "Face players of similar level in quick duels. The more you win, the higher your ELO!",
+      "badge": "Ranked",
+      "eloInfo": "Your ELO: {value}",
+      "searchOpponent": "Find an opponent"
     },
     "info": {
       "title": "Competitive Mode",
@@ -307,28 +311,39 @@
     },
     "startSearch": "Start Search",
     "matchmaking": {
-      "searching": "Searching",
-      "searchingMessage": "We're looking for an opponent…",
+      "searching": "Searching…",
+      "searchingMessage": "Looking for a compatible opponent…",
       "found": "Opponent found!",
+      "gameStartingSoon": "The game is about to start…",
       "you": "You",
       "opponent": "Opponent",
       "vs": "VS",
-      "cancel": "Cancel",
-      "startDuel": "Start Duel"
+      "cancel": "Cancel search"
     },
-    "duel": {
-      "title": "1v1 Duel",
-      "badge": "Increasing difficulty questions",
-      "you": "You",
-      "opponent": "Opponent",
-      "elo": "Elo {value}",
-      "health": "Health points",
-      "healthYou": "Health points — You",
-      "healthOpponent": "Health points — Opponent",
-      "ready": "Ready?",
-      "readyMessage": "The quiz will start once both players are ready.",
-      "quit": "Quit",
-      "startQuiz": "Start Quiz"
+    "quiz": {
+      "title": "Ranked Duel",
+      "question": "Question {current} / {total}",
+      "score": "Score:",
+      "timeRemaining": "Time remaining: {time}s",
+      "getReady": "Get ready…",
+      "playersStatus": "Players status",
+      "answered": "Answered",
+      "waitingAnswer": "Waiting for your answer…",
+      "opponentAnswered": "Answered",
+      "waitingOpponent": "Waiting…",
+      "correct": "Correct +{points} pts",
+      "incorrect": "Wrong answer",
+      "finished": "Duel Over!",
+      "victory": "Victory!",
+      "defeat": "Defeat",
+      "draw": "Draw",
+      "eloGained": "+{points} ELO",
+      "eloLost": "-{points} ELO",
+      "eloUnchanged": "ELO unchanged",
+      "finalRanking": "Duel Results",
+      "replay": "Play again",
+      "home": "Home",
+      "errorAnswering": "Error submitting answer"
     }
   },
   "leaderboard": {
