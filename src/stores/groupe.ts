@@ -26,7 +26,7 @@ export interface PartyType {
 
 export interface User {
   id?: number | string
-  idUser?: number | string
+  idUser?: string
   nickName?: string
   avatar?: string
   email?: string
@@ -40,7 +40,7 @@ export interface GroupePartyInfo {
   finish: boolean
   id: string
   idPartyType: number
-  idUserHost: number
+  idUserHost: string
   nbQuestions: number
   scoreEachRound?: boolean
   partyDifficulty: PartyDifficulty[]

@@ -221,7 +221,13 @@
       "badge": "Entrez le code du salon",
       "code": "Code de la partie",
       "example": "Exemple: 538950",
-      "joinButton": "Rejoindre"
+      "joinButton": "Rejoindre",
+      "modal": {
+        "title": "Rejoindre la partie",
+        "nickname": "Choisissez un pseudo pour le salon",
+        "nicknamePlaceholder": "Votre pseudo",
+        "submit": "Rejoindre la partie"
+      }
     },
     "lobby": {
       "joinError": "Erreur lors de la tentative de rejoindre la partie",

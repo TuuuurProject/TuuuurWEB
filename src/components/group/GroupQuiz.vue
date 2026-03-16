@@ -789,7 +789,9 @@ const playersStatus = computed(() => {
 
     const hasAnswered = usersAnswered.value.has(userId)
     const hasResult = playerAnswerResults.value.has(userId)
-    const isCurrentUser = userId === userStore.userId
+    const isCurrentUser =
+      (userId === userStore.userId && userStore.isLogged) ||
+      (userId === userStore.userIdInvited && userStore.isLoggedAsInvited)
 
     let status = 'waiting'
 
@@ -1003,8 +1005,10 @@ const answer = async (opt: { id: number }) => {
   userAnswerId.value = opt.id
 
   // Add current user to answered set
-  if (userStore.userId) {
+  if (userStore.userId && userStore.isLogged) {
     usersAnswered.value.add(userStore.userId)
+  } else if (userStore.userIdInvited && userStore.isLoggedAsInvited) {
+    usersAnswered.value.add(userStore.userIdInvited)
   }
 
   // Answer
