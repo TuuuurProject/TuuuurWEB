@@ -37,9 +37,21 @@
           class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
           role="alert"
         >
-          <ul class="mt-1 list-disc list-inside">
-            <li v-for="(msg, idx) in error" :key="idx">{{ (msg as ErrorMessage)?.description }}</li>
-          </ul>
+          <template
+            v-if="
+              typeof error === 'string' ||
+              (typeof error === 'object' && error?.name?.includes('Axios'))
+            "
+          >
+            {{ error }}
+          </template>
+          <template v-else-if="error && typeof error === 'object'">
+            <ul v-for="field in Object.keys(error)" :key="field" class="mt-1 list-disc list-inside">
+              <li v-for="(msg, idx) in error[field]" :key="idx">
+                {{ typeof msg === 'string' ? msg : msg?.description }}
+              </li>
+            </ul>
+          </template>
         </div>
       </div>
     </div>
@@ -62,6 +74,33 @@
           :placeholder="$t('group.join.modal.nicknamePlaceholder')"
         />
       </div>
+
+      <div v-if="errorUsername" class="my-5">
+        <div
+          class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
+          role="alert"
+        >
+          <template
+            v-if="
+              typeof errorUsername === 'string' ||
+              (typeof errorUsername === 'object' && errorUsername?.name?.includes('Axios'))
+            "
+          >
+            {{ errorUsername }}
+          </template>
+          <template v-else-if="errorUsername && typeof errorUsername === 'object'">
+            <ul
+              v-for="field in Object.keys(errorUsername)"
+              :key="field"
+              class="mt-1 list-disc list-inside"
+            >
+              <li v-for="(msg, idx) in errorUsername[field]" :key="idx">
+                {{ typeof msg === 'string' ? msg : msg?.description }}
+              </li>
+            </ul>
+          </template>
+        </div>
+      </div>
     </ModalDialog>
   </section>
 </template>
@@ -82,6 +121,7 @@ interface ErrorMessage {
 type ErrorField = string | ErrorMessage
 
 const error = ref<Record<string, ErrorField[]> | null>(null)
+const errorUsername = ref<Record<string, ErrorField[]> | null>(null)
 
 const digits = reactive<string[]>(['', '', '', '', '', ''])
 
@@ -199,7 +239,7 @@ const joinGroupInvited = async () => {
   // Create invited token
   await userStore.getInvitedToken(username.value)
 
-  error.value = await groupeStore.joinGroupe(digits.join(''))
+  errorUsername.value = await groupeStore.joinGroupe(digits.join(''))
 
   if (groupeStore.groupeId) {
     showModalUsername.value = false
