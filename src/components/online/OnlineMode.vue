@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue3-toastify'
 import signalrService, { RankedEvent } from '@/services/signalrService'
@@ -81,6 +81,8 @@ import LoggedInBlock from '@/components/LoggedInBlock.vue'
 const { t } = useI18n()
 const rankedStore = useRankedStore()
 const userStore = useUserStore()
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
 
 type Step = 'idle' | 'search' | 'found' | 'game'
 const step = ref<Step>('idle')
@@ -109,12 +111,14 @@ const currentUser = computed(() => userInfo.value)
 
 // ─── SignalR handlers ─────────────────────────────────────────────────────────
 function onOpponentFound(opponent: RankedUser) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Opponent found:', opponent)
   rankedStore.opponent = opponent
   step.value = 'found'
   firstCountdownReceived = false
 }
 
 function onCountdown(seconds: number) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Countdown:', seconds)
   if (step.value === 'found' && !firstCountdownReceived) {
     firstCountdownReceived = true
     initialCountdown.value = seconds
@@ -125,6 +129,7 @@ function onCountdown(seconds: number) {
 }
 
 function onError(message: string) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.error('[SignalR] Error:', message)
   toast.error(message)
   if (step.value === 'search') {
     step.value = 'idle'
@@ -184,6 +189,12 @@ async function cleanup(skipDisconnect = false) {
 }
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
+const allEvents = [
+  { name: RankedEvent.OpponentFound, handler: onOpponentFound },
+  { name: RankedEvent.Countdown, handler: onCountdown },
+  { name: RankedEvent.Error, handler: onError },
+]
+
 onMounted(async () => {
   // Fetch user info if not already loaded
   if (!userStore.userInfo) {
@@ -192,15 +203,26 @@ onMounted(async () => {
     } catch (_) {}
   }
 
-  signalrService.on(RankedEvent.OpponentFound, onOpponentFound as any)
-  signalrService.on(RankedEvent.Countdown, onCountdown as any)
-  signalrService.on(RankedEvent.Error, onError as any)
+  try {
+    allEvents.forEach((event) => {
+      signalrService.off(event.name)
+    })
+
+    allEvents.forEach((event) => {
+      signalrService.on(event.name, (data: unknown) => {
+        event.handler(data)
+      })
+    })
+  } catch (error) {
+    console.error('Failed to connect to SignalR:', error)
+    proxy?.$toast.error(t('group.lobby.connectionError'))
+  }
 })
 
 onBeforeUnmount(async () => {
-  signalrService.off(RankedEvent.OpponentFound, onOpponentFound as any)
-  signalrService.off(RankedEvent.Countdown, onCountdown as any)
-  signalrService.off(RankedEvent.Error, onError as any)
+  allEvents.forEach((event) => {
+    signalrService.off(event.name)
+  })
 
   if (step.value === 'search') {
     try {

@@ -479,12 +479,14 @@ async function sendAnswer(answerId: number) {
 
 // ─── SignalR event handlers ───────────────────────────────────────────────────
 function onCountdown(seconds: number) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Countdown:', seconds)
   countdownValue.value = seconds
   phase.value = 'countdown'
   stopTimer()
 }
 
 function onQuestionSend(question: RankedQuestion) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Question received:', question)
   currentQuestionData.value = question
   currentIndex.value = question.currentIndex
   if (question.question?.answer?.length) {
@@ -500,10 +502,13 @@ function onQuestionSend(question: RankedQuestion) {
 }
 
 function onUserAnswer() {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Opponent answered')
   opponentAnswered.value = true
 }
 
 function onAllPlayerAnswered(results: UserAnswered[]) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] All players answered:', results)
   stopTimer()
   meAnswered.value = true
   opponentAnswered.value = true
@@ -519,6 +524,8 @@ function onAllPlayerAnswered(results: UserAnswered[]) {
 }
 
 function onQuestionAnswerSend(question: RankedQuestion) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] Question answer revealed:', question)
   currentQuestionData.value = question
   lastPoints.value = question.score
   myScore.value += question.score
@@ -527,6 +534,8 @@ function onQuestionAnswerSend(question: RankedQuestion) {
 }
 
 function onScoreUpdate(updatedScores: UserScore[]) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] Scores updated:', updatedScores)
   scores.value = updatedScores
   rankedStore.scores = updatedScores
 
@@ -539,22 +548,29 @@ function onScoreUpdate(updatedScores: UserScore[]) {
 }
 
 function onPartyFinished(finalScores: UserScore[]) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] Party finished. Final scores:', finalScores)
   rankedStore.finalScores = finalScores
   phase.value = 'finished'
   stopTimer()
 }
 
 function onUserWin(eloPoints: number) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] You win! ELO change:', eloPoints)
   rankedStore.eloChange = eloPoints
   rankedStore.hasWon = true
 }
 
 function onUserLoose(eloPoints: number) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] You lose. ELO change:', eloPoints)
   rankedStore.eloChange = eloPoints
   rankedStore.hasWon = false
 }
 
 function onError(message: string) {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.error('[SignalR] Error:', message)
   toast.error(message)
 }
 
