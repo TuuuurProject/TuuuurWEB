@@ -301,9 +301,10 @@
   "competitive": {
     "title": "Mode Compétitif",
     "badge": "Classé",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder au mode compétitif !",
     "ranked": {
       "title": "Mode Ranked",
-      "subtitle": "Duel 1v1 — ELO dynamique",
+      "subtitle": "Duel 1v1",
       "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre ELO augmente !",
       "badge": "Classé",
       "eloInfo": "Votre ELO : {value}",
@@ -320,7 +321,7 @@
       "searching": "Recherche en cours…",
       "searchingMessage": "Nous cherchons un adversaire compatible…",
       "found": "Adversaire trouvé !",
-      "gameStartingSoon": "La partie commence dans quelques instants…",
+      "gameStartingSoon": "La partie va bientôt commencer...",
       "you": "Vous",
       "opponent": "Adversaire",
       "vs": "VS",

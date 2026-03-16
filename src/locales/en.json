@@ -301,9 +301,10 @@
   "competitive": {
     "title": "Competitive Mode",
     "badge": "Ranked",
+    "notLoggedIn": "Log in or create an account to access competitive mode!",
     "ranked": {
       "title": "Ranked Mode",
-      "subtitle": "1v1 Duel — Dynamic ELO",
+      "subtitle": "1v1 Duel",
       "description": "Face players of similar level in quick duels. The more you win, the higher your ELO!",
       "badge": "Ranked",
       "eloInfo": "Your ELO: {value}",

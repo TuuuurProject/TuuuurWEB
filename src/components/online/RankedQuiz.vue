@@ -9,7 +9,9 @@
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
         <span class="pill">
-          {{ $t('competitive.quiz.question', { current: currentIndex + 1, total: totalQuestions }) }}
+          {{
+            $t('competitive.quiz.question', { current: currentIndex + 1, total: totalQuestions })
+          }}
         </span>
         <span class="pill">
           {{ $t('competitive.quiz.score') }} <strong>{{ myScore }}</strong>
@@ -18,9 +20,12 @@
     </header>
 
     <Transition name="slide-fade" mode="out-in">
-
       <!-- === COUNTDOWN === -->
-      <div v-if="phase === 'countdown'" key="countdown" class="flex flex-col items-center justify-center py-16 gap-6">
+      <div
+        v-if="phase === 'countdown'"
+        key="countdown"
+        class="flex flex-col items-center justify-center py-16 gap-6"
+      >
         <p class="text-brand-gray font-branding text-xl">{{ $t('competitive.quiz.getReady') }}</p>
         <div
           class="w-32 h-32 rounded-full bg-brand-purple/20 border-4 border-brand-purple shadow-neon flex items-center justify-center animate-pulse"
@@ -30,10 +35,15 @@
       </div>
 
       <!-- === QUESTION + GAME === -->
-      <div v-else-if="phase === 'question' || phase === 'answered' || phase === 'revealing'" key="game" class="flex flex-col gap-4">
-
+      <div
+        v-else-if="phase === 'question' || phase === 'answered' || phase === 'revealing'"
+        key="game"
+        class="flex flex-col gap-4"
+      >
         <!-- Timer bar -->
-        <div class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon">
+        <div
+          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
+        >
           <div class="h-2 w-full bg-brand-dark/30">
             <div
               class="h-2 transition-[width] duration-300"
@@ -74,7 +84,10 @@
           </div>
 
           <!-- Result feedback after answers revealed -->
-          <div v-if="phase === 'revealing' && myAnsweredResult !== null" class="mt-5 flex items-center gap-3">
+          <div
+            v-if="phase === 'revealing' && myAnsweredResult !== null"
+            class="mt-5 flex items-center gap-3"
+          >
             <span v-if="myAnsweredResult" class="badge-green">
               {{ $t('competitive.quiz.correct', { points: lastPoints }) }}
             </span>
@@ -92,22 +105,44 @@
             <!-- Me -->
             <div
               class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
-              :class="meAnswered ? 'border-brand-green/50 bg-brand-green/5' : 'border-brand-purple/20'"
+              :class="
+                meAnswered ? 'border-brand-green/50 bg-brand-green/5' : 'border-brand-purple/20'
+              "
             >
               <div class="relative shrink-0">
-                <div class="w-10 h-10 rounded-full bg-brand-purple/20 overflow-hidden flex items-center justify-center border-2"
-                     :class="meAnswered ? 'border-brand-green' : 'border-brand-purple/40'">
-                  <img v-if="currentUser?.avatar" :src="currentUser.avatar" class="w-full h-full object-cover" alt="" />
+                <div
+                  class="w-10 h-10 rounded-full bg-brand-purple/20 overflow-hidden flex items-center justify-center border-2"
+                  :class="meAnswered ? 'border-brand-green' : 'border-brand-purple/40'"
+                >
+                  <img
+                    v-if="currentUser?.avatar"
+                    :src="currentUser.avatar"
+                    class="w-full h-full object-cover"
+                    alt=""
+                  />
                   <font-awesome-icon v-else icon="user" class="text-brand-purple" />
                 </div>
-                <span v-if="meAnswered" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-brand-green flex items-center justify-center">
-                  <font-awesome-icon icon="check" class="text-white text-xs" style="font-size: 8px" />
+                <span
+                  v-if="meAnswered"
+                  class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-brand-green flex items-center justify-center"
+                >
+                  <font-awesome-icon
+                    icon="check"
+                    class="text-white text-xs"
+                    style="font-size: 8px"
+                  />
                 </span>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-brand-lightGray truncate">{{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}</p>
+                <p class="text-sm font-semibold text-brand-lightGray truncate">
+                  {{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}
+                </p>
                 <p class="text-xs" :class="meAnswered ? 'text-brand-green' : 'text-brand-gray'">
-                  {{ meAnswered ? $t('competitive.quiz.answered') : $t('competitive.quiz.waitingAnswer') }}
+                  {{
+                    meAnswered
+                      ? $t('competitive.quiz.answered')
+                      : $t('competitive.quiz.waitingAnswer')
+                  }}
                 </p>
               </div>
             </div>
@@ -115,22 +150,45 @@
             <!-- Opponent -->
             <div
               class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
-              :class="opponentAnswered ? 'border-brand-orange/50 bg-brand-orange/5' : 'border-brand-purple/20'"
+              :class="
+                opponentAnswered
+                  ? 'border-brand-orange/50 bg-brand-orange/5'
+                  : 'border-brand-purple/20'
+              "
             >
               <div class="relative shrink-0">
-                <div class="w-10 h-10 rounded-full bg-brand-orange/20 overflow-hidden flex items-center justify-center border-2"
-                     :class="opponentAnswered ? 'border-brand-orange' : 'border-brand-orange/30'">
-                  <img v-if="opponent?.avatar" :src="opponent.avatar" class="w-full h-full object-cover" alt="" />
+                <div
+                  class="w-10 h-10 rounded-full bg-brand-orange/20 overflow-hidden flex items-center justify-center border-2"
+                  :class="opponentAnswered ? 'border-brand-orange' : 'border-brand-orange/30'"
+                >
+                  <img
+                    v-if="opponent?.avatar"
+                    :src="opponent.avatar"
+                    class="w-full h-full object-cover"
+                    alt=""
+                  />
                   <font-awesome-icon v-else icon="user-ninja" class="text-brand-orange" />
                 </div>
-                <span v-if="opponentAnswered" class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-brand-orange flex items-center justify-center">
+                <span
+                  v-if="opponentAnswered"
+                  class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-brand-orange flex items-center justify-center"
+                >
                   <font-awesome-icon icon="check" class="text-white" style="font-size: 8px" />
                 </span>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-brand-lightGray truncate">{{ opponent?.nickName ?? $t('competitive.matchmaking.opponent') }}</p>
-                <p class="text-xs" :class="opponentAnswered ? 'text-brand-orange' : 'text-brand-gray'">
-                  {{ opponentAnswered ? $t('competitive.quiz.opponentAnswered') : $t('competitive.quiz.waitingOpponent') }}
+                <p class="text-sm font-semibold text-brand-lightGray truncate">
+                  {{ opponent?.nickName ?? $t('competitive.matchmaking.opponent') }}
+                </p>
+                <p
+                  class="text-xs"
+                  :class="opponentAnswered ? 'text-brand-orange' : 'text-brand-gray'"
+                >
+                  {{
+                    opponentAnswered
+                      ? $t('competitive.quiz.opponentAnswered')
+                      : $t('competitive.quiz.waitingOpponent')
+                  }}
                 </p>
               </div>
             </div>
@@ -143,8 +201,15 @@
             </div>
             <div class="flex gap-4">
               <div v-for="s in scores" :key="s.user.id" class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-full bg-brand-darkGray overflow-hidden flex items-center justify-center shrink-0">
-                  <img v-if="s.user.avatar" :src="s.user.avatar" class="w-full h-full object-cover" alt="" />
+                <div
+                  class="w-6 h-6 rounded-full bg-brand-darkGray overflow-hidden flex items-center justify-center shrink-0"
+                >
+                  <img
+                    v-if="s.user.avatar"
+                    :src="s.user.avatar"
+                    class="w-full h-full object-cover"
+                    alt=""
+                  />
                   <font-awesome-icon v-else icon="user" class="text-brand-gray text-xs" />
                 </div>
                 <span class="text-sm font-bold text-brand-lightGray">{{ s.score }}</span>
@@ -159,29 +224,71 @@
         <!-- Result banner -->
         <div
           class="gaming-card text-center"
-          :class="rankedStore.hasWon === true ? 'border-brand-green/40' : rankedStore.hasWon === false ? 'border-brand-orange/40' : 'border-brand-purple/20'"
+          :class="
+            rankedStore.hasWon === true
+              ? 'border-brand-green/40'
+              : rankedStore.hasWon === false
+                ? 'border-brand-orange/40'
+                : 'border-brand-purple/20'
+          "
         >
           <div class="text-5xl mb-3">
             <span v-if="rankedStore.hasWon === true">🏆</span>
             <span v-else-if="rankedStore.hasWon === false">😔</span>
             <span v-else>🤝</span>
           </div>
-          <h3 class="font-branding text-4xl mb-2"
-              :class="rankedStore.hasWon === true ? 'text-brand-green' : rankedStore.hasWon === false ? 'text-brand-orange' : 'text-brand-lightGray'">
-            {{ rankedStore.hasWon === true ? $t('competitive.quiz.victory') : rankedStore.hasWon === false ? $t('competitive.quiz.defeat') : $t('competitive.quiz.draw') }}
+          <h3
+            class="font-branding text-4xl mb-2"
+            :class="
+              rankedStore.hasWon === true
+                ? 'text-brand-green'
+                : rankedStore.hasWon === false
+                  ? 'text-brand-orange'
+                  : 'text-brand-lightGray'
+            "
+          >
+            {{
+              rankedStore.hasWon === true
+                ? $t('competitive.quiz.victory')
+                : rankedStore.hasWon === false
+                  ? $t('competitive.quiz.defeat')
+                  : $t('competitive.quiz.draw')
+            }}
           </h3>
 
           <!-- ELO change -->
-          <div v-if="rankedStore.eloChange !== null" class="inline-flex items-center gap-2 px-4 py-2 rounded-full mt-2"
-               :class="rankedStore.hasWon === true ? 'bg-brand-green/15 border border-brand-green/30' : rankedStore.hasWon === false ? 'bg-brand-orange/15 border border-brand-orange/30' : 'bg-brand-purple/15 border border-brand-purple/30'">
-            <font-awesome-icon icon="chart-line" :class="rankedStore.hasWon === true ? 'text-brand-green' : 'text-brand-orange'" />
-            <span class="font-branding text-xl"
-                  :class="rankedStore.hasWon === true ? 'text-brand-green' : rankedStore.hasWon === false ? 'text-brand-orange' : 'text-brand-lightGray'">
-              {{ rankedStore.hasWon === true
-                ? $t('competitive.quiz.eloGained', { points: rankedStore.eloChange })
+          <div
+            v-if="rankedStore.eloChange !== null"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full mt-2"
+            :class="
+              rankedStore.hasWon === true
+                ? 'bg-brand-green/15 border border-brand-green/30'
                 : rankedStore.hasWon === false
-                  ? $t('competitive.quiz.eloLost', { points: rankedStore.eloChange })
-                  : $t('competitive.quiz.eloUnchanged') }}
+                  ? 'bg-brand-orange/15 border border-brand-orange/30'
+                  : 'bg-brand-purple/15 border border-brand-purple/30'
+            "
+          >
+            <font-awesome-icon
+              icon="chart-line"
+              :class="rankedStore.hasWon === true ? 'text-brand-green' : 'text-brand-orange'"
+            />
+            <span
+              class="font-branding text-xl"
+              :class="
+                rankedStore.hasWon === true
+                  ? 'text-brand-green'
+                  : rankedStore.hasWon === false
+                    ? 'text-brand-orange'
+                    : 'text-brand-lightGray'
+              "
+            >
+              {{
+                rankedStore.hasWon === true
+                  ? $t('competitive.quiz.eloGained', { points: rankedStore.eloChange })
+                  : rankedStore.hasWon === false
+                    ? $t('competitive.quiz.eloLost', { points: rankedStore.eloChange })
+                    : $t('competitive.quiz.eloUnchanged')
+              }}
             </span>
           </div>
         </div>
@@ -198,31 +305,52 @@
               v-for="(entry, idx) in rankedStore.finalScores"
               :key="entry.user.id"
               class="flex items-center gap-4 p-4 rounded-2xl border transition-all"
-              :class="idx === 0 ? 'border-brand-yellow/40 bg-brand-yellow/5' : 'border-brand-purple/20 bg-brand-darkGray/20'"
+              :class="
+                idx === 0
+                  ? 'border-brand-yellow/40 bg-brand-yellow/5'
+                  : 'border-brand-purple/20 bg-brand-darkGray/20'
+              "
             >
               <!-- Position -->
-              <div class="w-10 h-10 rounded-full flex items-center justify-center font-branding text-xl shrink-0"
-                   :class="idx === 0 ? 'bg-brand-yellow/20 text-brand-yellow' : 'bg-brand-purple/20 text-brand-purple'">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center font-branding text-xl shrink-0"
+                :class="
+                  idx === 0
+                    ? 'bg-brand-yellow/20 text-brand-yellow'
+                    : 'bg-brand-purple/20 text-brand-purple'
+                "
+              >
                 {{ idx === 0 ? '🥇' : '🥈' }}
               </div>
 
               <!-- Avatar -->
-              <div class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2"
-                   :class="idx === 0 ? 'border-brand-yellow/50' : 'border-brand-purple/30'">
-                <img v-if="entry.user.avatar" :src="entry.user.avatar" class="w-full h-full object-cover" alt="" />
+              <div
+                class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2"
+                :class="idx === 0 ? 'border-brand-yellow/50' : 'border-brand-purple/30'"
+              >
+                <img
+                  v-if="entry.user.avatar"
+                  :src="entry.user.avatar"
+                  class="w-full h-full object-cover"
+                  alt=""
+                />
                 <font-awesome-icon v-else icon="user" class="text-brand-gray" />
               </div>
 
               <!-- Name -->
               <div class="flex-1 min-w-0">
-                <p class="font-branding text-lg text-brand-lightGray truncate">{{ entry.user.nickName }}</p>
+                <p class="font-branding text-lg text-brand-lightGray truncate">
+                  {{ entry.user.nickName }}
+                </p>
                 <p class="text-xs text-brand-gray">{{ entry.user.globalElo }} ELO</p>
               </div>
 
               <!-- Score -->
               <div class="text-right">
-                <p class="font-branding text-2xl"
-                   :class="idx === 0 ? 'text-brand-yellow' : 'text-brand-lightGray'">
+                <p
+                  class="font-branding text-2xl"
+                  :class="idx === 0 ? 'text-brand-yellow' : 'text-brand-lightGray'"
+                >
                   {{ entry.score }}
                 </p>
                 <p class="text-xs text-brand-gray">pts</p>
@@ -243,16 +371,15 @@
           </button>
         </div>
       </div>
-
     </Transition>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue3-toastify'
-import rankedSignalrService, { RankedEvent } from '@/services/rankedSignalrService'
+import signalrService, { RankedEvent } from '@/services/signalrService'
 import useRankedStore from '@/stores/ranked'
 import type { RankedUser, RankedQuestion, UserAnswered, UserScore } from '@/stores/ranked'
 
@@ -266,6 +393,8 @@ defineEmits<{ home: []; replay: [] }>()
 
 const { t } = useI18n()
 const rankedStore = useRankedStore()
+const instance = getCurrentInstance()
+const proxy = instance?.proxy
 
 // ─── Phase ───────────────────────────────────────────────────────────────────
 type Phase = 'countdown' | 'question' | 'answered' | 'revealing' | 'finished'
@@ -342,7 +471,7 @@ async function sendAnswer(answerId: number) {
   stopTimer()
 
   try {
-    await rankedSignalrService.invoke(RankedEvent.SendAnswer, answerId)
+    await signalrService.invoke(RankedEvent.SendAnswer, answerId)
   } catch (e) {
     toast.error(t('competitive.quiz.errorAnswering'))
   }
@@ -370,7 +499,7 @@ function onQuestionSend(question: RankedQuestion) {
   startTimer()
 }
 
-function onUserAnswer(_user: RankedUser) {
+function onUserAnswer() {
   opponentAnswered.value = true
 }
 
@@ -430,31 +559,43 @@ function onError(message: string) {
 }
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
+const allEvents = [
+  { name: RankedEvent.Countdown, handler: onCountdown },
+  { name: RankedEvent.QuestionSend, handler: onQuestionSend },
+  { name: RankedEvent.UserAnswer, handler: onUserAnswer },
+  { name: RankedEvent.AllPlayerAnswered, handler: onAllPlayerAnswered },
+  { name: RankedEvent.QuestionAnswerSend, handler: onQuestionAnswerSend },
+  { name: RankedEvent.ScoreUpdate, handler: onScoreUpdate },
+  { name: RankedEvent.PartyFinished, handler: onPartyFinished },
+  { name: RankedEvent.UserWin, handler: onUserWin },
+  { name: RankedEvent.UserLoose, handler: onUserLoose },
+  { name: RankedEvent.Error, handler: onError },
+]
+
 onMounted(() => {
-  rankedSignalrService.on(RankedEvent.Countdown, onCountdown as any)
-  rankedSignalrService.on(RankedEvent.QuestionSend, onQuestionSend as any)
-  rankedSignalrService.on(RankedEvent.UserAnswer, onUserAnswer as any)
-  rankedSignalrService.on(RankedEvent.AllPlayerAnswered, onAllPlayerAnswered as any)
-  rankedSignalrService.on(RankedEvent.QuestionAnswerSend, onQuestionAnswerSend as any)
-  rankedSignalrService.on(RankedEvent.ScoreUpdate, onScoreUpdate as any)
-  rankedSignalrService.on(RankedEvent.PartyFinished, onPartyFinished as any)
-  rankedSignalrService.on(RankedEvent.UserWin, onUserWin as any)
-  rankedSignalrService.on(RankedEvent.UserLoose, onUserLoose as any)
-  rankedSignalrService.on(RankedEvent.Error, onError as any)
+  // Connection signalR
+  try {
+    allEvents.forEach((event) => {
+      signalrService.off(event.name)
+    })
+
+    allEvents.forEach((event) => {
+      signalrService.on(event.name, (data: unknown) => {
+        event.handler(data)
+      })
+    })
+  } catch (error) {
+    console.error('Failed to connect to SignalR:', error)
+    proxy?.$toast.error(t('group.lobby.connectionError'))
+  }
 })
 
 onBeforeUnmount(() => {
   stopTimer()
-  rankedSignalrService.off(RankedEvent.Countdown, onCountdown as any)
-  rankedSignalrService.off(RankedEvent.QuestionSend, onQuestionSend as any)
-  rankedSignalrService.off(RankedEvent.UserAnswer, onUserAnswer as any)
-  rankedSignalrService.off(RankedEvent.AllPlayerAnswered, onAllPlayerAnswered as any)
-  rankedSignalrService.off(RankedEvent.QuestionAnswerSend, onQuestionAnswerSend as any)
-  rankedSignalrService.off(RankedEvent.ScoreUpdate, onScoreUpdate as any)
-  rankedSignalrService.off(RankedEvent.PartyFinished, onPartyFinished as any)
-  rankedSignalrService.off(RankedEvent.UserWin, onUserWin as any)
-  rankedSignalrService.off(RankedEvent.UserLoose, onUserLoose as any)
-  rankedSignalrService.off(RankedEvent.Error, onError as any)
+  // Nettoyer les listeners SignalR
+  allEvents.forEach((event) => {
+    signalrService.off(event.name, event.handler)
+  })
 })
 </script>
 

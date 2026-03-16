@@ -56,18 +56,38 @@ export enum GroupEvent {
   Error = 'OnError',
 }
 
+export enum RankedEvent {
+  // Client → Server
+  JoinSearchOpponent = 'JoinSearchOpponent',
+  LeaveSearchOpponent = 'LeaveSearchOpponent',
+  SendAnswer = 'SendAnswer',
+
+  // Server → Client
+  OpponentFound = 'OnOpponentFound',
+  Countdown = 'OnCountdown',
+  QuestionSend = 'OnQuestionSend',
+  UserAnswer = 'OnUserAnswer',
+  AllPlayerAnswered = 'OnAllPlayerAnswered',
+  QuestionAnswerSend = 'OnQuestionAnswerSend',
+  ScoreUpdate = 'OnScoreUpdate',
+  PartyFinished = 'OnPartyFinished',
+  UserWin = 'OnUserWin',
+  UserLoose = 'OnUserLoose',
+  Error = 'OnError',
+}
+
 type EventHandler = (...args: unknown[]) => void
 
 class SignalRService {
   private connection: HubConnection | null = null
   private handlers: Map<string, Set<EventHandler>> = new Map()
 
-  async connect(token?: string): Promise<void> {
+  async connect(token?: string, ranked: boolean = false): Promise<void> {
     if (this.connection?.state === HubConnectionState.Connected) {
       return
     }
 
-    const url = import.meta.env.VITE_BASE_API_URL + 'group'
+    const url = import.meta.env.VITE_BASE_API_URL + (ranked ? 'ranked' : 'group')
 
     this.connection = new HubConnectionBuilder()
       .withUrl(url, {

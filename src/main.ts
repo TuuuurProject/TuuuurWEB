@@ -101,6 +101,7 @@ import {
   faInfoCircle,
   faGaugeHigh,
   faArrowRightFromBracket,
+  faCircleNotch,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -183,6 +184,7 @@ library.add(
   faInfoCircle,
   faGaugeHigh,
   faArrowRightFromBracket,
+  faCircleNotch,
 )
 
 // Functions
