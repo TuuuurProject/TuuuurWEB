@@ -1048,25 +1048,25 @@ const next = async () => {
 }
 
 function buttonClass(answerId: number, valid: boolean) {
-  if (!answered.value) {
-    return 'bg-brand-darkGray/50 border-brand-purple/30 text-brand-lightGray hover:bg-brand-purple/20 hover:border-brand-purple'
-  }
-
-  // Si le joueur a répondu mais que la correction n'est pas encore disponible
-  if (!scoreIsAvailable.value) {
-    // Mettre en évidence la réponse sélectionnée
-    if (answerId === userAnswerId.value) {
-      return 'bg-brand-purple/30 border-brand-purple text-brand-lightGray font-semibold ring-2 ring-brand-purple/50'
+  if (scoreIsAvailable.value) {
+    if (valid === true) {
+      return 'border-brand-green bg-brand-green/15 text-brand-green cursor-default'
     }
-    // Les autres réponses restent grises
-    return 'bg-brand-darkGray/50 border-brand-purple/20 text-brand-gray'
+    if (answerId === userAnswerId.value && valid === false) {
+      return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
+    }
+    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
   }
 
-  if (valid === null) return
+  if (answerId === userAnswerId.value) {
+    return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
+  }
 
-  return valid
-    ? 'bg-brand-green/20 border-brand-green text-brand-green'
-    : 'bg-brand-orange/20 border-brand-orange text-brand-orange'
+  if (answered.value) {
+    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+  }
+
+  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {
@@ -1512,74 +1512,6 @@ onBeforeUnmount(async () => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(108, 92, 231, 0.6);
-}
-
-/* Countdown overlay animation (Mario Kart vibe) */
-.countdown-pop {
-  font-size: clamp(96px, 18vw, 220px);
-  line-height: 1;
-  text-shadow:
-    0 0 18px rgba(108, 92, 231, 0.55),
-    0 0 42px rgba(108, 92, 231, 0.35);
-  animation: countdown-pop 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-}
-
-.countdown-message {
-  font-size: 2rem;
-  animation: countdown-pop 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-  animation-delay: 150ms;
-}
-
-@keyframes countdown-pop {
-  0% {
-    transform: scale(0.65) rotate(-3deg);
-    opacity: 0;
-    filter: blur(2px);
-  }
-  60% {
-    transform: scale(1.08) rotate(1deg);
-    opacity: 1;
-    filter: blur(0px);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-/* Transition for overlay */
-.countdown-fade-enter-active,
-.countdown-fade-leave-active {
-  transition: opacity 180ms ease;
-}
-.countdown-fade-enter-from,
-.countdown-fade-leave-to {
-  opacity: 0;
-}
-
-.countdown-swap-enter-active,
-.countdown-swap-leave-active {
-  transition:
-    transform 120ms cubic-bezier(0.2, 0.9, 0.2, 1),
-    opacity 120ms ease;
-}
-
-.countdown-swap-enter-from {
-  transform: scale(0.8);
-  opacity: 0;
-}
-.countdown-swap-enter-to {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.countdown-swap-leave-from {
-  transform: scale(1);
-  opacity: 1;
-}
-.countdown-swap-leave-to {
-  transform: scale(1.08);
-  opacity: 0;
 }
 
 /* Boutons de difficulté */

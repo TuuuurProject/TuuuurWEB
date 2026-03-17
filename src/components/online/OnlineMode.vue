@@ -1,6 +1,6 @@
 <template>
   <section>
-    <template v-if="userStore.isLogged || userStore.isLoggedAsInvited">
+    <template v-if="userStore.isLogged">
       <!-- Landing: search button only -->
       <div v-if="step === 'idle'" class="space-y-6">
         <header class="flex items-center justify-between">

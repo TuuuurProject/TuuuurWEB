@@ -41,7 +41,7 @@
             :key="opt"
             class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
-            :class="buttonClass(opt.valid)"
+            :class="buttonClass(parseInt(opt.id), opt.valid)"
             @click="answer(opt)"
           >
             <span
@@ -308,6 +308,7 @@ const index = ref(0)
 const nbMaxQuestions = ref(0)
 const score = ref(0)
 const answered = ref(false)
+const userAnswerId = ref<number | null>(null)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
@@ -393,6 +394,7 @@ function clearTimer() {
 const answer = async (opt: { id: string }) => {
   if (answered.value) return
   answered.value = true
+  userAnswerId.value = parseInt(opt.id)
 
   clearTimer()
 
@@ -418,6 +420,7 @@ const skip = async () => {
     await soloStore.loadAnswerById(null)
 
     answered.value = true
+    userAnswerId.value = null
     clearTimer()
     wasCorrect.value = false
     lastPoints.value = 0
@@ -441,6 +444,7 @@ const next = async () => {
   }
   index.value++
   answered.value = false
+  userAnswerId.value = null
   wasCorrect.value = false
   lastPoints.value = 0
   startTimer()
@@ -453,6 +457,7 @@ const restart = async () => {
   router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 
   answered.value = false
+  userAnswerId.value = null
   index.value = 0
   score.value = 0
   wasCorrect.value = false
@@ -461,16 +466,22 @@ const restart = async () => {
   startTimer()
 }
 
-function buttonClass(valid: boolean) {
-  if (!answered.value) {
-    return 'bg-brand-darkGray/50 border-brand-purple/30 text-brand-lightGray hover:bg-brand-purple/20 hover:border-brand-purple'
+function buttonClass(answerId: number, valid: boolean) {
+  if (answered.value) {
+    if (valid === true) {
+      return 'border-brand-green bg-brand-green/15 text-brand-green cursor-default'
+    }
+    if (answerId === userAnswerId.value && valid === false) {
+      return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
+    }
+    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
   }
 
-  if (valid === null) return
+  if (answerId === userAnswerId.value) {
+    return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
+  }
 
-  return valid
-    ? 'bg-brand-green/20 border-brand-green text-brand-green'
-    : 'bg-brand-orange/20 border-brand-orange text-brand-orange'
+  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {

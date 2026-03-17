@@ -20,23 +20,9 @@
     </header>
 
     <Transition name="slide-fade" mode="out-in">
-      <!-- === COUNTDOWN === -->
-      <div
-        v-if="phase === 'countdown'"
-        key="countdown"
-        class="flex flex-col items-center justify-center py-16 gap-6"
-      >
-        <p class="text-brand-gray font-branding text-xl">{{ $t('competitive.quiz.getReady') }}</p>
-        <div
-          class="w-32 h-32 rounded-full bg-brand-purple/20 border-4 border-brand-purple shadow-neon flex items-center justify-center animate-pulse"
-        >
-          <span class="font-branding text-6xl text-brand-lightGray">{{ countdownValue }}</span>
-        </div>
-      </div>
-
       <!-- === QUESTION + GAME === -->
       <div
-        v-else-if="phase === 'question' || phase === 'answered' || phase === 'revealing'"
+        v-if="phase === 'question' || phase === 'answered' || phase === 'revealing'"
         key="game"
         class="flex flex-col gap-4"
       >
@@ -61,7 +47,7 @@
 
         <!-- Question card -->
         <div class="gaming-card">
-          <h3 class="font-branding text-2xl mb-6 text-brand-lightGray leading-snug">
+          <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">
             {{ currentQuestionData?.question?.label }}
           </h3>
 
@@ -379,6 +365,32 @@
       <p class="text-brand-lightGray">{{ $t('competitive.quiz.confirmLeave.message') }}</p>
     </ModalDialog>
   </section>
+
+  <!-- === COUNTDOWN === -->
+
+  <transition name="countdown-fade">
+    <div
+      v-if="countdownValue !== null && phase === 'countdown'"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/80 backdrop-blur-sm mt-0"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
+      <div class="text-center select-none">
+        <transition name="countdown-swap" mode="out-in">
+          <div
+            :key="countdownValue"
+            class="countdown-pop drop-shadow-[0_0_30px_rgba(108,92,231,0.55)]"
+            :class="countdownTextClass"
+          >
+            {{ countdownValue }}
+          </div>
+        </transition>
+        <div class="countdown-message mt-4 text-sm text-brand-lightGray/80">
+          {{ $t('competitive.quiz.getReady') }}
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
@@ -473,6 +485,15 @@ function answerButtonClass(opt: { id: number; valid: boolean | null }) {
 
   return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
+
+// ─── Functions ──────────────────────────────────────────────────────────────
+const countdownTextClass = computed(() => {
+  // Variantes de couleur façon “3-2-1” arcade
+  if (countdownValue.value === 3) return 'text-brand-yellow'
+  if (countdownValue.value === 2) return 'text-brand-orange'
+  if (countdownValue.value === 1) return 'text-brand-green'
+  return 'text-brand-lightGray'
+})
 
 // ─── Send answer ──────────────────────────────────────────────────────────────
 async function sendAnswer(answerId: number) {
@@ -648,9 +669,8 @@ async function confirmLeave() {
   rankedStore.reset()
 
   if (pendingNavigation) {
-    const destination = pendingNavigation.to
+    await router.push(pendingNavigation.to)
     pendingNavigation = null
-    await router.push(destination)
   } else {
     emit('home')
   }
