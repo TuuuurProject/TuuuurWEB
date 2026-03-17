@@ -22,7 +22,7 @@
     <Transition name="slide-fade" mode="out-in">
       <!-- === QUESTION + GAME === -->
       <div
-        v-if="phase === 'question' || phase === 'answered' || phase === 'revealing'"
+        v-if="(phase === 'question' || phase === 'answered' || phase === 'revealing') && !showCurrentRanking"
         key="game"
         class="flex flex-col gap-4"
       >
@@ -102,7 +102,11 @@
                     class="w-full h-full object-cover"
                     alt=""
                   />
-                  <font-awesome-icon v-else icon="user" class="text-brand-purple" />
+                  <div v-else class="h-16 w-16 flex items-center justify-center">
+                    <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+                      {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
+                    </span>
+                  </div>
                 </div>
                 <span
                   v-if="meAnswered"
@@ -149,7 +153,11 @@
                     class="w-full h-full object-cover"
                     alt=""
                   />
-                  <font-awesome-icon v-else icon="user-ninja" class="text-brand-orange" />
+                  <div v-else class="h-16 w-16 flex items-center justify-center">
+                    <span id="nickaname" class="text-2xl font-bold text-brand-orange">
+                      {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
+                    </span>
+                  </div>
                 </div>
                 <span
                   v-if="opponentAnswered"
@@ -176,54 +184,119 @@
             </div>
           </div>
 
-          <!-- Live scores -->
-          <div v-if="scores.length" class="mt-4 pt-4 border-t border-brand-purple/10">
-            <div class="flex items-center justify-between text-xs text-brand-gray mb-2">
-              <span>Scores</span>
-            </div>
-            <div class="flex gap-4">
-              <div v-for="s in scores" :key="s.user.id" class="flex items-center gap-2">
+        </div>
+      </div>
+
+      <!-- === CURRENT RANKING (après révélation des réponses) === -->
+      <div v-else-if="showCurrentRanking" key="ranking" class="gaming-card">
+        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-purple/20">
+          <div
+            class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
+          >
+            <font-awesome-icon icon="trophy" />
+          </div>
+          <h3 class="font-branding text-xl text-brand-lightGray">
+            {{ $t('competitive.quiz.currentRanking') }}
+          </h3>
+        </div>
+
+        <div class="space-y-2">
+          <div
+            v-for="(entry, index) in sortedScores"
+            :key="entry.user.id"
+            class="flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-300"
+            :class="
+              index === 0
+                ? 'border-brand-yellow/40 bg-brand-yellow/10'
+                : 'border-brand-gray/40 bg-brand-gray/5'
+            "
+          >
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <!-- Position badge -->
+              <span
+                class="font-bold text-sm w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                :class="index === 0 ? 'bg-brand-yellow/20 text-brand-yellow' : 'bg-brand-gray/20 text-brand-gray'"
+              >
+                {{ index + 1 }}
+              </span>
+
+              <!-- Avatar -->
+              <div class="relative shrink-0">
                 <div
-                  class="w-6 h-6 rounded-full bg-brand-darkGray overflow-hidden flex items-center justify-center shrink-0"
+                  class="w-10 h-10 rounded-full border-2 overflow-hidden flex items-center justify-center"
+                  :class="index === 0 ? 'border-brand-yellow' : 'border-brand-gray'"
                 >
                   <img
-                    v-if="s.user.avatar"
-                    :src="s.user.avatar"
+                    v-if="entry.user.avatar"
+                    :src="entry.user.avatar"
+                    alt="avatar"
                     class="w-full h-full object-cover"
-                    alt=""
                   />
-                  <font-awesome-icon v-else icon="user" class="text-brand-gray text-xs" />
+                  <span
+                    v-else
+                    class="text-lg font-bold"
+                    :class="index === 0 ? 'text-brand-yellow' : 'text-brand-gray'"
+                  >
+                    {{ entry.user.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
                 </div>
-                <span class="text-sm font-bold text-brand-lightGray">{{ s.score }}</span>
+                <!-- Crown / number badge -->
+                <div
+                  class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center"
+                  :class="index === 0 ? 'bg-brand-yellow' : 'bg-brand-gray'"
+                >
+                  <font-awesome-icon
+                    v-if="index === 0"
+                    icon="crown"
+                    class="text-[10px] text-brand-dark"
+                  />
+                  <span v-else class="text-[10px] font-bold text-white">2</span>
+                </div>
               </div>
+
+              <span class="font-semibold text-brand-lightGray truncate">
+                {{ entry.user.nickName }}
+              </span>
+            </div>
+
+            <!-- Score -->
+            <div
+              class="font-branding text-xl shrink-0 ml-3"
+              :class="index === 0 ? 'text-brand-yellow' : 'text-brand-gray'"
+            >
+              {{ entry.score }}
             </div>
           </div>
         </div>
       </div>
 
       <!-- === END GAME === -->
-      <div v-else-if="phase === 'finished'" key="finished" class="flex flex-col gap-6">
-        <!-- Result banner -->
+      <div v-else-if="phase === 'finished'" key="finished" class="space-y-6">
+
+        <!-- Header : résultat + ELO + stats -->
         <div
-          class="gaming-card text-center"
+          class="gaming-card text-center bg-gradient-to-br"
           :class="
             rankedStore.hasWon === true
-              ? 'border-brand-green/40'
+              ? 'from-brand-green/15 to-brand-purple/10 border-brand-green/40'
               : rankedStore.hasWon === false
-                ? 'border-brand-orange/40'
-                : 'border-brand-purple/20'
+                ? 'from-brand-orange/15 to-brand-purple/10 border-brand-orange/40'
+                : 'from-brand-purple/15 to-brand-purple/10'
           "
         >
+          <!-- Emoji résultat -->
           <div class="text-5xl mb-3">
             <span v-if="rankedStore.hasWon === true">🏆</span>
             <span v-else-if="rankedStore.hasWon === false">😔</span>
             <span v-else>🤝</span>
           </div>
+
+          <!-- Titre -->
           <h3
             class="font-branding text-4xl mb-2"
             :class="
               rankedStore.hasWon === true
-                ? 'text-brand-green'
+                ? 'text-brand-green glow-text'
                 : rankedStore.hasWon === false
                   ? 'text-brand-orange'
                   : 'text-brand-lightGray'
@@ -238,10 +311,10 @@
             }}
           </h3>
 
-          <!-- ELO change -->
+          <!-- Badge ELO -->
           <div
             v-if="rankedStore.eloChange !== null"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-full mt-2"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4"
             :class="
               rankedStore.hasWon === true
                 ? 'bg-brand-green/15 border border-brand-green/30'
@@ -252,7 +325,13 @@
           >
             <font-awesome-icon
               icon="chart-line"
-              :class="rankedStore.hasWon === true ? 'text-brand-green' : 'text-brand-orange'"
+              :class="
+                rankedStore.hasWon === true
+                  ? 'text-brand-green'
+                  : rankedStore.hasWon === false
+                    ? 'text-brand-orange'
+                    : 'text-brand-purple'
+              "
             />
             <span
               class="font-branding text-xl"
@@ -273,82 +352,222 @@
               }}
             </span>
           </div>
+
+          <!-- Stats -->
+          <div class="flex items-center justify-center gap-6 mt-2">
+            <div class="text-center">
+              <div class="text-sm text-brand-gray mb-1">{{ $t('competitive.quiz.finalScore') }}</div>
+              <div class="font-branding text-3xl text-brand-yellow">{{ myScore }}</div>
+            </div>
+            <div class="h-12 w-px bg-brand-purple/30"></div>
+            <div class="text-center">
+              <div class="text-sm text-brand-gray mb-1">{{ $t('competitive.quiz.questions') }}</div>
+              <div class="font-branding text-3xl text-brand-lightGray">{{ totalQuestions }}</div>
+            </div>
+            <div class="h-12 w-px bg-brand-purple/30"></div>
+            <div class="text-center">
+              <div class="text-sm text-brand-gray mb-1">{{ $t('competitive.quiz.successRate') }}</div>
+              <div class="font-branding text-3xl text-brand-green">
+                {{ totalQuestions ? Math.round((correctAnswersCount / totalQuestions) * 100) : 0 }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Badges correct / incorrect -->
+          <div class="flex items-center justify-center gap-3 mt-6">
+            <div class="badge-success">
+              <font-awesome-icon icon="check-circle" class="mr-1" />
+              {{ correctAnswersCount }} {{ $t('competitive.quiz.correctAnswers') }}
+            </div>
+            <div class="badge-warning">
+              <font-awesome-icon icon="times-circle" class="mr-1" />
+              {{ totalQuestions - correctAnswersCount }} {{ $t('competitive.quiz.incorrectAnswers') }}
+            </div>
+          </div>
         </div>
 
-        <!-- Final ranking -->
+        <!-- Podium 2 joueurs -->
         <div class="gaming-card">
-          <h4 class="font-branding text-xl text-brand-lightGray mb-4">
-            <font-awesome-icon icon="trophy" class="mr-2 text-brand-yellow" />
-            {{ $t('competitive.quiz.finalRanking') }}
-          </h4>
-
-          <div class="space-y-3">
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
             <div
-              v-for="(entry, idx) in rankedStore.finalScores"
-              :key="entry.user.id"
-              class="flex items-center gap-4 p-4 rounded-2xl border transition-all"
-              :class="
-                idx === 0
-                  ? 'border-brand-yellow/40 bg-brand-yellow/5'
-                  : 'border-brand-purple/20 bg-brand-darkGray/20'
-              "
+              class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
             >
-              <!-- Position -->
-              <div
-                class="w-10 h-10 rounded-full flex items-center justify-center font-branding text-xl shrink-0"
-                :class="
-                  idx === 0
-                    ? 'bg-brand-yellow/20 text-brand-yellow'
-                    : 'bg-brand-purple/20 text-brand-purple'
-                "
-              >
-                {{ idx === 0 ? '🥇' : '🥈' }}
-              </div>
+              <font-awesome-icon icon="trophy" />
+            </div>
+            <h3 class="font-branding text-2xl text-brand-lightGray">
+              {{ $t('competitive.quiz.finalRanking') }}
+            </h3>
+          </div>
 
-              <!-- Avatar -->
-              <div
-                class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shrink-0 border-2"
-                :class="idx === 0 ? 'border-brand-yellow/50' : 'border-brand-purple/30'"
-              >
-                <img
-                  v-if="entry.user.avatar"
-                  :src="entry.user.avatar"
-                  class="w-full h-full object-cover"
-                  alt=""
-                />
-                <font-awesome-icon v-else icon="user" class="text-brand-gray" />
-              </div>
-
-              <!-- Name -->
-              <div class="flex-1 min-w-0">
-                <p class="font-branding text-lg text-brand-lightGray truncate">
-                  {{ entry.user.nickName }}
-                </p>
-                <p class="text-xs text-brand-gray">{{ entry.user.globalElo }} ELO</p>
-              </div>
-
-              <!-- Score -->
-              <div class="text-right">
-                <p
-                  class="font-branding text-2xl"
-                  :class="idx === 0 ? 'text-brand-yellow' : 'text-brand-lightGray'"
+          <div class="grid grid-cols-2 gap-4 max-w-xs mx-auto items-end">
+            <!-- 2e place (gauche) -->
+            <div
+              v-if="rankedStore.finalScores[1]"
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
+              <div class="relative inline-block mb-3">
+                <div
+                  class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-gray/40 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg overflow-hidden"
                 >
-                  {{ entry.score }}
-                </p>
-                <p class="text-xs text-brand-gray">pts</p>
+                  <img
+                    v-if="rankedStore.finalScores[1].user.avatar"
+                    :src="rankedStore.finalScores[1].user.avatar"
+                    alt="avatar"
+                    class="w-full h-full object-cover"
+                  />
+                  <span v-else class="text-2xl sm:text-3xl font-bold text-brand-gray">
+                    {{ rankedStore.finalScores[1].user.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <div
+                  class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-gray/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <span class="text-sm font-bold text-white">2</span>
+                </div>
+              </div>
+              <div class="font-semibold text-sm text-brand-lightGray truncate px-2">
+                {{ rankedStore.finalScores[1].user.nickName }}
+              </div>
+              <div class="text-sm text-brand-gray mt-0.5">
+                {{ rankedStore.finalScores[1].user.globalElo }} ELO
+              </div>
+              <div class="text-2xl font-branding text-brand-gray mt-1">
+                {{ rankedStore.finalScores[1].score }}
+              </div>
+              <div
+                class="mt-2 h-24 sm:h-32 bg-gradient-to-t from-brand-gray/30 to-brand-gray/10 border-2 border-brand-gray/30 rounded-t-xl"
+              ></div>
+            </div>
+
+            <!-- 1re place (droite) -->
+            <div
+              v-if="rankedStore.finalScores[0]"
+              class="text-center transform transition-all duration-300 hover:scale-105"
+            >
+              <div class="relative inline-block mb-3">
+                <div
+                  class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon animate-pulse-slow overflow-hidden"
+                >
+                  <img
+                    v-if="rankedStore.finalScores[0].user.avatar"
+                    :src="rankedStore.finalScores[0].user.avatar"
+                    alt="avatar"
+                    class="w-full h-full object-cover"
+                  />
+                  <span v-else class="text-3xl sm:text-4xl font-bold text-brand-yellow">
+                    {{ rankedStore.finalScores[0].user.nickName?.charAt(0).toUpperCase() || '?' }}
+                  </span>
+                </div>
+                <!-- Couronne -->
+                <div
+                  class="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <font-awesome-icon icon="crown" class="text-sm text-brand-dark" />
+                </div>
+                <!-- Badge 1 -->
+                <div
+                  class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
+                >
+                  <span class="text-sm font-bold text-brand-dark">1</span>
+                </div>
+              </div>
+              <div class="font-bold text-brand-lightGray truncate px-2">
+                {{ rankedStore.finalScores[0].user.nickName }}
+              </div>
+              <div class="text-sm text-brand-gray mt-0.5">
+                {{ rankedStore.finalScores[0].user.globalElo }} ELO
+              </div>
+              <div class="text-3xl font-branding text-brand-yellow mt-1 glow-text">
+                {{ rankedStore.finalScores[0].score }}
+              </div>
+              <div
+                class="mt-2 h-32 sm:h-40 bg-gradient-to-t from-brand-yellow/30 to-brand-yellow/10 border-2 border-brand-yellow/40 rounded-t-xl"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Récapitulatif des questions -->
+        <div class="gaming-card">
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
+            <div
+              class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
+            >
+              <font-awesome-icon icon="list-check" />
+            </div>
+            <h3 class="font-branding text-2xl text-brand-lightGray">
+              {{ $t('competitive.quiz.summary') }}
+            </h3>
+          </div>
+
+          <div class="space-y-4">
+            <div
+              v-for="(entry, idx) in questionHistory"
+              :key="idx"
+              class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
+            >
+              <!-- En-tête question -->
+              <div class="flex items-start gap-3 mb-3">
+                <div
+                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                  :class="
+                    entry.correct
+                      ? 'bg-brand-green/20 text-brand-green border border-brand-green/40'
+                      : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
+                  "
+                >
+                  {{ idx + 1 }}
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-brand-lightGray mb-2">
+                    {{ entry.question.question?.label }}
+                  </p>
+                  <div v-if="entry.correct" class="badge-success text-xs">
+                    <font-awesome-icon icon="check" class="mr-1" />
+                    {{ $t('competitive.quiz.goodAnswer') }} +{{ entry.points }} pts
+                  </div>
+                  <div v-else class="badge-warning text-xs">
+                    <font-awesome-icon icon="times" class="mr-1" />
+                    {{ $t('competitive.quiz.badAnswer') }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Réponses -->
+              <div class="grid gap-2 sm:grid-cols-2 mt-3">
+                <div
+                  v-for="answer in entry.question.question?.answer"
+                  :key="answer.id"
+                  class="rounded-xl px-3 py-2 text-sm border transition-all duration-200"
+                  :class="getAnswerClass(entry.selectedAnswerId, answer)"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="flex-shrink-0">
+                      <font-awesome-icon v-if="answer.valid" icon="check" />
+                      <font-awesome-icon
+                        v-else-if="entry.selectedAnswerId === answer.id"
+                        icon="times"
+                      />
+                      <font-awesome-icon v-else icon="circle" class="text-xs" />
+                    </span>
+                    <span class="flex-1">{{ answer.value }}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex items-center justify-center gap-3">
-          <button class="btn btn-ghost" @click="$emit('home')">
-            <font-awesome-icon icon="house" />
+        <!-- Actions (sticky bas) -->
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
+        >
+          <button class="btn btn-ghost w-full sm:w-auto" @click="$emit('home')">
+            <font-awesome-icon icon="house" class="mr-2" />
             {{ $t('competitive.quiz.home') }}
           </button>
-          <button class="btn btn-primary" @click="$emit('replay')">
-            <font-awesome-icon icon="rotate-right" />
+          <button class="btn btn-primary w-full sm:w-auto" @click="$emit('replay')">
+            <font-awesome-icon icon="rotate-right" class="mr-2" />
             {{ $t('competitive.quiz.replay') }}
           </button>
         </div>
@@ -440,6 +659,18 @@ const lastPoints = ref(0)
 const myScore = ref(0)
 const scores = ref<UserScore[]>([])
 const finished = computed(() => phase.value === 'finished')
+const showCurrentRanking = computed(() => phase.value === 'revealing' && scores.value.length > 0)
+const sortedScores = computed(() => [...scores.value].sort((a, b) => b.score - a.score))
+
+// ─── Question history (pour le récapitulatif de fin) ──────────────────────────
+type HistoryEntry = {
+  question: RankedQuestion
+  correct: boolean
+  points: number
+  selectedAnswerId: number | null
+}
+const questionHistory = ref<HistoryEntry[]>([])
+const correctAnswersCount = computed(() => questionHistory.value.filter((e) => e.correct).length)
 
 const QUESTION_DURATION = 30
 const remaining = ref(QUESTION_DURATION)
@@ -565,6 +796,14 @@ function onQuestionAnswerSend(question: RankedQuestion) {
   myScore.value += question.score
   phase.value = 'revealing'
   stopTimer()
+
+  // Accumule l'historique pour le récapitulatif de fin de partie
+  questionHistory.value.push({
+    question,
+    correct: question.score > 0,
+    points: question.score,
+    selectedAnswerId: selectedAnswerId.value,
+  })
 }
 
 function onScoreUpdate(updatedScores: UserScore[]) {
@@ -627,6 +866,20 @@ const handleBeforeUnload = () => {
   // SignalR n'est pas disponible en synchrone sur beforeunload,
   // on se contente de déconnecter proprement côté serveur via la perte de connexion.
   // Si nécessaire, ajouter ici un fetch keepalive vers une API de forfait ranked.
+}
+
+// ─── Answer class pour le récapitulatif ──────────────────────────────────────
+function getAnswerClass(
+  selectedId: number | null,
+  answer: { id: number; valid: boolean | null },
+) {
+  const isCorrect = answer.valid === true
+  const isUserChoice = selectedId === answer.id
+
+  if (isCorrect && isUserChoice) return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
+  if (isCorrect) return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
+  if (isUserChoice) return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
+  return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'
 }
 
 // ─── Keyboard shortcuts ───────────────────────────────────────────────────────

@@ -351,6 +351,15 @@
       "replay": "Rejouer",
       "home": "Accueil",
       "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "currentRanking": "Classement actuel",
+      "finalScore": "Score final",
+      "questions": "Questions",
+      "successRate": "Taux de réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des réponses",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."

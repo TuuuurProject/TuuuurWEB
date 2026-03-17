@@ -73,7 +73,8 @@
       </div>
       <div class="text-right flex items-center justify-start sm:justify-end">
         <div class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold">
-          <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}: 1210
+          <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}:
+          {{ userStore.userInfo?.globalElo ?? '—' }}
         </div>
       </div>
     </div>

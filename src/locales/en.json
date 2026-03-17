@@ -351,6 +351,15 @@
       "replay": "Play again",
       "home": "Home",
       "errorAnswering": "Error submitting answer",
+      "currentRanking": "Current Ranking",
+      "finalScore": "Final Score",
+      "questions": "Questions",
+      "successRate": "Success Rate",
+      "correctAnswers": "Correct",
+      "incorrectAnswers": "Incorrect",
+      "summary": "Answer Summary",
+      "goodAnswer": "Correct answer",
+      "badAnswer": "Wrong answer",
       "confirmLeave": {
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? Your progress will be lost and ELO will not be updated."
