@@ -1,5 +1,5 @@
 <template>
-  <overlay-block :loading="isLoading">
+  <overlay-block :loading="historyStore.isLoading">
     <div class="space-y-4 sm:space-y-5">
       <!-- Header with stats -->
       <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -34,11 +34,11 @@
           :key="filter.value"
           :class="[
             'pill text-xs sm:text-sm whitespace-nowrap',
-            selectedFilter === filter.value
+            selectedFilter === filter.id
               ? 'bg-brand-purple/30 border-brand-purple text-brand-purple'
               : 'bg-brand-darkGray/50 border-brand-gray/30 text-brand-gray hover:bg-brand-purple/10',
           ]"
-          @click="selectedFilter = filter.value"
+          @click="selectedFilter = filter.id"
         >
           {{ filter.label }}
         </button>
@@ -151,7 +151,10 @@
               </div>
 
               <!-- Themes line -->
-              <div class="flex items-start gap-1 sm:gap-1.5">
+              <div
+                v-if="match.partyTheme && match.partyTheme.length > 0"
+                class="flex items-center gap-1 sm:gap-1.5"
+              >
                 <font-awesome-icon
                   icon="tags"
                   class="text-brand-purple text-xs mt-0.5 flex-shrink-0"
@@ -160,7 +163,7 @@
                   <span
                     v-for="partyTheme in getVisibleThemes(match.partyTheme)"
                     :key="partyTheme.id"
-                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple whitespace-nowrap"
+                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple whitespace-nowrap flex items-center"
                   >
                     <font-awesome-icon :icon="partyTheme.theme.icon" class="mr-1" />
                     <span class="truncate max-w-[80px] sm:max-w-none inline-block">{{
@@ -169,7 +172,7 @@
                   </span>
                   <span
                     v-if="getRemainingThemesCount(match.partyTheme) > 0"
-                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple cursor-help whitespace-nowrap"
+                    class="pill text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2 bg-brand-purple/10 border-brand-purple/30 text-brand-purple cursor-help whitespace-nowrap flex items-center"
                     :title="getRemainingThemesNames(match.partyTheme)"
                   >
                     +{{ getRemainingThemesCount(match.partyTheme) }}
@@ -336,17 +339,17 @@ const difficultyColorMap: Record<string, string> = {
   extreme: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
 }
 
-const isLoading = ref(false)
-const selectedFilter = ref('all')
+const selectedFilter = ref(0) // 'all' by default
 const historyStore = useHistoryStore()
 
 // Nombre maximum de thèmes à afficher (responsive)
 const maxVisibleThemes = ref(3)
 
 const filters = computed(() => [
-  { label: t('profile.matchHistory.filters.all'), value: 'all' },
-  { label: t('profile.matchHistory.filters.solo'), value: 'solo' },
-  { label: t('profile.matchHistory.filters.group'), value: 'groupe' },
+  { label: t('profile.matchHistory.filters.all'), value: 'all', id: 0 },
+  { label: t('profile.matchHistory.filters.solo'), value: 'solo', id: 3 },
+  { label: t('profile.matchHistory.filters.group'), value: 'groupe', id: 1 },
+  { label: t('profile.matchHistory.filters.ranked'), value: 'ranked', id: 2 },
 ])
 
 const matches = computed(() => {
@@ -391,10 +394,12 @@ const filteredMatches = computed(() => {
   let filtered = matches.value
 
   // Filtrage
-  if (selectedFilter.value === 'solo') {
-    filtered = filtered.filter((m: Match) => m.partyType.label === 'Solo')
-  } else if (selectedFilter.value === 'groupe') {
-    filtered = filtered.filter((m: Match) => m.partyType.label === 'Groupe')
+  if (selectedFilter.value === 3) {
+    filtered = filtered.filter((m: Match) => m.partyType.id === 3)
+  } else if (selectedFilter.value === 1) {
+    filtered = filtered.filter((m: Match) => m.partyType.id === 1)
+  } else if (selectedFilter.value === 2) {
+    filtered = filtered.filter((m: Match) => m.partyType.id === 2)
   }
 
   // Tri et enrichissement des données en une seule passe

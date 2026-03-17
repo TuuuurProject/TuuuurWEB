@@ -133,7 +133,7 @@
         "all": "All",
         "solo": "Solo",
         "group": "Group",
-        "competitive": "Competitive"
+        "ranked": "Ranked"
       },
       "inProgress": "In Progress",
       "questions": "Questions:",

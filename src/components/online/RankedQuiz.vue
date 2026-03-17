@@ -22,7 +22,10 @@
     <Transition name="slide-fade" mode="out-in">
       <!-- === QUESTION + GAME === -->
       <div
-        v-if="(phase === 'question' || phase === 'answered' || phase === 'revealing') && !showCurrentRanking"
+        v-if="
+          (phase === 'question' || phase === 'answered' || phase === 'revealing') &&
+          !showCurrentRanking
+        "
         key="game"
         class="flex flex-col gap-4"
       >
@@ -183,7 +186,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -215,7 +217,11 @@
               <!-- Position badge -->
               <span
                 class="font-bold text-sm w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                :class="index === 0 ? 'bg-brand-yellow/20 text-brand-yellow' : 'bg-brand-gray/20 text-brand-gray'"
+                :class="
+                  index === 0
+                    ? 'bg-brand-yellow/20 text-brand-yellow'
+                    : 'bg-brand-gray/20 text-brand-gray'
+                "
               >
                 {{ index + 1 }}
               </span>
@@ -272,7 +278,6 @@
 
       <!-- === END GAME === -->
       <div v-else-if="phase === 'finished'" key="finished" class="space-y-6">
-
         <!-- Header : résultat + ELO + stats -->
         <div
           class="gaming-card text-center bg-gradient-to-br"
@@ -356,7 +361,9 @@
           <!-- Stats -->
           <div class="flex items-center justify-center gap-6 mt-2">
             <div class="text-center">
-              <div class="text-sm text-brand-gray mb-1">{{ $t('competitive.quiz.finalScore') }}</div>
+              <div class="text-sm text-brand-gray mb-1">
+                {{ $t('competitive.quiz.finalScore') }}
+              </div>
               <div class="font-branding text-3xl text-brand-yellow">{{ myScore }}</div>
             </div>
             <div class="h-12 w-px bg-brand-purple/30"></div>
@@ -366,7 +373,9 @@
             </div>
             <div class="h-12 w-px bg-brand-purple/30"></div>
             <div class="text-center">
-              <div class="text-sm text-brand-gray mb-1">{{ $t('competitive.quiz.successRate') }}</div>
+              <div class="text-sm text-brand-gray mb-1">
+                {{ $t('competitive.quiz.successRate') }}
+              </div>
               <div class="font-branding text-3xl text-brand-green">
                 {{ totalQuestions ? Math.round((correctAnswersCount / totalQuestions) * 100) : 0 }}%
               </div>
@@ -381,7 +390,8 @@
             </div>
             <div class="badge-warning">
               <font-awesome-icon icon="times-circle" class="mr-1" />
-              {{ totalQuestions - correctAnswersCount }} {{ $t('competitive.quiz.incorrectAnswers') }}
+              {{ totalQuestions - correctAnswersCount }}
+              {{ $t('competitive.quiz.incorrectAnswers') }}
             </div>
           </div>
         </div>
@@ -586,7 +596,6 @@
   </section>
 
   <!-- === COUNTDOWN === -->
-
   <transition name="countdown-fade">
     <div
       v-if="countdownValue !== null && phase === 'countdown'"
@@ -672,7 +681,7 @@ type HistoryEntry = {
 const questionHistory = ref<HistoryEntry[]>([])
 const correctAnswersCount = computed(() => questionHistory.value.filter((e) => e.correct).length)
 
-const QUESTION_DURATION = 30
+const QUESTION_DURATION = 15
 const remaining = ref(QUESTION_DURATION)
 const remainingRatio = computed(() => remaining.value / QUESTION_DURATION)
 let timerInterval: ReturnType<typeof setInterval> | null = null
@@ -869,14 +878,12 @@ const handleBeforeUnload = () => {
 }
 
 // ─── Answer class pour le récapitulatif ──────────────────────────────────────
-function getAnswerClass(
-  selectedId: number | null,
-  answer: { id: number; valid: boolean | null },
-) {
+function getAnswerClass(selectedId: number | null, answer: { id: number; valid: boolean | null }) {
   const isCorrect = answer.valid === true
   const isUserChoice = selectedId === answer.id
 
-  if (isCorrect && isUserChoice) return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
+  if (isCorrect && isUserChoice)
+    return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
   if (isCorrect) return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
   if (isUserChoice) return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
   return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'

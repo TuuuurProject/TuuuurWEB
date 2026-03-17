@@ -4,17 +4,17 @@
       data-testid="profile-info"
       class="gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 grid sm:grid-cols-1 md:grid-cols-2"
     >
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
         <div class="relative group cursor-pointer" @click="triggerFileInput">
           <img
             v-if="userStore.userInfo?.avatar"
             :src="userStore.userInfo?.avatar"
             alt="avatar"
-            class="h-16 w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
+            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
           />
           <div
             v-else
-            class="h-16 w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
+            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
           >
             <span id="nickaname" class="text-2xl font-bold text-brand-purple">
               {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
@@ -39,7 +39,7 @@
           <div v-if="!isEditingNickname" class="flex items-center gap-2">
             <div
               id="nickname"
-              class="font-branding text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors flex items-center"
+              class="font-branding text-sm md:text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors flex items-center"
               @click="startEditingNickname"
             >
               {{ userStore.userInfo?.nickName }}
@@ -51,7 +51,7 @@
               ref="nicknameInput"
               v-model="newNickname"
               type="text"
-              class="font-branding text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
+              class="font-branding text-sm md:text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
               @keydown.enter="saveNickname"
               @keydown.escape="cancelEditingNickname"
             />
@@ -71,7 +71,7 @@
           <div class="text-sm text-brand-gray">{{ userStore.userInfo?.email }}</div>
         </div>
       </div>
-      <div class="text-right flex items-center justify-start sm:justify-end">
+      <div class="text-right flex items-center justify-start sm:justify-end" style="z-index: -1">
         <div class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold">
           <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}:
           {{ userStore.userInfo?.globalElo ?? '—' }}
