@@ -394,13 +394,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue3-toastify'
 import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue-router'
 import signalrService, { RankedEvent } from '@/services/signalrService'
 import useRankedStore from '@/stores/ranked'
 import type { RankedUser, RankedQuestion, UserAnswered, UserScore } from '@/stores/ranked'
+import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import ModalDialog from '@/components/ModalDialog.vue'
 
 const props = defineProps<{
@@ -414,8 +415,7 @@ const emit = defineEmits<{ home: []; replay: [] }>()
 const { t } = useI18n()
 const router = useRouter()
 const rankedStore = useRankedStore()
-const instance = getCurrentInstance()
-const proxy = instance?.proxy
+const { cleanupRanked } = useRankedLifecycle()
 
 // ─── Confirmation de sortie ───────────────────────────────────────────────────
 const showConfirmLeaveModal = ref(false)
@@ -622,30 +622,62 @@ const allEvents = [
   { name: RankedEvent.Error, handler: onError },
 ]
 
-onMounted(() => {
-  // Connection signalR
-  try {
-    allEvents.forEach((event) => {
-      signalrService.off(event.name)
-    })
+// Fermeture de l'onglet/navigateur pendant la partie
+const handleBeforeUnload = () => {
+  // SignalR n'est pas disponible en synchrone sur beforeunload,
+  // on se contente de déconnecter proprement côté serveur via la perte de connexion.
+  // Si nécessaire, ajouter ici un fetch keepalive vers une API de forfait ranked.
+}
 
-    allEvents.forEach((event) => {
-      signalrService.on(event.name, (data: unknown) => {
-        event.handler(data)
-      })
-    })
-  } catch (error) {
-    console.error('Failed to connect to SignalR:', error)
-    proxy?.$toast.error(t('group.lobby.connectionError'))
+// ─── Keyboard shortcuts ───────────────────────────────────────────────────────
+const handleKeyPress = (event: KeyboardEvent) => {
+  if (phase.value !== 'question') return
+
+  // Mapping QWERTY + AZERTY pour sélectionner une réponse (1-4)
+  const keyMap: Record<string, number> = {
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4, // QWERTY
+    '&': 1,
+    é: 2,
+    '"': 3,
+    "'": 4, // AZERTY
   }
+
+  const answerNumber = keyMap[event.key]
+  if (answerNumber) {
+    const opt = currentQuestionData.value?.question?.answer?.[answerNumber - 1]
+    if (opt) sendAnswer(opt.id)
+  }
+}
+
+onMounted(() => {
+  // Même pattern que GroupQuiz :
+  // 1. Nettoyer TOUS les handlers existants pour ces events (évite les doublons)
+  // 2. Enregistrer les nouveaux handlers directement (pas de wrapper anonyme)
+  allEvents.forEach((event) => signalrService.off(event.name))
+  allEvents.forEach((event) => signalrService.on(event.name, event.handler))
+
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  window.addEventListener('keydown', handleKeyPress)
 })
 
-onBeforeUnmount(() => {
+onBeforeUnmount(async () => {
   stopTimer()
-  // off(eventName) sans handler = supprime TOUS les listeners pour cet event
-  allEvents.forEach((event) => {
-    signalrService.off(event.name)
-  })
+
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+  window.removeEventListener('keydown', handleKeyPress)
+
+  // Retirer les handlers SignalR de ce composant
+  allEvents.forEach((event) => signalrService.off(event.name, event.handler))
+
+  // Si la connexion est encore ouverte (fin de partie normale ou sortie via "Home"),
+  // déconnecter proprement. Le guard isCleaningUp dans useRankedLifecycle empêche
+  // le double appel si confirmLeave() a déjà déconnecté.
+  if (signalrService.isConnected()) {
+    await cleanupRanked()
+  }
 })
 
 // ─── Guard de navigation ──────────────────────────────────────────────────────
@@ -662,11 +694,7 @@ onBeforeRouteLeave((to, from, next) => {
 async function confirmLeave() {
   showConfirmLeaveModal.value = false
 
-  // Déconnexion SignalR (la partie s'arrête côté client)
-  if (signalrService.isConnected()) {
-    await signalrService.disconnect()
-  }
-  rankedStore.reset()
+  await cleanupRanked()
 
   if (pendingNavigation) {
     await router.push(pendingNavigation.to)

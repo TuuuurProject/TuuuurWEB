@@ -67,13 +67,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { toast } from 'vue3-toastify'
 import signalrService, { RankedEvent } from '@/services/signalrService'
 import useRankedStore from '@/stores/ranked'
 import useUserStore from '@/stores/user'
 import type { RankedUser } from '@/stores/ranked'
+import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import RankedMatchmaking from './RankedMatchmaking.vue'
 import RankedQuiz from './RankedQuiz.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
@@ -81,8 +82,7 @@ import LoggedInBlock from '@/components/LoggedInBlock.vue'
 const { t } = useI18n()
 const rankedStore = useRankedStore()
 const userStore = useUserStore()
-const instance = getCurrentInstance()
-const proxy = instance?.proxy
+const { cleanupRanked, connectSignalR } = useRankedLifecycle()
 
 type Step = 'idle' | 'search' | 'found' | 'game'
 const step = ref<Step>('idle')
@@ -91,7 +91,7 @@ const initialCountdown = ref<number | null>(null)
 let firstCountdownReceived = false
 
 // ─── Build a RankedUser from userStore info ───────────────────────────────────
-const userInfo = computed<RankedUser | null>(() => {
+const currentUser = computed<RankedUser | null>(() => {
   if (!userStore.userInfo) return null
   return {
     id: String(userStore.userId),
@@ -107,8 +107,6 @@ const userInfo = computed<RankedUser | null>(() => {
   }
 })
 
-const currentUser = computed(() => userInfo.value)
-
 // ─── SignalR handlers ─────────────────────────────────────────────────────────
 function onOpponentFound(opponent: RankedUser) {
   if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Opponent found:', opponent)
@@ -118,13 +116,14 @@ function onOpponentFound(opponent: RankedUser) {
 }
 
 function onCountdown(seconds: number) {
-  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Countdown:', seconds)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Countdown (OnlineMode):', seconds)
+  // Transition vers le jeu au premier countdown reçu après OnOpponentFound.
+  // RankedQuiz prendra le relais pour les countdowns suivants.
   if (step.value === 'found' && !firstCountdownReceived) {
     firstCountdownReceived = true
     initialCountdown.value = seconds
     step.value = 'game'
-    // Remove this listener once game started (RankedQuiz will handle it)
-    signalrService.off(RankedEvent.Countdown, onCountdown as any)
+    signalrService.off(RankedEvent.Countdown, onCountdown)
   }
 }
 
@@ -136,13 +135,18 @@ function onError(message: string) {
   }
 }
 
+const allEvents = [
+  { name: RankedEvent.OpponentFound, handler: onOpponentFound },
+  { name: RankedEvent.Countdown,     handler: onCountdown },
+  { name: RankedEvent.Error,         handler: onError },
+]
+
 // ─── Actions ──────────────────────────────────────────────────────────────────
 async function startSearch() {
   connectionLoading.value = true
   try {
-    if (!signalrService.isConnected()) {
-      await signalrService.connect(userStore.token || '', true)
-    }
+    // Connexion centralisée via le composable (identique au pattern groupe)
+    await connectSignalR()
 
     rankedStore.reset()
     step.value = 'search'
@@ -153,85 +157,64 @@ async function startSearch() {
   } catch (e) {
     toast.error(t('group.lobby.connectionError'))
     step.value = 'idle'
-    await signalrService.disconnect()
+    await cleanupRanked()
   } finally {
     connectionLoading.value = false
   }
 }
 
 async function handleCancel() {
+  // Quitter la file proprement avant de déconnecter
   try {
     if (signalrService.isConnected()) {
       await signalrService.invoke(RankedEvent.LeaveSearchOpponent)
     }
-  } catch (_) {
-    // ignore
-  }
+  } catch (_) {}
+
+  await cleanupRanked()
   step.value = 'idle'
 }
 
-async function handleHome() {
-  await cleanup()
+// "Home" depuis l'écran de fin : RankedQuiz gère sa propre déconnexion dans
+// onBeforeUnmount, OnlineMode revient juste à l'état idle.
+function handleHome() {
   step.value = 'idle'
 }
 
+// "Replay" : cleanupRanked() d'abord (déconnecte), puis changement de step
+// (RankedQuiz démonte, voit la connexion déjà fermée), puis nouvelle recherche.
+// Évite la race condition entre la déconnexion et la reconnexion.
 async function handleReplay() {
-  rankedStore.reset()
+  await cleanupRanked()
   step.value = 'idle'
   await startSearch()
 }
 
-async function cleanup(skipDisconnect = false) {
-  if (!skipDisconnect && signalrService.isConnected()) {
-    await signalrService.disconnect()
-  }
-  rankedStore.reset()
-}
-
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
-const allEvents = [
-  { name: RankedEvent.OpponentFound, handler: onOpponentFound },
-  { name: RankedEvent.Countdown, handler: onCountdown },
-  { name: RankedEvent.Error, handler: onError },
-]
-
 onMounted(async () => {
-  // Fetch user info if not already loaded
   if (!userStore.userInfo) {
-    try {
-      await userStore.getUserInfo()
-    } catch (_) {}
+    try { await userStore.getUserInfo() } catch (_) {}
   }
 
-  try {
-    allEvents.forEach((event) => {
-      signalrService.off(event.name)
-    })
-
-    allEvents.forEach((event) => {
-      signalrService.on(event.name, (data: unknown) => {
-        event.handler(data)
-      })
-    })
-  } catch (error) {
-    console.error('Failed to connect to SignalR:', error)
-    proxy?.$toast.error(t('group.lobby.connectionError'))
-  }
+  // Même pattern que GroupLobby : nettoyer tous les handlers existants pour ces
+  // événements avant d'enregistrer les nôtres (évite les doublons au remontage).
+  allEvents.forEach((event) => signalrService.off(event.name))
+  allEvents.forEach((event) => signalrService.on(event.name, event.handler))
 })
 
 onBeforeUnmount(async () => {
-  allEvents.forEach((event) => {
-    signalrService.off(event.name)
-  })
+  // Retirer nos handlers (le composant est détruit)
+  allEvents.forEach((event) => signalrService.off(event.name, event.handler))
 
+  // Si on était encore en recherche, informer le serveur
   if (step.value === 'search') {
-    try {
-      await signalrService.invoke(RankedEvent.LeaveSearchOpponent)
-    } catch (_) {}
+    try { await signalrService.invoke(RankedEvent.LeaveSearchOpponent) } catch (_) {}
   }
 
+  // Ne pas déconnecter si on passe au jeu : RankedQuiz garde la connexion vivante
+  // et gérera lui-même la déconnexion dans son onBeforeUnmount.
   if (step.value !== 'game') {
-    await cleanup()
+    await cleanupRanked()
   }
 })
 </script>
