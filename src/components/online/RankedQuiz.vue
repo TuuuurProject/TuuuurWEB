@@ -625,7 +625,7 @@ const countdownValue = ref(props.initialCountdown ?? 3)
 // ─── Question state ───────────────────────────────────────────────────────────
 const currentQuestionData = ref<RankedQuestion | null>(null)
 const currentIndex = ref(0)
-const totalQuestions = ref(10)
+const totalQuestions = ref(0)
 const selectedAnswerId = ref<number | null>(null)
 const meAnswered = ref(false)
 const opponentAnswered = ref(false)
@@ -767,25 +767,38 @@ function onAllPlayerAnswered(results: UserAnswered[]) {
     const opponentResult = results.find((r) => r.user.id !== myId)
     if (opponentResult !== undefined) opponentAnsweredCorrect.value = opponentResult.correct
   }
+
+  // Push to history now that we know correctness (question data already in currentQuestionData)
+  if (currentQuestionData.value) {
+    questionHistory.value.push({
+      question: currentQuestionData.value,
+      correct: myAnsweredResult.value ?? false,
+      points: 0,
+      selectedAnswerId: selectedAnswerId.value,
+    })
+  }
 }
 
 function onQuestionAnswerSend(question: RankedQuestion) {
   if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
     console.log('[SignalR] Question answer revealed:', question)
   currentQuestionData.value = question
-  lastPoints.value = question.score
-  myScore.value += question.score
-  myAnsweredResult.value = question.score > 0
   answersRevealed.value = true
   stopTimer()
 
-  // Accumule l'historique pour le récapitulatif de fin de partie
-  questionHistory.value.push({
-    question,
-    correct: question.score > 0,
-    points: question.score,
-    selectedAnswerId: selectedAnswerId.value,
-  })
+  // Update the last history entry with the revealed question (answers have `valid` set)
+  const last = questionHistory.value[questionHistory.value.length - 1]
+  if (last && last.question.currentIndex === question.currentIndex) {
+    last.question = question
+  } else {
+    // Fallback: AllPlayerAnswered didn't fire (e.g. timer expired)
+    questionHistory.value.push({
+      question,
+      correct: false,
+      points: 0,
+      selectedAnswerId: selectedAnswerId.value,
+    })
+  }
 }
 
 function onScoreUpdate(updatedScores: UserScore[]) {
@@ -794,11 +807,20 @@ function onScoreUpdate(updatedScores: UserScore[]) {
   scores.value = updatedScores
   rankedStore.scores = updatedScores
 
-  // Update myScore from server scores
   const myId = props.currentUser?.id
   if (myId) {
-    const myScore_ = updatedScores.find((s) => s.user.id === myId)
-    if (myScore_) myScore.value = myScore_.score
+    const serverEntry = updatedScores.find((s) => s.user.id === myId)
+    if (serverEntry) {
+      // Compute points earned this round as delta from previous score
+      const earned = serverEntry.score - myScore.value
+      lastPoints.value = earned > 0 ? earned : 0
+
+      // Update last history entry with actual points
+      const last = questionHistory.value[questionHistory.value.length - 1]
+      if (last) last.points = lastPoints.value
+
+      myScore.value = serverEntry.score
+    }
   }
 
   phase.value = 'revealing'
