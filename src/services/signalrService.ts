@@ -70,7 +70,6 @@ export enum RankedEvent {
   AllPlayerAnswered = 'OnAllPlayerAnswered',
   QuestionAnswerSend = 'OnQuestionAnswerSend',
   ScoreUpdate = 'OnScoreUpdate',
-  PartyFinished = 'OnPartyFinished',
   UserWin = 'OnUserWin',
   UserLoose = 'OnUserLoose',
   Error = 'OnError',
