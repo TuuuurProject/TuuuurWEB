@@ -75,7 +75,8 @@ export enum RankedEvent {
   Error = 'OnError',
 }
 
-type EventHandler = (...args: unknown[]) => void
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type EventHandler = (...args: any[]) => void
 
 class SignalRService {
   private connection: HubConnection | null = null
