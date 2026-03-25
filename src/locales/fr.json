@@ -133,7 +133,7 @@
         "all": "Tous",
         "solo": "Solo",
         "group": "Groupe",
-        "competitive": "Compétitif"
+        "ranked": "Compétitif"
       },
       "inProgress": "En cours",
       "questions": "Questions:",
@@ -300,10 +300,15 @@
   },
   "competitive": {
     "title": "Mode Compétitif",
-    "badge": "Choisissez vos catégories favorites",
-    "categories": {
-      "title": "Catégories de Combat",
-      "subtitle": "Sélectionnez vos domaines d'expertise pour des duels équilibrés."
+    "badge": "Classé",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder au mode compétitif !",
+    "ranked": {
+      "title": "Mode Ranked",
+      "subtitle": "Duel 1v1",
+      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre ELO augmente !",
+      "badge": "Classé",
+      "eloInfo": "Votre ELO : {value}",
+      "searchOpponent": "Rechercher un adversaire"
     },
     "info": {
       "title": "Mode Compétitif",
@@ -313,28 +318,53 @@
     },
     "startSearch": "Lancer la recherche",
     "matchmaking": {
-      "searching": "Recherche",
-      "searchingMessage": "Nous cherchons un adversaire…",
+      "searching": "Recherche en cours…",
+      "searchingMessage": "Nous cherchons un adversaire compatible…",
       "found": "Adversaire trouvé !",
+      "gameStartingSoon": "La partie va bientôt commencer...",
       "you": "Vous",
       "opponent": "Adversaire",
       "vs": "VS",
-      "cancel": "Annuler",
-      "startDuel": "Commencer le duel"
+      "cancel": "Annuler la recherche"
     },
-    "duel": {
-      "title": "Duel 1v1",
-      "badge": "Questions à difficulté croissante",
-      "you": "Vous",
-      "opponent": "Adversaire",
-      "elo": "Elo {value}",
-      "health": "Points de vie",
-      "healthYou": "Points de vie — Vous",
-      "healthOpponent": "Points de vie — Adversaire",
-      "ready": "Prêts ?",
-      "readyMessage": "Le quiz commencera dès que les deux joueurs seront prêts.",
-      "quit": "Quitter",
-      "startQuiz": "Lancer le quiz"
+    "quiz": {
+      "abort": "Abandonner",
+      "title": "Duel Ranked",
+      "question": "Question {current}",
+      "score": "Score :",
+      "timeRemaining": "Temps restant : {time}s",
+      "getReady": "Préparez-vous…",
+      "playersStatus": "Statut des joueurs",
+      "answered": "A répondu",
+      "waitingAnswer": "En attente…",
+      "opponentAnswered": "A répondu",
+      "waitingOpponent": "En attente…",
+      "correct": "Correct",
+      "incorrect": "Mauvaise réponse",
+      "finished": "Duel Terminé !",
+      "victory": "Victoire !",
+      "defeat": "Défaite",
+      "draw": "Égalité",
+      "eloGained": "+{points} ELO",
+      "eloLost": "{points} ELO",
+      "eloUnchanged": "ELO inchangé",
+      "finalRanking": "Résultats du Duel",
+      "replay": "Rejouer",
+      "home": "Accueil",
+      "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "currentRanking": "Classement actuel",
+      "finalScore": "Score final",
+      "questions": "Questions",
+      "successRate": "Taux de réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des réponses",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
+      "confirmLeave": {
+        "title": "Quitter la partie ?",
+        "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
+      }
     }
   },
   "leaderboard": {
