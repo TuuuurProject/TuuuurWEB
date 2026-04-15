@@ -16,7 +16,7 @@
             v-else
             class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
           >
-            <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+            <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
               {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
             </span>
           </div>
@@ -280,11 +280,9 @@ const handleFileChange = async (event: Event) => {
       if (proxy) {
         ;(proxy as any).$toast.success(t('profile.avatar.updateSuccess'))
       }
-    } else {
+    } else if (proxy) {
       // Error occurred
-      if (proxy) {
-        ;(proxy as any).$toast.error(t('profile.avatar.updateError'))
-      }
+      ;(proxy as any).$toast.error(t('profile.avatar.updateError'))
     }
   } catch (error) {
     console.error('Error processing avatar:', error)
@@ -329,10 +327,8 @@ const saveNickname = async () => {
 
     // Attribution des nouvelles valeurs
     userStore.userInfo = result
-  } else {
-    if (proxy) {
-      ;(proxy as any).$toast.error(t('profile.nickname.updateError'))
-    }
+  } else if (proxy) {
+    ;(proxy as any).$toast.error(t('profile.nickname.updateError'))
   }
 }
 

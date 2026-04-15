@@ -80,7 +80,7 @@ type EventHandler = (...args: any[]) => void
 
 class SignalRService {
   private connection: HubConnection | null = null
-  private handlers: Map<string, Set<EventHandler>> = new Map()
+  private readonly handlers: Map<string, Set<EventHandler>> = new Map()
 
   async connect(token?: string, ranked: boolean = false): Promise<void> {
     if (this.connection?.state === HubConnectionState.Connected) {

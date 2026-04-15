@@ -1,10 +1,11 @@
 <template>
   <div>
-    <label v-if="props.label" class="block mb-1 font-medium text-brand-lightGray">
+    <label for="input_component" v-if="props.label" class="block mb-1 font-medium text-brand-lightGray">
       {{ props.label }}
     </label>
 
     <input
+      id="input_component"
       :value="props.modelValue"
       :disabled="props.disabled"
       :type="props.type"

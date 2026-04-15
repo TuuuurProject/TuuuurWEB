@@ -4,7 +4,6 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="fire" class="mr-2" /> {{ $t('competitive.title') }}
       </h2>
-      <div class="badge-info animate-pulse-slow">{{ $t('competitive.badge') }}</div>
     </header>
 
     <div class="gaming-card">

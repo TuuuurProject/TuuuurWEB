@@ -41,7 +41,7 @@
             :key="opt"
             class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
-            :class="buttonClass(parseInt(opt.id), opt.valid)"
+            :class="buttonClass(Number.parseInt(opt.id), opt.valid)"
             @click="answer(opt)"
           >
             <span
@@ -394,15 +394,15 @@ function clearTimer() {
 const answer = async (opt: { id: string }) => {
   if (answered.value) return
   answered.value = true
-  userAnswerId.value = parseInt(opt.id)
+  userAnswerId.value = Number.parseInt(opt.id)
 
   clearTimer()
 
   // Load the answer by ID
-  await soloStore.loadAnswerById(parseInt(opt.id))
+  await soloStore.loadAnswerById(Number.parseInt(opt.id))
 
   // Test if correct
-  wasCorrect.value = isUserAnswerIsCorrect(parseInt(opt.id))
+  wasCorrect.value = isUserAnswerIsCorrect(Number.parseInt(opt.id))
 
   let newScore = 0
   if (wasCorrect.value) {
@@ -585,7 +585,7 @@ const partyDifficulties = computed(() => {
 const partyThemes = computed(() => {
   const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.idTheme) || []
   if (!themeIds || themeIds.length === 0 || !themeStore.list) return []
-  return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
+  return themeStore.list.filter((t: any) => themeIds.includes(Number.parseInt(t.id)))
 })
 
 const getAnswerClass = (questionData: any, answer: any) => {
@@ -653,27 +653,6 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* Boutons de difficulté */
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-}
-
 /* Couleurs par difficulté */
 .diff-easy {
   --diff-color: #10b981;
@@ -689,11 +668,27 @@ onBeforeUnmount(() => {
 }
 
 .difficulty-button {
-  color: var(--diff-color);
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--diff-color);
+
+}
+
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
+
 }
 
 /* Effet de glow animé */

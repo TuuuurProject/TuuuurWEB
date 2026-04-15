@@ -90,11 +90,13 @@ export function useGroupLifecycle() {
   const connectSignalR = async () => {
     if (!signalrService.isConnected()) {
       try {
-        const token = userStore.isLogged
-          ? userStore.token
-          : userStore.isLoggedAsInvited
-            ? userStore.invitedToken
-            : null
+        let token: string | null = null
+
+        if (userStore.isLogged) {
+          token = userStore.token
+        } else if (userStore.isLoggedAsInvited) {
+          token = userStore.invitedToken
+        }
 
         await signalrService.connect(token || '')
         if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR connected for group')

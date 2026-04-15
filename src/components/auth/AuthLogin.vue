@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
@@ -117,7 +117,6 @@ import AuthCode from '@/components/auth/AuthCode.vue'
 import AuthForgotPassword from '@/components/auth/AuthForgotPassword.vue'
 
 const { t } = useI18n()
-const proxy = getCurrentInstance()?.proxy
 const login = ref('')
 const password = ref('')
 
@@ -193,9 +192,6 @@ const redirectAfterLogin = () => {
 
 // Handle forgot password success
 const handleForgotPasswordSuccess = () => {
-  // if (proxy) {
-  //   ;(proxy as any).$toast.success(t('auth.forgotPassword.successMessage'))
-  // }
   step.value = 1
 }
 </script>

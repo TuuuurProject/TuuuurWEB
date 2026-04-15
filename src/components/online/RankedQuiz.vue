@@ -118,7 +118,7 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+                    <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
                       {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -203,7 +203,7 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="nickaname" class="text-2xl font-bold text-brand-orange">
+                    <span id="opponent-nickname" class="text-2xl font-bold text-brand-orange">
                       {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -615,6 +615,7 @@ const { cleanupRanked } = useRankedLifecycle()
 
 // ─── Confirmation de sortie ───────────────────────────────────────────────────
 const showConfirmLeaveModal = ref(false)
+const bypassGuard = ref(false) // Permet de bypass le guard après confirmation
 let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormalized } | null = null
 
 // ─── Phase ───────────────────────────────────────────────────────────────────
@@ -932,14 +933,14 @@ onBeforeUnmount(async () => {
 
 // ─── Guard de navigation ──────────────────────────────────────────────────────
 onBeforeRouteLeave((to, from, next) => {
-  if (phase.value !== 'finished') {
-    pendingNavigation = { to, from }
-    showConfirmLeaveModal.value = true
-    next(false)
-  } else {
-    next()
-  }
-})
+    if (bypassGuard.value || phase.value === 'finished') {
+      next()
+    } else {
+      pendingNavigation = { to, from }
+      showConfirmLeaveModal.value = true
+      next(false)
+    }
+  })
 
 async function confirmLeave() {
   showConfirmLeaveModal.value = false
@@ -947,6 +948,7 @@ async function confirmLeave() {
   await cleanupRanked()
 
   if (pendingNavigation) {
+    bypassGuard.value = true
     await router.push(pendingNavigation.to)
     pendingNavigation = null
   } else {

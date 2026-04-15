@@ -4,9 +4,9 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text text-center mb-4">
         {{ $t('auth.verification.title') }}
       </h2>
-      <label class="block font-semibold mb-8 text-brand-green text-center">
+      <div class="block font-semibold mb-8 text-brand-green text-center">
         {{ $t('auth.verification.message') }}
-      </label>
+      </div>
       <div class="flex items-center gap-1 sm:gap-2 justify-center">
         <input
           v-for="i in 6"
