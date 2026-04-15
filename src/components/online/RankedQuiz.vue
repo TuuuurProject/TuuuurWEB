@@ -493,7 +493,7 @@
             </h3>
           </div>
 
-          <div class="space-y-4">
+          <div v-if="questionHistory.length > 0" class="space-y-4">
             <div
               v-for="(entry, idx) in questionHistory"
               :key="idx"
@@ -548,6 +548,9 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div v-else class="text-center text-brand-gray space-y-4">
+            {{ $t('competitive.quiz.noQuestions') }}
           </div>
         </div>
 
@@ -793,12 +796,20 @@ function onAllPlayerAnswered(results: UserAnswered[]) {
 
   // Push to history now that we know correctness (question data already in currentQuestionData)
   if (currentQuestionData.value) {
-    questionHistory.value.push({
-      question: currentQuestionData.value,
-      correct: myAnsweredResult.value ?? false,
-      points: 0,
-      selectedAnswerId: selectedAnswerId.value,
-    })
+    const existingIdx = questionHistory.value.findIndex(
+      (e) => e.question.currentIndex === currentQuestionData.value!.currentIndex,
+    )
+    if (existingIdx !== -1) {
+      questionHistory.value[existingIdx].correct = myAnsweredResult.value ?? false
+      questionHistory.value[existingIdx].selectedAnswerId = selectedAnswerId.value
+    } else {
+      questionHistory.value.push({
+        question: currentQuestionData.value,
+        correct: myAnsweredResult.value ?? false,
+        points: 0,
+        selectedAnswerId: selectedAnswerId.value,
+      })
+    }
   }
 }
 
@@ -809,10 +820,12 @@ function onQuestionAnswerSend(question: RankedQuestion) {
   answersRevealed.value = true
   stopTimer()
 
-  // Update the last history entry with the revealed question (answers have `valid` set)
-  const last = questionHistory.value[questionHistory.value.length - 1]
-  if (last && last.question.currentIndex === question.currentIndex) {
-    last.question = question
+  // Update the existing history entry with the revealed question (answers have `valid` set)
+  const existingIdx = questionHistory.value.findIndex(
+    (e) => e.question.currentIndex === question.currentIndex,
+  )
+  if (existingIdx !== -1) {
+    questionHistory.value[existingIdx].question = question
   } else {
     // Fallback: AllPlayerAnswered didn't fire (e.g. timer expired)
     questionHistory.value.push({

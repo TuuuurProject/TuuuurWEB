@@ -578,7 +578,7 @@
             </h3>
           </div>
 
-          <div class="space-y-4 pr-2">
+          <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
             <div
               v-for="(questionData, idx) in allQuestionsParty"
               :key="idx"
@@ -622,7 +622,7 @@
                   <div class="flex items-center gap-2">
                     <span class="flex-shrink-0">
                       <font-awesome-icon v-if="answer.valid" icon="check" />
-                      <font-awesome-icon v-else-if="isUserAnswer(questionData)" icon="times" />
+                      <font-awesome-icon v-else-if="answer.id === questionData?.idAnswer" icon="times" />
                       <font-awesome-icon v-else icon="circle" class="text-xs" />
                     </span>
                     <span class="flex-1">{{ answer.value }}</span>
@@ -631,13 +631,22 @@
               </div>
             </div>
           </div>
+          <div v-else class="text-center text-brand-gray space-y-4 pr-2">
+            {{ $t('group.quiz.noQuestions') }}
+          </div>
         </div>
 
         <!-- Actions finales -->
         <div
           class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
         >
-          <button class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
+                <button
+          class="btn btn-secondary w-full sm:w-auto"
+          @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"
+        >
+          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
+        </button>
+          <button v-if="!comeFromHistory" class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
             <font-awesome-icon icon="arrow-left" class="mr-2" />
             {{ $t('group.quiz.returnToLobby') }}
           </button>
@@ -723,6 +732,7 @@ const globalUserScore = ref(5000)
 const userAnswerId = ref(<number | null>null)
 const scoreIsAvailable = ref(false)
 const percentageCorrectScore = ref(<number | null>null)
+  const comeFromHistory = ref(false)
 
 // Track which users have answered the current question
 const usersAnswered = ref(new Set<number | string>())
@@ -1108,9 +1118,6 @@ const getQuestionPoints = (questionData: any) => {
   return questionData?.score || 100
 }
 
-const isUserAnswer = (questionData: any) => {
-  return questionData?.idAnswer !== null
-}
 
 // Computed properties pour les informations de la partie
 const difficulties = computed(() => [
@@ -1175,7 +1182,7 @@ const isUserAnswerIsCorrect = (questions: any, answerId: number) => {
 
 const getAnswerClass = (questionData: any, answer: any) => {
   const isCorrect = answer.valid
-  const isUserChoice = isUserAnswer(questionData)
+  const isUserChoice = answer.id === questionData?.idAnswer
 
   if (isCorrect && isUserChoice) {
     // Bonne réponse sélectionnée
@@ -1395,6 +1402,7 @@ onMounted(async () => {
     await groupeStore.getGroupeInfo(groupeStore.groupeId)
     finished.value = groupeStore.groupePartyInfo!.finish
     if(finished.value) {
+      comeFromHistory.value = true 
       globalUserScore.value = groupeStore.groupePartyInfo!.score
       percentageCorrectScore.value = groupeStore.groupePartyInfo!.percent
 
@@ -1501,6 +1509,8 @@ const cancelLeave = () => {
 onBeforeUnmount(async () => {
   clearTimer()
   clearCountdownOverlay()
+
+  comeFromHistory.value = false
 
   window.removeEventListener('keydown', handleKeyPress)
   window.removeEventListener('beforeunload', handleBeforeUnload)

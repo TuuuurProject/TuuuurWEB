@@ -209,7 +209,7 @@
           <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
         </div>
 
-        <div class="space-y-4 pr-2">
+        <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
           <div
             v-for="(questionData, idx) in allQuestionsParty"
             :key="idx"
@@ -253,7 +253,7 @@
                 <div class="flex items-center gap-2">
                   <span class="flex-shrink-0">
                     <font-awesome-icon v-if="answer.valid" icon="check" />
-                    <font-awesome-icon v-else-if="isUserAnswer(questionData)" icon="times" />
+                    <font-awesome-icon v-else-if="answer.id === questionData?.userPartyQuestion?.idAnswer" icon="times" />
                     <font-awesome-icon v-else icon="circle" class="text-xs" />
                   </span>
                   <span class="flex-1">{{ answer.value }}</span>
@@ -261,6 +261,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div v-else class="text-center text-brand-gray space-y-4 pr-2">
+          {{ $t('solo.quiz.noQuestions') }}
         </div>
       </div>
 
@@ -530,9 +533,6 @@ const getQuestionPoints = (questionData: any) => {
   return questionData?.userPartyQuestion?.score || 100
 }
 
-const isUserAnswer = (questionData: any) => {
-  return questionData?.userPartyQuestion?.idAnswer !== null
-}
 
 // Computed properties pour les informations de la partie
 const difficulties = computed(() => [
@@ -590,7 +590,7 @@ const partyThemes = computed(() => {
 
 const getAnswerClass = (questionData: any, answer: any) => {
   const isCorrect = answer.valid
-  const isUserChoice = isUserAnswer(questionData)
+  const isUserChoice = answer.id === questionData?.userPartyQuestion?.idAnswer
 
   if (isCorrect && isUserChoice) {
     // Bonne réponse sélectionnée
