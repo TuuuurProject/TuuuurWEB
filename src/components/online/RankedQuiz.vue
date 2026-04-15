@@ -118,7 +118,18 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
+                    <span 
+                      id="user-nickname" 
+                      class="text-2xl font-bold"
+                      :class="
+                        myAnsweredResult === true
+                          ? 'text-brand-green'
+                          : myAnsweredResult === false
+                            ? 'text-brand-orange'
+                            : meAnswered
+                              ? 'text-brand-purple'
+                              : 'text-brand-gray'
+                      ">
                       {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -203,7 +214,18 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="opponent-nickname" class="text-2xl font-bold text-brand-orange">
+                    <span 
+                      id="opponent-nickname" 
+                      class="text-2xl font-bold"
+                      :class="
+                        opponentAnsweredCorrect === true
+                          ? 'text-brand-green'
+                          : opponentAnsweredCorrect === false
+                            ? 'text-brand-orange'
+                            : opponentAnswered
+                              ? 'text-brand-purple'
+                              : 'text-brand-gray'
+                    ">
                       {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
