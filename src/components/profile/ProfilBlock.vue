@@ -280,11 +280,9 @@ const handleFileChange = async (event: Event) => {
       if (proxy) {
         ;(proxy as any).$toast.success(t('profile.avatar.updateSuccess'))
       }
-    } else {
+    } else if (proxy) {
       // Error occurred
-      if (proxy) {
-        ;(proxy as any).$toast.error(t('profile.avatar.updateError'))
-      }
+      ;(proxy as any).$toast.error(t('profile.avatar.updateError'))
     }
   } catch (error) {
     console.error('Error processing avatar:', error)
@@ -329,10 +327,8 @@ const saveNickname = async () => {
 
     // Attribution des nouvelles valeurs
     userStore.userInfo = result
-  } else {
-    if (proxy) {
-      ;(proxy as any).$toast.error(t('profile.nickname.updateError'))
-    }
+  } else if (proxy) {
+    ;(proxy as any).$toast.error(t('profile.nickname.updateError'))
   }
 }
 

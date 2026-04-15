@@ -58,7 +58,7 @@ export default defineStore('user', {
 
     userId(): string {
       const payload = this.decodedPayloadToken as any
-      if (payload && payload.id) {
+      if (payload?.id) {
         return payload.id
       }
       return ''
@@ -66,7 +66,7 @@ export default defineStore('user', {
 
     userInvitedId(): string {
       const payload = this.decodedPayloadInvitedToken as any
-      if (payload && payload.id) {
+      if (payload?.id) {
         return payload.id
       }
       return ''
@@ -91,7 +91,7 @@ export default defineStore('user', {
 
     userIdInvited(): string {
       const payload = this.decodedPayloadInvitedToken as any
-      if (payload && payload.id) {
+      if (payload?.id) {
         return payload.id
       }
       return ''

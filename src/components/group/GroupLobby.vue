@@ -272,9 +272,8 @@ const handlePlayerExpelledEvent = async (data: any) => {
     proxy?.$toast.warning(t('group.lobby.youWereExpelled'))
     await cleanupGroup()
     emit('goTo', 'mode')
-  } else {
-    // Retirer le joueur expulsé de la liste
-    if (groupeStore.groupePartyInfo) {
+  } else if (groupeStore.groupePartyInfo) {
+      // Retirer le joueur expulsé de la liste
       groupeStore.groupePartyInfo.partyUsers = groupeStore.groupePartyInfo.partyUsers.filter(
         (u: any) => {
           const userId = u.user.idUser ?? u.user.id
@@ -282,7 +281,6 @@ const handlePlayerExpelledEvent = async (data: any) => {
         },
       )
       proxy?.$toast.info(t('group.lobby.playerExpelled', { name: data.nickName }))
-    }
   }
 }
 

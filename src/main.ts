@@ -200,7 +200,7 @@ const unixToDate = function (unix: number | null, format = 'DD/MM/YYYY') {
   if (format === 'DD MMMM YYYY') {
     // Première lettre du mois en majuscule
     const day =
-      dateDayjs.format('DD')[0] === '0' ? dateDayjs.format('DD')[1] : dateDayjs.format('DD')
+      dateDayjs.format('DD').startsWith('0') ? dateDayjs.format('DD').slice(1) : dateDayjs.format('DD')
     const month = dateDayjs.format('MMMM')
     const year = dateDayjs.format('YYYY')
 

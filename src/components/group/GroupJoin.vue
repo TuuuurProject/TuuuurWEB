@@ -6,9 +6,9 @@
 
     <div class="gaming-card">
       <div class="max-w-md mx-auto">
-        <label class="block font-semibold mb-3 text-brand-lightGray">{{
+        <div class="block font-semibold mb-3 text-brand-lightGray">{{
           $t('group.join.code')
-        }}</label>
+        }}</div>
         <div class="flex items-center gap-1 sm:gap-2 justify-center">
           <input
             v-for="i in 6"

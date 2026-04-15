@@ -61,26 +61,6 @@
                 }}</span>
                 <span v-else class="badge-orange">{{ $t('group.quiz.incorrect') }}</span>
               </div>
-              <!-- <div class="flex items-center gap-3 ml-auto">
-            <button class="btn btn-secondary" @click="skip" :disabled="answered">
-              {{ $t('group.quiz.skip') }}
-              <span
-                v-if="!answered"
-                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
-              >
-                S
-              </span>
-            </button>
-            <button class="btn btn-primary relative" @click="next" :disabled="!answered">
-              {{ $t('group.quiz.next') }}
-              <span
-                v-if="answered"
-                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
-              >
-                <font-awesome-icon icon="turn-down" />
-              </span>
-            </button>
-          </div> -->
             </div>
           </overlay-block>
         </div>
