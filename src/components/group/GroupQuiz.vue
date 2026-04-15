@@ -766,7 +766,7 @@ const playersRanking = ref<
 const showAllPlayers = ref(false)
 
 const remaining = ref(TOTAL_TIME)
-let timer: number | null = null
+let timer: ReturnType<typeof setInterval> | null = null
 let startTime: number | null = null
 
 // Gestion de la modale de confirmation pour quitter
@@ -1225,7 +1225,7 @@ const exitQuizGame = async () => {
 
 // Handlers for SignalR events
 const countdownValue = ref<number | null>(null)
-let countdownClearTimeout: number | null = null
+let countdownClearTimeout: ReturnType<typeof setTimeout> | null = null
 
 const countdownTextClass = computed(() => {
   // Variantes de couleur façon “3-2-1” arcade

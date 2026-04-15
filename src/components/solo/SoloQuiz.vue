@@ -321,7 +321,7 @@ const finished = ref(false)
 const comeFromHistory = ref(false)
 
 const remaining = ref(TOTAL_TIME)
-let timer: number | null = null
+let timer: ReturnType<typeof setInterval> | null = null
 let startTime: number | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
