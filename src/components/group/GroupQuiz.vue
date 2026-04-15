@@ -272,7 +272,7 @@
             <div class="text-center">
               <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.successRate') }}</div>
               <div class="font-branding text-3xl text-brand-green">
-                {{ Math.round((correctAnswersCount / allQuestionsParty.length) * 100) }}%
+                {{ pourcentageCorrect }}%
               </div>
             </div>
           </div>
@@ -694,7 +694,7 @@ import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
-import useGroupeStore from '@/stores/groupe'
+import useGroupeStore, { type GroupePartyInfo, type PartyQuestion, type User } from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 import useThemeStore from '@/stores/theme'
 import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
@@ -719,9 +719,10 @@ const answered = ref(false)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
-const globalUserScore = ref(0)
+const globalUserScore = ref(5000)
 const userAnswerId = ref(<number | null>null)
 const scoreIsAvailable = ref(false)
+const percentageCorrectScore = ref(<number | null>null)
 
 // Track which users have answered the current question
 const usersAnswered = ref(new Set<number | string>())
@@ -1091,6 +1092,12 @@ const correctAnswersCount = computed(() => {
   return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
 })
 
+const pourcentageCorrect = computed(() => {
+  if(percentageCorrectScore.value !== null) return percentageCorrectScore.value
+  if (allQuestionsParty.value.length === 0) return 0
+  return Math.round((correctAnswersCount.value / allQuestionsParty.value.length) * 100)
+})
+
 const isQuestionCorrect = (questionData: any) => {
   if (!questionData?.correct) return false
   return questionData?.correct
@@ -1272,7 +1279,7 @@ const handleQuestionSend = (data: any) => {
   // Réinitialiser l'état "finished" si une nouvelle partie commence
   if (finished.value) {
     finished.value = false
-    globalUserScore.value = 0
+    globalUserScore.value = 5000
     showAllPlayers.value = false
 
     // Réinitialiser les questions de la partie précédente
@@ -1383,6 +1390,45 @@ const handleBeforeUnload = () => {
 }
 
 onMounted(async () => {
+  // If onMounted, the groupId exist, display the recap
+  if (groupeStore.groupeId) {
+    await groupeStore.getGroupeInfo(groupeStore.groupeId)
+    finished.value = groupeStore.groupePartyInfo!.finish
+    if(finished.value) {
+      globalUserScore.value = groupeStore.groupePartyInfo!.score
+      percentageCorrectScore.value = groupeStore.groupePartyInfo!.percent
+
+      // Populate players ranking from userScores (API data, not SignalR)
+      const partyInfoRaw = groupeStore.groupePartyInfo as GroupePartyInfo & { userScores?: { score: number; user: User }[] }
+      if (Array.isArray(partyInfoRaw.userScores)) {
+        playersRanking.value = partyInfoRaw.userScores.map((us) => ({
+          score: us.score,
+          user: us.user as { id?: number; nickName?: string; avatar?: string | null; email?: string; isAdmin?: boolean; isNew?: boolean },
+        }))
+      }
+
+      // Normalize partyQuestions to match the live-game format expected by the recap
+      if (groupeStore.groupePartyInfo!.partyQuestions) {
+        groupeStore.groupePartyInfo!.partyQuestions = groupeStore.groupePartyInfo!.partyQuestions.map((pq) => {
+          const raw = pq as PartyQuestion & { userPartyQuestion?: { correct?: boolean; idAnswer?: number | null; score?: number } }
+          return {
+            ...pq,
+            correct: raw.userPartyQuestion?.correct ?? false,
+            idAnswer: raw.userPartyQuestion?.idAnswer ?? null,
+            score: raw.userPartyQuestion?.score ?? 0,
+          }
+        })
+      }
+
+      // Load themes so partyThemes computed can resolve icons/labels
+      if (!themeStore.list) {
+        await themeStore.loadThemes()
+      }
+
+      return
+    }
+  }
+
   // Load themes if not already loaded
   if (!themeStore.list) {
     await themeStore.loadThemes()

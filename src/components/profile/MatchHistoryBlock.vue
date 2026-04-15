@@ -526,7 +526,7 @@ const showMatchDetails = (match: Match) => {
   if (match.partyType.label === 'Solo') {
     router.push({ name: 'SoloQuiz', params: { id: match.id } })
   } else if (match.partyType.label === 'Groupe') {
-    // router.push({ name: 'GroupMode', params: { id: match.id } })
+    router.push({ name: 'GroupMode', params: { id: match.id } })
   }
 }
 

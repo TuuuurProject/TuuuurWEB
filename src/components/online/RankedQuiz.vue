@@ -545,7 +545,7 @@
       </div>
     </Transition>
 
-    <div v-if="!finished" class="flex flex-wrap items-center justify-end gap-3 mt-4 text-sm">
+    <div v-if="!finished && !showCurrentRanking" class="flex flex-wrap items-center justify-end gap-3 mt-4 text-sm">
       <button class="btn btn-ghost" @click="showConfirmLeaveModal = true">
         <font-awesome-icon icon="arrow-right-from-bracket" class="mr-2" />
         {{ $t('competitive.quiz.abort') }}

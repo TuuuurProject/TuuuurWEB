@@ -624,6 +624,7 @@ onMounted(async () => {
   if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
     finished.value = true
     comeFromHistory.value = true
+    return
   }
 
   startTimer()
