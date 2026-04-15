@@ -191,7 +191,7 @@
 import { reactive, ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useThemeStore from '@/stores/theme'
-import useGroupeStore, { type PartyDifficulty } from '@/stores/groupe'
+import useGroupeStore, { type PartyDifficulty, type PartyTheme } from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
@@ -268,54 +268,32 @@ const questions = ref(10)
 
 const scoreEachRound = ref(false)
 
+function applyPartyInfo(newInfo: NonNullable<typeof groupeStore.groupePartyInfo>) {
+  if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
+    selected.clear()
+    newInfo.partyTheme.forEach((theme: PartyTheme) => selected.add(theme.idTheme as string))
+  }
+  if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
+    selectedDifficulty.value = newInfo.partyDifficulty.map(
+      (d: PartyDifficulty) => d.idDifficulty as number,
+    )
+  }
+  if (newInfo.scoreEachRound !== undefined) scoreEachRound.value = newInfo.scoreEachRound
+  if (newInfo.nbQuestions) questions.value = newInfo.nbQuestions
+}
+
 watch(
   () => groupeStore.groupePartyInfo,
   (newInfo) => {
     if (!newInfo) return
+    if (currentUserIsHost.value && !groupeStore.comeFromEndOfQuizGame) return
 
-    if (currentUserIsHost.value && !groupeStore.comeFromEndOfQuizGame) {
-      return
-    }
+    const isReturningHost = currentUserIsHost.value && groupeStore.comeFromEndOfQuizGame
 
-    if (currentUserIsHost.value && groupeStore.comeFromEndOfQuizGame) {
-      if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
-        selected.clear()
-        newInfo.partyTheme.forEach((theme) => selected.add(theme.idTheme as string))
-      }
-      if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
-        selectedDifficulty.value = newInfo.partyDifficulty.map(
-          (d: PartyDifficulty) => d.idDifficulty as number,
-        )
-      }
-      if (newInfo.scoreEachRound !== undefined) {
-        scoreEachRound.value = newInfo.scoreEachRound
-      }
-      if (newInfo.nbQuestions) {
-        questions.value = newInfo.nbQuestions
-      }
+    applyPartyInfo(newInfo)
 
+    if (isReturningHost) {
       groupeStore.comeFromEndOfQuizGame = false
-
-      return
-    }
-
-    if (newInfo.nbQuestions) {
-      questions.value = newInfo.nbQuestions
-    }
-
-    if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
-      selectedDifficulty.value = newInfo.partyDifficulty.map(
-        (d: PartyDifficulty) => d.idDifficulty as number,
-      )
-    }
-
-    if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
-      selected.clear()
-      newInfo.partyTheme.forEach((theme) => selected.add(theme.idTheme as string))
-    }
-
-    if (newInfo.scoreEachRound !== undefined) {
-      scoreEachRound.value = newInfo.scoreEachRound
     }
   },
   { deep: true, immediate: true },

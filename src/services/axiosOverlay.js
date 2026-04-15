@@ -44,7 +44,7 @@ export default async function axiosOverlay(axiosConfig, overlayConfig = defaultO
     ...overlayConfig.functions.errorsHandlers,
   }
 
-  let initialToken = await overlayConfig.functions.getToken()
+  let initialToken = await Promise.resolve(overlayConfig.functions.getToken())
 
   let instance = axios.create()
 
@@ -71,7 +71,7 @@ export default async function axiosOverlay(axiosConfig, overlayConfig = defaultO
             overlayConfig.functions.setToken(error.response.data.token)
 
             // Vérifie que le token a bien été mis à jour
-            const newToken = overlayConfig.functions.getToken()
+            const newToken = await Promise.resolve(overlayConfig.functions.getToken())
             if (newToken && newToken !== initialToken) {
               const retryConfig = {
                 ...overlayConfig,

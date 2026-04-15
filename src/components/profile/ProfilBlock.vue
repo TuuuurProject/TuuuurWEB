@@ -16,7 +16,7 @@
             v-else
             class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
           >
-            <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+            <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
               {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
             </span>
           </div>

@@ -118,7 +118,7 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="nickaname" class="text-2xl font-bold text-brand-purple">
+                    <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
                       {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -203,7 +203,7 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span id="nickaname" class="text-2xl font-bold text-brand-orange">
+                    <span id="opponent-nickname" class="text-2xl font-bold text-brand-orange">
                       {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
