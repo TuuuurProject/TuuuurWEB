@@ -253,7 +253,10 @@
                 <div class="flex items-center gap-2">
                   <span class="flex-shrink-0">
                     <font-awesome-icon v-if="answer.valid" icon="check" />
-                    <font-awesome-icon v-else-if="answer.id === questionData?.userPartyQuestion?.idAnswer" icon="times" />
+                    <font-awesome-icon
+                      v-else-if="answer.id === questionData?.userPartyQuestion?.idAnswer"
+                      icon="times"
+                    />
                     <font-awesome-icon v-else icon="circle" class="text-xs" />
                   </span>
                   <span class="flex-1">{{ answer.value }}</span>
@@ -372,7 +375,7 @@ const startTimer = () => {
   remaining.value = TOTAL_TIME
   startTime = Date.now()
 
-  timer = window.setInterval(async () => {
+  timer = globalThis.setInterval(async () => {
     const elapsed = (Date.now() - startTime!) / 1000 // temps écoulé en secondes
     remaining.value = Math.max(0, +(TOTAL_TIME - elapsed).toFixed(1))
 
@@ -533,7 +536,6 @@ const getQuestionPoints = (questionData: any) => {
   return questionData?.userPartyQuestion?.score || 100
 }
 
-
 // Computed properties pour les informations de la partie
 const difficulties = computed(() => [
   {
@@ -630,13 +632,13 @@ onMounted(async () => {
   startTimer()
 
   // Ajouter l'écouteur d'événements clavier
-  window.addEventListener('keydown', handleKeyPress)
+  globalThis.addEventListener('keydown', handleKeyPress)
 })
 
 onBeforeUnmount(() => {
   clearTimer()
   // Retirer l'écouteur d'événements clavier
-  window.removeEventListener('keydown', handleKeyPress)
+  globalThis.removeEventListener('keydown', handleKeyPress)
 
   // Reset des variables locales
   index.value = 0
@@ -676,8 +678,7 @@ onBeforeUnmount(() => {
   background: rgba(30, 30, 40, 0.5);
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--diff-color);
-
+  color: var(--diff-color);
 }
 
 .difficulty-button:hover {
@@ -689,7 +690,6 @@ onBeforeUnmount(() => {
   border-color: currentColor;
   background: rgba(30, 30, 40, 0.8);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-
 }
 
 /* Effet de glow animé */

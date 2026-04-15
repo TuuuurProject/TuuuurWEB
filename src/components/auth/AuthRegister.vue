@@ -209,7 +209,7 @@ const passwordRules = computed(() => ({
   minLength: registerData.value.password.length >= 8,
   hasLowercase: /[a-z]/.test(registerData.value.password),
   hasUppercase: /[A-Z]/.test(registerData.value.password),
-  hasNumber: /[0-9]/.test(registerData.value.password),
+  hasNumber: /\d/.test(registerData.value.password),
   passwordsMatch:
     registerData.value.password === registerData.value.confirmPassword &&
     registerData.value.password.length > 0 &&

@@ -273,14 +273,14 @@ const handlePlayerExpelledEvent = async (data: any) => {
     await cleanupGroup()
     emit('goTo', 'mode')
   } else if (groupeStore.groupePartyInfo) {
-      // Retirer le joueur expulsé de la liste
-      groupeStore.groupePartyInfo.partyUsers = groupeStore.groupePartyInfo.partyUsers.filter(
-        (u: any) => {
-          const userId = u.user.idUser ?? u.user.id
-          return userId !== data.id
-        },
-      )
-      proxy?.$toast.info(t('group.lobby.playerExpelled', { name: data.nickName }))
+    // Retirer le joueur expulsé de la liste
+    groupeStore.groupePartyInfo.partyUsers = groupeStore.groupePartyInfo.partyUsers.filter(
+      (u: any) => {
+        const userId = u.user.idUser ?? u.user.id
+        return userId !== data.id
+      },
+    )
+    proxy?.$toast.info(t('group.lobby.playerExpelled', { name: data.nickName }))
   }
 }
 
@@ -319,7 +319,7 @@ onMounted(async () => {
       })
     })
 
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    globalThis.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
     proxy?.$toast.error(t('group.lobby.connectionError'))
@@ -340,7 +340,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 // Cleanup SignalR listeners only (keep connection alive for the game)
 onBeforeUnmount(() => {
   // Retirer le gestionnaire de fermeture de page
-  window.removeEventListener('beforeunload', handleBeforeUnload)
+  globalThis.removeEventListener('beforeunload', handleBeforeUnload)
 
   // Nettoyer uniquement les écouteurs SignalR du lobby
   // La connexion reste active pour GroupQuiz

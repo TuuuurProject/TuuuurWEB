@@ -6,9 +6,7 @@
 
     <div class="gaming-card">
       <div class="max-w-md mx-auto">
-        <div class="block font-semibold mb-3 text-brand-lightGray">{{
-          $t('group.join.code')
-        }}</div>
+        <div class="block font-semibold mb-3 text-brand-lightGray">{{ $t('group.join.code') }}</div>
         <div class="flex items-center gap-1 sm:gap-2 justify-center">
           <input
             v-for="i in 6"
@@ -195,7 +193,7 @@ const handlePaste = async (event: ClipboardEvent) => {
   try {
     const code = event.clipboardData?.getData('text')?.replace(/\s|-/g, '') || ''
 
-    if (/^[0-9]{6}$/.test(code)) {
+    if (/^\d{6}$/.test(code)) {
       fillDigits(code)
     }
   } catch {}
@@ -206,7 +204,7 @@ const handleKeyboardPaste = async () => {
     const code = await navigator.clipboard.readText()
     const cleanCode = code.replace(/\s|-/g, '')
 
-    if (/^[0-9]{6}$/.test(cleanCode)) {
+    if (/^\d{6}$/.test(cleanCode)) {
       fillDigits(cleanCode)
     }
   } catch {}

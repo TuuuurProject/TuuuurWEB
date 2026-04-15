@@ -132,7 +132,7 @@ onMounted(async () => {
   }
 
   // If code is in url, try to join the group (handles page refresh and direct link with code)
-  const urlParams = new URLSearchParams(window.location.search)
+  const urlParams = new URLSearchParams(globalThis.location.search)
   const codeFromUrl = urlParams.get('code')
   if (codeFromUrl && !groupeStore.groupeId) {
     groupeStore
@@ -152,8 +152,8 @@ onMounted(async () => {
         // emit('goTo', 'join')
         // Remove code in url to prevent infinite loop on refresh
         urlParams.delete('code')
-        const newUrl = `${window.location.pathname}`
-        window.history.replaceState({}, '', newUrl)
+        const newUrl = `${globalThis.location.pathname}`
+        globalThis.history.replaceState({}, '', newUrl)
       })
   }
 })

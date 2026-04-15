@@ -7,6 +7,11 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 dayjs.locale('fr')
 
+interface JwtTokenPayload {
+  exp: number
+  id: string
+}
+
 interface UserInfo {
   nickName: string
   avatar: string
@@ -36,7 +41,7 @@ export default defineStore('user', {
 
     isLogged() {
       if (this.token) {
-        const payload = this.decodedPayloadToken as any
+        const payload = this.decodedPayloadToken as JwtTokenPayload | null
         if (!payload) return false
 
         const localExp = dayjs.unix(payload.exp).unix()
@@ -57,7 +62,7 @@ export default defineStore('user', {
     },
 
     userId(): string {
-      const payload = this.decodedPayloadToken as any
+      const payload = this.decodedPayloadToken as JwtTokenPayload | null
       if (payload?.id) {
         return payload.id
       }
@@ -65,7 +70,7 @@ export default defineStore('user', {
     },
 
     userInvitedId(): string {
-      const payload = this.decodedPayloadInvitedToken as any
+      const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
       if (payload?.id) {
         return payload.id
       }
@@ -74,7 +79,7 @@ export default defineStore('user', {
 
     isLoggedAsInvited() {
       if (this.invitedToken) {
-        const payload = this.decodedPayloadInvitedToken as any
+        const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
         if (!payload) return false
 
         const localExp = dayjs.unix(payload.exp).unix()
@@ -90,7 +95,7 @@ export default defineStore('user', {
     },
 
     userIdInvited(): string {
-      const payload = this.decodedPayloadInvitedToken as any
+      const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
       if (payload?.id) {
         return payload.id
       }

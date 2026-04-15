@@ -243,7 +243,7 @@ const passwordRules = computed(() => ({
   minLength: newPassword.value.length >= 8,
   hasLowercase: /[a-z]/.test(newPassword.value),
   hasUppercase: /[A-Z]/.test(newPassword.value),
-  hasNumber: /[0-9]/.test(newPassword.value),
+  hasNumber: /\d/.test(newPassword.value),
   passwordsMatch:
     newPassword.value === confirmNewPassword.value &&
     newPassword.value.length > 0 &&
@@ -351,7 +351,7 @@ const handleCodePaste = async (event: ClipboardEvent) => {
   try {
     const code = event.clipboardData?.getData('text')?.replace(/\s|-/g, '') || ''
 
-    if (/^[0-9]{6}$/.test(code)) {
+    if (/^\d{6}$/.test(code)) {
       fillCodeDigits(code)
     }
   } catch {}

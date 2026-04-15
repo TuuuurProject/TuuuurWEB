@@ -118,8 +118,8 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span 
-                      id="user-nickname" 
+                    <span
+                      id="user-nickname"
                       class="text-2xl font-bold"
                       :class="
                         myAnsweredResult === true
@@ -129,7 +129,8 @@
                             : meAnswered
                               ? 'text-brand-purple'
                               : 'text-brand-gray'
-                      ">
+                      "
+                    >
                       {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -214,8 +215,8 @@
                     alt=""
                   />
                   <div v-else class="h-16 w-16 flex items-center justify-center">
-                    <span 
-                      id="opponent-nickname" 
+                    <span
+                      id="opponent-nickname"
                       class="text-2xl font-bold"
                       :class="
                         opponentAnsweredCorrect === true
@@ -225,7 +226,8 @@
                             : opponentAnswered
                               ? 'text-brand-purple'
                               : 'text-brand-gray'
-                    ">
+                      "
+                    >
                       {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
                     </span>
                   </div>
@@ -570,7 +572,10 @@
       </div>
     </Transition>
 
-    <div v-if="!finished && !showCurrentRanking" class="flex flex-wrap items-center justify-end gap-3 mt-4 text-sm">
+    <div
+      v-if="!finished && !showCurrentRanking"
+      class="flex flex-wrap items-center justify-end gap-3 mt-4 text-sm"
+    >
       <button class="btn btn-ghost" @click="showConfirmLeaveModal = true">
         <font-awesome-icon icon="arrow-right-from-bracket" class="mr-2" />
         {{ $t('competitive.quiz.abort') }}
@@ -645,7 +650,7 @@ let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormali
 
 // ─── Phase ───────────────────────────────────────────────────────────────────
 type Phase = 'countdown' | 'question' | 'answered' | 'revealing' | 'finished'
-const phase = ref<Phase>(props.initialCountdown !== undefined ? 'countdown' : 'question')
+const phase = ref<Phase>(props.initialCountdown === undefined ? 'question' : 'countdown')
 const countdownValue = ref(props.initialCountdown ?? 3)
 
 // ─── Question state ───────────────────────────────────────────────────────────
@@ -742,7 +747,7 @@ async function sendAnswer(answerId: number) {
 
   try {
     await signalrService.invoke(RankedEvent.SendAnswer, answerId)
-  } catch (e) {
+  } catch {
     toast.error(t('competitive.quiz.errorAnswering'))
   }
 }
@@ -849,7 +854,7 @@ function onScoreUpdate(updatedScores: UserScore[]) {
     if (serverEntry) {
       // Compute points earned this round as delta from previous score
       const earned = serverEntry.score - myScore.value
-      lastPoints.value = earned > 0 ? earned : 0
+      lastPoints.value = Math.max(earned, 0)
 
       // Update last history entry with actual points
       const last = questionHistory.value[questionHistory.value.length - 1]
@@ -945,15 +950,15 @@ onMounted(() => {
   allEvents.forEach((event) => signalrService.off(event.name))
   allEvents.forEach((event) => signalrService.on(event.name, event.handler))
 
-  window.addEventListener('beforeunload', handleBeforeUnload)
-  window.addEventListener('keydown', handleKeyPress)
+  globalThis.addEventListener('beforeunload', handleBeforeUnload)
+  globalThis.addEventListener('keydown', handleKeyPress)
 })
 
 onBeforeUnmount(async () => {
   stopTimer()
 
-  window.removeEventListener('beforeunload', handleBeforeUnload)
-  window.removeEventListener('keydown', handleKeyPress)
+  globalThis.removeEventListener('beforeunload', handleBeforeUnload)
+  globalThis.removeEventListener('keydown', handleKeyPress)
 
   // Retirer les handlers SignalR de ce composant
   allEvents.forEach((event) => signalrService.off(event.name, event.handler))
@@ -968,14 +973,14 @@ onBeforeUnmount(async () => {
 
 // ─── Guard de navigation ──────────────────────────────────────────────────────
 onBeforeRouteLeave((to, from, next) => {
-    if (bypassGuard.value || phase.value === 'finished') {
-      next()
-    } else {
-      pendingNavigation = { to, from }
-      showConfirmLeaveModal.value = true
-      next(false)
-    }
-  })
+  if (bypassGuard.value || phase.value === 'finished') {
+    next()
+  } else {
+    pendingNavigation = { to, from }
+    showConfirmLeaveModal.value = true
+    next(false)
+  }
+})
 
 async function confirmLeave() {
   showConfirmLeaveModal.value = false

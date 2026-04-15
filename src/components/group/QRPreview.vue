@@ -22,7 +22,7 @@ const props = defineProps({
 watch(
   () => props.code,
   async (newCode) => {
-    currentUrl.value = window.location + `?code=${newCode}`
+    currentUrl.value = globalThis.location + `?code=${newCode}`
     qrDataUrl.value = await QRCode.toDataURL(currentUrl.value, {
       width: 200,
       margin: 2,
@@ -32,7 +32,7 @@ watch(
 
 onMounted(() => {
   if (props.code) {
-    currentUrl.value = window.location + `?code=${props.code}`
+    currentUrl.value = globalThis.location + `?code=${props.code}`
     QRCode.toDataURL(currentUrl.value, { width: 200, margin: 2 }).then((url) => {
       qrDataUrl.value = url
     })
