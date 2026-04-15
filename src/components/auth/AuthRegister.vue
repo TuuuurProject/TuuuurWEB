@@ -4,7 +4,6 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.register.title') }}
       </h2>
-      <div class="badge-success">{{ $t('auth.register.badge') }}</div>
     </header>
 
     <transition name="fade" mode="out-in">
