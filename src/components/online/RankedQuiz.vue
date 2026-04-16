@@ -945,6 +945,7 @@ onBeforeRouteLeave((to, from, next) => {
 async function confirmLeave() {
   showConfirmLeaveModal.value = false
 
+  await signalrService.invoke(RankedEvent.GiveUp)
   await cleanupRanked()
 
   if (pendingNavigation) {

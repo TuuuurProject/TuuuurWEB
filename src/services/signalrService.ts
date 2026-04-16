@@ -61,6 +61,7 @@ export enum RankedEvent {
   JoinSearchOpponent = 'JoinSearchOpponent',
   LeaveSearchOpponent = 'LeaveSearchOpponent',
   SendAnswer = 'SendAnswer',
+  GiveUp = 'GiveUp',
 
   // Server → Client
   OpponentFound = 'OnOpponentFound',
