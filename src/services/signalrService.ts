@@ -63,6 +63,8 @@ export enum RankedEvent {
   SendAnswer = 'SendAnswer',
 
   // Server → Client
+  GiveUp = 'GiveUp',
+  UserForfeited = 'OnUserForfeited',
   OpponentFound = 'OnOpponentFound',
   Countdown = 'OnCountdown',
   QuestionSend = 'OnQuestionSend',

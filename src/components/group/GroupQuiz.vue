@@ -737,7 +737,7 @@ const answered = ref(false)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
-const globalUserScore = ref(5000)
+const globalUserScore = ref(0)
 const userAnswerId = ref(<number | null>null)
 const scoreIsAvailable = ref(false)
 const percentageCorrectScore = ref(<number | null>null)
@@ -1294,7 +1294,7 @@ const handleQuestionSend = (data: any) => {
   // Réinitialiser l'état "finished" si une nouvelle partie commence
   if (finished.value) {
     finished.value = false
-    globalUserScore.value = 5000
+    globalUserScore.value = 0
     showAllPlayers.value = false
 
     // Réinitialiser les questions de la partie précédente

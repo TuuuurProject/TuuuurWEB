@@ -361,6 +361,7 @@
       "correctAnswers": "Correctes",
       "incorrectAnswers": "Incorrectes",
       "summary": "Récapitulatif des réponses",
+      "opponentForfeited": "L'adversaire a abandonné la partie.",
       "goodAnswer": "Bonne réponse",
       "badAnswer": "Mauvaise réponse",
       "confirmLeave": {

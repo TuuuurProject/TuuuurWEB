@@ -103,6 +103,7 @@ import {
   faArrowRightFromBracket,
   faCircleNotch,
   faChartLine,
+  faFlag,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -187,6 +188,7 @@ library.add(
   faArrowRightFromBracket,
   faCircleNotch,
   faChartLine,
+  faFlag,
 )
 
 // Functions
@@ -199,8 +201,9 @@ const unixToDate = function (unix: number | null, format = 'DD/MM/YYYY') {
 
   if (format === 'DD MMMM YYYY') {
     // Première lettre du mois en majuscule
-    const day =
-      dateDayjs.format('DD').startsWith('0') ? dateDayjs.format('DD').slice(1) : dateDayjs.format('DD')
+    const day = dateDayjs.format('DD').startsWith('0')
+      ? dateDayjs.format('DD').slice(1)
+      : dateDayjs.format('DD')
     const month = dateDayjs.format('MMMM')
     const year = dateDayjs.format('YYYY')
 

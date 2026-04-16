@@ -361,6 +361,7 @@
       "correctAnswers": "Correct",
       "incorrectAnswers": "Incorrect",
       "summary": "Answer Summary",
+      "opponentForfeited": "The opponent forfeited the game.",
       "goodAnswer": "Correct answer",
       "badAnswer": "Wrong answer",
       "confirmLeave": {

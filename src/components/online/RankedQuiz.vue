@@ -482,6 +482,15 @@
           </div>
         </div>
 
+        <!-- Message forfait -->
+        <div
+          v-if="rankedStore.isForfeited"
+          class="flex justify-center items-center gap-3 px-4 py-3 rounded-xl border border-brand-orange/40 bg-brand-orange/10 text-brand-orange text-lg mb-4"
+        >
+          <font-awesome-icon icon="flag" class="shrink-0" />
+          <span>{{ $t('competitive.quiz.opponentForfeited') }}</span>
+        </div>
+
         <!-- Récapitulatif des questions -->
         <div class="gaming-card">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
@@ -666,7 +675,7 @@ const answersRevealed = ref(false)
 const lastPoints = ref(0)
 
 // ─── Score & timer ────────────────────────────────────────────────────────────
-const myScore = ref(0)
+const myScore = ref(5000)
 const scores = ref<UserScore[]>([])
 const finished = computed(() => phase.value === 'finished')
 const showCurrentRanking = computed(() => phase.value === 'revealing' && scores.value.length > 0)
@@ -883,6 +892,11 @@ function onUserLoose(eloPoints: number) {
   phase.value = 'finished'
 }
 
+function onUserForfeited() {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Opponent forfeited')
+  rankedStore.isForfeited = true
+}
+
 function onError(message: string) {
   if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.error('[SignalR] Error:', message)
   toast.error(message)
@@ -898,6 +912,7 @@ const allEvents = [
   { name: RankedEvent.ScoreUpdate, handler: onScoreUpdate },
   { name: RankedEvent.UserWin, handler: onUserWin },
   { name: RankedEvent.UserLoose, handler: onUserLoose },
+  { name: RankedEvent.UserForfeited, handler: onUserForfeited }, // Même traitement que la défaite côté client
   { name: RankedEvent.Error, handler: onError },
 ]
 
@@ -985,6 +1000,8 @@ onBeforeRouteLeave((to, from, next) => {
 async function confirmLeave() {
   showConfirmLeaveModal.value = false
 
+  // GiveUp de l'utilisateur
+  await signalrService.invoke(RankedEvent.GiveUp)
   await cleanupRanked()
 
   if (pendingNavigation) {
