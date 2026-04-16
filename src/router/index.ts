@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/SoloPage.vue'),
   },
   {
-    path: '/groupe',
+    path: '/groupe/:id?',
     name: 'GroupMode',
     component: () => import('../views/GroupModePage.vue'),
   },

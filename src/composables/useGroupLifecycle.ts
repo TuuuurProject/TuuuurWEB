@@ -113,11 +113,11 @@ export function useGroupLifecycle() {
    */
   const setupAutoCleanup = () => {
     onMounted(() => {
-      window.addEventListener('beforeunload', handleBeforeUnload)
+      globalThis.addEventListener('beforeunload', handleBeforeUnload)
     })
 
     onBeforeUnmount(async () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
+      globalThis.removeEventListener('beforeunload', handleBeforeUnload)
       await cleanupGroup()
     })
   }

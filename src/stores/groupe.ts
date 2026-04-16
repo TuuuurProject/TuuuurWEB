@@ -159,6 +159,24 @@ export default defineStore('groupe', {
       }
     },
 
+    async getGroupeInfo(id: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'group/' + id
+      try {
+        const config = {
+          url,
+          method: 'GET'
+        }
+        const response = await axiosOverlayConnector(config)
+        this.groupePartyInfo = response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async createGroupe() {
       this.loadingCreationGroupe++
       const url = import.meta.env.VITE_API_URL + 'group/create'

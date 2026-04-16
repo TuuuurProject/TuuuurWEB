@@ -57,6 +57,7 @@ const useRankedStore = defineStore('ranked', () => {
   const finalScores = ref<UserScore[]>([])
   const eloChange = ref<number | null>(null)
   const hasWon = ref<boolean | null>(null)
+  const isForfeited = ref<boolean>(false)
 
   function reset() {
     opponent.value = null
@@ -64,6 +65,7 @@ const useRankedStore = defineStore('ranked', () => {
     finalScores.value = []
     eloChange.value = null
     hasWon.value = null
+    isForfeited.value = false
   }
 
   return {
@@ -72,6 +74,7 @@ const useRankedStore = defineStore('ranked', () => {
     finalScores,
     eloChange,
     hasWon,
+    isForfeited,
     reset,
   }
 })

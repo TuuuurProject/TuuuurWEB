@@ -19,7 +19,7 @@ export const resizeImage = async function (settings) {
   if (!(file instanceof File)) {
     throw new TypeError('file must be a File object')
   }
-  if (!file.type.match(/image\/.*/)) {
+  if (!(/image\/.*/).exec(file.type)) {
     throw new Error("Le fichier n'est pas une image")
   }
 

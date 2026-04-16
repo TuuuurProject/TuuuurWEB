@@ -87,6 +87,7 @@
 
 <script setup lang="ts">
 import { onMounted, getCurrentInstance, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GroupCreate from './GroupCreate.vue'
 import GroupJoin from './GroupJoin.vue'
@@ -100,6 +101,7 @@ import GroupQuiz from '@/components/group/GroupQuiz.vue'
 const userStore = useUserStore()
 const groupeStore = useGroupeStore()
 
+const route = useRoute()
 const { t } = useI18n()
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
@@ -120,9 +122,17 @@ function goLobbyFromJoin() {
   step.value = 'lobby'
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Si un ID est présent dans l'URL, l'assigner au store
+  const groupeId = route.params.id as string
+  if (groupeId && groupeStore.groupeId === null) {
+    groupeStore.groupeId = groupeId
+
+    step.value = 'game'
+  }
+
   // If code is in url, try to join the group (handles page refresh and direct link with code)
-  const urlParams = new URLSearchParams(window.location.search)
+  const urlParams = new URLSearchParams(globalThis.location.search)
   const codeFromUrl = urlParams.get('code')
   if (codeFromUrl && !groupeStore.groupeId) {
     groupeStore
@@ -142,8 +152,8 @@ onMounted(() => {
         // emit('goTo', 'join')
         // Remove code in url to prevent infinite loop on refresh
         urlParams.delete('code')
-        const newUrl = `${window.location.pathname}`
-        window.history.replaceState({}, '', newUrl)
+        const newUrl = `${globalThis.location.pathname}`
+        globalThis.history.replaceState({}, '', newUrl)
       })
   }
 })

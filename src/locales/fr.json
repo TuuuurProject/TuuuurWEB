@@ -198,7 +198,8 @@
       "themes": "Thèmes",
       "allThemes": "Tous les thèmes",
       "difficulties": "Difficultés",
-      "numberOfQuestions": "Nombre de questions"
+      "numberOfQuestions": "Nombre de questions",
+      "noQuestions": "Aucune question disponible pour ce quiz"
     }
   },
   "group": {
@@ -295,7 +296,8 @@
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
       },
-      "returnToLobby": "Retour au lobby"
+      "returnToLobby": "Retour au lobby",
+      "noQuestions": "Aucune question disponible pour cette partie"
     }
   },
   "competitive": {
@@ -359,12 +361,14 @@
       "correctAnswers": "Correctes",
       "incorrectAnswers": "Incorrectes",
       "summary": "Récapitulatif des réponses",
+      "opponentForfeited": "L'adversaire a abandonné la partie.",
       "goodAnswer": "Bonne réponse",
       "badAnswer": "Mauvaise réponse",
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
-      }
+      },
+      "noQuestions": "Aucune question disponible pour ce duel"
     }
   },
   "leaderboard": {

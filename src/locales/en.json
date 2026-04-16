@@ -198,7 +198,8 @@
       "themes": "Themes",
       "allThemes": "All themes",
       "difficulties": "Difficulties",
-      "numberOfQuestions": "Number of questions"
+      "numberOfQuestions": "Number of questions",
+      "noQuestions": "No question available for this quiz"
     }
   },
   "group": {
@@ -295,7 +296,8 @@
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? You will lose your progress and cannot return."
       },
-      "returnToLobby": "Return to lobby"
+      "returnToLobby": "Return to lobby",
+      "noQuestions": "No question available for this game"
     }
   },
   "competitive": {
@@ -359,12 +361,14 @@
       "correctAnswers": "Correct",
       "incorrectAnswers": "Incorrect",
       "summary": "Answer Summary",
+      "opponentForfeited": "The opponent forfeited the game.",
       "goodAnswer": "Correct answer",
       "badAnswer": "Wrong answer",
       "confirmLeave": {
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? Your progress will be lost and ELO will not be updated."
-      }
+      },
+      "noQuestions": "No question available for this duel"
     }
   },
   "leaderboard": {

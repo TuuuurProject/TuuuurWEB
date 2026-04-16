@@ -526,7 +526,7 @@ const showMatchDetails = (match: Match) => {
   if (match.partyType.label === 'Solo') {
     router.push({ name: 'SoloQuiz', params: { id: match.id } })
   } else if (match.partyType.label === 'Groupe') {
-    // router.push({ name: 'GroupMode', params: { id: match.id } })
+    router.push({ name: 'GroupMode', params: { id: match.id } })
   }
 }
 
@@ -564,7 +564,7 @@ const getRemainingThemesNames = (partyTheme: any[]) => {
 
 // Ajuster le nombre de thèmes visibles selon la largeur de l'écran
 const updateMaxVisibleThemes = () => {
-  const width = window.innerWidth
+  const width = globalThis.innerWidth
   if (width >= 1024) {
     // Desktop: afficher 4 thèmes
     maxVisibleThemes.value = 4
@@ -585,7 +585,7 @@ onMounted(async () => {
   updateMaxVisibleThemes()
 
   // Écouter les changements de taille d'écran
-  window.addEventListener('resize', updateMaxVisibleThemes)
+  globalThis.addEventListener('resize', updateMaxVisibleThemes)
 
   // First page of history
   await historyStore.getHistory()
@@ -593,7 +593,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
   // Nettoyer le listener
-  window.removeEventListener('resize', updateMaxVisibleThemes)
+  globalThis.removeEventListener('resize', updateMaxVisibleThemes)
 })
 </script>
 

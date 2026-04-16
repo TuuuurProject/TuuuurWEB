@@ -116,7 +116,8 @@ function onOpponentFound(opponent: RankedUser) {
 }
 
 function onCountdown(seconds: number) {
-  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('[SignalR] Countdown (OnlineMode):', seconds)
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+    console.log('[SignalR] Countdown (OnlineMode):', seconds)
   // Transition vers le jeu au premier countdown reçu après OnOpponentFound.
   // RankedQuiz prendra le relais pour les countdowns suivants.
   if (step.value === 'found' && !firstCountdownReceived) {
@@ -137,8 +138,8 @@ function onError(message: string) {
 
 const allEvents = [
   { name: RankedEvent.OpponentFound, handler: onOpponentFound },
-  { name: RankedEvent.Countdown,     handler: onCountdown },
-  { name: RankedEvent.Error,         handler: onError },
+  { name: RankedEvent.Countdown, handler: onCountdown },
+  { name: RankedEvent.Error, handler: onError },
 ]
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
@@ -154,7 +155,7 @@ async function startSearch() {
     initialCountdown.value = null
 
     await signalrService.invoke(RankedEvent.JoinSearchOpponent)
-  } catch (e) {
+  } catch {
     toast.error(t('group.lobby.connectionError'))
     step.value = 'idle'
     await cleanupRanked()
@@ -169,7 +170,9 @@ async function handleCancel() {
     if (signalrService.isConnected()) {
       await signalrService.invoke(RankedEvent.LeaveSearchOpponent)
     }
-  } catch (_) {}
+  } catch (e) {
+    if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.warn('Failed to leave search queue:', e)
+  }
 
   await cleanupRanked()
   step.value = 'idle'
@@ -193,7 +196,11 @@ async function handleReplay() {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(async () => {
   if (!userStore.userInfo) {
-    try { await userStore.getUserInfo() } catch (_) {}
+    try {
+      await userStore.getUserInfo()
+    } catch (e) {
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.warn('Failed to fetch user info:', e)
+    }
   }
 
   // Même pattern que GroupLobby : nettoyer tous les handlers existants pour ces
@@ -208,7 +215,12 @@ onBeforeUnmount(async () => {
 
   // Si on était encore en recherche, informer le serveur
   if (step.value === 'search') {
-    try { await signalrService.invoke(RankedEvent.LeaveSearchOpponent) } catch (_) {}
+    try {
+      await signalrService.invoke(RankedEvent.LeaveSearchOpponent)
+    } catch (e) {
+      if (import.meta.env.VITE_DEBUG_CONSOLE_LOG)
+        console.warn('Failed to leave search queue on unmount:', e)
+    }
   }
 
   // Ne pas déconnecter si on passe au jeu : RankedQuiz garde la connexion vivante

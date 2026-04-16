@@ -95,7 +95,7 @@ const handlePaste = async (event: ClipboardEvent) => {
   try {
     const code = event.clipboardData?.getData('text')?.replace(/\s|-/g, '') || ''
 
-    if (/^[0-9]{6}$/.test(code)) {
+    if (/^\d{6}$/.test(code)) {
       fillDigits(code)
     }
   } catch {}
@@ -106,7 +106,7 @@ const handleKeyboardPaste = async () => {
     const code = await navigator.clipboard.readText()
     const cleanCode = code.replace(/\s|-/g, '')
 
-    if (/^[0-9]{6}$/.test(cleanCode)) {
+    if (/^\d{6}$/.test(cleanCode)) {
       fillDigits(cleanCode)
     }
   } catch {}

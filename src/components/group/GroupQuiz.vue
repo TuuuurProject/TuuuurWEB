@@ -271,9 +271,7 @@
             <div class="h-12 w-px bg-brand-purple/30"></div>
             <div class="text-center">
               <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.successRate') }}</div>
-              <div class="font-branding text-3xl text-brand-green">
-                {{ Math.round((correctAnswersCount / allQuestionsParty.length) * 100) }}%
-              </div>
+              <div class="font-branding text-3xl text-brand-green">{{ pourcentageCorrect }}%</div>
             </div>
           </div>
 
@@ -578,7 +576,7 @@
             </h3>
           </div>
 
-          <div class="space-y-4 pr-2">
+          <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
             <div
               v-for="(questionData, idx) in allQuestionsParty"
               :key="idx"
@@ -622,7 +620,10 @@
                   <div class="flex items-center gap-2">
                     <span class="flex-shrink-0">
                       <font-awesome-icon v-if="answer.valid" icon="check" />
-                      <font-awesome-icon v-else-if="isUserAnswer(questionData)" icon="times" />
+                      <font-awesome-icon
+                        v-else-if="answer.id === questionData?.idAnswer"
+                        icon="times"
+                      />
                       <font-awesome-icon v-else icon="circle" class="text-xs" />
                     </span>
                     <span class="flex-1">{{ answer.value }}</span>
@@ -631,13 +632,26 @@
               </div>
             </div>
           </div>
+          <div v-else class="text-center text-brand-gray space-y-4 pr-2">
+            {{ $t('group.quiz.noQuestions') }}
+          </div>
         </div>
 
         <!-- Actions finales -->
         <div
           class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
         >
-          <button class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
+          <button
+            class="btn btn-secondary w-full sm:w-auto"
+            @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"
+          >
+            <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
+          </button>
+          <button
+            v-if="!comeFromHistory"
+            class="btn btn-secondary w-full sm:w-auto"
+            @click="exitQuizGame"
+          >
             <font-awesome-icon icon="arrow-left" class="mr-2" />
             {{ $t('group.quiz.returnToLobby') }}
           </button>
@@ -694,7 +708,11 @@ import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
-import useGroupeStore from '@/stores/groupe'
+import useGroupeStore, {
+  type GroupePartyInfo,
+  type PartyQuestion,
+  type User,
+} from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 import useThemeStore from '@/stores/theme'
 import { useGroupLifecycle } from '@/composables/useGroupLifecycle'
@@ -722,6 +740,8 @@ const finished = ref(false)
 const globalUserScore = ref(0)
 const userAnswerId = ref(<number | null>null)
 const scoreIsAvailable = ref(false)
+const percentageCorrectScore = ref(<number | null>null)
+const comeFromHistory = ref(false)
 
 // Track which users have answered the current question
 const usersAnswered = ref(new Set<number | string>())
@@ -746,7 +766,7 @@ const playersRanking = ref<
 const showAllPlayers = ref(false)
 
 const remaining = ref(TOTAL_TIME)
-let timer: number | null = null
+let timer: ReturnType<typeof setInterval> | null = null
 let startTime: number | null = null
 
 // Gestion de la modale de confirmation pour quitter
@@ -953,7 +973,7 @@ const startTimer = () => {
   remaining.value = TOTAL_TIME
   startTime = Date.now()
 
-  timer = window.setInterval(async () => {
+  timer = globalThis.setInterval(async () => {
     const elapsed = (Date.now() - startTime!) / 1000 // temps écoulé en secondes
     remaining.value = Math.max(0, +(TOTAL_TIME - elapsed).toFixed(1))
 
@@ -1091,6 +1111,12 @@ const correctAnswersCount = computed(() => {
   return allQuestionsParty.value.filter((q: any) => isQuestionCorrect(q)).length
 })
 
+const pourcentageCorrect = computed(() => {
+  if (percentageCorrectScore.value !== null) return percentageCorrectScore.value
+  if (allQuestionsParty.value.length === 0) return 0
+  return Math.round((correctAnswersCount.value / allQuestionsParty.value.length) * 100)
+})
+
 const isQuestionCorrect = (questionData: any) => {
   if (!questionData?.correct) return false
   return questionData?.correct
@@ -1099,10 +1125,6 @@ const isQuestionCorrect = (questionData: any) => {
 const getQuestionPoints = (questionData: any) => {
   // Simuler les points gagnés (à adapter selon votre logique)
   return questionData?.score || 100
-}
-
-const isUserAnswer = (questionData: any) => {
-  return questionData?.idAnswer !== null
 }
 
 // Computed properties pour les informations de la partie
@@ -1168,7 +1190,7 @@ const isUserAnswerIsCorrect = (questions: any, answerId: number) => {
 
 const getAnswerClass = (questionData: any, answer: any) => {
   const isCorrect = answer.valid
-  const isUserChoice = isUserAnswer(questionData)
+  const isUserChoice = answer.id === questionData?.idAnswer
 
   if (isCorrect && isUserChoice) {
     // Bonne réponse sélectionnée
@@ -1203,7 +1225,7 @@ const exitQuizGame = async () => {
 
 // Handlers for SignalR events
 const countdownValue = ref<number | null>(null)
-let countdownClearTimeout: number | null = null
+let countdownClearTimeout: ReturnType<typeof setTimeout> | null = null
 
 const countdownTextClass = computed(() => {
   // Variantes de couleur façon “3-2-1” arcade
@@ -1236,7 +1258,7 @@ const handleCountdownEvent = (data: any) => {
 
     // On masque un poil après le "1"
     if (value === 1) {
-      countdownClearTimeout = window.setTimeout(() => {
+      countdownClearTimeout = globalThis.setTimeout(() => {
         clearCountdownOverlay()
       }, 900)
     }
@@ -1383,6 +1405,58 @@ const handleBeforeUnload = () => {
 }
 
 onMounted(async () => {
+  // If onMounted, the groupId exist, display the recap
+  if (groupeStore.groupeId) {
+    await groupeStore.getGroupeInfo(groupeStore.groupeId)
+    finished.value = groupeStore.groupePartyInfo!.finish
+    if (finished.value) {
+      comeFromHistory.value = true
+      globalUserScore.value = groupeStore.groupePartyInfo!.score
+      percentageCorrectScore.value = groupeStore.groupePartyInfo!.percent
+
+      // Populate players ranking from userScores (API data, not SignalR)
+      const partyInfoRaw = groupeStore.groupePartyInfo as GroupePartyInfo & {
+        userScores?: { score: number; user: User }[]
+      }
+      if (Array.isArray(partyInfoRaw.userScores)) {
+        playersRanking.value = partyInfoRaw.userScores.map((us) => ({
+          score: us.score,
+          user: us.user as {
+            id?: number
+            nickName?: string
+            avatar?: string | null
+            email?: string
+            isAdmin?: boolean
+            isNew?: boolean
+          },
+        }))
+      }
+
+      // Normalize partyQuestions to match the live-game format expected by the recap
+      if (groupeStore.groupePartyInfo!.partyQuestions) {
+        groupeStore.groupePartyInfo!.partyQuestions =
+          groupeStore.groupePartyInfo!.partyQuestions.map((pq) => {
+            const raw = pq as PartyQuestion & {
+              userPartyQuestion?: { correct?: boolean; idAnswer?: number | null; score?: number }
+            }
+            return {
+              ...pq,
+              correct: raw.userPartyQuestion?.correct ?? false,
+              idAnswer: raw.userPartyQuestion?.idAnswer ?? null,
+              score: raw.userPartyQuestion?.score ?? 0,
+            }
+          })
+      }
+
+      // Load themes so partyThemes computed can resolve icons/labels
+      if (!themeStore.list) {
+        await themeStore.loadThemes()
+      }
+
+      return
+    }
+  }
+
   // Load themes if not already loaded
   if (!themeStore.list) {
     await themeStore.loadThemes()
@@ -1408,10 +1482,10 @@ onMounted(async () => {
   nbMaxQuestions.value = groupeStore.groupePartyInfo?.nbQuestions || 0
 
   // Ajouter l'écouteur d'événements clavier
-  window.addEventListener('keydown', handleKeyPress)
+  globalThis.addEventListener('keydown', handleKeyPress)
 
   // Ajouter le gestionnaire de fermeture de page
-  window.addEventListener('beforeunload', handleBeforeUnload)
+  globalThis.addEventListener('beforeunload', handleBeforeUnload)
 })
 
 // Gérer la navigation (bouton retour du navigateur, changement de route)
@@ -1456,8 +1530,10 @@ onBeforeUnmount(async () => {
   clearTimer()
   clearCountdownOverlay()
 
-  window.removeEventListener('keydown', handleKeyPress)
-  window.removeEventListener('beforeunload', handleBeforeUnload)
+  comeFromHistory.value = false
+
+  globalThis.removeEventListener('keydown', handleKeyPress)
+  globalThis.removeEventListener('beforeunload', handleBeforeUnload)
 
   // Nettoyer les listeners SignalR
   allEvents.forEach((event) => {
