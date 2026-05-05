@@ -1,0 +1,18 @@
+name: Build release branch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  docker-push:
+    uses: ./.github/workflows/job_build_release.yaml
+    with:
+      environment_name: 'Production'
+      image_tag: 'production'
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID_PROD }}

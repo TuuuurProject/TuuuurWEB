@@ -1,0 +1,19 @@
+name: Build Workflow
+
+on:
+  workflow_call:
+    secrets:
+      VITE_GOOGLE_CLIENT_ID:
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build --no-cache -t tuuur_web:dev --build-arg BUILD_ENV=preprod --build-arg VITE_GOOGLE_CLIENT_ID=${{ secrets.VITE_GOOGLE_CLIENT_ID }} .

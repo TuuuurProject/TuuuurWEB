@@ -1,0 +1,24 @@
+FROM node:lts-alpine AS build-stage
+WORKDIR /app
+
+# Argument pour définir l'environnement (preprod, production, etc.)
+ARG BUILD_ENV=preprod
+ARG VITE_GOOGLE_CLIENT_ID
+
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+# Copier le bon fichier .env et supprimer tous les autres
+RUN cp ".env.${BUILD_ENV}" .env && \
+    echo "" >> .env && \
+    echo "VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}" >> .env && \
+    rm -f .env.*
+
+RUN rm -rf dist/ && npm run build
+
+FROM nginx:stable-alpine AS production-stage
+COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+CMD ["nginx", "-g", "daemon off;"]
