@@ -8,7 +8,9 @@ export default function axiosOverlayConnector(axiosConfig, overlayConfig = {}) {
 
   let functionConfig = {
     getToken: async () => {
-      return userStore.token
+      if (userStore.isLogged) return userStore.token
+      if (userStore.isLoggedAsInvited) return userStore.invitedToken
+      return null
     },
     setToken: (token) => {
       userStore.token = token

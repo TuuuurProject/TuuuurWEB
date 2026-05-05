@@ -2,6 +2,14 @@
 export default {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
+    screens: {
+      xs: '480px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         brand: {
@@ -37,13 +45,14 @@ export default {
         orbitron: ['Orbitron', 'cursive', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        neon: '0 0 20px rgba(108, 92, 231, 0.5), 0 0 40px rgba(108, 92, 231, 0.3)',
-        'neon-orange': '0 0 20px rgba(255, 107, 53, 0.5), 0 0 40px rgba(255, 107, 53, 0.3)',
-        'neon-green': '0 0 20px rgba(0, 208, 132, 0.5), 0 0 40px rgba(0, 208, 132, 0.3)',
-        glow: '0 0 30px rgba(108, 92, 231, 0.4)',
-        'glow-hover': '0 0 40px rgba(108, 92, 231, 0.6), 0 0 60px rgba(108, 92, 231, 0.4)',
-        card: '0 8px 32px rgba(10, 11, 30, 0.3), 0 4px 16px rgba(10, 11, 30, 0.2)',
-        soft: '0 12px 24px rgba(74,46,25,0.14), 0 6px 12px rgba(74,46,25,0.08)',
+        neon: '0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.1)',
+        'neon-orange': '0 0 5px rgba(255, 107, 53, 0.2), 0 0 10px rgba(255, 107, 53, 0.1)',
+        'neon-green': '0 0 5px rgba(0, 208, 132, 0.2), 0 0 10px rgba(0, 208, 132, 0.1)',
+        glow: '0 0 8px rgba(108, 92, 231, 0.15)',
+        'glow-hover': '0 0 12px rgba(108, 92, 231, 0.25), 0 0 20px rgba(108, 92, 231, 0.12)',
+        'glow-hover-orange': '0 0 12px rgba(255, 107, 53, 0.25), 0 0 20px rgba(255, 107, 53, 0.12)',
+        card: '0 2px 8px rgba(10, 11, 30, 0.15), 0 1px 4px rgba(10, 11, 30, 0.08)',
+        soft: '0 3px 6px rgba(74,46,25,0.05), 0 1px 3px rgba(74,46,25,0.03)',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

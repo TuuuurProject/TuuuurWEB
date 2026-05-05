@@ -13,11 +13,13 @@
             })
           }}</span>
         </div>
-        <ul class="grid gap-4 md:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] sm:grid-cols-1">
+        <ul
+          class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
+        >
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 hover:shadow-neon transition duration-250 overflow-hidden"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 items-start hover:shadow-neon transition duration-250 overflow-hidden flex gap-4 items-center"
           >
             <div class="relative shrink-0">
               <div
@@ -39,11 +41,19 @@
                 </div>
               </div>
             </div>
-            <div class="min-w-0">
+            <div class="min-w-0 flex-1">
               <div class="font-semibold leading-tight truncate text-brand-lightGray">
                 {{ p.user?.nickName }}
               </div>
             </div>
+            <button
+              v-if="currentUserIsHost && (p.user.idUser ?? p.user.id) !== userStore.userId"
+              @click="handleExpelPlayer(p)"
+              class="btn-icon text-brand-orange hover:text-red-500 transition-colors shrink-0"
+              :title="$t('group.lobby.expelPlayer')"
+            >
+              <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+            </button>
           </li>
         </ul>
       </div>
@@ -52,7 +62,7 @@
       <aside class="md:col-span-4 space-y-4">
         <div class="gaming-card">
           <h3 class="font-branding text-xl mb-3 text-brand-lightGray">
-            {{ $t('group.lobby.joinSection') }}
+            {{ $t('group.lobby.joinSection') }} !
           </h3>
           <div
             class="text-center font-branding text-2xl tracking-wider text-brand-lightGray hover:underline cursor-pointer mb-4"
@@ -63,13 +73,17 @@
           </div>
 
           <div class="flex justify-center">
-            <QRPreview :text="groupeStore?.groupePartyInfo?.code || ''" :size="180" />
+            <QRPreview :code="groupeStore?.groupePartyInfo?.code || ''" />
           </div>
         </div>
       </aside>
     </div>
 
     <div class="flex flex-wrap items-center justify-end gap-3">
+      <button class="btn btn-ghost" @click="leaveGroupe">
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
+      </button>
+
       <button
         v-if="currentUserIsHost"
         class="btn btn-primary"
@@ -109,10 +123,7 @@
           <span class="text-brand-gray">
             {{
               Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
-                .map(
-                  (difficulty: any) =>
-                    difficulty?.difficulty?.label,
-                )
+                .map((difficulty: any) => difficulty?.difficulty?.label)
                 .join(', ')
             }}</span
           >
@@ -156,6 +167,12 @@ const copyCode = async () => {
   navigator.clipboard.writeText(groupeStore?.groupePartyInfo?.code || '').then(() => {
     proxy?.$toast.success(t('group.lobby.copySuccess'))
   })
+}
+
+const leaveGroupe = async () => {
+  // Nettoyage complet de groupe
+  await cleanupGroup()
+  emit('goTo', 'mode')
 }
 
 // Start game when :
@@ -221,6 +238,16 @@ const handlePartyUpdateEvent = (data: any) => {
   }
 }
 
+const handleExpelPlayer = async (player: any) => {
+  try {
+    const playerId = player.user.idUser ?? player.user.id
+    await groupeStore.expelledPlayer(playerId)
+  } catch (error) {
+    console.error('Failed to expel player:', error)
+    proxy?.$toast.error(t('group.lobby.expelError'))
+  }
+}
+
 const confirmStartGame = async () => {
   if (signalrService.isConnected()) {
     await signalrService.send(GroupEvent.StartGroupParty)
@@ -235,12 +262,35 @@ const handleOnError = (error: any) => {
   proxy?.$toast.error(error)
 }
 
+const handlePlayerExpelledEvent = async (data: any) => {
+  if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('Player expelled:', data)
+  // Si c'est le joueur actuel qui a été expulsé, nettoyer et retourner au mode sélection
+  if (
+    (data.id === userStore.userId && userStore.isLogged) ||
+    (data.id === userStore.userIdInvited && userStore.isLoggedAsInvited)
+  ) {
+    proxy?.$toast.warning(t('group.lobby.youWereExpelled'))
+    await cleanupGroup()
+    emit('goTo', 'mode')
+  } else if (groupeStore.groupePartyInfo) {
+    // Retirer le joueur expulsé de la liste
+    groupeStore.groupePartyInfo.partyUsers = groupeStore.groupePartyInfo.partyUsers.filter(
+      (u: any) => {
+        const userId = u.user.idUser ?? u.user.id
+        return userId !== data.id
+      },
+    )
+    proxy?.$toast.info(t('group.lobby.playerExpelled', { name: data.nickName }))
+  }
+}
+
 const allEvents = [
   { name: GroupEvent.PlayerJoined, handler: handleJoinEvent },
   { name: GroupEvent.PlayerLeft, handler: handleLeaveEvent },
   { name: GroupEvent.PartyStarted, handler: handleStartEvent },
   { name: GroupEvent.PartyDeleted, handler: handleDeleteEvent },
   { name: GroupEvent.PartyUpdated, handler: handlePartyUpdateEvent },
+  { name: GroupEvent.PlayerExepelled, handler: handlePlayerExpelledEvent },
   { name: GroupEvent.Error, handler: handleOnError },
 ]
 
@@ -257,14 +307,19 @@ onMounted(async () => {
   try {
     await connectSignalR()
 
+    // Nettoyer les anciens listeners avant d'en ajouter de nouveaux
+    allEvents.forEach((event) => {
+      signalrService.off(event.name) // Retire TOUS les handlers pour cet event
+    })
+
+    // Maintenant, ajouter nos nouveaux listeners
     allEvents.forEach((event) => {
       signalrService.on(event.name, (data: unknown) => {
         event.handler(data)
       })
     })
 
-    // Ajouter le gestionnaire de fermeture de page
-    window.addEventListener('beforeunload', handleBeforeUnload)
+    globalThis.addEventListener('beforeunload', handleBeforeUnload)
   } catch (error) {
     console.error('Failed to connect to SignalR:', error)
     proxy?.$toast.error(t('group.lobby.connectionError'))
@@ -273,17 +328,19 @@ onMounted(async () => {
 
 // Gérer la navigation (bouton retour du navigateur, changement de route)
 onBeforeRouteLeave(async (to, from, next) => {
-  // Si l'utilisateur change de route (bouton retour, navigation), nettoyer le groupe
+  // Si l'utilisateur appuie sur retour, nettoyer le groupe et revenir au mode de sélection
   if (groupeStore.groupeId) {
     await cleanupGroup()
   }
-  next()
+  emit('goTo', 'mode')
+
+  next(false) // Bloquer la navigation pour rester dans le composant parent
 })
 
 // Cleanup SignalR listeners only (keep connection alive for the game)
 onBeforeUnmount(() => {
   // Retirer le gestionnaire de fermeture de page
-  window.removeEventListener('beforeunload', handleBeforeUnload)
+  globalThis.removeEventListener('beforeunload', handleBeforeUnload)
 
   // Nettoyer uniquement les écouteurs SignalR du lobby
   // La connexion reste active pour GroupQuiz

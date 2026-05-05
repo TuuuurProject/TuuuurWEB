@@ -4,11 +4,13 @@
       <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.title') }}
       </h2>
-      <div class="badge-info">{{ $t('auth.login.badge') }}</div>
     </header>
 
     <transition name="fade" mode="out-in">
-      <div v-if="step === 1" class="max-w-lg gaming-card mx-auto">
+      <div v-if="step === 0" class="max-w-lg gaming-card mx-auto">
+        <auth-forgot-password @back="step = 1" @success="handleForgotPasswordSuccess" />
+      </div>
+      <div v-else-if="step === 1" class="max-w-lg gaming-card mx-auto">
         <overlay-block :loading="userStore.isLoading">
           <form class="space-y-5" @submit.prevent="loginUser">
             <div>
@@ -37,12 +39,12 @@
                 :placeholder="$t('auth.login.passwordPlaceholder')"
               />
               <div class="mt-2 text-sm">
-                <button type="button" class="pill hover:bg-brand-purple/10">
+                <button type="button" class="pill hover:bg-brand-purple/10" @click="step = 0">
                   {{ $t('auth.login.forgotPassword') }}
                 </button>
               </div>
             </div>
-            <div class="pt-2 flex items-center justify-center gap-3">
+            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
               <button type="button" class="btn btn-secondary" @click="$emit('back')">
                 {{ $t('common.cancel') }}
               </button>
@@ -56,15 +58,25 @@
               class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
               role="alert"
             >
-              <ul
-                v-for="field in Object.keys(error)"
-                :key="field"
-                class="mt-1 list-disc list-inside"
+              <template
+                v-if="
+                  typeof error === 'string' ||
+                  (typeof error === 'object' && error?.name?.includes('Axios'))
+                "
               >
-                <li v-for="(msg, idx) in error[field]" :key="idx">
-                  {{ typeof msg === 'string' ? msg : msg?.description }}
-                </li>
-              </ul>
+                {{ error }}
+              </template>
+              <template v-else-if="error && typeof error === 'object'">
+                <ul
+                  v-for="field in Object.keys(error)"
+                  :key="field"
+                  class="mt-1 list-disc list-inside"
+                >
+                  <li v-for="(msg, idx) in error[field]" :key="idx">
+                    {{ typeof msg === 'string' ? msg : msg?.description }}
+                  </li>
+                </ul>
+              </template>
             </div>
           </div>
 
@@ -78,9 +90,11 @@
             <google-login :callback="handleGoogleLogin" />
           </div>
 
-          <div class="mt-6 text-sm text-brand-gray text-center">
+          <div
+            class="mt-6 text-sm text-brand-gray text-center flex items-center justify-center gap-2 flex-col sm:flex-row"
+          >
             {{ $t('auth.login.noAccount') }}
-            <button class="pill hover:bg-brand-purple/10 ml-2" @click="$emit('goto-register')">
+            <button class="pill hover:bg-brand-purple/10 sm:ml-2" @click="$emit('goto-register')">
               {{ $t('auth.login.createAccount') }}
             </button>
           </div>
@@ -100,6 +114,7 @@ import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import router from '@/router'
 import AuthCode from '@/components/auth/AuthCode.vue'
+import AuthForgotPassword from '@/components/auth/AuthForgotPassword.vue'
 
 const { t } = useI18n()
 const login = ref('')
@@ -112,7 +127,7 @@ interface ErrorMessage {
 type ErrorField = string | ErrorMessage
 
 const error = ref<Record<string, ErrorField[]> | null>(null)
-const step = ref(1) // 1: login, 2: verify email
+const step = ref(1) // 0: forgot password, 1: login, 2: verify email
 
 const userStore = useUserStore()
 
@@ -174,4 +189,22 @@ const redirectAfterLogin = () => {
     router.push({ name: 'Home' })
   }
 }
+
+// Handle forgot password success
+const handleForgotPasswordSuccess = () => {
+  step.value = 1
+}
 </script>
+
+<style scoped>
+/* Transition rapide entre les étapes */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

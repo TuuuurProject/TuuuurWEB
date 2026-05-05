@@ -7,15 +7,23 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 dayjs.locale('fr')
 
+interface JwtTokenPayload {
+  exp: number
+  id: string
+}
+
 interface UserInfo {
   nickName: string
   avatar: string
   email: string
+  isGoogleUser: boolean
+  globalElo: number
 }
 
 export default defineStore('user', {
   state: () => ({
     token: null as string | null,
+    invitedToken: null as string | null,
     refreshToken: null as string | null,
     loading: 0 as number,
     comeFrom: null as string | null, // To store the route before login
@@ -33,7 +41,7 @@ export default defineStore('user', {
 
     isLogged() {
       if (this.token) {
-        const payload = this.decodedPayloadToken as any
+        const payload = this.decodedPayloadToken as JwtTokenPayload | null
         if (!payload) return false
 
         const localExp = dayjs.unix(payload.exp).unix()
@@ -53,12 +61,45 @@ export default defineStore('user', {
       return false
     },
 
-    userId(): number {
-      const payload = this.decodedPayloadToken as any
-      if (payload && payload.id) {
-        return parseInt(payload.id)
+    userId(): string {
+      const payload = this.decodedPayloadToken as JwtTokenPayload | null
+      if (payload?.id) {
+        return payload.id
       }
-      return 0
+      return ''
+    },
+
+    userInvitedId(): string {
+      const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
+      if (payload?.id) {
+        return payload.id
+      }
+      return ''
+    },
+
+    isLoggedAsInvited() {
+      if (this.invitedToken) {
+        const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
+        if (!payload) return false
+
+        const localExp = dayjs.unix(payload.exp).unix()
+        const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+        return localExp > currentTimeInSeconds
+      }
+      return false
+    },
+
+    decodedPayloadInvitedToken: (state) => {
+      if (!state.invitedToken) return null
+      return jwtDecode(state.invitedToken)
+    },
+
+    userIdInvited(): string {
+      const payload = this.decodedPayloadInvitedToken as JwtTokenPayload | null
+      if (payload?.id) {
+        return payload.id
+      }
+      return ''
     },
   },
 
@@ -235,6 +276,28 @@ export default defineStore('user', {
       }
     },
 
+    async getInvitedToken(nickname: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/invited'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: {
+            nickname,
+          },
+        }
+        const response = await axiosOverlayConnector(config)
+        this.invitedToken = response.data.token.token
+        this.userInfo = response.data.user
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async getRefreshToken() {
       this.loading++
       const url = import.meta.env.VITE_API_URL + 'auth/refresh'
@@ -281,6 +344,44 @@ export default defineStore('user', {
         }
 
         return responseData
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async forgotPassword(login: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/password/forgot'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { login },
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async resetPassword(login: string, password: string, code: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'auth/password/reset'
+      try {
+        const config = {
+          url,
+          method: 'POST',
+          data: { login, password, code },
+        }
+        const response = await axiosOverlayConnector(config)
+        return response.data
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error

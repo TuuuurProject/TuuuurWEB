@@ -35,13 +35,11 @@ onMounted(async () => {
       if (route.meta.mustBeAuthenticated) {
         userStore.logout()
       }
-      window.location.reload()
+      globalThis.location.reload()
     }
-  } else {
-    if (!userStore.isLogged && route.meta.mustBeAuthenticated) {
-      // Pas de refresh token et route protégée : rediriger vers login
-      userStore.logout()
-    }
+  } else if (!userStore.isLogged && route.meta.mustBeAuthenticated) {
+    // Pas de refresh token et route protégée : rediriger vers login
+    userStore.logout()
   }
 })
 </script>

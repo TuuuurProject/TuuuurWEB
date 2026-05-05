@@ -93,12 +93,12 @@
         </div>
 
         <div>
-          <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
+          <div class="font-semibold mb-3 block text-brand-lightGray mt-6">
             <font-awesome-icon icon="trophy" class="mr-2 text-brand-purple" />
             {{ $t('group.lobby.scoreEachRound') }}
-          </label>
+          </div>
           <div
-            class="flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
+            class="select-none flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
             @click="scoreEachRound = !scoreEachRound"
           >
             <div class="flex-1">
@@ -124,9 +124,9 @@
         <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <label class="font-semibold text-brand-lightGray">{{
+              <div class="font-semibold text-brand-lightGray">{{
                 $t('solo.settings.questionsCount')
-              }}</label>
+              }}</div>
               <span class="pill font-bold text-brand-purple">{{ questions }}</span>
             </div>
             <div class="mt-3 flex items-center gap-3">
@@ -156,10 +156,10 @@
         </div>
 
         <div>
-          <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
+          <div class="font-semibold mb-3 block text-brand-lightGray mt-6">
             <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
             {{ $t('solo.settings.difficulty') }}
-          </label>
+          </div>
           <div class="space-y-2">
             <button
               v-for="diff in difficulties"
@@ -191,7 +191,7 @@
 import { reactive, ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useThemeStore from '@/stores/theme'
-import useGroupeStore, { type PartyDifficulty } from '@/stores/groupe'
+import useGroupeStore, { type PartyDifficulty, type PartyTheme } from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 
 const { t } = useI18n()
@@ -199,7 +199,7 @@ const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
 
-const selectedDifficulty = ref([2]) // Moyen par défaut
+const selectedDifficulty = ref<number[]>([]) // Moyen par défaut
 
 interface Theme {
   id: string
@@ -242,41 +242,6 @@ const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
 )
 
-watch(
-  () => groupeStore.groupePartyInfo?.nbQuestions,
-  (newInfo) => {
-    if (newInfo) {
-      questions.value = newInfo
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.partyDifficulty,
-  (newDiff) => {
-    if (newDiff && Array.isArray(newDiff) && !currentUserIsHost.value) {
-      selectedDifficulty.value = newDiff.map((d: PartyDifficulty) => d.idDifficulty as number)
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.partyTheme,
-  (newThemes) => {
-    if (newThemes && Array.isArray(newThemes) && !currentUserIsHost.value) {
-      selected.clear()
-      newThemes.forEach((theme) => selected.add(theme.idTheme as string))
-    }
-  },
-)
-
-watch(
-  () => groupeStore.groupePartyInfo?.scoreEachRound,
-  (newValue) => {
-    if (!currentUserIsHost.value) scoreEachRound.value = newValue as boolean
-  },
-)
-
 onMounted(async () => {
   // Récupération des thèmes
   await themeStore.loadThemes()
@@ -302,6 +267,37 @@ const selectedDifficultyList = computed(() => {
 const questions = ref(10)
 
 const scoreEachRound = ref(false)
+
+function applyPartyInfo(newInfo: NonNullable<typeof groupeStore.groupePartyInfo>) {
+  if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
+    selected.clear()
+    newInfo.partyTheme.forEach((theme: PartyTheme) => selected.add(theme.idTheme as string))
+  }
+  if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
+    selectedDifficulty.value = newInfo.partyDifficulty.map(
+      (d: PartyDifficulty) => d.idDifficulty as number,
+    )
+  }
+  if (newInfo.scoreEachRound !== undefined) scoreEachRound.value = newInfo.scoreEachRound
+  if (newInfo.nbQuestions) questions.value = newInfo.nbQuestions
+}
+
+watch(
+  () => groupeStore.groupePartyInfo,
+  (newInfo) => {
+    if (!newInfo) return
+    if (currentUserIsHost.value && !groupeStore.comeFromEndOfQuizGame) return
+
+    const isReturningHost = currentUserIsHost.value && groupeStore.comeFromEndOfQuizGame
+
+    applyPartyInfo(newInfo)
+
+    if (isReturningHost) {
+      groupeStore.comeFromEndOfQuizGame = false
+    }
+  },
+  { deep: true, immediate: true },
+)
 
 const toggle = (id: string) => {
   if (selected.has(id)) {
@@ -378,28 +374,6 @@ const toggleDifficulty = (id: number) => {
 }
 
 /* Boutons de difficulté */
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-  transform: translateX(4px);
-}
-
 /* Couleurs par difficulté */
 .diff-easy {
   --diff-color: #10b981;
@@ -415,10 +389,25 @@ const toggleDifficulty = (id: number) => {
 }
 
 .difficulty-button {
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--diff-color);
 }
 
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
+  transform: translateX(4px);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
 }
 

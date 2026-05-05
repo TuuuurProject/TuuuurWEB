@@ -13,7 +13,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/SoloPage.vue'),
   },
   {
-    path: '/groupe',
+    path: '/groupe/:id?',
     name: 'GroupMode',
     component: () => import('../views/GroupModePage.vue'),
   },
@@ -57,17 +57,17 @@ router.beforeEach((to, from, next) => {
   const user = useUserStore()
 
   // Liste des routes qui nécessitent une connexion
-  const protectedRoutes = ['Profile', 'SoloQuiz', 'GroupMode']
+  const protectedRoutes = new Set(['Profile', 'SoloQuiz', 'GroupMode'])
 
   // Sauvegarder la route uniquement si l'utilisateur n'est pas connecté
   // et tente d'accéder à une page protégée
-  if (!user.isLogged && protectedRoutes.includes(to.name as string)) {
+  if (!user.isLogged && protectedRoutes.has(to.name as string)) {
     user.comeFrom = to.fullPath
   }
 
   if (
     user.isLogged &&
-    protectedRoutes.includes(from.name as string) &&
+    protectedRoutes.has(from.name as string) &&
     (to.name === 'Login' || to.name === 'Register')
   ) {
     return next({ name: 'Home' })

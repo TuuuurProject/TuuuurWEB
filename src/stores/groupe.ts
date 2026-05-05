@@ -26,7 +26,7 @@ export interface PartyType {
 
 export interface User {
   id?: number | string
-  idUser?: number | string
+  idUser?: string
   nickName?: string
   avatar?: string
   email?: string
@@ -40,7 +40,7 @@ export interface GroupePartyInfo {
   finish: boolean
   id: string
   idPartyType: number
-  idUserHost: number
+  idUserHost: string
   nbQuestions: number
   scoreEachRound?: boolean
   partyDifficulty: PartyDifficulty[]
@@ -63,6 +63,7 @@ export default defineStore('groupe', {
     groupePartyInfo: null as GroupePartyInfo | null,
     loading: 0 as number,
     loadingCreationGroupe: 0 as number,
+    comeFromEndOfQuizGame: false as boolean,
   }),
 
   getters: {
@@ -158,6 +159,24 @@ export default defineStore('groupe', {
       }
     },
 
+    async getGroupeInfo(id: string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'group/' + id
+      try {
+        const config = {
+          url,
+          method: 'GET'
+        }
+        const response = await axiosOverlayConnector(config)
+        this.groupePartyInfo = response.data
+      } catch (error: any) {
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
     async createGroupe() {
       this.loadingCreationGroupe++
       const url = import.meta.env.VITE_API_URL + 'group/create'
@@ -198,6 +217,8 @@ export default defineStore('groupe', {
 
         // Persister l'état du groupe
         this.persistGroupState()
+
+        return true
       } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
@@ -267,6 +288,25 @@ export default defineStore('groupe', {
         console.error('Error leaving group:', error)
         this.resetGroupState()
 
+        const errData = error?.response?.data
+        return errData ?? error
+      } finally {
+        this.loading--
+      }
+    },
+
+    async expelledPlayer(idPlayer: number | string) {
+      this.loading++
+      const url = import.meta.env.VITE_API_URL + 'group/user/' + idPlayer
+      try {
+        const config = {
+          url,
+          method: 'DELETE',
+        }
+        const response = await axiosOverlayConnector(config)
+
+        return response.data
+      } catch (error: any) {
         const errData = error?.response?.data
         return errData ?? error
       } finally {

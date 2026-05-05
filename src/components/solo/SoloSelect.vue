@@ -38,9 +38,9 @@
           <div class="space-y-5">
             <div>
               <div class="flex items-center justify-between">
-                <label class="font-semibold text-brand-lightGray">{{
+                <div class="font-semibold text-brand-lightGray">{{
                   $t('solo.settings.questionsCount')
-                }}</label>
+                }}</div>
                 <span class="pill font-bold text-brand-purple">{{ questions }}</span>
               </div>
               <div class="mt-3 flex items-center gap-3">
@@ -70,10 +70,10 @@
           </div>
 
           <div>
-            <label class="font-semibold mb-3 block text-brand-lightGray mt-6">
+            <div class="font-semibold mb-3 block text-brand-lightGray mt-6">
               <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
               {{ $t('solo.settings.difficulty') }}
-            </label>
+            </div>
             <div class="space-y-2">
               <button
                 v-for="diff in difficulties"
@@ -241,7 +241,7 @@ const confirm = async () => {
   open.value = false
 
   soloStore.setPartySetup({
-    themes: Array.from(selected).map((id) => parseInt(id as string)),
+    themes: Array.from(selected).map((id) => Number.parseInt(id as string)),
     difficulties: Array.from(selectedDifficulty.value),
     nbQuestions: questions.value,
   })
@@ -275,28 +275,6 @@ const confirm = async () => {
 }
 
 /* Boutons de difficulté */
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-  transform: translateX(4px);
-}
-
 /* Couleurs par difficulté */
 .diff-easy {
   --diff-color: #10b981;
@@ -312,11 +290,27 @@ const confirm = async () => {
 }
 
 .difficulty-button {
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--diff-color);
 }
 
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
+  transform: translateX(4px);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
+
 }
 
 /* Effet de glow animé */

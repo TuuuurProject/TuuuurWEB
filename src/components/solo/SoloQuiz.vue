@@ -41,7 +41,7 @@
             :key="opt"
             class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
-            :class="buttonClass(opt.valid)"
+            :class="buttonClass(Number.parseInt(opt.id), opt.valid)"
             @click="answer(opt)"
           >
             <span
@@ -209,7 +209,7 @@
           <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
         </div>
 
-        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
           <div
             v-for="(questionData, idx) in allQuestionsParty"
             :key="idx"
@@ -253,7 +253,10 @@
                 <div class="flex items-center gap-2">
                   <span class="flex-shrink-0">
                     <font-awesome-icon v-if="answer.valid" icon="check" />
-                    <font-awesome-icon v-else-if="isUserAnswer(questionData)" icon="times" />
+                    <font-awesome-icon
+                      v-else-if="answer.id === questionData?.userPartyQuestion?.idAnswer"
+                      icon="times"
+                    />
                     <font-awesome-icon v-else icon="circle" class="text-xs" />
                   </span>
                   <span class="flex-1">{{ answer.value }}</span>
@@ -261,6 +264,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div v-else class="text-center text-brand-gray space-y-4 pr-2">
+          {{ $t('solo.quiz.noQuestions') }}
         </div>
       </div>
 
@@ -289,7 +295,6 @@ import { useI18n } from 'vue-i18n'
 import useSoloStore from '@/stores/solo.js'
 import useThemeStore from '@/stores/theme.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
-import solo from '@/stores/solo.js'
 
 const soloStore = useSoloStore()
 const themeStore = useThemeStore()
@@ -302,19 +307,22 @@ interface PartyInfo {
   nbQuestions: number
   score: number
   finish: boolean
+  partyQuestions: any[]
 }
 
 const index = ref(0)
 const nbMaxQuestions = ref(0)
 const score = ref(0)
 const answered = ref(false)
+const userAnswerId = ref<number | null>(null)
 const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
 const comeFromHistory = ref(false)
 
 const remaining = ref(TOTAL_TIME)
-let timer: number | null = null
+let timer: ReturnType<typeof setInterval> | null = null
+let startTime: number | null = null
 
 const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
@@ -365,8 +373,12 @@ const handleKeyPress = async (event: KeyboardEvent) => {
 const startTimer = () => {
   clearTimer()
   remaining.value = TOTAL_TIME
-  timer = window.setInterval(async () => {
-    remaining.value = Math.max(0, +(remaining.value - 0.1).toFixed(1))
+  startTime = Date.now()
+
+  timer = globalThis.setInterval(async () => {
+    const elapsed = (Date.now() - startTime!) / 1000 // temps écoulé en secondes
+    remaining.value = Math.max(0, +(TOTAL_TIME - elapsed).toFixed(1))
+
     if (remaining.value <= 0) {
       // Load the answer by ID, set to null to indicate timeout
       await soloStore.loadAnswerById(null)
@@ -388,14 +400,15 @@ function clearTimer() {
 const answer = async (opt: { id: string }) => {
   if (answered.value) return
   answered.value = true
+  userAnswerId.value = Number.parseInt(opt.id)
 
   clearTimer()
 
   // Load the answer by ID
-  await soloStore.loadAnswerById(parseInt(opt.id))
+  await soloStore.loadAnswerById(Number.parseInt(opt.id))
 
   // Test if correct
-  wasCorrect.value = isUserAnswerIsCorrect(parseInt(opt.id))
+  wasCorrect.value = isUserAnswerIsCorrect(Number.parseInt(opt.id))
 
   let newScore = 0
   if (wasCorrect.value) {
@@ -413,6 +426,7 @@ const skip = async () => {
     await soloStore.loadAnswerById(null)
 
     answered.value = true
+    userAnswerId.value = null
     clearTimer()
     wasCorrect.value = false
     lastPoints.value = 0
@@ -436,6 +450,7 @@ const next = async () => {
   }
   index.value++
   answered.value = false
+  userAnswerId.value = null
   wasCorrect.value = false
   lastPoints.value = 0
   startTimer()
@@ -448,6 +463,7 @@ const restart = async () => {
   router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 
   answered.value = false
+  userAnswerId.value = null
   index.value = 0
   score.value = 0
   wasCorrect.value = false
@@ -456,16 +472,22 @@ const restart = async () => {
   startTimer()
 }
 
-function buttonClass(valid: boolean) {
-  if (!answered.value) {
-    return 'bg-brand-darkGray/50 border-brand-purple/30 text-brand-lightGray hover:bg-brand-purple/20 hover:border-brand-purple'
+function buttonClass(answerId: number, valid: boolean) {
+  if (answered.value) {
+    if (valid === true) {
+      return 'border-brand-green bg-brand-green/15 text-brand-green cursor-default'
+    }
+    if (answerId === userAnswerId.value && valid === false) {
+      return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
+    }
+    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
   }
 
-  if (valid === null) return
+  if (answerId === userAnswerId.value) {
+    return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
+  }
 
-  return valid
-    ? 'bg-brand-green/20 border-brand-green text-brand-green'
-    : 'bg-brand-orange/20 border-brand-orange text-brand-orange'
+  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {
@@ -512,10 +534,6 @@ const isQuestionCorrect = (questionData: any) => {
 const getQuestionPoints = (questionData: any) => {
   // Simuler les points gagnés (à adapter selon votre logique)
   return questionData?.userPartyQuestion?.score || 100
-}
-
-const isUserAnswer = (questionData: any) => {
-  return questionData?.userPartyQuestion?.idAnswer !== null
 }
 
 // Computed properties pour les informations de la partie
@@ -567,14 +585,14 @@ const partyDifficulties = computed(() => {
 })
 
 const partyThemes = computed(() => {
-  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.id) || []
+  const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.idTheme) || []
   if (!themeIds || themeIds.length === 0 || !themeStore.list) return []
-  return themeStore.list.filter((t: any) => themeIds.includes(parseInt(t.id)))
+  return themeStore.list.filter((t: any) => themeIds.includes(Number.parseInt(t.id)))
 })
 
 const getAnswerClass = (questionData: any, answer: any) => {
   const isCorrect = answer.valid
-  const isUserChoice = isUserAnswer(questionData)
+  const isUserChoice = answer.id === questionData?.userPartyQuestion?.idAnswer
 
   if (isCorrect && isUserChoice) {
     // Bonne réponse sélectionnée
@@ -601,23 +619,26 @@ onMounted(async () => {
   await soloStore.loadPartyInfo()
 
   nbMaxQuestions.value = (soloPartyInfoComputed.value as PartyInfo)?.nbQuestions || 0
+  score.value = (soloPartyInfoComputed.value as PartyInfo)?.score || 0
+  index.value = (soloPartyInfoComputed.value as PartyInfo)?.partyQuestions?.length - 1 || 0
 
   // If onMounted, the partyId exist, display the recap
   if (soloStore.partyId && soloStore.partyInfo && (soloStore.partyInfo as PartyInfo).finish) {
     finished.value = true
     comeFromHistory.value = true
+    return
   }
 
   startTimer()
 
   // Ajouter l'écouteur d'événements clavier
-  window.addEventListener('keydown', handleKeyPress)
+  globalThis.addEventListener('keydown', handleKeyPress)
 })
 
 onBeforeUnmount(() => {
   clearTimer()
   // Retirer l'écouteur d'événements clavier
-  window.removeEventListener('keydown', handleKeyPress)
+  globalThis.removeEventListener('keydown', handleKeyPress)
 
   // Reset des variables locales
   index.value = 0
@@ -634,46 +655,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(10, 11, 30, 0.5);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(108, 92, 231, 0.4);
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 92, 231, 0.6);
-}
-
 /* Boutons de difficulté */
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-}
-
 /* Couleurs par difficulté */
 .diff-easy {
   --diff-color: #10b981;
@@ -689,10 +671,24 @@ onBeforeUnmount(() => {
 }
 
 .difficulty-button {
+  position: relative;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.5);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--diff-color);
 }
 
+.difficulty-button:hover {
+  transform: translateX(4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 .difficulty-button.selected {
+  border-color: currentColor;
+  background: rgba(30, 30, 40, 0.8);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
 }
 

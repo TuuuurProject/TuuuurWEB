@@ -52,6 +52,14 @@
       "emailPlaceholder": "vous{'@'}exemple.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "••••••••",
+      "confirmPassword": "Confirmez le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "passwordMinLength": "Minimum 8 caractères",
+      "passwordLowercase": "Au moins une minuscule",
+      "passwordUppercase": "Au moins une majuscule",
+      "passwordNumber": "Au moins un chiffre",
+      "passwordsMatch": "Les mots de passe correspondent",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter"
@@ -60,6 +68,25 @@
       "title": "Vérification de votre email",
       "message": "Un code a été envoyé à votre adresse email.",
       "submit": "Confirmer"
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "description": "Saisissez votre pseudo ou email pour recevoir un code de réinitialisation.",
+      "loginLabel": "Email",
+      "loginPlaceholder": "Votre email",
+      "sendCode": "Envoyer le code",
+      "codeTitle": "Code de vérification",
+      "codeDescription": "Un code a été envoyé à votre adresse email.",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "••••••••",
+      "confirmPassword": "Confirmez le nouveau mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "codeSent": "Code envoyé avec succès ! Vérifiez votre email.",
+      "codeError": "Erreur lors de l'envoi du code. Vérifiez vos informations.",
+      "resetSuccess": "Mot de passe réinitialisé avec succès !",
+      "resetError": "Erreur lors de la réinitialisation. Vérifiez le code et réessayez.",
+      "successMessage": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
     },
     "googleError": "Erreur lors de la connexion avec Google"
   },
@@ -106,7 +133,7 @@
         "all": "Tous",
         "solo": "Solo",
         "group": "Groupe",
-        "competitive": "Compétitif"
+        "ranked": "Compétitif"
       },
       "inProgress": "En cours",
       "questions": "Questions:",
@@ -171,7 +198,8 @@
       "themes": "Thèmes",
       "allThemes": "Tous les thèmes",
       "difficulties": "Difficultés",
-      "numberOfQuestions": "Nombre de questions"
+      "numberOfQuestions": "Nombre de questions",
+      "noQuestions": "Aucune question disponible pour ce quiz"
     }
   },
   "group": {
@@ -194,9 +222,16 @@
       "badge": "Entrez le code du salon",
       "code": "Code de la partie",
       "example": "Exemple: 538950",
-      "joinButton": "Rejoindre"
+      "joinButton": "Rejoindre",
+      "modal": {
+        "title": "Rejoindre la partie",
+        "nickname": "Choisissez un pseudo pour le salon",
+        "nicknamePlaceholder": "Votre pseudo",
+        "submit": "Rejoindre la partie"
+      }
     },
     "lobby": {
+      "joinError": "Erreur lors de la tentative de rejoindre la partie",
       "noThemeSelected": "Aucun thème sélectionné",
       "noDifficultySelected": "Aucune difficulté sélectionnée",
       "difficulties": "Difficultés:",
@@ -216,7 +251,11 @@
       "userJoined": "{name} a rejoint le lobby",
       "userLeft": "{name} a quitté le lobby",
       "lobbyDeleted": "Le lobby a été supprimé",
-      "connectionError": "Erreur de connexion temps réel"
+      "connectionError": "Erreur de connexion temps réel",
+      "expelPlayer": "Expulser le joueur",
+      "playerExpelled": "{name} a été expulsé(e) du lobby",
+      "youWereExpelled": "Vous avez été expulsé(e) du lobby",
+      "expelError": "Erreur lors de l'expulsion du joueur"
     },
     "quiz": {
       "title": "Quiz en Groupe",
@@ -244,6 +283,7 @@
       "playersStatus": "Statut des joueurs",
       "answered": "A répondu",
       "waiting": "En attente...",
+      "noAnswer": "Pas répondu",
       "ranking": "Classement Final",
       "otherPlayers": "{count} autre joueur | {count} autres joueurs",
       "partyInfo": "Informations de la partie",
@@ -255,15 +295,22 @@
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
-      }
+      },
+      "returnToLobby": "Retour au lobby",
+      "noQuestions": "Aucune question disponible pour cette partie"
     }
   },
   "competitive": {
     "title": "Mode Compétitif",
-    "badge": "Choisissez vos catégories favorites",
-    "categories": {
-      "title": "Catégories de Combat",
-      "subtitle": "Sélectionnez vos domaines d'expertise pour des duels équilibrés."
+    "badge": "Classé",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder au mode compétitif !",
+    "ranked": {
+      "title": "Mode Ranked",
+      "subtitle": "Duel 1v1",
+      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre ELO augmente !",
+      "badge": "Classé",
+      "eloInfo": "Votre ELO : {value}",
+      "searchOpponent": "Rechercher un adversaire"
     },
     "info": {
       "title": "Mode Compétitif",
@@ -273,28 +320,55 @@
     },
     "startSearch": "Lancer la recherche",
     "matchmaking": {
-      "searching": "Recherche",
-      "searchingMessage": "Nous cherchons un adversaire…",
+      "searching": "Recherche en cours…",
+      "searchingMessage": "Nous cherchons un adversaire compatible…",
       "found": "Adversaire trouvé !",
+      "gameStartingSoon": "La partie va bientôt commencer...",
       "you": "Vous",
       "opponent": "Adversaire",
       "vs": "VS",
-      "cancel": "Annuler",
-      "startDuel": "Commencer le duel"
+      "cancel": "Annuler la recherche"
     },
-    "duel": {
-      "title": "Duel 1v1",
-      "badge": "Questions à difficulté croissante",
-      "you": "Vous",
-      "opponent": "Adversaire",
-      "elo": "Elo {value}",
-      "health": "Points de vie",
-      "healthYou": "Points de vie — Vous",
-      "healthOpponent": "Points de vie — Adversaire",
-      "ready": "Prêts ?",
-      "readyMessage": "Le quiz commencera dès que les deux joueurs seront prêts.",
-      "quit": "Quitter",
-      "startQuiz": "Lancer le quiz"
+    "quiz": {
+      "abort": "Abandonner",
+      "title": "Duel Ranked",
+      "question": "Question {current}",
+      "score": "Score :",
+      "timeRemaining": "Temps restant : {time}s",
+      "getReady": "Préparez-vous…",
+      "playersStatus": "Statut des joueurs",
+      "answered": "A répondu",
+      "waitingAnswer": "En attente…",
+      "opponentAnswered": "A répondu",
+      "waitingOpponent": "En attente…",
+      "correct": "Correct",
+      "incorrect": "Mauvaise réponse",
+      "finished": "Duel Terminé !",
+      "victory": "Victoire !",
+      "defeat": "Défaite",
+      "draw": "Égalité",
+      "eloGained": "+{points} ELO",
+      "eloLost": "{points} ELO",
+      "eloUnchanged": "ELO inchangé",
+      "finalRanking": "Résultats du Duel",
+      "replay": "Rejouer",
+      "home": "Accueil",
+      "errorAnswering": "Erreur lors de la soumission de la réponse",
+      "currentRanking": "Classement actuel",
+      "finalScore": "Score final",
+      "questions": "Questions",
+      "successRate": "Taux de réussite",
+      "correctAnswers": "Correctes",
+      "incorrectAnswers": "Incorrectes",
+      "summary": "Récapitulatif des réponses",
+      "opponentForfeited": "L'adversaire a abandonné la partie.",
+      "goodAnswer": "Bonne réponse",
+      "badAnswer": "Mauvaise réponse",
+      "confirmLeave": {
+        "title": "Quitter la partie ?",
+        "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
+      },
+      "noQuestions": "Aucune question disponible pour ce duel"
     }
   },
   "leaderboard": {

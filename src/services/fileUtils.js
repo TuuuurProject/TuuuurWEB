@@ -4,7 +4,10 @@ export const fileToBase64 = (file) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => resolve(reader.result)
-    reader.onerror = (error) => reject(error)
+    reader.onerror = () => {
+      const reason = reader.error?.message || 'Erreur lors de la lecture du fichier'
+      reject(new Error(reason))
+    }
   })
 }
 
@@ -16,7 +19,7 @@ export const resizeImage = async function (settings) {
   if (!(file instanceof File)) {
     throw new TypeError('file must be a File object')
   }
-  if (!file.type.match(/image\/.*/)) {
+  if (!(/image\/.*/).exec(file.type)) {
     throw new Error("Le fichier n'est pas une image")
   }
 

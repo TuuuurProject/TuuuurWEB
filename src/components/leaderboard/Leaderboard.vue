@@ -4,7 +4,6 @@
       <h2 class="font-display text-3xl text-brand-lightGray glow-text">
         <font-awesome-icon icon="trophy" /> {{ $t('leaderboard.title') }}
       </h2>
-      <div class="badge-warning animate-pulse-slow">{{ $t('leaderboard.badge') }}</div>
     </header>
 
     <!-- Podium top 3 avec effets gaming -->

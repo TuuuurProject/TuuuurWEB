@@ -7,15 +7,12 @@ const defaultOverlayConfig = {
   functions: {
     getToken: () => {
       console.log('getToken')
-      // return window.localStorage.getItem('token')
     },
     setToken: (token) => {
       console.log('setToken', token)
-      // window.localStorage.setItem('token', token)
     },
     logout: () => {
       console.log('logout')
-      // window.localStorage.setItem('token', null)
     },
     setHeaders: (instance) => {
       instance.defaults.headers.common['Accept'] = 'application/json'
@@ -44,7 +41,7 @@ export default async function axiosOverlay(axiosConfig, overlayConfig = defaultO
     ...overlayConfig.functions.errorsHandlers,
   }
 
-  let initialToken = await overlayConfig.functions.getToken()
+  let initialToken = await Promise.resolve(overlayConfig.functions.getToken())
 
   let instance = axios.create()
 
@@ -66,12 +63,12 @@ export default async function axiosOverlay(axiosConfig, overlayConfig = defaultO
         resolve(response)
       })
       .catch(async (error) => {
-        if (error.response && error.response.status === 449 && overlayConfig.retry) {
+        if (error.response?.status === 449 && overlayConfig.retry) {
           try {
             overlayConfig.functions.setToken(error.response.data.token)
 
             // Vérifie que le token a bien été mis à jour
-            const newToken = overlayConfig.functions.getToken()
+            const newToken = await Promise.resolve(overlayConfig.functions.getToken())
             if (newToken && newToken !== initialToken) {
               const retryConfig = {
                 ...overlayConfig,
@@ -100,20 +97,6 @@ export default async function axiosOverlay(axiosConfig, overlayConfig = defaultO
           }
           return axiosOverlay(axiosConfig, retryConfig)
         }
-
-        // if (error.response && error.response.status === 401 && overlayConfig.mustBeAuthenticated) {
-        //   if (!overlayConfig.functions.errorsConfig[401]?.dontLogout) {
-        //     try {
-        //       overlayConfig.functions.logout()
-        //     } catch (logoutError) {
-        //       console.error('Erreur lors du logout:', logoutError)
-        //     }
-        //   }
-
-        //   if (!overlayConfig.functions.errorsConfig[401]?.dontStopAll) {
-        //     window.stop()
-        //   }
-        // }
 
         if (error.response?.status && overlayConfig.functions.errorsHandlers[error.response.status])
           overlayConfig.functions.errorsHandlers[error.response.status]({

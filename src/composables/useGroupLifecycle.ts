@@ -90,7 +90,15 @@ export function useGroupLifecycle() {
   const connectSignalR = async () => {
     if (!signalrService.isConnected()) {
       try {
-        await signalrService.connect(userStore.token || '')
+        let token: string | null = null
+
+        if (userStore.isLogged) {
+          token = userStore.token
+        } else if (userStore.isLoggedAsInvited) {
+          token = userStore.invitedToken
+        }
+
+        await signalrService.connect(token || '')
         if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('SignalR connected for group')
       } catch (error) {
         console.error('Failed to connect to SignalR:', error)
@@ -105,11 +113,11 @@ export function useGroupLifecycle() {
    */
   const setupAutoCleanup = () => {
     onMounted(() => {
-      window.addEventListener('beforeunload', handleBeforeUnload)
+      globalThis.addEventListener('beforeunload', handleBeforeUnload)
     })
 
     onBeforeUnmount(async () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
+      globalThis.removeEventListener('beforeunload', handleBeforeUnload)
       await cleanupGroup()
     })
   }

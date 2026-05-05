@@ -2,7 +2,7 @@ export interface Match {
   id: string
   dt: string
   idPartyType: number
-  idUserHost: number
+  idUserHost: string
   active: boolean
   finish: boolean
   score: number
@@ -50,7 +50,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       id: 'match-1',
       dt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // Yesterday
       idPartyType: 1,
-      idUserHost: 1,
+      idUserHost: '1',
       active: false,
       finish: true,
       score: 80,
@@ -79,7 +79,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       id: 'match-2',
       dt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
       idPartyType: 1,
-      idUserHost: 1,
+      idUserHost: '1',
       active: false,
       finish: true,
       score: 60,
@@ -108,7 +108,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       id: 'match-3',
       dt: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), // 3 days ago
       idPartyType: 2,
-      idUserHost: 1,
+      idUserHost: '1',
       active: false,
       finish: true,
       score: 90,
