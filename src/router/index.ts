@@ -18,7 +18,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../views/GroupModePage.vue'),
   },
   {
-    path: '/competitif',
+    path: '/competitif/:id?',
     name: 'CompetitiveMode',
     component: () => import('../views/CompetitiveModePage.vue'),
   },
@@ -57,7 +57,7 @@ router.beforeEach((to, from, next) => {
   const user = useUserStore()
 
   // Liste des routes qui nécessitent une connexion
-  const protectedRoutes = new Set(['Profile', 'SoloQuiz', 'GroupMode'])
+  const protectedRoutes = new Set(['Profile', 'SoloQuiz', 'GroupMode', 'CompetitiveMode'])
 
   // Sauvegarder la route uniquement si l'utilisateur n'est pas connecté
   // et tente d'accéder à une page protégée
