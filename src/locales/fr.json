@@ -20,7 +20,8 @@
     "competitive": "Compétitif",
     "profile": "Profil",
     "ranking": "Classement",
-    "modes": "Modes de jeu"
+    "modes": "Modes de jeu",
+    "menu": "Menu"
   },
   "home": {
     "title": "Tuuuur",
@@ -60,6 +61,8 @@
       "passwordUppercase": "Au moins une majuscule",
       "passwordNumber": "Au moins un chiffre",
       "passwordsMatch": "Les mots de passe correspondent",
+      "nicknameMaxLength": "50 caractères maximum",
+      "nicknameFormat": "Lettres, chiffres, tirets et espaces uniquement",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter"
@@ -122,6 +125,7 @@
     },
     "nickname": {
       "emptyError": "Le nom d'utilisateur ne peut pas être vide",
+      "invalidFormatError": "Le pseudo doit contenir uniquement des lettres, chiffres, tirets et espaces (50 caractères max)",
       "updateSuccess": "Nom d'utilisateur mis à jour avec succès !",
       "updateError": "Erreur lors de la mise à jour du nom d'utilisateur"
     },
