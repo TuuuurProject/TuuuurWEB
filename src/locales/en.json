@@ -20,7 +20,8 @@
     "competitive": "Competitive",
     "profile": "Profile",
     "ranking": "Ranking",
-    "modes": "Game modes"
+    "modes": "Game modes",
+    "menu": "Menu"
   },
   "home": {
     "title": "Tuuuur",
@@ -60,6 +61,8 @@
       "passwordUppercase": "At least one uppercase letter",
       "passwordNumber": "At least one number",
       "passwordsMatch": "Passwords match",
+      "nicknameMaxLength": "50 characters maximum",
+      "nicknameFormat": "Letters, numbers, hyphens and spaces only",
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
       "signIn": "Sign in"
@@ -122,6 +125,7 @@
     },
     "nickname": {
       "emptyError": "Username cannot be empty",
+      "invalidFormatError": "Username must contain only letters, numbers, hyphens and spaces (50 characters max)",
       "updateSuccess": "Username updated successfully!",
       "updateError": "Error updating username"
     },

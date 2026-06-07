@@ -151,6 +151,11 @@ async function startSearch() {
     // Connexion centralisée via le composable (identique au pattern groupe)
     await connectSignalR()
 
+    // Re-enregistrer les handlers après un éventuel disconnect (replay)
+    // disconnect() vide this.handlers, donc on doit les réenregistrer
+    allEvents.forEach((event) => signalrService.off(event.name))
+    allEvents.forEach((event) => signalrService.on(event.name, event.handler))
+
     rankedStore.reset()
     step.value = 'search'
     firstCountdownReceived = false
