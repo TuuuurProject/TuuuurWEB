@@ -52,9 +52,10 @@
       <!-- Quiz -->
       <RankedQuiz
         v-else-if="step === 'game'"
-        :opponent="rankedStore.opponent!"
+        :opponent="rankedStore.opponent ?? undefined"
         :current-user="currentUser"
         :initial-countdown="initialCountdown ?? undefined"
+        :history-mode="isHistoryMode"
         @home="handleHome"
         @replay="handleReplay"
       />
@@ -88,6 +89,7 @@ type Step = 'idle' | 'search' | 'found' | 'game'
 const step = ref<Step>('idle')
 const connectionLoading = ref(false)
 const initialCountdown = ref<number | null>(null)
+const isHistoryMode = ref(false)
 let firstCountdownReceived = false
 
 // ─── Build a RankedUser from userStore info ───────────────────────────────────
@@ -149,6 +151,11 @@ async function startSearch() {
     // Connexion centralisée via le composable (identique au pattern groupe)
     await connectSignalR()
 
+    // Re-enregistrer les handlers après un éventuel disconnect (replay)
+    // disconnect() vide this.handlers, donc on doit les réenregistrer
+    allEvents.forEach((event) => signalrService.off(event.name))
+    allEvents.forEach((event) => signalrService.on(event.name, event.handler))
+
     rankedStore.reset()
     step.value = 'search'
     firstCountdownReceived = false
@@ -201,6 +208,14 @@ onMounted(async () => {
     } catch (e) {
       if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.warn('Failed to fetch user info:', e)
     }
+  }
+
+  // History mode: partyId set from route param by CompetitiveModePage
+  if (rankedStore.partyId) {
+    isHistoryMode.value = true
+    await rankedStore.loadPartyInfo()
+    step.value = 'game'
+    return
   }
 
   // Même pattern que GroupLobby : nettoyer tous les handlers existants pour ces
