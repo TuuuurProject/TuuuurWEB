@@ -642,14 +642,13 @@
           class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
         >
           <button
-            v-if="comeFromHistory"
             class="btn btn-secondary w-full sm:w-auto"
-            @click="router.push({ name: 'Profile' })"
+            @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"
           >
             <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
           </button>
           <button
-            v-else
+            v-if="!comeFromHistory"
             class="btn btn-secondary w-full sm:w-auto"
             @click="exitQuizGame"
           >

@@ -20,8 +20,7 @@
     "competitive": "Competitive",
     "profile": "Profile",
     "ranking": "Ranking",
-    "modes": "Game modes",
-    "menu": "Menu"
+    "modes": "Game modes"
   },
   "home": {
     "title": "Tuuuur",
@@ -61,8 +60,6 @@
       "passwordUppercase": "At least one uppercase letter",
       "passwordNumber": "At least one number",
       "passwordsMatch": "Passwords match",
-      "nicknameMaxLength": "50 characters maximum",
-      "nicknameFormat": "Letters, numbers, hyphens and spaces only",
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
       "signIn": "Sign in"
@@ -125,7 +122,6 @@
     },
     "nickname": {
       "emptyError": "Username cannot be empty",
-      "invalidFormatError": "Username must contain only letters, numbers, hyphens and spaces (50 characters max)",
       "updateSuccess": "Username updated successfully!",
       "updateError": "Error updating username"
     },
@@ -376,13 +372,12 @@
     }
   },
   "leaderboard": {
-    "title": "Global Leaderboard",
-    "badge": "Top Legends",
+    "title": "Gaming Leaderboard",
+    "badge": "Top 20 Legends",
     "podium": {
       "first": "#1",
       "second": "#2",
-      "third": "#3",
-      "empty": "?"
+      "third": "#3"
     },
     "ranking": {
       "title": "Full Ranking",
@@ -392,14 +387,7 @@
       "currentChampion": "Current Champion",
       "challenger": "Challenger",
       "confirmedPlayer": "Confirmed Player"
-    },
-    "otherPlayers": "See {count} other players",
-    "empty": "No ranked players yet",
-    "eloLabel": "Elo",
-    "notLoggedIn": "Log in or create an account to access the leaderboard!",
-    "you": "You",
-    "unranked": "Unranked",
-    "yourPosition": "Your position"
+    }
   },
   "modal": {
     "defaultTitle": "Confirmation",

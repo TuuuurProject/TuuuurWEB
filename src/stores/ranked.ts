@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import axiosOverlayConnector from '@/services/axiosOverlayConnector.js'
+import { ref } from 'vue'
 
 export interface RankedUser {
   id: string
@@ -13,31 +12,6 @@ export interface RankedUser {
   isInvitedUser: boolean
   elo: { idTheme: number; value: number; theme: null }[]
   globalElo: number
-}
-
-export interface RankingUser {
-  id: string
-  nickName: string
-  email: string
-  avatar: string | null
-  isAdmin: boolean
-  isNew: boolean
-  isGoogleUser: boolean
-  isInvitedUser: boolean
-  elo: { idTheme: number; value: number; gamesPlayed: number; theme: { id: number; icon: string; label: string } }[]
-  globalElo: number
-  userRanking: number
-}
-
-export interface RankingResponse {
-  users: RankingUser[]
-  userRanking: number
-  userElo: number
-  currentPage: number
-  totalPages: number
-  totalUsers: number
-  userTier: number
-  userDivision: number
 }
 
 export interface RankedAnswer {
@@ -77,39 +51,6 @@ export interface UserScore {
   user: RankedUser
 }
 
-export interface RankedPartyQuestion {
-  id: number
-  idParty: string
-  idQuestion: number
-  question: {
-    id: number
-    label: string
-    idDifficulty: number
-    answer: RankedAnswer[]
-    difficulty?: { id: number; label: string }
-    questionTheme?: {
-      id: number
-      idQuestion: number
-      idTheme: number
-      theme: { id: number; icon: string; label: string }
-    }[]
-  }
-  userPartyQuestion: {
-    idAnswer: number | null
-    correct: boolean
-    score: number
-  } | null
-}
-
-export interface RankedPartyInfo {
-  id: string
-  finish: boolean
-  isWinner: boolean
-  elo: number
-  finalScore: number
-  partyQuestions?: RankedPartyQuestion[]
-}
-
 const useRankedStore = defineStore('ranked', () => {
   const opponent = ref<RankedUser | null>(null)
   const scores = ref<UserScore[]>([])
@@ -118,43 +59,6 @@ const useRankedStore = defineStore('ranked', () => {
   const hasWon = ref<boolean | null>(null)
   const isForfeited = ref<boolean>(false)
 
-  const partyId = ref<string | null>(null)
-  const partyInfo = ref<RankedPartyInfo | null>(null)
-  const loading = ref(0)
-  const rankingData = ref<RankingResponse | null>(null)
-  const rankingLoading = ref(0)
-
-  const isLoading = computed(() => loading.value > 0)
-  const isRankingLoading = computed(() => rankingLoading.value > 0)
-
-  async function loadPartyInfo() {
-    if (!partyId.value) return null
-
-    loading.value++
-    const url = import.meta.env.VITE_API_URL + `ranked/${partyId.value}`
-    try {
-      const response = await axiosOverlayConnector({ url, method: 'GET' })
-      partyInfo.value = response.data
-    } catch (error: any) {
-      return error?.response?.data ?? error
-    } finally {
-      loading.value--
-    }
-  }
-
-  async function loadRanking(page = 1, size = 50) {
-    rankingLoading.value++
-    const url = import.meta.env.VITE_API_URL + `ranked/ranking?Page=${page}&Size=${size}`
-    try {
-      const response = await axiosOverlayConnector({ url, method: 'GET' })
-      rankingData.value = response.data
-    } catch (error: any) {
-      return error?.response?.data ?? error
-    } finally {
-      rankingLoading.value--
-    }
-  }
-
   function reset() {
     opponent.value = null
     scores.value = []
@@ -162,9 +66,6 @@ const useRankedStore = defineStore('ranked', () => {
     eloChange.value = null
     hasWon.value = null
     isForfeited.value = false
-    partyId.value = null
-    partyInfo.value = null
-    loading.value = 0
   }
 
   return {
@@ -174,14 +75,7 @@ const useRankedStore = defineStore('ranked', () => {
     eloChange,
     hasWon,
     isForfeited,
-    partyId,
-    partyInfo,
-    isLoading,
-    loadPartyInfo,
     reset,
-    rankingData,
-    isRankingLoading,
-    loadRanking,
   }
 })
 

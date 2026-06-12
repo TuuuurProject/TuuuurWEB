@@ -51,7 +51,6 @@
               ref="nicknameInput"
               v-model="newNickname"
               type="text"
-              maxlength="50"
               class="font-branding text-sm md:text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
               @keydown.enter="saveNickname"
               @keydown.escape="cancelEditingNickname"
@@ -310,26 +309,15 @@ const cancelEditingNickname = () => {
   newNickname.value = ''
 }
 
-const NICKNAME_REGEX = /^[a-zA-Z0-9\- ]+$/
-
 const saveNickname = async () => {
-  const trimmed = newNickname.value.trim()
-
-  if (!trimmed) {
+  if (!newNickname.value.trim()) {
     if (proxy) {
       ;(proxy as any).$toast.error(t('profile.nickname.emptyError'))
     }
     return
   }
 
-  if (trimmed.length > 50 || !NICKNAME_REGEX.test(trimmed)) {
-    if (proxy) {
-      ;(proxy as any).$toast.error(t('profile.nickname.invalidFormatError'))
-    }
-    return
-  }
-
-  const result = await userStore.updateNickname(trimmed)
+  const result = await userStore.updateNickname(newNickname.value.trim())
 
   if (result?.email) {
     isEditingNickname.value = false

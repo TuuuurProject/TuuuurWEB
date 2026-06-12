@@ -5,17 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import OnlineMode from '@/components/online/OnlineMode.vue'
-import useRankedStore from '@/stores/ranked'
 
 const router = useRouter()
-const route = useRoute()
-const rankedStore = useRankedStore()
-
-// Assigner synchroniquement pour que OnlineMode (enfant) voie l'id dès son onMounted
-const partyId = route.params.id as string
-if (partyId && rankedStore.partyId === null) {
-  rankedStore.partyId = partyId
-}
 </script>

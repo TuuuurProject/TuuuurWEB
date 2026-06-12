@@ -133,7 +133,7 @@
                           : 'text-brand-red'
                     "
                   >
-                    {{ (match.percent ?? 0).toFixed(2) }}%
+                    {{ match.percent }}%
                   </span>
                 </div>
                 <div
@@ -527,8 +527,6 @@ const showMatchDetails = (match: Match) => {
     router.push({ name: 'SoloQuiz', params: { id: match.id } })
   } else if (match.partyType.label === 'Groupe') {
     router.push({ name: 'GroupMode', params: { id: match.id } })
-  } else if (match.partyType.label === 'Classée') {
-    router.push({ name: 'CompetitiveMode', params: { id: match.id } })
   }
 }
 

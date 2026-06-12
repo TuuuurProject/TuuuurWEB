@@ -1,374 +1,223 @@
 <template>
   <section class="space-y-8">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="trophy" class="mr-2 text-brand-yellow" />
-        {{ $t('leaderboard.title') }}
+      <h2 class="font-display text-3xl text-brand-lightGray glow-text">
+        <font-awesome-icon icon="trophy" /> {{ $t('leaderboard.title') }}
       </h2>
     </header>
 
-    <!-- Not logged in -->
-    <div v-if="!userStore.isLogged && !userStore.isLoggedAsInvited" class="gaming-card">
-      <LoggedInBlock :message="$t('leaderboard.notLoggedIn')" />
-    </div>
-
-    <!-- Loading -->
-    <div v-else-if="rankedStore.isRankingLoading" class="gaming-card text-center py-12">
-      <font-awesome-icon icon="spinner" spin class="text-3xl text-brand-purple mb-4" />
-      <p class="text-brand-gray">{{ $t('common.loading') }}</p>
-    </div>
-
-    <template v-else>
-      <!-- Podium Top 3 -->
-      <div class="gaming-card">
-        <!-- Empty state -->
-        <div v-if="sortedPlayers.length === 0" class="text-center py-8 text-brand-gray">
-          <font-awesome-icon icon="trophy" class="text-4xl mb-3 opacity-30" />
-          <p>{{ $t('leaderboard.empty') }}</p>
+    <!-- Podium top 3 avec effets gaming -->
+    <div class="grid gap-4 md:grid-cols-3 items-end">
+      <!-- 2ème place -->
+      <div
+        class="order-2 md:order-1 gaming-card flex flex-col items-center transform transition-transform"
+      >
+        <div class="text-brand-orange mb-3 animate-bounce-slow">
+          <svg viewBox="0 0 24 24" class="h-8 w-8" fill="currentColor">
+            <path
+              d="M17 3h4v4a5 5 0 0 1-5 5h-1.28A6 6 0 0 1 7 7V3h4a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1Z"
+            />
+          </svg>
         </div>
-
-        <template v-else>
-          <!-- Podium -->
-          <div class="mb-6">
-            <div
-              class="grid gap-4 max-w-3xl mx-auto items-end"
-              :class="{
-                'grid-cols-1 max-w-xs': sortedPlayers.length === 1,
-                'grid-cols-3': sortedPlayers.length > 1,
-              }"
-            >
-              <!-- 2nd place -->
-              <div
-                v-if="sortedPlayers[1]"
-                class="text-center transform transition-all duration-300"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
-                    :class="
-                      isCurrentUser(sortedPlayers[1])
-                        ? 'border-brand-purple shadow-neon'
-                        : 'border-brand-gray/40'
-                    "
-                  >
-                    <img
-                      v-if="sortedPlayers[1].avatar"
-                      :src="sortedPlayers[1].avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-2xl sm:text-3xl font-bold text-brand-gray">
-                      {{ sortedPlayers[1].nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-gray/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-white">2</span>
-                  </div>
-                  <!-- "Vous" badge -->
-                  <div
-                    v-if="isCurrentUser(sortedPlayers[1])"
-                    class="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-bold whitespace-nowrap"
-                  >
-                    {{ $t('leaderboard.you') }}
-                  </div>
-                </div>
-                <div
-                  class="font-semibold text-sm truncate px-2"
-                  :class="
-                    isCurrentUser(sortedPlayers[1]) ? 'text-brand-purple' : 'text-brand-lightGray'
-                  "
-                >
-                  {{ sortedPlayers[1].nickName }}
-                </div>
-                <div class="text-2xl font-branding text-brand-gray mt-1">
-                  {{ sortedPlayers[1].globalElo }}
-                  <span class="text-sm font-sans text-brand-gray/60">{{
-                    $t('leaderboard.eloLabel')
-                  }}</span>
-                </div>
-                <div
-                  class="mt-2 h-24 sm:h-32 bg-gradient-to-t from-brand-gray/30 to-brand-gray/10 border-2 border-brand-gray/30 rounded-t-xl"
-                />
-              </div>
-              <!-- 2nd place empty slot -->
-              <div v-else-if="sortedPlayers.length === 1" />
-
-              <!-- 1st place -->
-              <div
-                v-if="sortedPlayers[0]"
-                class="text-center transform transition-all duration-300"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon animate-pulse-slow"
-                    :class="
-                      isCurrentUser(sortedPlayers[0])
-                        ? 'ring-2 ring-brand-purple ring-offset-2 ring-offset-brand-dark'
-                        : ''
-                    "
-                  >
-                    <img
-                      v-if="sortedPlayers[0].avatar"
-                      :src="sortedPlayers[0].avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-3xl sm:text-4xl font-bold text-brand-yellow">
-                      {{ sortedPlayers[0].nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <font-awesome-icon icon="crown" class="text-sm text-brand-dark" />
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-brand-dark">1</span>
-                  </div>
-                  <!-- "Vous" badge -->
-                  <div
-                    v-if="isCurrentUser(sortedPlayers[0])"
-                    class="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-bold whitespace-nowrap"
-                  >
-                    {{ $t('leaderboard.you') }}
-                  </div>
-                </div>
-                <div
-                  class="font-bold truncate px-2"
-                  :class="
-                    isCurrentUser(sortedPlayers[0]) ? 'text-brand-purple' : 'text-brand-lightGray'
-                  "
-                >
-                  {{ sortedPlayers[0].nickName }}
-                </div>
-                <div class="text-3xl font-branding text-brand-yellow mt-1 glow-text">
-                  {{ sortedPlayers[0].globalElo }}
-                  <span class="text-sm font-sans text-brand-yellow/60">{{
-                    $t('leaderboard.eloLabel')
-                  }}</span>
-                </div>
-                <div
-                  class="mt-2 h-32 sm:h-40 bg-gradient-to-t from-brand-yellow/30 to-brand-yellow/10 border-2 border-brand-yellow/40 rounded-t-xl"
-                />
-              </div>
-              <!-- 1st place empty slot -->
-              <div v-else class="text-center">
-                <div
-                  class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-dashed border-brand-yellow/30 bg-brand-darkGray/20 flex items-center justify-center mx-auto"
-                >
-                  <span class="text-3xl font-bold text-brand-yellow/30">?</span>
-                </div>
-              </div>
-
-              <!-- 3rd place -->
-              <div
-                v-if="sortedPlayers[2]"
-                class="text-center transform transition-all duration-300"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
-                    :class="
-                      isCurrentUser(sortedPlayers[2])
-                        ? 'border-brand-purple shadow-neon'
-                        : 'border-brand-orange/40'
-                    "
-                  >
-                    <img
-                      v-if="sortedPlayers[2].avatar"
-                      :src="sortedPlayers[2].avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-2xl sm:text-3xl font-bold text-brand-orange">
-                      {{ sortedPlayers[2].nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-orange/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-white">3</span>
-                  </div>
-                  <!-- "Vous" badge -->
-                  <div
-                    v-if="isCurrentUser(sortedPlayers[2])"
-                    class="absolute -top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-bold whitespace-nowrap"
-                  >
-                    {{ $t('leaderboard.you') }}
-                  </div>
-                </div>
-                <div
-                  class="font-semibold text-sm truncate px-2"
-                  :class="
-                    isCurrentUser(sortedPlayers[2]) ? 'text-brand-purple' : 'text-brand-lightGray'
-                  "
-                >
-                  {{ sortedPlayers[2].nickName }}
-                </div>
-                <div class="text-2xl font-branding text-brand-orange mt-1">
-                  {{ sortedPlayers[2].globalElo }}
-                  <span class="text-sm font-sans text-brand-orange/60">{{
-                    $t('leaderboard.eloLabel')
-                  }}</span>
-                </div>
-                <div
-                  class="mt-2 h-20 sm:h-28 bg-gradient-to-t from-brand-orange/30 to-brand-orange/10 border-2 border-brand-orange/30 rounded-t-xl"
-                />
-              </div>
-            </div>
+        <div class="relative">
+          <img
+            :src="avatar(top[1].name)"
+            :alt="top[1].name"
+            class="h-16 w-16 rounded-full border-2 border-brand-orange shadow-neon-orange mb-3 bg-brand-darkGray"
+          />
+          <div
+            class="absolute -top-1 -right-1 w-6 h-6 bg-brand-orange rounded-full flex items-center justify-center text-white text-xs font-bold"
+          >
+            2
           </div>
-
-          <!-- Remaining players (rank 4+) -->
-          <div v-if="sortedPlayers.length > 3" class="mt-6 space-y-2">
-            <div
-              v-for="(player, index) in sortedPlayers.slice(3)"
-              :key="player.id"
-              class="flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200"
-              :class="
-                isCurrentUser(player)
-                  ? 'border-brand-purple/60 bg-brand-purple/10'
-                  : 'border-brand-purple/10 bg-brand-darkGray/20 hover:border-brand-purple/30'
-              "
-            >
-              <div class="flex items-center gap-3 min-w-0 flex-1">
-                <span
-                  class="font-bold text-sm w-6 text-center shrink-0"
-                  :class="isCurrentUser(player) ? 'text-brand-purple' : 'text-brand-gray'"
-                >
-                  {{ index + 4 }}
-                </span>
-                <div
-                  class="w-10 h-10 rounded-full border-2 bg-brand-darkGray/50 flex items-center justify-center shrink-0"
-                  :class="isCurrentUser(player) ? 'border-brand-purple' : 'border-brand-purple/30'"
-                >
-                  <img
-                    v-if="player.avatar"
-                    :src="player.avatar"
-                    alt="avatar"
-                    class="w-full h-full rounded-full object-cover"
-                  />
-                  <span
-                    v-else
-                    class="text-lg font-bold"
-                    :class="isCurrentUser(player) ? 'text-brand-purple' : 'text-brand-purple'"
-                  >
-                    {{ player.nickName?.charAt(0).toUpperCase() || '?' }}
-                  </span>
-                </div>
-                <span
-                  class="font-semibold truncate"
-                  :class="isCurrentUser(player) ? 'text-brand-purple' : 'text-brand-lightGray'"
-                >
-                  {{ player.nickName }}
-                </span>
-                <span
-                  v-if="isCurrentUser(player)"
-                  class="shrink-0 px-2 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-bold"
-                >
-                  {{ $t('leaderboard.you') }}
-                </span>
-              </div>
-              <div
-                class="font-branding text-xl shrink-0 ml-3"
-                :class="isCurrentUser(player) ? 'text-brand-purple' : 'text-brand-purple'"
-              >
-                {{ player.globalElo }}
-                <span class="text-xs font-sans text-brand-purple/60">{{
-                  $t('leaderboard.eloLabel')
-                }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Current user pinned at bottom when not in visible list -->
-          <template v-if="!currentUserInList && rankedStore.rankingData">
-            <div
-              class="flex items-center justify-center py-1 text-brand-gray/40 text-lg tracking-widest select-none"
-            >
-              ···
-            </div>
-            <div
-              class="flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/60 bg-brand-purple/10"
-            >
-              <div class="flex items-center gap-3 min-w-0 flex-1">
-                <span class="text-brand-purple font-bold text-sm w-6 text-center shrink-0">
-                  {{
-                    rankedStore.rankingData.userRanking > 0
-                      ? rankedStore.rankingData.userRanking
-                      : '—'
-                  }}
-                </span>
-                <div
-                  class="w-10 h-10 rounded-full border-2 border-brand-purple bg-brand-darkGray/50 flex items-center justify-center shrink-0"
-                >
-                  <img
-                    v-if="userStore.userInfo?.avatar"
-                    :src="userStore.userInfo.avatar"
-                    alt="avatar"
-                    class="w-full h-full rounded-full object-cover"
-                  />
-                  <span v-else class="text-lg font-bold text-brand-purple">
-                    {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
-                  </span>
-                </div>
-                <span class="font-semibold text-brand-purple truncate">
-                  {{ userStore.userInfo?.nickName }}
-                </span>
-                <span
-                  class="shrink-0 px-2 py-0.5 rounded-full bg-brand-purple text-white text-[10px] font-bold"
-                >
-                  {{ $t('leaderboard.you') }}
-                </span>
-              </div>
-              <div class="font-branding text-xl shrink-0 ml-3 text-brand-purple">
-                {{ rankedStore.rankingData.userElo }}
-                <span class="text-xs font-sans text-brand-purple/60">{{
-                  $t('leaderboard.eloLabel')
-                }}</span>
-              </div>
-            </div>
-          </template>
-        </template>
+        </div>
+        <div class="font-display text-2xl text-brand-lightGray">#2 {{ top[1].name }}</div>
+        <div
+          class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold mt-2"
+        >
+          <font-awesome-icon icon="fire" /> {{ top[1].elo }} Élo
+        </div>
       </div>
-    </template>
+
+      <!-- 1ère place -->
+      <div
+        class="order-1 md:order-2 gaming-card flex flex-col items-center scale-110 shadow-neon transform transition-transform"
+      >
+        <div class="text-brand-yellow mb-3 animate-float">
+          <svg viewBox="0 0 24 24" class="h-12 w-12" fill="currentColor">
+            <path
+              d="M17 3h4v4a5 5 0 0 1-5 5h-1.28A6 6 0 0 1 7 7V3h4a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1Z"
+            />
+          </svg>
+        </div>
+        <div class="relative">
+          <img
+            :src="avatar(top[0].name)"
+            :alt="top[0].name"
+            class="h-20 w-20 rounded-full border-4 border-brand-yellow shadow-glow mb-3 bg-brand-darkGray"
+          />
+          <div
+            class="absolute -top-2 -right-2 w-8 h-8 bg-brand-yellow rounded-full flex items-center justify-center text-brand-dark text-sm font-bold animate-pulse-slow"
+          >
+            1
+          </div>
+          <div
+            class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-brand-green rounded-full border-2 border-brand-darkGray flex items-center justify-center"
+          >
+            <font-awesome-icon icon="crown" class="text-xs text-brand-yellow" />
+          </div>
+        </div>
+        <div class="font-display text-3xl text-brand-lightGray glow-text">#1 {{ top[0].name }}</div>
+        <div
+          class="pill bg-brand-yellow/20 border-brand-yellow/40 text-brand-yellow font-bold mt-2"
+        >
+          <font-awesome-icon icon="star" /> {{ top[0].elo }} Élo
+        </div>
+      </div>
+
+      <!-- 3ème place -->
+      <div class="order-3 gaming-card flex flex-col items-center transform transition-transform">
+        <div class="text-brand-gray mb-3 animate-wiggle">
+          <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor">
+            <path
+              d="M17 3h4v4a5 5 0 0 1-5 5h-1.28A6 6 0 0 1 7 7V3h4a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1Z"
+            />
+          </svg>
+        </div>
+        <div class="relative">
+          <img
+            :src="avatar(top[2].name)"
+            :alt="top[2].name"
+            class="h-14 w-14 rounded-full border-2 border-brand-gray shadow-card mb-3 bg-brand-darkGray"
+          />
+          <div
+            class="absolute -top-1 -right-1 w-6 h-6 bg-brand-gray rounded-full flex items-center justify-center text-brand-dark text-xs font-bold"
+          >
+            3
+          </div>
+        </div>
+        <div class="font-display text-xl text-brand-lightGray">#3 {{ top[2].name }}</div>
+        <div class="pill bg-brand-gray/20 border-brand-gray/40 text-brand-gray font-bold mt-2">
+          <font-awesome-icon icon="medal" /> {{ top[2].elo }} Élo
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste du classement avec style gaming -->
+    <div class="gaming-card">
+      <div class="flex items-center gap-3 mb-4 pb-4 border-b border-brand-purple/20">
+        <div
+          class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
+        >
+          <font-awesome-icon icon="chart-column" />
+        </div>
+        <h3 class="font-display text-xl text-brand-lightGray">
+          {{ $t('leaderboard.ranking.title') }}
+        </h3>
+        <div class="ml-auto badge-info">{{ $t('leaderboard.ranking.badge') }}</div>
+      </div>
+
+      <ul class="space-y-2">
+        <li
+          v-for="p in rest"
+          :key="p.rank"
+          class="group py-3 px-4 flex items-center gap-4 hover:bg-brand-purple/10 rounded-2xl transition-all duration-200 hover:shadow-card border border-transparent hover:border-brand-purple/20"
+        >
+          <div class="w-12 h-8 flex items-center justify-center">
+            <span
+              class="font-display text-lg font-bold"
+              :class="p.rank <= 10 ? 'text-brand-purple' : 'text-brand-gray'"
+            >
+              #{{ p.rank }}
+            </span>
+          </div>
+          <div class="relative">
+            <img
+              :src="avatar(p.name)"
+              :alt="p.name"
+              class="h-10 w-10 rounded-full border border-brand-purple/30 bg-brand-darkGray group-hover:border-brand-purple/60 transition-colors"
+            />
+            <div
+              v-if="p.rank <= 5"
+              class="absolute -top-1 -right-1 w-4 h-4 bg-brand-green rounded-full flex items-center justify-center"
+            >
+              <font-awesome-icon icon="fire" class="text-xs" />
+            </div>
+          </div>
+          <div class="flex-1">
+            <div
+              class="font-semibold text-brand-lightGray group-hover:text-white transition-colors truncate"
+            >
+              {{ p.name }}
+            </div>
+            <div v-if="p.rank <= 5" class="text-xs text-brand-green">
+              {{ $t('leaderboard.status.currentChampion') }}
+            </div>
+            <div v-else-if="p.rank <= 10" class="text-xs text-brand-orange">
+              {{ $t('leaderboard.status.challenger') }}
+            </div>
+            <div v-else class="text-xs text-brand-gray">
+              {{ $t('leaderboard.status.confirmedPlayer') }}
+            </div>
+          </div>
+          <div
+            class="pill font-bold"
+            :class="
+              p.rank <= 5
+                ? 'bg-brand-green/20 border-brand-green/40 text-brand-green'
+                : p.rank <= 10
+                  ? 'bg-brand-orange/20 border-brand-orange/40 text-brand-orange'
+                  : 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple'
+            "
+          >
+            <font-awesome-icon icon="bolt" /> {{ p.elo }}
+          </div>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import useRankedStore from '@/stores/ranked'
-import useUserStore from '@/stores/user'
-import LoggedInBlock from '@/components/LoggedInBlock.vue'
+import { computed } from 'vue'
 
-const rankedStore = useRankedStore()
-const userStore = useUserStore()
+function avatar(name: string) {
+  const seed = encodeURIComponent(name)
+  return `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${seed}`
+}
 
-const currentUserId = computed(() =>
-  userStore.isLogged
-    ? userStore.userId
-    : userStore.isLoggedAsInvited
-      ? userStore.userIdInvited
-      : null,
-)
+interface Player {
+  rank: number
+  name: string
+  elo: number
+}
+const players: Player[] = Array.from({ length: 20 }, (_, i) => ({
+  rank: i + 1,
+  name: [
+    'Ava',
+    'Liam',
+    'Emma',
+    'Noah',
+    'Mia',
+    'Lucas',
+    'Zoé',
+    'Leo',
+    'Luna',
+    'Hugo',
+    'Chloé',
+    'Nina',
+    'Evan',
+    'Jade',
+    'Axel',
+    'Léa',
+    'Sacha',
+    'Maël',
+    'Eva',
+    'Yanis',
+  ][i],
+  elo: 1400 + Math.round((20 - i) * 12 + Math.random() * 25),
+}))
 
-const isCurrentUser = (player: { id: string }) => player.id === currentUserId.value
-
-const sortedPlayers = computed(() => {
-  const users = rankedStore.rankingData?.users ?? []
-  return [...users].sort((a, b) => b.globalElo - a.globalElo)
-})
-
-const currentUserInList = computed(
-  () =>
-    currentUserId.value !== null && sortedPlayers.value.some((p) => p.id === currentUserId.value),
-)
-
-onMounted(async () => {
-  userStore.getUserInfo()
-  await rankedStore.loadRanking()
-})
+const top = computed(() => players.slice(0, 3))
+const rest = computed(() => players.slice(3))
 </script>

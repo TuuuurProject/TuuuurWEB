@@ -20,8 +20,7 @@
     "competitive": "Compétitif",
     "profile": "Profil",
     "ranking": "Classement",
-    "modes": "Modes de jeu",
-    "menu": "Menu"
+    "modes": "Modes de jeu"
   },
   "home": {
     "title": "Tuuuur",
@@ -61,8 +60,6 @@
       "passwordUppercase": "Au moins une majuscule",
       "passwordNumber": "Au moins un chiffre",
       "passwordsMatch": "Les mots de passe correspondent",
-      "nicknameMaxLength": "50 caractères maximum",
-      "nicknameFormat": "Lettres, chiffres, tirets et espaces uniquement",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter"
@@ -125,7 +122,6 @@
     },
     "nickname": {
       "emptyError": "Le nom d'utilisateur ne peut pas être vide",
-      "invalidFormatError": "Le pseudo doit contenir uniquement des lettres, chiffres, tirets et espaces (50 caractères max)",
       "updateSuccess": "Nom d'utilisateur mis à jour avec succès !",
       "updateError": "Erreur lors de la mise à jour du nom d'utilisateur"
     },
@@ -376,13 +372,12 @@
     }
   },
   "leaderboard": {
-    "title": "Classement Global",
-    "badge": "Top Légendes",
+    "title": "Classement Gaming",
+    "badge": "Top 20 Légendes",
     "podium": {
       "first": "#1",
       "second": "#2",
-      "third": "#3",
-      "empty": "?"
+      "third": "#3"
     },
     "ranking": {
       "title": "Classement Complet",
@@ -392,14 +387,7 @@
       "currentChampion": "Champion actuel",
       "challenger": "Challenger",
       "confirmedPlayer": "Joueur confirmé"
-    },
-    "otherPlayers": "Voir les {count} autres joueurs",
-    "empty": "Aucun joueur classé pour l'instant",
-    "eloLabel": "Élo",
-    "notLoggedIn": "Connectez ou créez vous un compte pour accéder au classement !",
-    "you": "Vous",
-    "unranked": "Hors classement",
-    "yourPosition": "Votre position"
+    }
   },
   "modal": {
     "defaultTitle": "Confirmation",

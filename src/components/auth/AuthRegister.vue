@@ -18,7 +18,6 @@
                 id="nickName"
                 v-model="registerData.nickName"
                 type="text"
-                maxlength="50"
                 class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.register.nicknamePlaceholder')"
                 required
@@ -63,35 +62,6 @@
                 required
               />
             </div>
-
-            <!-- Nickname validation rules -->
-            <transition name="slide-fade">
-              <div
-                v-if="registerData.nickName"
-                class="rounded-lg p-4 bg-brand-darkGray/30 border border-brand-purple/20"
-              >
-                <ul class="space-y-1.5 text-sm">
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="nicknameRules.maxLength ? 'check-circle' : 'times-circle'"
-                      :class="nicknameRules.maxLength ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="nicknameRules.maxLength ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.nicknameMaxLength') }}
-                    </span>
-                  </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="nicknameRules.validFormat ? 'check-circle' : 'times-circle'"
-                      :class="nicknameRules.validFormat ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="nicknameRules.validFormat ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.nicknameFormat') }}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </transition>
 
             <!-- Password validation rules -->
             <transition name="slide-fade">
@@ -234,17 +204,6 @@ type ErrorField = string | ErrorMessage
 
 const error = ref<Record<string, ErrorField[]> | null>(null)
 
-const NICKNAME_REGEX = /^[a-zA-Z0-9\- ]+$/
-
-// Nickname validation rules
-const nicknameRules = computed(() => {
-  const trimmed = registerData.value.nickName.trim()
-  return {
-    maxLength: trimmed.length > 0 && trimmed.length <= 50,
-    validFormat: trimmed.length > 0 && NICKNAME_REGEX.test(trimmed),
-  }
-})
-
 // Password validation rules
 const passwordRules = computed(() => ({
   minLength: registerData.value.password.length >= 8,
@@ -260,8 +219,7 @@ const passwordRules = computed(() => ({
 // Check if the form is valid
 const isFormValid = computed(() => {
   return (
-    nicknameRules.value.maxLength &&
-    nicknameRules.value.validFormat &&
+    registerData.value.nickName.trim() !== '' &&
     registerData.value.email.trim() !== '' &&
     passwordRules.value.minLength &&
     passwordRules.value.hasLowercase &&
