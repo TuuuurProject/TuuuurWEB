@@ -376,12 +376,13 @@
     }
   },
   "leaderboard": {
-    "title": "Classement Gaming",
-    "badge": "Top 20 Légendes",
+    "title": "Classement Global",
+    "badge": "Top Légendes",
     "podium": {
       "first": "#1",
       "second": "#2",
-      "third": "#3"
+      "third": "#3",
+      "empty": "?"
     },
     "ranking": {
       "title": "Classement Complet",
@@ -391,7 +392,14 @@
       "currentChampion": "Champion actuel",
       "challenger": "Challenger",
       "confirmedPlayer": "Joueur confirmé"
-    }
+    },
+    "otherPlayers": "Voir les {count} autres joueurs",
+    "empty": "Aucun joueur classé pour l'instant",
+    "eloLabel": "Élo",
+    "notLoggedIn": "Connectez ou créez vous un compte pour accéder au classement !",
+    "you": "Vous",
+    "unranked": "Hors classement",
+    "yourPosition": "Votre position"
   },
   "modal": {
     "defaultTitle": "Confirmation",

@@ -15,6 +15,31 @@ export interface RankedUser {
   globalElo: number
 }
 
+export interface RankingUser {
+  id: string
+  nickName: string
+  email: string
+  avatar: string | null
+  isAdmin: boolean
+  isNew: boolean
+  isGoogleUser: boolean
+  isInvitedUser: boolean
+  elo: { idTheme: number; value: number; gamesPlayed: number; theme: { id: number; icon: string; label: string } }[]
+  globalElo: number
+  userRanking: number
+}
+
+export interface RankingResponse {
+  users: RankingUser[]
+  userRanking: number
+  userElo: number
+  currentPage: number
+  totalPages: number
+  totalUsers: number
+  userTier: number
+  userDivision: number
+}
+
 export interface RankedAnswer {
   id: number
   idQuestion: number
@@ -96,8 +121,11 @@ const useRankedStore = defineStore('ranked', () => {
   const partyId = ref<string | null>(null)
   const partyInfo = ref<RankedPartyInfo | null>(null)
   const loading = ref(0)
+  const rankingData = ref<RankingResponse | null>(null)
+  const rankingLoading = ref(0)
 
   const isLoading = computed(() => loading.value > 0)
+  const isRankingLoading = computed(() => rankingLoading.value > 0)
 
   async function loadPartyInfo() {
     if (!partyId.value) return null
@@ -111,6 +139,19 @@ const useRankedStore = defineStore('ranked', () => {
       return error?.response?.data ?? error
     } finally {
       loading.value--
+    }
+  }
+
+  async function loadRanking(page = 1, size = 50) {
+    rankingLoading.value++
+    const url = import.meta.env.VITE_API_URL + `ranked/ranking?Page=${page}&Size=${size}`
+    try {
+      const response = await axiosOverlayConnector({ url, method: 'GET' })
+      rankingData.value = response.data
+    } catch (error: any) {
+      return error?.response?.data ?? error
+    } finally {
+      rankingLoading.value--
     }
   }
 
@@ -138,6 +179,9 @@ const useRankedStore = defineStore('ranked', () => {
     isLoading,
     loadPartyInfo,
     reset,
+    rankingData,
+    isRankingLoading,
+    loadRanking,
   }
 })
 
