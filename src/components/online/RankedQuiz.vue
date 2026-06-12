@@ -569,11 +569,18 @@
         <div
           class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
         >
-          <button class="btn btn-ghost w-full sm:w-auto" @click="$emit('home')">
+          <button
+            class="btn btn-ghost w-full sm:w-auto"
+            @click="historyMode ? router.push({ name: 'Profile' }) : $emit('home')"
+          >
             <font-awesome-icon icon="house" class="mr-2" />
             {{ $t('competitive.quiz.home') }}
           </button>
-          <button class="btn btn-primary w-full sm:w-auto" @click="$emit('replay')">
+          <button
+            v-if="!historyMode"
+            class="btn btn-primary w-full sm:w-auto"
+            @click="$emit('replay')"
+          >
             <font-awesome-icon icon="rotate-right" class="mr-2" />
             {{ $t('competitive.quiz.replay') }}
           </button>
@@ -635,14 +642,21 @@ import { toast } from 'vue3-toastify'
 import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue-router'
 import signalrService, { RankedEvent } from '@/services/signalrService'
 import useRankedStore from '@/stores/ranked'
-import type { RankedUser, RankedQuestion, UserAnswered, UserScore } from '@/stores/ranked'
+import type {
+  RankedUser,
+  RankedQuestion,
+  UserAnswered,
+  UserScore,
+  RankedPartyQuestion,
+} from '@/stores/ranked'
 import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import ModalDialog from '@/components/ModalDialog.vue'
 
 const props = defineProps<{
-  opponent: RankedUser
+  opponent?: RankedUser
   currentUser: RankedUser | null
   initialCountdown?: number
+  historyMode?: boolean
 }>()
 
 const emit = defineEmits<{ home: []; replay: [] }>()
@@ -659,7 +673,9 @@ let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormali
 
 // ─── Phase ───────────────────────────────────────────────────────────────────
 type Phase = 'countdown' | 'question' | 'answered' | 'revealing' | 'finished'
-const phase = ref<Phase>(props.initialCountdown === undefined ? 'question' : 'countdown')
+const phase = ref<Phase>(
+  props.historyMode ? 'finished' : props.initialCountdown === undefined ? 'question' : 'countdown',
+)
 const countdownValue = ref(props.initialCountdown ?? 3)
 
 // ─── Question state ───────────────────────────────────────────────────────────
@@ -959,6 +975,40 @@ const handleKeyPress = (event: KeyboardEvent) => {
 }
 
 onMounted(() => {
+  if (props.historyMode && rankedStore.partyInfo) {
+    const info = rankedStore.partyInfo
+
+    rankedStore.hasWon = info.isWinner
+    rankedStore.eloChange = info.elo
+    myScore.value = info.finalScore
+
+    if (info.partyQuestions && info.partyQuestions.length > 0) {
+      totalQuestions.value = info.partyQuestions.length
+      questionHistory.value = info.partyQuestions.map((pq: RankedPartyQuestion, idx: number) => ({
+        question: {
+          question: {
+            id: pq.question.id,
+            label: pq.question.label,
+            idDifficulty: pq.question.idDifficulty,
+            answer: pq.question.answer,
+            difficulty: pq.question.difficulty ?? { id: 0, label: '' },
+            partyQuestion: [],
+            questionTheme: pq.question.questionTheme ?? [],
+          },
+          currentIndex: idx,
+          score: pq.userPartyQuestion?.score ?? 0,
+          multiplier: 1,
+        },
+        correct: pq.userPartyQuestion?.correct ?? false,
+        points: pq.userPartyQuestion?.score ?? 0,
+        selectedAnswerId: pq.userPartyQuestion?.idAnswer ?? null,
+      }))
+    }
+
+    phase.value = 'finished'
+    return
+  }
+
   // Même pattern que GroupQuiz :
   // 1. Nettoyer TOUS les handlers existants pour ces events (évite les doublons)
   // 2. Enregistrer les nouveaux handlers directement (pas de wrapper anonyme)
@@ -971,6 +1021,11 @@ onMounted(() => {
 
 onBeforeUnmount(async () => {
   stopTimer()
+
+  if (props.historyMode) {
+    rankedStore.reset()
+    return
+  }
 
   globalThis.removeEventListener('beforeunload', handleBeforeUnload)
   globalThis.removeEventListener('keydown', handleKeyPress)
