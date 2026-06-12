@@ -372,12 +372,13 @@
     }
   },
   "leaderboard": {
-    "title": "Gaming Leaderboard",
-    "badge": "Top 20 Legends",
+    "title": "Global Leaderboard",
+    "badge": "Top Legends",
     "podium": {
       "first": "#1",
       "second": "#2",
-      "third": "#3"
+      "third": "#3",
+      "empty": "?"
     },
     "ranking": {
       "title": "Full Ranking",
@@ -387,7 +388,14 @@
       "currentChampion": "Current Champion",
       "challenger": "Challenger",
       "confirmedPlayer": "Confirmed Player"
-    }
+    },
+    "otherPlayers": "See {count} other players",
+    "empty": "No ranked players yet",
+    "eloLabel": "Elo",
+    "notLoggedIn": "Log in or create an account to access the leaderboard!",
+    "you": "You",
+    "unranked": "Unranked",
+    "yourPosition": "Your position"
   },
   "modal": {
     "defaultTitle": "Confirmation",
