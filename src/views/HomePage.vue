@@ -113,13 +113,14 @@
 
     <!-- Footer avec effet glow -->
     <footer class="absolute bottom-6 text-xs text-brand-gray glow-text">
-      {{ $t('home.footer', { year: currentYear }) }}
+      {{ $t('home.footer', { year: currentYear }) }} - V.{{ packageJson.version }}
     </footer>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
+import packageJson from '/package.json'
 
 const router = useRouter()
 const currentYear = new Date().getFullYear()

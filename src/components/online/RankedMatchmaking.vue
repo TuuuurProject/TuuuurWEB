@@ -132,7 +132,6 @@
               {{ opponent?.nickName ?? $t('competitive.matchmaking.opponent') }}
             </p>
             <div class="player-elo">
-              <font-awesome-icon icon="star" class="text-brand-yellow text-xs" />
               <span>{{ opponent?.globalElo ?? '—' }} ELO</span>
             </div>
           </div>
