@@ -105,7 +105,7 @@ const currentUser = computed<RankedUser | null>(() => {
     isGoogleUser: userStore.userInfo.isGoogleUser,
     isInvitedUser: false,
     elo: [],
-    globalElo: 0,
+    globalElo: userStore.userInfo.globalElo ?? 0,
   }
 })
 

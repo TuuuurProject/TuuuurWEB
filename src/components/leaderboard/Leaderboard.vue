@@ -102,7 +102,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon animate-pulse-slow"
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon"
                     :class="
                       isCurrentUser(sortedPlayers[0])
                         ? 'ring-2 ring-brand-purple ring-offset-2 ring-offset-brand-dark'
