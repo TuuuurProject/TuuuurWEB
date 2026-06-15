@@ -120,7 +120,7 @@
 
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import packageJson from '/package.json'
+import packageJson from '../../package.json'
 
 const router = useRouter()
 const currentYear = new Date().getFullYear()
