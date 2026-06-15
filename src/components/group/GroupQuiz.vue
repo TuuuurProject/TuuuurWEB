@@ -249,7 +249,7 @@
           class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
         >
           <div
-            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4 animate-pulse-slow"
+            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
           >
             <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
           </div>
@@ -354,7 +354,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon animate-pulse-slow"
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon"
                   >
                     <img
                       v-if="sortedPlayers[0]?.user?.avatar"
@@ -648,11 +648,7 @@
           >
             <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
           </button>
-          <button
-            v-else
-            class="btn btn-secondary w-full sm:w-auto"
-            @click="exitQuizGame"
-          >
+          <button v-else class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
             <font-awesome-icon icon="arrow-left" class="mr-2" />
             {{ $t('group.quiz.returnToLobby') }}
           </button>
