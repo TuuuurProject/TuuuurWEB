@@ -91,7 +91,7 @@
         class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
       >
         <div
-          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4 animate-pulse-slow"
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
         >
           <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
         </div>

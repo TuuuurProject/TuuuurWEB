@@ -10,10 +10,8 @@
 
     <!-- Matchmaking visual -->
     <Transition name="state-switch" mode="out-in">
-
       <!-- ── SEARCHING ────────────────────────────────────────── -->
       <div v-if="state === 'search'" key="search" class="flex flex-col items-center gap-8 py-4">
-
         <!-- Radar -->
         <div class="radar">
           <!-- Ambient glow -->
@@ -79,7 +77,6 @@
 
       <!-- ── FOUND ───────────────────────────────────────────── -->
       <div v-else key="found" class="flex flex-col items-center gap-6 py-4 w-full">
-
         <!-- Match found badge -->
         <div class="found-badge">
           <font-awesome-icon icon="bolt" class="mr-1.5" />
@@ -88,7 +85,6 @@
 
         <!-- Players face-off -->
         <div class="matchup">
-
           <!-- You -->
           <div class="player player--you">
             <div class="avatar-ring avatar-ring--purple">
@@ -108,8 +104,7 @@
               {{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}
             </p>
             <div class="player-elo">
-              <font-awesome-icon icon="star" class="text-brand-yellow text-xs" />
-              <span>{{ currentUser?.globalElo ?? '—' }}</span>
+              <span>{{ currentUser?.globalElo ?? '—' }} ELO</span>
             </div>
           </div>
 
@@ -138,18 +133,16 @@
             </p>
             <div class="player-elo">
               <font-awesome-icon icon="star" class="text-brand-yellow text-xs" />
-              <span>{{ opponent?.globalElo ?? '—' }}</span>
+              <span>{{ opponent?.globalElo ?? '—' }} ELO</span>
             </div>
           </div>
         </div>
 
         <!-- Starting soon -->
         <p class="text-sm text-brand-gray text-center animate-pulse">
-          <font-awesome-icon icon="hourglass-half" class="mr-1.5 text-brand-green" />
           {{ $t('competitive.matchmaking.gameStartingSoon') }}
         </p>
       </div>
-
     </Transition>
   </section>
 </template>
@@ -209,9 +202,18 @@ defineEmits<{ cancel: [] }>()
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.radar-ring--outer { width: 88%;  height: 88%; }
-.radar-ring--mid   { width: 62%;  height: 62%; }
-.radar-ring--inner { width: 36%;  height: 36%; }
+.radar-ring--outer {
+  width: 88%;
+  height: 88%;
+}
+.radar-ring--mid {
+  width: 62%;
+  height: 62%;
+}
+.radar-ring--inner {
+  width: 36%;
+  height: 36%;
+}
 
 /* Cross-hair */
 .radar-line {
@@ -254,8 +256,12 @@ defineEmits<{ cancel: [] }>()
 }
 
 @keyframes radar-rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Center dot */
@@ -286,8 +292,14 @@ defineEmits<{ cancel: [] }>()
   animation: radar-ping 2.2s ease-out infinite;
 }
 @keyframes radar-ping {
-  0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-  100% { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(6);
+    opacity: 0;
+  }
 }
 
 /* Blip dots */
@@ -301,8 +313,15 @@ defineEmits<{ cancel: [] }>()
   animation: blip-pulse 2.4s ease-in-out infinite;
 }
 @keyframes blip-pulse {
-  0%, 100% { opacity: 0.2; transform: scale(0.8); }
-  50%       { opacity: 0.9; transform: scale(1.3); }
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.3);
+  }
 }
 
 /* ── FOUND STATE ────────────────────────────────────────────── */
@@ -320,8 +339,14 @@ defineEmits<{ cancel: [] }>()
   animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 @keyframes badge-pop {
-  from { transform: scale(0.6); opacity: 0; }
-  to   { transform: scale(1);   opacity: 1; }
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Players row */
@@ -333,10 +358,14 @@ defineEmits<{ cancel: [] }>()
   width: 100%;
 }
 @media (min-width: 480px) {
-  .matchup { gap: 1.75rem; }
+  .matchup {
+    gap: 1.75rem;
+  }
 }
 @media (min-width: 640px) {
-  .matchup { gap: 2.5rem; }
+  .matchup {
+    gap: 2.5rem;
+  }
 }
 
 .player {
@@ -349,7 +378,9 @@ defineEmits<{ cancel: [] }>()
   max-width: 110px;
 }
 @media (min-width: 640px) {
-  .player { max-width: 140px; }
+  .player {
+    max-width: 140px;
+  }
 }
 
 /* Slide-in animations */
@@ -360,12 +391,24 @@ defineEmits<{ cancel: [] }>()
   animation: slide-from-right 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) 0.08s both;
 }
 @keyframes slide-from-left {
-  from { transform: translateX(-28px); opacity: 0; }
-  to   { transform: translateX(0);     opacity: 1; }
+  from {
+    transform: translateX(-28px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 @keyframes slide-from-right {
-  from { transform: translateX(28px); opacity: 0; }
-  to   { transform: translateX(0);    opacity: 1; }
+  from {
+    transform: translateX(28px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 /* Avatar ring */
@@ -375,11 +418,15 @@ defineEmits<{ cancel: [] }>()
 }
 .avatar-ring--purple {
   background: linear-gradient(135deg, #6c5ce7, #8b7cf8);
-  box-shadow: 0 0 18px rgba(108, 92, 231, 0.55), 0 0 36px rgba(108, 92, 231, 0.2);
+  box-shadow:
+    0 0 18px rgba(108, 92, 231, 0.55),
+    0 0 36px rgba(108, 92, 231, 0.2);
 }
 .avatar-ring--orange {
   background: linear-gradient(135deg, #ff6b35, #ff8c5a);
-  box-shadow: 0 0 18px rgba(255, 107, 53, 0.55), 0 0 36px rgba(255, 107, 53, 0.2);
+  box-shadow:
+    0 0 18px rgba(255, 107, 53, 0.55),
+    0 0 36px rgba(255, 107, 53, 0.2);
 }
 
 .avatar-inner {
@@ -394,7 +441,10 @@ defineEmits<{ cancel: [] }>()
   justify-content: center;
 }
 @media (min-width: 640px) {
-  .avatar-inner { width: 88px; height: 88px; }
+  .avatar-inner {
+    width: 88px;
+    height: 88px;
+  }
 }
 
 .avatar-initial {
@@ -402,8 +452,12 @@ defineEmits<{ cancel: [] }>()
   font-weight: 700;
   line-height: 1;
 }
-.avatar-initial--purple { color: #6c5ce7; }
-.avatar-initial--orange { color: #ff6b35; }
+.avatar-initial--purple {
+  color: #6c5ce7;
+}
+.avatar-initial--orange {
+  color: #ff6b35;
+}
 
 /* Player text */
 .player-nick {
@@ -417,7 +471,9 @@ defineEmits<{ cancel: [] }>()
   width: 100%;
 }
 @media (min-width: 640px) {
-  .player-nick { font-size: 0.875rem; }
+  .player-nick {
+    font-size: 0.875rem;
+  }
 }
 
 .player-elo {
@@ -448,11 +504,19 @@ defineEmits<{ cancel: [] }>()
     0 0 40px rgba(255, 107, 53, 0.3);
 }
 @media (min-width: 640px) {
-  .vs-text { font-size: 2.75rem; }
+  .vs-text {
+    font-size: 2.75rem;
+  }
 }
 @keyframes vs-pop {
-  from { transform: scale(0.2) rotate(-20deg); opacity: 0; }
-  to   { transform: scale(1)   rotate(0deg);   opacity: 1; }
+  from {
+    transform: scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 /* ── STATE SWITCH TRANSITION ────────────────────────────────── */
