@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, onMounted } from 'vue'
 import useGroupeStore from '@/stores/groupe'
 import useUserStore from '@/stores/user'
 import ModalDialog from '@/components/ModalDialog.vue'
@@ -250,4 +250,20 @@ const joinGroupInvited = async () => {
     }
   }
 }
+
+onMounted(async () => {
+  // If code is in url, try to join the group (handles page refresh and direct link with code)
+  const urlParams = new URLSearchParams(globalThis.location.search)
+  const codeFromUrl = urlParams.get('code')
+
+  if (codeFromUrl && !groupeStore.groupeId) {
+    fillDigits(codeFromUrl)
+
+    showModalUsername.value = true
+
+    urlParams.delete('code')
+    const newUrl = `${globalThis.location.pathname}`
+    globalThis.history.replaceState({}, '', newUrl)
+  }
+})
 </script>
