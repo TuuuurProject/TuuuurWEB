@@ -135,26 +135,7 @@ onMounted(async () => {
   const urlParams = new URLSearchParams(globalThis.location.search)
   const codeFromUrl = urlParams.get('code')
   if (codeFromUrl && !groupeStore.groupeId) {
-    groupeStore
-      .joinGroupe(codeFromUrl)
-      .then((res) => {
-        if (res === true) {
-          step.value = 'lobby'
-        } else {
-          step.value = 'join'
-          proxy?.$nextTick(() => {
-            proxy?.$toast.error(t('group.lobby.joinError'))
-          })
-        }
-      })
-      .finally(() => {
-        // Go back to join step if join fails (invalid code, group full, etc.)
-        // emit('goTo', 'join')
-        // Remove code in url to prevent infinite loop on refresh
-        urlParams.delete('code')
-        const newUrl = `${globalThis.location.pathname}`
-        globalThis.history.replaceState({}, '', newUrl)
-      })
+    step.value = 'join'
   }
 })
 </script>
