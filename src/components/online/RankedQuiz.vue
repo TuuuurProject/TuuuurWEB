@@ -1019,8 +1019,23 @@ onMounted(() => {
   globalThis.addEventListener('keydown', handleKeyPress)
 })
 
+const handlePageLeave = async () => {
+  if (signalrService.isConnected()) {
+    await signalrService.invoke(RankedEvent.GiveUp)
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('beforeunload', handlePageLeave)
+  window.addEventListener('pagehide', handlePageLeave)
+})
+
 onBeforeUnmount(async () => {
   stopTimer()
+
+  await handlePageLeave()
+  window.removeEventListener('beforeunload', handlePageLeave)
+  window.removeEventListener('pagehide', handlePageLeave)
 
   if (props.historyMode) {
     rankedStore.reset()
