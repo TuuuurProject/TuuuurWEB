@@ -259,7 +259,13 @@ onMounted(async () => {
   if (codeFromUrl && !groupeStore.groupeId) {
     fillDigits(codeFromUrl)
 
-    showModalUsername.value = true
+    if (userStore.isLogged) {
+      error.value = await groupeStore.joinGroupe(codeFromUrl)
+      if (groupeStore.groupeId) emit('joined', true)
+    } else {
+      // If user isn't logged in, ask for username and create temp token
+      showModalUsername.value = true
+    }
 
     urlParams.delete('code')
     const newUrl = `${globalThis.location.pathname}`
