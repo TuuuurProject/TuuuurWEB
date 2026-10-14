@@ -7,6 +7,17 @@ describe('Parcours 1: Solo - Créer et lancer une partie', () => {
     cy.wait(1000)
   })
 
+  it('garde le choix du theme apres rechargement', () => {
+    cy.getByTestId('theme-toggle').click()
+    cy.get('html').invoke('attr', 'data-theme').then((theme) => {
+      const selectedTheme = theme as string
+      expect(['light', 'dark']).to.include(selectedTheme)
+      cy.reload()
+      cy.get('html').should('have.attr', 'data-theme', selectedTheme)
+      cy.getByTestId('home-solo').should('be.visible')
+    })
+  })
+
   it('devrait permettre de créer et lancer une partie solo après connexion', () => {
     // Étape 1: Depuis la home, cliquer sur "Jouer en solo"
     cy.getByTestId('home-solo').should('be.visible').click()

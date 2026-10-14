@@ -21,15 +21,31 @@
     "profile": "Profile",
     "ranking": "Ranking",
     "modes": "Game modes",
-    "menu": "Menu"
+    "menu": "Menu",
+    "darkTheme": "Switch to dark mode",
+    "lightTheme": "Switch to light mode"
   },
   "home": {
-    "title": "Tuuuur",
-    "subtitle": "Fun and competitive quiz. Play solo, in groups, or in online duels.",
+    "title": "Monkizz",
+    "eyebrow": "The quiz for curious minds",
+    "headlineFirst": "Stay curious.",
+    "headlineSecond": "Play more.",
+    "subtitle": "A little knowledge, a lot of fun. Pick your way to play and let your curiosity lead the way.",
+    "tagline": "General knowledge without taking yourself too seriously.",
+    "chipCuriosity": "Curiosity on",
+    "chipChallenge": "Your turn to play",
+    "explore": "A way to play for everyone",
+    "chooseMode": "Pick your mode",
+    "soloTitle": "Your own pace",
+    "soloDescription": "Explore your favorite topics and chase a perfect score.",
+    "groupTitle": "With friends",
+    "groupDescription": "Bring your crew together for a quiz night.",
+    "duelTitle": "Time to duel",
+    "duelDescription": "Take on other players and climb the leaderboard.",
     "playSolo": "Play Solo",
     "playGroup": "Play in Group",
     "competitiveMode": "Competitive Mode",
-    "footer": "© {year} Tuuuur"
+    "footer": "© {year} Monkizz"
   },
   "auth": {
     "login": {

@@ -21,15 +21,31 @@
     "profile": "Profil",
     "ranking": "Classement",
     "modes": "Modes de jeu",
-    "menu": "Menu"
+    "menu": "Menu",
+    "darkTheme": "Activer le mode sombre",
+    "lightTheme": "Activer le mode clair"
   },
   "home": {
-    "title": "Tuuuur",
-    "subtitle": "Quiz fun et compétitif. Jouez en solo, en groupe ou en duel en ligne.",
+    "title": "Monkizz",
+    "eyebrow": "Le quiz qui reveille les neurones",
+    "headlineFirst": "Curieux de",
+    "headlineSecond": "nature ?",
+    "subtitle": "Un peu de savoir, beaucoup de fun. Choisis ton terrain de jeu et laisse ta curiosité faire le reste.",
+    "tagline": "La culture générale, sans se prendre au sérieux.",
+    "chipCuriosity": "Curiosité activée",
+    "chipChallenge": "À toi de jouer",
+    "explore": "À chacun sa façon de jouer",
+    "chooseMode": "Choisis ton mode",
+    "soloTitle": "À ton rythme",
+    "soloDescription": "Explore tes thèmes préférés et vise le sans-faute.",
+    "groupTitle": "Entre potes",
+    "groupDescription": "Réunis ta bande autour d'une partie de quiz.",
+    "duelTitle": "Place au duel",
+    "duelDescription": "Affronte d'autres joueurs et grimpe au classement.",
     "playSolo": "Jouer en solo",
     "playGroup": "Jouer en groupe",
     "competitiveMode": "Mode compétitif",
-    "footer": "© {year} Tuuuur"
+    "footer": "© {year} Monkizz"
   },
   "auth": {
     "login": {

@@ -166,7 +166,7 @@ defineEmits<{ cancel: [] }>()
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: #1a1b2e;
+  background: rgb(var(--surface-card));
   border: 1px solid rgba(108, 92, 231, 0.35);
   overflow: hidden;
   box-shadow:
@@ -432,8 +432,8 @@ defineEmits<{ cancel: [] }>()
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #1a1b2e;
-  border: 2px solid #1a1b2e;
+  background: rgb(var(--surface-card));
+  border: 2px solid rgb(var(--surface-card));
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -452,17 +452,17 @@ defineEmits<{ cancel: [] }>()
   line-height: 1;
 }
 .avatar-initial--purple {
-  color: #6c5ce7;
+  color: rgb(var(--accent-primary));
 }
 .avatar-initial--orange {
-  color: #ff6b35;
+  color: rgb(var(--accent-coral));
 }
 
 /* Player text */
 .player-nick {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #e1e5e9;
+  color: rgb(var(--text-primary));
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -480,7 +480,7 @@ defineEmits<{ cancel: [] }>()
   align-items: center;
   gap: 0.25rem;
   font-size: 0.75rem;
-  color: #8b9aa8;
+  color: rgb(var(--text-muted));
   font-weight: 500;
 }
 
@@ -493,10 +493,10 @@ defineEmits<{ cancel: [] }>()
   animation: vs-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 .vs-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  color: #ff6b35;
+  color: rgb(var(--accent-coral));
   letter-spacing: 0.05em;
   text-shadow:
     0 0 16px rgba(255, 107, 53, 0.7),

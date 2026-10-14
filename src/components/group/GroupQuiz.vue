@@ -1554,17 +1554,17 @@ onBeforeUnmount(async () => {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(10, 11, 30, 0.5);
+  background: rgb(var(--surface-raised) / 0.5);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(108, 92, 231, 0.4);
+  background: rgb(var(--accent-primary) / 0.4);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 92, 231, 0.6);
+  background: rgb(var(--accent-primary) / 0.6);
 }
 
 /* Boutons de difficulté */
@@ -1572,21 +1572,21 @@ onBeforeUnmount(async () => {
   position: relative;
   padding: 0.875rem 1rem;
   border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
+  border: 2px solid rgb(var(--accent-primary) / 0.15);
+  background: rgb(var(--surface-card));
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
+  color: rgb(var(--text-primary));
 }
 
 .difficulty-button:hover {
   transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgb(var(--accent-primary) / 0.5);
 }
 
 .difficulty-button.selected {
   border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
+  background: rgb(var(--surface-raised));
 }
 
 /* Couleurs par difficulté */

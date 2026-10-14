@@ -358,19 +358,19 @@ const toggleDifficulty = (id: number) => {
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
+  background: rgb(var(--accent-primary));
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+  box-shadow: 0 0 10px rgb(var(--accent-primary) / 0.3);
 }
 
 .slider-purple::-moz-range-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
+  background: rgb(var(--accent-primary));
   cursor: pointer;
   border: none;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+  box-shadow: 0 0 10px rgb(var(--accent-primary) / 0.3);
 }
 
 /* Boutons de difficulté */
@@ -392,8 +392,8 @@ const toggleDifficulty = (id: number) => {
   position: relative;
   padding: 0.875rem 1rem;
   border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
+  border: 2px solid rgb(var(--accent-primary) / 0.15);
+  background: rgb(var(--surface-card));
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--diff-color);
@@ -401,12 +401,12 @@ const toggleDifficulty = (id: number) => {
 
 .difficulty-button:hover {
   transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgb(var(--accent-primary) / 0.5);
 }
 
 .difficulty-button.selected {
   border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
+  background: rgb(var(--surface-raised));
   transform: translateX(4px);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
 }

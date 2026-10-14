@@ -122,6 +122,6 @@ durations and timing functions.
 
 <style scoped>
 section#body-block {
-  min-height: calc(100vh - 75px);
+  min-height: calc(100vh - 76px);
 }
 </style>

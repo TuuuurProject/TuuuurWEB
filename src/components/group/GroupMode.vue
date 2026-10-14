@@ -16,13 +16,13 @@
         >
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-2xl bg-brand-purple/20 flex items-center justify-center text-brand-purple text-2xl group-hover:bg-brand-purple group-hover:text-white transition-all duration-300"
+              class="w-12 h-12 rounded-2xl bg-brand-purple/20 flex items-center justify-center text-brand-purple text-2xl transition-all duration-300"
             >
               <font-awesome-icon icon="gamepad" />
             </div>
             <div>
               <h3
-                class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
+                class="font-branding text-2xl mb-2 text-brand-lightGray transition-colors"
               >
                 {{ $t('group.create.title') }}
               </h3>
@@ -43,13 +43,13 @@
         >
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl group-hover:bg-brand-orange group-hover:text-white transition-all duration-300"
+              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl transition-all duration-300"
             >
               <font-awesome-icon icon="rocket" />
             </div>
             <div>
               <h3
-                class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
+                class="font-branding text-2xl mb-2 text-brand-lightGray transition-colors"
               >
                 {{ $t('group.join.title') }}
               </h3>

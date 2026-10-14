@@ -1,7 +1,9 @@
 <template>
   <div class="relative">
     <button
-      class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 flex items-center gap-2"
+      class="pill hover:bg-brand-purple/10 hover:border-brand-purple/40 flex items-center gap-2 text-sm font-bold"
+      :aria-label="currentLocaleLabel"
+      :aria-expanded="isOpen"
       @click="toggleDropdown"
     >
       <span>{{ currentLocaleLabel }}</span>
@@ -13,7 +15,7 @@
     <transition name="fade">
       <div
         v-if="isOpen"
-        class="absolute right-0 mt-2 w-32 rounded-2xl bg-brand-darkGray/95 backdrop-blur-xl border border-brand-purple/30 shadow-neon overflow-hidden z-50"
+        class="absolute right-0 mt-2 w-32 rounded-2xl bg-brand-darkGray border border-brand-purple/30 shadow-card overflow-hidden z-50"
       >
         <button
           v-for="locale in availableLocales"

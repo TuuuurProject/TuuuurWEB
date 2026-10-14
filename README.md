@@ -1,45 +1,23 @@
-# fusion-vue-tailwind-starter
+# Monkizz Web
 
-This template should help get you started developing with Vue 3 in Vite.
+Client Vue 3 / Vite du quiz de culture generale Monkizz. Les modes solo, groupe et competitif utilisent l'API existante.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Developpement
 
 ```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+npm ci
 npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
 npm run build
+npm run test:unit -- --run
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Les URL d'API et les identifiants de connexion sont fournis par les variables `VITE_*` de l'environnement ; ne jamais y placer de secret. Les parcours de test navigateur utilisent `npm run e2e:run`.
 
-```sh
-npm run test:unit
-```
+## Identite visuelle
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- Signature : curieux, joueur et accessible ; logo singe geometrique cree pour Monkizz (`src/assets/monkizz-mark.svg`).
+- Typographie : Space Grotesk pour titres, chiffres et actions ; DM Sans pour le texte et les questions. Les polices ont des fallbacks systeme et sont chargees depuis Google Fonts dans `index.html`.
+- Palette claire : fond creme `#F7F6F1`, encre `#1D2539`, indigo `#353779`, corail `#C64630`, vert `#10735E`.
+- Palette sombre : fond nuit `#111827`, texte ivoire `#F6F6F1`, indigo doux `#B6B7FF`, corail `#FFA080`, menthe `#87DDB7`.
+- Les tokens des deux themes sont dans `src/assets/base.css` et exposes aux utilitaires Tailwind par `tailwind.config.js`. Le choix clair/sombre est conserve dans `localStorage` sous `monkizz-theme` ; sans preference enregistree, il suit le theme du systeme au premier chargement.
+- Le mouvement reduit est respecte via `prefers-reduced-motion`. Les composants de jeu doivent privilegier les tokens semantiques plutot que des couleurs codees en dur.

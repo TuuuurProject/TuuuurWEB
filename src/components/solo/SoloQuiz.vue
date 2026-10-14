@@ -674,8 +674,8 @@ onBeforeUnmount(() => {
   position: relative;
   padding: 0.875rem 1rem;
   border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
+  border: 2px solid rgb(var(--accent-primary) / 0.15);
+  background: rgb(var(--surface-card));
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--diff-color);
@@ -683,12 +683,12 @@ onBeforeUnmount(() => {
 
 .difficulty-button:hover {
   transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgb(var(--accent-primary) / 0.5);
 }
 
 .difficulty-button.selected {
   border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
+  background: rgb(var(--surface-raised));
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
 }
 

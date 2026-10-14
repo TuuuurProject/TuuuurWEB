@@ -13,45 +13,40 @@ export default {
     extend: {
       colors: {
         brand: {
-          // Couleurs gaming vibrantes
-          dark: '#0A0B1E', // Bleu très sombre pour le fond
-          darkGray: '#1A1B2E', // Gris sombre pour les cartes
-          purple: '#6C5CE7', // Violet électrique principal
-          purpleDark: '#5A4FCF', // Violet plus sombre
-          orange: '#FF6B35', // Orange énergique
-          orangeDark: '#E55A2B', // Orange plus sombre
-          green: '#00D084', // Vert néon
-          greenDark: '#00B56F', // Vert plus sombre
-          yellow: '#FFD93D', // Jaune vif pour les accents
-          pink: '#FF4081', // Rose vif pour les éléments spéciaux
-          cyan: '#00E5FF', // Cyan pour les liens/info
-          lightGray: '#E1E5E9', // Texte clair
-          gray: '#8B9AA8', // Texte secondaire
+          dark: 'rgb(var(--surface-page) / <alpha-value>)',
+          darkGray: 'rgb(var(--surface-card) / <alpha-value>)',
+          purple: 'rgb(var(--accent-primary) / <alpha-value>)',
+          purpleDark: 'rgb(var(--accent-primary-dark) / <alpha-value>)',
+          orange: 'rgb(var(--accent-coral) / <alpha-value>)',
+          orangeDark: 'rgb(var(--accent-coral-dark) / <alpha-value>)',
+          green: 'rgb(var(--accent-green) / <alpha-value>)',
+          greenDark: 'rgb(var(--accent-green-dark) / <alpha-value>)',
+          yellow: 'rgb(var(--accent-yellow) / <alpha-value>)',
+          pink: 'rgb(var(--accent-pink) / <alpha-value>)',
+          cyan: 'rgb(var(--accent-cyan) / <alpha-value>)',
+          lightGray: 'rgb(var(--text-primary) / <alpha-value>)',
+          gray: 'rgb(var(--text-muted) / <alpha-value>)',
           white: '#FFFFFF', // Blanc pur
-          // Anciennes couleurs pour compatibilité
           light: '#C37A3E',
           beige: '#F3E1C3',
         },
       },
       fontFamily: {
-        // Baloo 2 pour titres, boutons, branding
-        display: ['Baloo 2', 'cursive', 'system-ui', 'sans-serif'],
-        branding: ['Baloo 2', 'cursive', 'system-ui', 'sans-serif'],
-        // Nunito pour corps de texte, quiz, menus
-        sans: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        body: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        // Polices gaming pour éléments spéciaux
-        gaming: ['"Press Start 2P"', 'cursive', 'monospace'],
-        orbitron: ['Orbitron', 'cursive', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        branding: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body: ['DM Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        gaming: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        orbitron: ['Space Grotesk', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        neon: '0 0 5px rgba(108, 92, 231, 0.2), 0 0 10px rgba(108, 92, 231, 0.1)',
-        'neon-orange': '0 0 5px rgba(255, 107, 53, 0.2), 0 0 10px rgba(255, 107, 53, 0.1)',
-        'neon-green': '0 0 5px rgba(0, 208, 132, 0.2), 0 0 10px rgba(0, 208, 132, 0.1)',
-        glow: '0 0 8px rgba(108, 92, 231, 0.15)',
-        'glow-hover': '0 0 12px rgba(108, 92, 231, 0.25), 0 0 20px rgba(108, 92, 231, 0.12)',
-        'glow-hover-orange': '0 0 12px rgba(255, 107, 53, 0.25), 0 0 20px rgba(255, 107, 53, 0.12)',
-        card: '0 2px 8px rgba(10, 11, 30, 0.15), 0 1px 4px rgba(10, 11, 30, 0.08)',
+        neon: '0 8px 20px rgb(var(--accent-primary) / 0.15)',
+        'neon-orange': '0 8px 20px rgb(var(--accent-coral) / 0.15)',
+        'neon-green': '0 8px 20px rgb(var(--accent-green) / 0.15)',
+        glow: '0 8px 24px rgb(var(--accent-primary) / 0.12)',
+        'glow-hover': '0 12px 28px rgb(var(--accent-primary) / 0.22)',
+        'glow-hover-orange': '0 12px 28px rgb(var(--accent-coral) / 0.22)',
+        card: '0 12px 36px rgb(var(--shadow-color) / 0.08)',
         soft: '0 3px 6px rgba(74,46,25,0.05), 0 1px 3px rgba(74,46,25,0.03)',
       },
       animation: {
@@ -84,14 +79,12 @@ export default {
         250: '250ms',
       },
       backgroundImage: {
-        'gaming-gradient': 'linear-gradient(135deg, #0A0B1E 0%, #1A1B2E 50%, #0A0B1E 100%)',
-        'purple-gradient': 'linear-gradient(135deg, #6C5CE7 0%, #5A4FCF 100%)',
-        'orange-gradient': 'linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%)',
-        'green-gradient': 'linear-gradient(135deg, #00D084 0%, #00B56F 100%)',
-        cosmic:
-          'radial-gradient(ellipse at top, rgba(108, 92, 231, 0.1) 0%, transparent 50%), radial-gradient(ellipse at bottom, rgba(255, 107, 53, 0.1) 0%, transparent 50%)',
-        'card-gradient':
-          'linear-gradient(145deg, rgba(26, 27, 46, 0.8) 0%, rgba(10, 11, 30, 0.9) 100%)',
+        'gaming-gradient': 'linear-gradient(135deg, rgb(var(--surface-page)), rgb(var(--surface-raised)))',
+        'purple-gradient': 'linear-gradient(135deg, rgb(var(--accent-primary)), rgb(var(--accent-primary-dark)))',
+        'orange-gradient': 'linear-gradient(135deg, rgb(var(--accent-coral)), rgb(var(--accent-coral-dark)))',
+        'green-gradient': 'linear-gradient(135deg, rgb(var(--accent-green)), rgb(var(--accent-green-dark)))',
+        cosmic: 'radial-gradient(ellipse at top, rgb(var(--accent-primary) / 0.07), transparent 65%)',
+        'card-gradient': 'linear-gradient(145deg, rgb(var(--surface-card)), rgb(var(--surface-raised)))',
         'beige-radial':
           'radial-gradient(1200px 600px at 10% 10%, rgba(195,122,62,0.08), transparent), radial-gradient(1000px 500px at 90% 80%, rgba(107,185,77,0.10), transparent)',
       },

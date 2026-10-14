@@ -2,8 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+:root {
+  color-scheme: light;
+  --surface-page: 247 246 241;
+  --surface-card: 255 255 255;
+  --surface-raised: 239 241 238;
+  --text-primary: 29 37 57;
+  --text-muted: 81 91 107;
+  --accent-primary: 53 55 121;
+  --accent-primary-dark: 39 41 95;
+  --accent-coral: 198 70 48;
+  --accent-coral-dark: 164 49 31;
+  --accent-green: 16 115 94;
+  --accent-green-dark: 9 90 73;
+  --accent-yellow: 173 109 18;
+  --accent-pink: 176 53 93;
+  --accent-cyan: 12 106 129;
+  --shadow-color: 26 36 62;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --surface-page: 17 24 39;
+  --surface-card: 31 40 59;
+  --surface-raised: 38 48 69;
+  --text-primary: 246 246 241;
+  --text-muted: 186 196 209;
+  --accent-primary: 182 183 255;
+  --accent-primary-dark: 146 149 233;
+  --accent-coral: 255 160 128;
+  --accent-coral-dark: 239 125 93;
+  --accent-green: 135 221 183;
+  --accent-green-dark: 89 190 151;
+  --accent-yellow: 255 209 111;
+  --accent-pink: 255 153 184;
+  --accent-cyan: 134 215 228;
+  --shadow-color: 0 0 0;
+}
 
 /* Base styles aligned with brand */
 html,
@@ -15,6 +50,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 /* Custom scrollbar */
@@ -45,15 +81,14 @@ body {
     @apply font-branding text-brand-lightGray;
   }
   ::selection {
-    background: rgba(108, 92, 231, 0.3);
-    color: #e1e5e9;
+    background: rgb(var(--accent-primary) / 0.22);
+    color: rgb(var(--text-primary));
   }
 }
 
 @layer components {
-  /* Gaming Buttons */
   .btn {
-    @apply relative overflow-hidden inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-purple/30 disabled:opacity-50 disabled:cursor-not-allowed transform;
+    @apply relative inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-purple disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn::before {
@@ -63,7 +98,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
     transition: left 0.5s;
   }
 
@@ -72,20 +107,27 @@ body {
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon hover:shadow-glow-hover;
+    @apply bg-brand-purple text-white shadow-neon hover:bg-brand-purpleDark hover:shadow-glow-hover;
+  }
+
+  :root[data-theme='dark'] .btn-primary {
+    color: rgb(var(--surface-page));
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-brand-orange to-brand-orangeDark text-white shadow-neon-orange hover:shadow-glow-hover-orange;
+    @apply bg-brand-orange text-white shadow-neon-orange hover:bg-brand-orangeDark hover:shadow-glow-hover-orange;
+  }
+
+  :root[data-theme='dark'] .btn-secondary {
+    color: rgb(var(--surface-page));
   }
 
   .btn-ghost {
-    @apply bg-brand-darkGray/50 backdrop-blur text-brand-lightGray border-2 border-brand-purple/30 hover:border-brand-purple hover:bg-brand-purple/10;
+    @apply bg-brand-darkGray text-brand-lightGray border border-brand-purple/30 hover:border-brand-purple hover:bg-brand-purple/10;
   }
 
-  /* Gaming Cards */
   .gaming-card {
-    @apply rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/20 p-6 shadow-card transition-all duration-300 transform hover:border-brand-purple/30;
+    @apply rounded-3xl bg-brand-darkGray border border-brand-purple/15 p-6 shadow-card transition-all duration-200 hover:border-brand-purple/40;
   }
 
   .menu-card {
@@ -94,7 +136,7 @@ body {
 
   /* Pills and Badges */
   .pill {
-    @apply rounded-full bg-brand-darkGray/80 backdrop-blur px-4 py-2 text-brand-lightGray border border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200;
+    @apply rounded-full bg-brand-darkGray px-4 py-2 text-brand-lightGray border border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200;
   }
 
   .badge-success {
@@ -120,13 +162,11 @@ body {
 
   /* Gaming Text Effects */
   .glow-text {
-    text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+    text-shadow: none;
   }
 
   .title-gaming {
-    @apply font-display text-6xl md:text-7xl lg:text-8xl bg-gradient-to-r from-brand-purple via-brand-pink to-brand-orange bg-clip-text text-transparent;
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
+    @apply font-display text-6xl md:text-7xl lg:text-8xl text-brand-lightGray font-bold;
   }
 
   /* Category Buttons */
@@ -139,7 +179,11 @@ body {
   }
 
   .category-button.selected {
-    @apply border-brand-purple bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon;
+    @apply border-brand-purple bg-brand-purple text-white shadow-neon;
+  }
+
+  :root[data-theme='dark'] .category-button.selected {
+    color: rgb(var(--surface-page));
   }
 
   /* Modal Animations */
@@ -175,8 +219,8 @@ body {
     font-size: clamp(96px, 18vw, 220px);
     line-height: 1;
     text-shadow:
-      0 0 18px rgba(108, 92, 231, 0.55),
-      0 0 42px rgba(108, 92, 231, 0.35);
+      0 0 18px rgb(var(--accent-primary) / 0.35),
+      0 0 42px rgb(var(--accent-primary) / 0.2);
     animation: countdown-pop 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
   }
 
@@ -236,5 +280,19 @@ body {
   .countdown-swap-leave-to {
     transform: scale(1.08);
     opacity: 0;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--accent-primary));
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
