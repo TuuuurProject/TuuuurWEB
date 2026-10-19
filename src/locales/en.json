@@ -32,13 +32,13 @@
     "footer": "© {year} Monkizz"
   },
   "arena": {
-    "eyebrow": "Welcome to the quiz jungle",
-    "title": "A curious mind.",
-    "titleAccent": "A playful instinct.",
-    "description": "One clever monkey. A world of trivia. Ready to take the leap? Challenge your friends, test your knowledge and reach for the top.",
-    "play": "Let's play",
+    "eyebrow": "The quiz that brings out your wild side",
+    "title": "Your knowledge.",
+    "titleAccent": "Your playground.",
+    "description": "Questions, duels and those “I knew that!” moments. Test your trivia skills, challenge your friends and come back for a rematch.",
+    "play": "Start a quiz",
     "explore": "Explore game modes",
-    "footnote": "Solo, with friends or head-to-head. Always curious.",
+    "footnote": "You don't need all the answers. Just curiosity.",
     "modesEyebrow": "Your adventure starts here",
     "modesTitle": "Find your kind of wild.",
     "modesAside": "One curiosity. Three ways to play.",
@@ -105,8 +105,17 @@
       "science": "Science",
       "cinema": "Cinema",
       "history": "History",
-      "caption": "Curiosity is a playground",
-      "greeting": "Let's play!"
+      "caption": "Banana expert. Quiz enthusiast.",
+      "greeting": "Hello? This is a banana speaking.",
+      "joke": "Wrong answer? Sorry, bad reception.",
+      "label": "Meet Moki, the Monkizz mascot",
+      "description": "Moki, a big-eared 3D monkey with a crooked purple cap, a cheeky tongue and a banana phone.",
+      "stamp": "100% curious · 0% serious",
+      "react": "Go bananas!",
+      "turnLeft": "Turn Moki to the left",
+      "turnRight": "Turn Moki to the right",
+      "loading": "Moki is getting ready…",
+      "unavailable": "Illustrated Moki · 3D unavailable"
     }
   },
   "auth": {

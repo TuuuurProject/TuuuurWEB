@@ -1,197 +1,140 @@
 <template>
   <svg
     class="monkey-mascot"
-    :viewBox="portrait ? '35 10 250 225' : '0 0 320 380'"
+    :viewBox="portrait ? '0 0 320 245' : '0 0 320 380'"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
     focusable="false"
   >
     <defs>
-      <radialGradient :id="`${id}-fur`" cx=".32" cy=".2" r=".85">
-        <stop stop-color="#cd8b50" />
-        <stop offset=".55" stop-color="#91502e" />
-        <stop offset="1" stop-color="#46261f" />
+      <radialGradient :id="`${id}-fur`" cx=".3" cy=".2" r=".9">
+        <stop stop-color="#dc9752" />
+        <stop offset=".6" stop-color="#b86b34" />
+        <stop offset="1" stop-color="#6e351f" />
       </radialGradient>
-      <radialGradient :id="`${id}-face`" cx=".4" cy=".25" r=".8">
-        <stop stop-color="#fff0ca" />
-        <stop offset=".65" stop-color="#efc18c" />
-        <stop offset="1" stop-color="#cf8b58" />
+      <radialGradient :id="`${id}-face`" cx=".35" cy=".2" r=".9">
+        <stop stop-color="#ffe9b9" />
+        <stop offset="1" stop-color="#e5a86b" />
       </radialGradient>
-      <linearGradient :id="`${id}-jacket`" x2=".9" y2="1">
-        <stop stop-color="#d4bfff" />
-        <stop offset=".45" stop-color="#9870e8" />
-        <stop offset="1" stop-color="#54329b" />
+      <linearGradient :id="`${id}-purple`" x2=".8" y2="1">
+        <stop stop-color="#bd9aff" />
+        <stop offset=".5" stop-color="#9160e4" />
+        <stop offset="1" stop-color="#5c359c" />
       </linearGradient>
-      <linearGradient :id="`${id}-shoe`" x2=".7" y2="1">
-        <stop stop-color="#efffb1" />
-        <stop offset=".6" stop-color="#c4ed68" />
-        <stop offset="1" stop-color="#719a33" />
+      <linearGradient :id="`${id}-lime`" x2=".7" y2="1">
+        <stop stop-color="#edffa6" />
+        <stop offset="1" stop-color="#9cbd48" />
       </linearGradient>
     </defs>
     <g v-if="!portrait">
       <path
-        d="M229 294c80 25 83-55 52-51-29 4-12 34 3 18"
+        d="M225 294c80 25 85-57 52-51-25 5-11 32 5 18"
         fill="none"
-        stroke="#502c20"
-        stroke-width="23"
+        :stroke="`url(#${id}-fur)`"
+        stroke-width="19"
         stroke-linecap="round"
       />
       <path
-        d="M231 290c75 26 79-51 50-43"
+        d="m123 302-14 41m86-41 14 41"
+        stroke="#9b572c"
+        stroke-width="37"
+        stroke-linecap="round"
+      />
+      <path
+        d="M109 222q-32-5-48 32l-19-24m169-5q40 28 28 61"
         fill="none"
-        stroke="#a66a3c"
+        :stroke="`url(#${id}-purple)`"
+        stroke-width="35"
+        stroke-linecap="round"
+      />
+      <ellipse cx="235" cy="292" rx="20" ry="22" :fill="`url(#${id}-face)`" />
+      <path d="M114 208q46-17 89 0l26 80q-8 40-70 40-63 0-71-40Z" :fill="`url(#${id}-purple)`" />
+      <path
+        d="m123 217 36 22 35-22"
+        fill="none"
+        stroke="#cdb0ff"
         stroke-width="12"
         stroke-linecap="round"
       />
-      <ellipse
-        cx="115"
-        cy="317"
-        rx="34"
-        ry="39"
-        :fill="`url(#${id}-fur)`"
-        transform="rotate(16 115 317)"
-      />
-      <ellipse
-        cx="203"
-        cy="317"
-        rx="34"
-        ry="39"
-        :fill="`url(#${id}-fur)`"
-        transform="rotate(-16 203 317)"
-      />
+      <path d="M143 238v27m31-27v27" stroke="#fff1dc" stroke-width="4" stroke-linecap="round" />
+      <path d="M125 282q35 12 68 0l-3 22q-31 10-61 0Z" fill="#b18aef" />
       <path
-        d="M100 222q-35 15-39 64-1 26 22 26 22-2 24-34l17-35m93-21q35 15 39 64 1 26-22 26-22-2-24-34l-17-35"
-        :fill="`url(#${id}-jacket)`"
+        d="M78 334q24-16 51 2l10 23q-2 12-62 9-15-12 1-34m164 0q-24-16-51 2l-10 23q2 12 62 9 15-12-1-34"
+        :fill="`url(#${id}-lime)`"
       />
-      <ellipse
-        cx="77"
-        cy="299"
-        rx="21"
-        ry="24"
-        :fill="`url(#${id}-face)`"
-        transform="rotate(15 77 299)"
-      />
-      <ellipse
-        cx="239"
-        cy="299"
-        rx="21"
-        ry="24"
-        :fill="`url(#${id}-face)`"
-        transform="rotate(-15 239 299)"
-      />
-      <path d="M110 207q49-24 98 0l21 76q-2 42-70 43-68-1-70-43Z" :fill="`url(#${id}-jacket)`" />
+      <path d="m77 365 56 1m54 0 56-1" stroke="#fff8e7" stroke-width="8" stroke-linecap="round" />
       <path
-        d="m131 215 28 28 28-28"
-        fill="none"
-        stroke="#e3d7ff"
-        stroke-width="8"
-        stroke-linecap="round"
-      />
-      <path d="M139 234v25m39-25v25" stroke="#ede5ff" stroke-width="4" stroke-linecap="round" />
-      <path
-        d="M126 280q32 13 66 0l-3 23q-30 12-60 0Z"
-        fill="#6640ae"
-        stroke="#bd9af7"
-        stroke-width="2"
-      />
-      <path
-        d="M76 329q22-17 49-1l15 22q7 20-32 22l-38-3q-13-17 6-40m166 0q-22-17-49-1l-15 22q-7 20 32 22l38-3q13-17-6-40"
-        :fill="`url(#${id}-shoe)`"
-      />
-      <path d="m73 361 57 1m58 0 57-1" stroke="#efffc8" stroke-width="9" stroke-linecap="round" />
-      <path
-        d="m95 337 23 3m-27 8 24 3m107-14-23 3m27 8-24 3"
-        stroke="#5d7b2e"
+        d="m96 341 22 2m-25 8 24 2m108-12-22 2m25 8-24 2"
+        stroke="#fff8e7"
         stroke-width="4"
         stroke-linecap="round"
       />
+      <path
+        d="M39 231Q-5 204 22 149q-5 47 32 65Z"
+        fill="#ffd244"
+        stroke="#e3a431"
+        stroke-width="3"
+      />
+      <path d="m22 149 2-7m15 90 5 5" stroke="#734728" stroke-width="7" stroke-linecap="round" />
+      <ellipse cx="43" cy="235" rx="17" ry="20" :fill="`url(#${id}-face)`" />
+      <path
+        d="m31 226 13 2m-14 6 14 2m-12 6 13 2"
+        stroke="#d8965e"
+        stroke-width="3"
+        stroke-linecap="round"
+      />
     </g>
-    <ellipse cx="60" cy="125" rx="33" ry="40" :fill="`url(#${id}-fur)`" />
-    <ellipse cx="260" cy="125" rx="33" ry="40" :fill="`url(#${id}-fur)`" />
-    <ellipse cx="61" cy="128" rx="19" ry="25" fill="#e3a377" />
-    <ellipse cx="259" cy="128" rx="19" ry="25" fill="#c98b60" />
-    <path
-      d="M62 121C56 42 105 19 158 27c63-14 108 24 102 97l-6 35c-5 48-44 71-95 71-58 0-94-25-98-72Z"
-      :fill="`url(#${id}-fur)`"
-    />
-    <path d="m129 36 17-24 14 16 23-13-4 27" :fill="`url(#${id}-fur)`" />
-    <path
-      d="M79 130c-14-56 39-83 80-42 43-42 94-12 79 43 20 51-20 84-79 84-60 0-101-34-80-85"
-      :fill="`url(#${id}-face)`"
-    />
-    <ellipse cx="119" cy="125" rx="18" ry="24" fill="#fff9e9" />
-    <ellipse cx="201" cy="125" rx="18" ry="24" fill="#fff9e9" />
-    <ellipse cx="124" cy="129" rx="11" ry="16" fill="#292126" />
-    <ellipse cx="196" cy="129" rx="11" ry="16" fill="#292126" />
-    <circle cx="128" cy="122" r="4" fill="white" />
-    <circle cx="200" cy="122" r="4" fill="white" />
-    <path
-      d="M102 94q16-12 30-1m56 0q16-11 29 1"
-      fill="none"
-      stroke="#633922"
-      stroke-width="7"
-      stroke-linecap="round"
-    />
-    <ellipse cx="159" cy="155" rx="19" ry="12" fill="#b6774d" />
-    <ellipse cx="153" cy="154" rx="3" ry="2" fill="#6c422e" />
-    <ellipse cx="166" cy="154" rx="3" ry="2" fill="#6c422e" />
-    <path d="M125 175q34 16 69-1-6 29-34 29-25 0-35-28" fill="#502b29" />
-    <path d="M131 179q29 10 56-1l-6 10q-25 7-44-1Z" fill="#fffaf0" />
-    <path d="M145 200q14-13 29-1-15 7-29 1" fill="#e98c80" />
-    <ellipse cx="96" cy="160" rx="13" ry="7" fill="#dd956a" opacity=".55" />
-    <ellipse cx="223" cy="160" rx="13" ry="7" fill="#dd956a" opacity=".55" />
-    <path d="M57 118C51-4 264-7 264 118" fill="none" stroke="#382749" stroke-width="17" />
-    <path d="M57 104C58 4 258 1 264 104" fill="none" stroke="#b798f3" stroke-width="9" />
-    <rect
-      x="41"
-      y="105"
-      width="27"
-      height="51"
-      rx="13"
-      fill="#503a7d"
-      transform="rotate(-8 54 130)"
-    />
-    <rect
-      x="45"
-      y="106"
-      width="15"
-      height="45"
-      rx="7"
-      fill="#c0a3ff"
-      transform="rotate(-8 54 130)"
-    />
-    <rect
-      x="252"
-      y="105"
-      width="27"
-      height="51"
-      rx="13"
-      fill="#503a7d"
-      transform="rotate(8 265 130)"
-    />
-    <rect
-      x="260"
-      y="108"
-      width="15"
-      height="43"
-      rx="7"
-      fill="#a382e3"
-      transform="rotate(8 265 130)"
-    />
-    <path
-      d="M266 151q-1 32-45 33"
-      fill="none"
-      stroke="#382749"
-      stroke-width="6"
-      stroke-linecap="round"
-    />
-    <rect x="207" y="177" width="23" height="12" rx="6" fill="#c4ed68" />
+    <g transform="rotate(-6 160 125)">
+      <ellipse cx="40" cy="128" rx="37" ry="43" :fill="`url(#${id}-fur)`" />
+      <ellipse cx="280" cy="128" rx="37" ry="43" :fill="`url(#${id}-fur)`" />
+      <ellipse cx="39" cy="130" rx="23" ry="29" fill="#eea17a" />
+      <ellipse cx="281" cy="130" rx="23" ry="29" fill="#e38c67" />
+      <ellipse cx="160" cy="127" rx="104" ry="103" :fill="`url(#${id}-fur)`" />
+      <path
+        d="M77 133c-10-58 40-83 83-43 44-40 94-12 83 43 20 49-20 89-83 89s-103-40-83-89"
+        :fill="`url(#${id}-face)`"
+      />
+      <ellipse cx="120" cy="129" rx="25" ry="32" fill="#fff9ed" />
+      <ellipse cx="201" cy="132" rx="25" ry="28" fill="#fff9ed" />
+      <ellipse cx="128" cy="134" rx="12" ry="18" fill="#30202b" />
+      <ellipse cx="193" cy="134" rx="12" ry="17" fill="#30202b" />
+      <circle cx="124" cy="127" r="5" fill="white" />
+      <circle cx="189" cy="127" r="5" fill="white" />
+      <path
+        d="M98 91q17-19 33-7m54 8q17-9 31 4"
+        fill="none"
+        stroke="#774325"
+        stroke-width="8"
+        stroke-linecap="round"
+      />
+      <ellipse cx="160" cy="165" rx="19" ry="11" fill="#b96f3e" />
+      <path d="m153 167 2 0m11 0 2 0" stroke="#704022" stroke-width="4" stroke-linecap="round" />
+      <ellipse cx="94" cy="174" rx="14" ry="7" fill="#ed9c78" />
+      <ellipse cx="229" cy="174" rx="14" ry="7" fill="#ed9c78" />
+      <path d="M126 186q36 10 74-4-3 36-37 34-28-1-37-30" fill="#39202b" />
+      <path d="m137 189 19 2-1 12-13-2Zm24 2 20-2-3 12-16 2Z" fill="#fff9ed" />
+      <path d="M167 209q26-14 25 6-4 21-20 15-10-4-5-21" fill="#f57e9a" />
+      <path d="m178 213-2 9" stroke="#cc587c" stroke-width="2" stroke-linecap="round" />
+      <g transform="rotate(-9 160 55)">
+        <path d="M70 77Q68 4 157 7q93-2 96 68Z" :fill="`url(#${id}-purple)`" />
+        <path d="M234 43q78 11 70 34-8 17-66-1Z" fill="#7045bc" />
+        <path
+          d="M73 73q85-22 176 1"
+          fill="none"
+          stroke="#c4a3ff"
+          stroke-width="12"
+          stroke-linecap="round"
+        />
+        <ellipse cx="155" cy="9" rx="11" ry="5" fill="#d7f47b" />
+        <ellipse cx="157" cy="43" rx="18" ry="16" fill="#d7f47b" />
+        <path d="m151 40 0 7m11-7v7" stroke="#7952bd" stroke-width="4" stroke-linecap="round" />
+      </g>
+    </g>
   </svg>
 </template>
 
 <script setup lang="ts">
 import { useId } from 'vue'
-
 defineProps<{ portrait?: boolean }>()
 const id = `monkey-${useId()}`
 </script>

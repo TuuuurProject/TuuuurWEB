@@ -56,7 +56,10 @@ async function setup(
   return { wrapper, router, i18n, pinia }
 }
 
-beforeEach(() => localStorage.clear())
+beforeEach(() => {
+  localStorage.clear()
+  vi.spyOn(console, 'warn').mockImplementation(() => {})
+})
 afterEach(() => {
   wrappers.splice(0).forEach((wrapper) => wrapper.unmount())
   vi.restoreAllMocks()
@@ -85,18 +88,19 @@ describe('Gaming hub', () => {
     expect(wrapper.get('.btn-play').text()).toContain(en.arena.play)
     expect(wrapper.get('#how-to-play').text()).toContain(en.arena.steps.answer.description)
     expect(wrapper.get('.topic-strip').text()).toContain(en.arena.topics.science)
-    expect(wrapper.get('.mascot-sticker').text()).toContain(en.arena.scene.greeting)
+    expect(wrapper.get('.character-speech').text()).toContain(en.arena.scene.greeting)
     expect(Object.keys(fr.arena).sort()).toEqual(Object.keys(en.arena).sort())
   })
 
-  it('keeps dimensional artwork decorative and free of focusable elements', async () => {
+  it('labels the mascot and keeps decorative artwork free of focusable elements', async () => {
     const { wrapper } = await setup(HomePage)
     const scene = wrapper.getComponent(KnowledgeScene)
-    expect(scene.attributes('aria-hidden')).toBe('true')
-    expect(scene.findAll('.cube-face')).toHaveLength(6)
-    expect(scene.findAll('button, a, input, [tabindex]')).toHaveLength(0)
+    expect(scene.attributes('aria-label')).toBe(fr.arena.scene.label)
+    expect(scene.get('[role="img"]').attributes('aria-label')).toBe(fr.arena.scene.description)
+    expect(scene.get('canvas').attributes('aria-hidden')).toBe('true')
+    expect(scene.get('.character-backdrop').findAll('button, a, input, [tabindex]')).toHaveLength(0)
     expect(wrapper.findAll('.mode-art[aria-hidden="true"]')).toHaveLength(3)
-    expect(scene.findAll('.mascot-stage .monkey-mascot')).toHaveLength(1)
+    expect(scene.findAll('.monkey-3d .monkey-mascot')).toHaveLength(1)
     expect(wrapper.findAll('.monkey-mascot[aria-hidden="true"][focusable="false"]')).toHaveLength(4)
   })
 
@@ -106,7 +110,7 @@ describe('Gaming hub', () => {
     expect(ids.length).toBeGreaterThan(0)
     expect(new Set(ids).size).toBe(ids.length)
     for (const node of wrapper.findAll('.monkey-mascot [fill^="url("]')) {
-      const id = node.attributes('fill').slice(5, -1)
+      const id = node.attributes('fill')?.slice(5, -1)
       expect(ids).toContain(id)
     }
   })

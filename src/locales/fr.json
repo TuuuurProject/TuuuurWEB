@@ -32,13 +32,13 @@
     "footer": "© {year} Monkizz"
   },
   "arena": {
-    "eyebrow": "Bienvenue dans la jungle du quiz",
-    "title": "Un esprit curieux.",
-    "titleAccent": "Un instinct joueur.",
-    "description": "Un singe malin. Des questions de culture générale. Et toi, prêt à faire le grand saut ? Défie tes amis, teste tes connaissances et vise le sommet.",
-    "play": "À toi de jouer",
+    "eyebrow": "Le quiz qui réveille ton côté sauvage",
+    "title": "Ta culture.",
+    "titleAccent": "Ton terrain de jeu.",
+    "description": "Des questions, des duels et des « mais je le savais ! ». Viens tester ta culture générale, défier ta bande et jouer la revanche.",
+    "play": "Lancer un quiz",
     "explore": "Explorer les modes",
-    "footnote": "Solo, entre amis ou en duel. Toujours curieux.",
+    "footnote": "Pas besoin de tout savoir. Juste d'avoir envie.",
     "modesEyebrow": "L'aventure commence ici",
     "modesTitle": "À chacun sa jungle.",
     "modesAside": "Même curiosité. Trois façons de jouer.",
@@ -105,8 +105,17 @@
       "science": "Sciences",
       "cinema": "Cinéma",
       "history": "Histoire",
-      "caption": "La curiosité est un terrain de jeu",
-      "greeting": "On joue ?"
+      "caption": "Expert en bananes. Et en quiz.",
+      "greeting": "Allô ? Oui, j'ai la banane.",
+      "joke": "Mauvaise réponse ? Je n'ai plus de réseau.",
+      "label": "Rencontre Moki, la mascotte Monkizz",
+      "description": "Moki, singe 3D aux grandes oreilles, casquette violette de travers, langue tirée et banane en guise de téléphone.",
+      "stamp": "100 % curieux · 0 % sérieux",
+      "react": "Fais le singe !",
+      "turnLeft": "Tourner Moki vers la gauche",
+      "turnRight": "Tourner Moki vers la droite",
+      "loading": "Moki prépare son entrée…",
+      "unavailable": "Moki en version illustrée · 3D indisponible"
     }
   },
   "auth": {
