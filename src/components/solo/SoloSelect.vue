@@ -1,9 +1,12 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-        <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('solo.title') }}
-      </h2>
+  <section class="solo-selection space-y-6">
+    <header class="solo-intro">
+      <div>
+        <p class="eyebrow">{{ $t('solo.title') }}</p>
+        <h1>{{ $t('arena.soloIntro') }}</h1>
+        <p class="solo-intro-description">{{ $t('arena.soloDescription') }}</p>
+      </div>
+      <ModeArtwork variant="solo" />
     </header>
 
     <template v-if="userStore.isLogged">
@@ -23,6 +26,7 @@
               @click="toggle(cat.id)"
               class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
               :class="selected.has(cat.id) ? 'selected' : ''"
+              :aria-pressed="selected.has(cat.id)"
             >
               <font-awesome-icon :icon="cat.icon" class="text-lg" />
               <span>{{ cat.label }}</span>
@@ -38,15 +42,17 @@
           <div class="space-y-5">
             <div>
               <div class="flex items-center justify-between">
-                <div class="font-semibold text-brand-lightGray">{{
-                  $t('solo.settings.questionsCount')
-                }}</div>
+                <div class="font-semibold text-brand-lightGray">
+                  {{ $t('solo.settings.questionsCount') }}
+                </div>
                 <span class="pill font-bold text-brand-purple">{{ questions }}</span>
               </div>
               <div class="mt-3 flex items-center gap-3">
                 <button
                   class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all"
                   @click="dec()"
+                  :aria-label="$t('solo.settings.questionsCount') + ' −'"
+                  :disabled="questions <= 5"
                 >
                   −
                 </button>
@@ -58,10 +64,13 @@
                   max="20"
                   step="5"
                   v-model.number="questions"
+                  :aria-label="$t('solo.settings.questionsCount')"
                 />
                 <button
                   class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all"
                   @click="inc()"
+                  :aria-label="$t('solo.settings.questionsCount') + ' +'"
+                  :disabled="questions >= 20"
                 >
                   ＋
                 </button>
@@ -81,6 +90,7 @@
                 @click="toggleDifficulty(diff.id)"
                 class="difficulty-button w-full group relative overflow-hidden"
                 :class="[selectedDifficulty.includes(diff.id) ? 'selected' : '', diff.colorClass]"
+                :aria-pressed="selectedDifficulty.includes(diff.id)"
               >
                 <div class="flex items-center justify-between relative z-10">
                   <div class="flex items-center gap-2">
@@ -149,6 +159,7 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ModalDialog from '@/components/ModalDialog.vue'
+import ModeArtwork from '@/components/gaming/ModeArtwork.vue'
 import useUserStore from '@/stores/user.js'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import useThemeStore from '@/stores/theme.js'
@@ -310,7 +321,6 @@ const confirm = async () => {
   background: rgba(30, 30, 40, 0.8);
   transform: translateX(4px);
   box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-
 }
 
 /* Effet de glow animé */

@@ -14,10 +14,10 @@ export default {
       colors: {
         brand: {
           // Couleurs gaming vibrantes
-          dark: '#0A0B1E', // Bleu très sombre pour le fond
-          darkGray: '#1A1B2E', // Gris sombre pour les cartes
-          purple: '#6C5CE7', // Violet électrique principal
-          purpleDark: '#5A4FCF', // Violet plus sombre
+          dark: '#10121C', // Bleu très sombre pour le fond
+          darkGray: '#1B1E2D', // Gris sombre pour les cartes
+          purple: '#A99AFF', // Violet électrique principal
+          purpleDark: '#7562D9', // Violet plus sombre
           orange: '#FF6B35', // Orange énergique
           orangeDark: '#E55A2B', // Orange plus sombre
           green: '#00D084', // Vert néon
@@ -26,7 +26,7 @@ export default {
           pink: '#FF4081', // Rose vif pour les éléments spéciaux
           cyan: '#00E5FF', // Cyan pour les liens/info
           lightGray: '#E1E5E9', // Texte clair
-          gray: '#8B9AA8', // Texte secondaire
+          gray: '#A4A9BD', // Texte secondaire
           white: '#FFFFFF', // Blanc pur
           // Anciennes couleurs pour compatibilité
           light: '#C37A3E',
@@ -34,12 +34,10 @@ export default {
         },
       },
       fontFamily: {
-        // Baloo 2 pour titres, boutons, branding
-        display: ['Baloo 2', 'cursive', 'system-ui', 'sans-serif'],
-        branding: ['Baloo 2', 'cursive', 'system-ui', 'sans-serif'],
-        // Nunito pour corps de texte, quiz, menus
-        sans: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        body: ['Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        branding: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         // Polices gaming pour éléments spéciaux
         gaming: ['"Press Start 2P"', 'cursive', 'monospace'],
         orbitron: ['Orbitron', 'cursive', 'system-ui', 'sans-serif'],

@@ -31,6 +31,56 @@
     "competitiveMode": "Competitive Mode",
     "footer": "© {year} Tuuuur"
   },
+  "arena": {
+    "eyebrow": "A playground for curious minds",
+    "title": "Your curiosity.",
+    "titleAccent": "Your superpower.",
+    "description": "From science to pop culture, turn what you know into epic moments. On your own, with friends or against a rival: it's your move.",
+    "play": "Let's play",
+    "explore": "Explore game modes",
+    "footnote": "A little knowledge. A lot of fun.",
+    "modesEyebrow": "A mode for every mood",
+    "modesTitle": "Choose your playground.",
+    "modesAside": "One curiosity. Three ways to play.",
+    "solo": {
+      "tag": "Your own challenge",
+      "meta": "1 player · Custom quiz",
+      "title": "The solo adventure",
+      "description": "Follow your curiosity. Pick your topics, take on the challenge and beat your own score."
+    },
+    "group": {
+      "tag": "Better together",
+      "meta": "With friends · Private lobby",
+      "title": "Clash of friends",
+      "description": "Who really knows it all? Create a lobby, share the code and put your friends to the test."
+    },
+    "ranked": {
+      "tag": "Play to compete",
+      "meta": "1 versus 1 · ELO ranking",
+      "title": "The duel arena",
+      "description": "One opponent. Your knowledge. Make every answer count and climb the leaderboard."
+    },
+    "rankingEyebrow": "Knowledge earns its place",
+    "rankingTitle": "Great minds deserve a leaderboard.",
+    "rankingDescription": "Discover the top players and find your next goal.",
+    "viewRanking": "View leaderboard",
+    "footer": "Stay curious. Play again.",
+    "skipContent": "Skip to content",
+    "navigation": "Main navigation",
+    "navPlay": "Play",
+    "language": "Language",
+    "soloIntro": "Your next challenge starts here.",
+    "soloDescription": "Build a quiz with the topics you love, set the difficulty and show what you know.",
+    "roundEyebrow": "Time to make the difference",
+    "answerCorrect": "Correct answer",
+    "answerIncorrect": "Your answer is incorrect",
+    "scene": {
+      "science": "Science",
+      "cinema": "Cinema",
+      "history": "History",
+      "caption": "A whole universe of knowledge"
+    }
+  },
   "auth": {
     "login": {
       "title": "Login",

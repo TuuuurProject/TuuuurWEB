@@ -31,6 +31,56 @@
     "competitiveMode": "Mode compétitif",
     "footer": "© {year} Tuuuur"
   },
+  "arena": {
+    "eyebrow": "Le terrain de jeu des esprits curieux",
+    "title": "Ta curiosité.",
+    "titleAccent": "Ton super-pouvoir.",
+    "description": "De la science à la pop culture, transforme ce que tu sais en moments épiques. En solo, entre amis ou face à un rival : à toi de jouer.",
+    "play": "C'est parti",
+    "explore": "Explorer les modes",
+    "footnote": "Un peu de savoir. Beaucoup de plaisir.",
+    "modesEyebrow": "À chaque humeur, son mode",
+    "modesTitle": "Choisis ton terrain de jeu.",
+    "modesAside": "Même curiosité. Trois façons de jouer.",
+    "solo": {
+      "tag": "À ton rythme",
+      "meta": "1 joueur · Quiz personnalisé",
+      "title": "L'aventure solo",
+      "description": "Suis ta curiosité. Choisis tes thèmes, relève le défi et bats ton propre score."
+    },
+    "group": {
+      "tag": "À plusieurs",
+      "meta": "Entre amis · Salon privé",
+      "title": "Le choc des amis",
+      "description": "Qui sait vraiment tout ? Crée ton salon, partage le code et départage ta bande."
+    },
+    "ranked": {
+      "tag": "L'esprit de compétition",
+      "meta": "1 contre 1 · Classement ELO",
+      "title": "L'arène des duels",
+      "description": "Un adversaire. Tes connaissances. Fais la différence et vise le haut du classement."
+    },
+    "rankingEyebrow": "La connaissance, ça se classe",
+    "rankingTitle": "Les grandes têtes ont leur classement.",
+    "rankingDescription": "Découvre les meilleurs joueurs et trouve ton prochain objectif.",
+    "viewRanking": "Voir le classement",
+    "footer": "Reste curieux. Joue encore.",
+    "skipContent": "Aller au contenu",
+    "navigation": "Navigation principale",
+    "navPlay": "Jouer",
+    "language": "Langue",
+    "soloIntro": "Ton prochain défi commence ici.",
+    "soloDescription": "Compose ton quiz avec les thèmes qui te plaisent, règle la difficulté et fais parler tes connaissances.",
+    "roundEyebrow": "À toi de faire la différence",
+    "answerCorrect": "Bonne réponse",
+    "answerIncorrect": "Ta réponse est incorrecte",
+    "scene": {
+      "science": "Sciences",
+      "cinema": "Cinéma",
+      "history": "Histoire",
+      "caption": "Tout un univers de connaissances"
+    }
+  },
   "auth": {
     "login": {
       "title": "Connexion",

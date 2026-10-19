@@ -1,15 +1,15 @@
 <template>
-  <main class="min-h-screen bg-brand-dark text-brand-lightGray">
+  <div class="app-shell min-h-screen text-brand-lightGray">
     <header-block />
 
-    <section id="body-block" class="bg-brand-dark">
+    <main id="body-block" tabindex="-1">
       <router-view id="content_page" v-slot="{ Component }">
         <transition name="slide-fade" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
-    </section>
-  </main>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -121,7 +121,7 @@ durations and timing functions.
 </style>
 
 <style scoped>
-section#body-block {
+main#body-block {
   min-height: calc(100vh - 75px);
 }
 </style>

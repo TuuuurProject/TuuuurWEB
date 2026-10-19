@@ -1,25 +1,40 @@
 <template>
   <section class="space-y-6">
-    <header class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <h2 class="font-branding text-3xl">{{ $t('solo.quiz.title') }}</h2>
+    <header class="quiz-arena-header flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="eyebrow mb-2">{{ $t('arena.roundEyebrow') }}</p>
+        <h1 class="font-branding text-3xl">{{ $t('solo.quiz.title') }}</h1>
       </div>
       <div v-if="!finished" class="flex items-center gap-3">
         <span class="pill">{{
           $t('solo.quiz.question', { current: index + 1, total: nbMaxQuestions })
         }}</span>
-        <span class="pill">
+        <span class="pill" aria-live="polite" aria-atomic="true">
           {{ $t('solo.quiz.score') }} <strong>{{ score }}</strong>
         </span>
+      </div>
+      <div v-if="!finished" class="quiz-round-progress" aria-hidden="true">
+        <span
+          v-for="round in nbMaxQuestions"
+          :key="round"
+          :class="{ 'is-complete': round <= index, 'is-current': round === index + 1 }"
+        />
       </div>
     </header>
 
     <!-- Timer / progress -->
     <div
       v-if="!finished"
-      class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
+      class="quiz-timer rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80"
     >
-      <div class="h-2 w-full bg-brand-dark/30">
+      <div
+        class="h-2 w-full bg-brand-dark/30"
+        role="progressbar"
+        :aria-label="$t('solo.quiz.timeRemaining', { time: remaining.toFixed(1) })"
+        :aria-valuenow="remaining"
+        :aria-valuemin="0"
+        :aria-valuemax="TOTAL_TIME"
+      >
         <div
           class="h-2 transition-[width] duration-250"
           :class="remainingRatio < 0.33 ? 'bg-brand-orange' : 'bg-brand-green'"
@@ -32,33 +47,48 @@
     </div>
 
     <!-- Question card -->
-    <div v-if="!finished" class="gaming-card">
+    <div v-if="!finished" class="gaming-card quiz-question-card">
       <overlay-block :loading="soloStore.isLoading">
         <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
         <div class="grid gap-3 sm:grid-cols-2">
           <button
             v-for="(opt, idx) in currentAnswer"
-            :key="opt"
-            class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
+            :key="opt.id"
+            class="quiz-answer group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
             :disabled="answered"
             :class="buttonClass(Number.parseInt(opt.id), opt.valid)"
             @click="answer(opt)"
           >
-            <span
-              class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
-            >
+            <span class="quiz-answer-key" aria-hidden="true">
               {{ idx + 1 }}
             </span>
-            {{ opt?.value }}
+            <span class="quiz-answer-label">{{ opt?.value }}</span>
+            <span v-if="answered && !soloStore.isLoading && opt.valid === true">
+              <font-awesome-icon icon="check-circle" aria-hidden="true" />
+              <span class="sr-only">{{ $t('arena.answerCorrect') }}</span>
+            </span>
+            <span
+              v-else-if="
+                answered &&
+                !soloStore.isLoading &&
+                Number.parseInt(opt.id) === userAnswerId &&
+                opt.valid === false
+              "
+            >
+              <font-awesome-icon icon="times-circle" aria-hidden="true" />
+              <span class="sr-only">{{ $t('arena.answerIncorrect') }}</span>
+            </span>
           </button>
         </div>
 
-        <div class="mt-6 flex items-center justify-between">
-          <div class="text-sm" v-if="answered">
-            <span v-if="wasCorrect" class="badge-green">{{
+        <div class="quiz-actions mt-6 flex items-center justify-between">
+          <div class="quiz-feedback text-sm" role="status" aria-atomic="true">
+            <span v-if="answered && !soloStore.isLoading && wasCorrect" class="badge-green">{{
               $t('solo.quiz.correct', { points: lastPoints })
             }}</span>
-            <span v-else class="badge-orange">{{ $t('solo.quiz.incorrect') }}</span>
+            <span v-else-if="answered && !soloStore.isLoading" class="badge-orange">{{
+              $t('solo.quiz.incorrect')
+            }}</span>
           </div>
           <div class="flex items-center gap-3 ml-auto">
             <button class="btn btn-secondary" @click="skip" :disabled="answered">

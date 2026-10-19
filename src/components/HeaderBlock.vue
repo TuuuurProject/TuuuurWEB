@@ -1,113 +1,94 @@
 <template>
-  <header
-    class="sticky top-0 z-10 bg-brand-darkGray/80 backdrop-blur-xl border-b border-brand-purple/20 h-[75px]"
-  >
-    <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between h-full">
-      <button
-        class="inline-flex items-center gap-2 text-brand-lightGray hover:text-brand-purple transition group"
-        @click="router.push({ name: 'Home' })"
-      >
-        <img
-          src="@/assets/logo.png"
-          alt="Tuuuur Logo"
-          width="50"
-          height="50"
-          class="group-hover:animate-glow"
-        />
-        <span class="font-display text-2xl">Tuuuur</span>
-      </button>
+  <header class="site-header" @keydown.esc="closeMenu">
+    <a class="skip-link" href="#body-block">{{ $t('arena.skipContent') }}</a>
+    <div class="header-inner">
+      <router-link class="brand-lockup" :to="{ name: 'Home' }" aria-label="Tuuuur">
+        <span class="brand-mark" aria-hidden="true">t<span>u</span></span>
+        <span class="brand-wordmark">tuuuur<span>.</span></span>
+      </router-link>
 
-      <!-- Desktop nav -->
-      <nav class="hidden sm:flex gap-3">
-        <button
-          class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'Home' })"
-        >
-          {{ $t('nav.home') }}
-        </button>
-        <button
-          class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'Profile' })"
-        >
-          {{ $t('nav.profile') }}
-        </button>
-        <mode-switcher />
-        <language-switcher />
+      <nav class="desktop-nav" :aria-label="$t('arena.navigation')">
+        <router-link :to="{ name: 'Home' }" class="nav-link" exact-active-class="nav-link--active">
+          <font-awesome-icon icon="gamepad" aria-hidden="true" /> {{ $t('arena.navPlay') }}
+        </router-link>
+        <router-link :to="{ name: 'Ranking' }" class="nav-link" active-class="nav-link--active">
+          <font-awesome-icon icon="trophy" aria-hidden="true" /> {{ $t('nav.ranking') }}
+        </router-link>
       </nav>
 
-      <!-- Burger button (mobile only) -->
-      <button
-        class="sm:hidden flex flex-col gap-1.5 p-2 text-brand-lightGray hover:text-brand-purple transition"
-        :aria-label="$t('nav.menu')"
-        :aria-expanded="mobileMenuOpen"
-        @click="mobileMenuOpen = !mobileMenuOpen"
-      >
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? 'rotate-45 translate-y-2' : ''"
-        />
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? 'opacity-0' : ''"
-        />
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''"
-        />
-      </button>
+      <div class="header-actions">
+        <language-switcher />
+        <router-link
+          class="header-account"
+          :to="{ name: userStore.isLogged ? 'Profile' : 'Login' }"
+          :aria-label="$t(userStore.isLogged ? 'nav.profile' : 'auth.login.submit')"
+        >
+          <font-awesome-icon
+            :icon="userStore.isLogged ? 'user' : 'sign-in-alt'"
+            aria-hidden="true"
+          />
+          <span>{{ $t(userStore.isLogged ? 'nav.profile' : 'auth.login.submit') }}</span>
+        </router-link>
+        <button
+          ref="menuButton"
+          class="mobile-menu-toggle"
+          :aria-label="$t('nav.menu')"
+          :aria-expanded="mobileMenuOpen"
+          aria-controls="mobile-navigation"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <font-awesome-icon v-if="mobileMenuOpen" icon="xmark" aria-hidden="true" />
+          <span v-else class="menu-lines" aria-hidden="true"><i /><i /><i /></span>
+        </button>
+      </div>
     </div>
-
-  </header>
-
-  <!-- Mobile menu dropdown (fixed hors du header pour éviter les conflits de z-index) -->
-  <transition
-    enter-active-class="transition-all duration-200 ease-out"
-    enter-from-class="opacity-0 -translate-y-2"
-    enter-to-class="opacity-100 translate-y-0"
-    leave-active-class="transition-all duration-150 ease-in"
-    leave-from-class="opacity-100 translate-y-0"
-    leave-to-class="opacity-0 -translate-y-2"
-  >
     <nav
       v-if="mobileMenuOpen"
-      class="sm:hidden fixed top-[75px] left-0 right-0 z-50 bg-brand-darkGray/95 backdrop-blur-xl border-b border-brand-purple/20 px-6 py-4 flex flex-col gap-3"
+      id="mobile-navigation"
+      class="mobile-navigation"
+      :aria-label="$t('arena.navigation')"
     >
-      <button
-        class="pill w-full text-left hover:bg-brand-purple/20 hover:border-brand-purple/40"
-        @click="navigate('Home')"
+      <router-link
+        v-for="link in mobileLinks"
+        :key="link.route"
+        :to="{ name: link.route }"
+        @click="mobileMenuOpen = false"
       >
-        {{ $t('nav.home') }}
-      </button>
-      <button
-        class="pill w-full text-left hover:bg-brand-purple/20 hover:border-brand-purple/40"
-        @click="navigate('Profile')"
-      >
-        {{ $t('nav.profile') }}
-      </button>
-      <div class="flex gap-3">
-        <mode-switcher />
-        <language-switcher />
-      </div>
+        <font-awesome-icon :icon="link.icon" aria-hidden="true" /> {{ $t(link.label) }}
+      </router-link>
     </nav>
-  </transition>
+  </header>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
+import useUserStore from '@/stores/user'
 import LanguageSwitcher from './LanguageSwitcher.vue'
-import ModeSwitcher from './ModeSwitcher.vue'
 
-const router = useRouter()
+const userStore = useUserStore()
 const route = useRoute()
 const mobileMenuOpen = ref(false)
+const menuButton = ref<HTMLButtonElement | null>(null)
+const mobileLinks = [
+  { route: 'Home', label: 'nav.home', icon: 'home' },
+  { route: 'SoloQuiz', label: 'home.playSolo', icon: 'bolt' },
+  { route: 'GroupMode', label: 'home.playGroup', icon: 'users' },
+  { route: 'CompetitiveMode', label: 'home.competitiveMode', icon: 'fire' },
+  { route: 'Ranking', label: 'nav.ranking', icon: 'trophy' },
+  { route: 'Profile', label: 'nav.profile', icon: 'user' },
+]
+
+function closeMenu() {
+  if (!mobileMenuOpen.value) return
+  mobileMenuOpen.value = false
+  menuButton.value?.focus()
+}
 
 watch(
   () => route.path,
-  () => { mobileMenuOpen.value = false },
+  () => {
+    mobileMenuOpen.value = false
+  },
 )
-
-function navigate(name: string) {
-  router.push({ name })
-}
 </script>
