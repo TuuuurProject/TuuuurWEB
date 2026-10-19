@@ -6,6 +6,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import { useColorMode } from './composables/useColorMode'
 
 // Google Login
 import vue3GoogleLogin from 'vue3-google-login'
@@ -104,6 +105,8 @@ import {
   faCircleNotch,
   faChartLine,
   faFlag,
+  faSun,
+  faMoon,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -189,6 +192,8 @@ library.add(
   faCircleNotch,
   faChartLine,
   faFlag,
+  faSun,
+  faMoon,
 )
 
 // Functions
@@ -242,7 +247,7 @@ async function initApp() {
   app.use(router)
   app.use(i18n)
   app.use(Vue3Toastify, {
-    theme: 'dark',
+    theme: useColorMode().isDark.value ? 'dark' : 'light',
     autoClose: 3000,
     position: toast.POSITION.TOP_RIGHT,
   })

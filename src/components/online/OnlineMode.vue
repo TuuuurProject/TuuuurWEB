@@ -4,13 +4,13 @@
       <!-- Landing: search button only -->
       <div v-if="step === 'idle'" class="space-y-6">
         <header class="flex items-center justify-between">
-          <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+          <h2 class="font-branding text-3xl text-brand-lightGray">
             <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
             {{ $t('competitive.ranked.title') }}
           </h2>
         </header>
 
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="flex items-start gap-4 mb-6">
             <div
               class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl shrink-0"
@@ -61,7 +61,7 @@
       />
     </template>
 
-    <div v-else class="gaming-card justify-self-center w-full">
+    <div v-else class="surface-card justify-self-center w-full">
       <logged-in-block :message="$t('competitive.notLoggedIn')" />
     </div>
   </section>

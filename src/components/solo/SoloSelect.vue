@@ -1,7 +1,7 @@
 <template>
   <section class="space-y-6">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-branding text-3xl text-brand-lightGray">
         <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('solo.title') }}
       </h2>
     </header>
@@ -9,7 +9,7 @@
     <template v-if="userStore.isLogged">
       <div class="grid gap-6 md:grid-cols-3">
         <!-- Cartes gaming avec backdrop blur -->
-        <div class="md:col-span-2 gaming-card">
+        <div class="md:col-span-2 surface-card">
           <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
             <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }}
           </h3>
@@ -31,16 +31,16 @@
         </div>
 
         <!-- Sidebar des paramètres -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <h3 class="font-display text-xl mb-2 text-brand-lightGray">
             <font-awesome-icon icon="gear" /> {{ $t('solo.settings.title') }}
           </h3>
           <div class="space-y-5">
             <div>
               <div class="flex items-center justify-between">
-                <div class="font-semibold text-brand-lightGray">{{
-                  $t('solo.settings.questionsCount')
-                }}</div>
+                <div class="font-semibold text-brand-lightGray">
+                  {{ $t('solo.settings.questionsCount') }}
+                </div>
                 <span class="pill font-bold text-brand-purple">{{ questions }}</span>
               </div>
               <div class="mt-3 flex items-center gap-3">
@@ -53,7 +53,7 @@
                 <!-- Slider personnalisé avec accents colorés -->
                 <input
                   type="range"
-                  class="w-full h-2 bg-brand-darkGray rounded-lg appearance-none cursor-pointer slider-purple"
+                  class="w-full h-2 bg-brand-surface2 rounded-lg appearance-none cursor-pointer slider-purple"
                   min="5"
                   max="20"
                   step="5"
@@ -91,8 +91,6 @@
                     <font-awesome-icon icon="check-circle" />
                   </div>
                 </div>
-                <!-- Effet de glow au survol -->
-                <div class="difficulty-glow" :class="diff.glowClass"></div>
               </button>
             </div>
           </div>
@@ -114,7 +112,7 @@
       </footer>
     </template>
 
-    <div v-else class="gaming-card justify-self-center w-full">
+    <div v-else class="surface-card justify-self-center w-full">
       <logged-in-block :message="$t('solo.notLoggedIn')" />
     </div>
 
@@ -251,120 +249,3 @@ const confirm = async () => {
   router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 }
 </script>
-
-<style scoped>
-/* Slider personnalisé */
-.slider-purple::-webkit-slider-thumb {
-  appearance: none;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-}
-
-.slider-purple::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-}
-
-/* Boutons de difficulté */
-/* Couleurs par difficulté */
-.diff-easy {
-  --diff-color: #10b981;
-}
-.diff-medium {
-  --diff-color: #f59e0b;
-}
-.diff-hard {
-  --diff-color: #f97316;
-}
-.diff-hardcore {
-  --diff-color: #ef4444;
-}
-
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--diff-color);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-  transform: translateX(4px);
-  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-
-}
-
-/* Effet de glow animé */
-.difficulty-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 0.75rem;
-}
-
-.difficulty-button:hover .difficulty-glow {
-  opacity: 0.1;
-}
-
-.difficulty-button.selected .difficulty-glow {
-  opacity: 0.15;
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.glow-green {
-  background: radial-gradient(circle, #10b981 0%, transparent 70%);
-}
-.glow-yellow {
-  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
-}
-.glow-orange {
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-}
-.glow-red {
-  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-
-.check-icon {
-  font-size: 1.125rem;
-  animation: check-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes check-pop {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-</style>

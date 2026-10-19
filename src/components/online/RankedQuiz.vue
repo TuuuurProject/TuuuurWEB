@@ -29,7 +29,7 @@
       >
         <!-- Timer bar -->
         <div
-          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
+          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-surface2/80 shadow-card"
         >
           <div class="h-2 w-full bg-brand-dark/30">
             <div
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Question card -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">
             {{ currentQuestionData?.question?.label }}
           </h3>
@@ -83,11 +83,11 @@
         </div>
 
         <!-- Players status card -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="grid grid-cols-2 gap-3">
             <!-- Me -->
             <div
-              class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
+              class="rounded-xl border bg-brand-surface2/30 p-3 flex items-center gap-3 transition-all duration-300"
               :class="
                 myAnsweredResult === true
                   ? 'border-brand-green/50 bg-brand-green/5'
@@ -184,7 +184,7 @@
 
             <!-- Opponent -->
             <div
-              class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
+              class="rounded-xl border bg-brand-surface2/30 p-3 flex items-center gap-3 transition-all duration-300"
               :class="
                 opponentAnsweredCorrect === true
                   ? 'border-brand-green/50 bg-brand-green/5'
@@ -283,7 +283,7 @@
       </div>
 
       <!-- === CURRENT RANKING (après révélation des réponses) === -->
-      <div v-else-if="showCurrentRanking" key="ranking" class="gaming-card">
+      <div v-else-if="showCurrentRanking" key="ranking" class="surface-card">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-purple/20">
           <div
             class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
@@ -373,7 +373,7 @@
       <div v-else-if="phase === 'finished'" key="finished" class="space-y-6">
         <!-- Header : résultat + ELO + stats -->
         <div
-          class="gaming-card text-center bg-gradient-to-br"
+          class="surface-card text-center bg-gradient-to-br"
           :class="
             rankedStore.hasWon === true
               ? 'from-brand-green/15 to-brand-purple/10 border-brand-green/40'
@@ -387,7 +387,7 @@
             class="font-branding text-4xl mb-2"
             :class="
               rankedStore.hasWon === true
-                ? 'text-brand-green glow-text'
+                ? 'text-brand-green'
                 : rankedStore.hasWon === false
                   ? 'text-brand-orange'
                   : 'text-brand-lightGray'
@@ -492,7 +492,7 @@
         </div>
 
         <!-- Récapitulatif des questions -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
             <div
               class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
@@ -508,7 +508,7 @@
             <div
               v-for="(entry, idx) in questionHistory"
               :key="idx"
-              class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
+              class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
             >
               <!-- En-tête question -->
               <div class="flex items-start gap-3 mb-3">
@@ -619,11 +619,7 @@
     >
       <div class="text-center select-none">
         <transition name="countdown-swap" mode="out-in">
-          <div
-            :key="countdownValue"
-            class="countdown-pop drop-shadow-[0_0_30px_rgba(108,92,231,0.55)]"
-            :class="countdownTextClass"
-          >
+          <div :key="countdownValue" class="countdown-pop" :class="countdownTextClass">
             {{ countdownValue }}
           </div>
         </transition>
@@ -738,7 +734,7 @@ function answerButtonClass(opt: { id: number; valid: boolean | null }) {
     if (opt.id === selectedAnswerId.value && opt.valid === false) {
       return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
     }
-    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
   }
 
   if (opt.id === selectedAnswerId.value) {
@@ -746,10 +742,10 @@ function answerButtonClass(opt: { id: number; valid: boolean | null }) {
   }
 
   if (phase.value !== 'question') {
-    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
   }
 
-  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
+  return 'border-brand-purple/20 bg-brand-surface2/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 // ─── Functions ──────────────────────────────────────────────────────────────
@@ -948,7 +944,7 @@ function getAnswerClass(selectedId: number | null, answer: { id: number; valid: 
     return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
   if (isCorrect) return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
   if (isUserChoice) return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
-  return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'
+  return 'bg-brand-surface2/30 border-brand-gray/20 text-brand-gray'
 }
 
 // ─── Keyboard shortcuts ───────────────────────────────────────────────────────

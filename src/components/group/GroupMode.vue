@@ -2,7 +2,7 @@
   <section>
     <div v-if="step === 'mode'" class="space-y-8">
       <header class="flex items-center justify-between">
-        <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+        <h2 class="font-branding text-3xl text-brand-lightGray">
           <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.title') }}
         </h2>
       </header>
@@ -11,7 +11,7 @@
       <div class="grid gap-6 md:grid-cols-2">
         <button
           data-testid="group-create"
-          class="gaming-card group p-8 text-left hover:shadow-neon transition-all duration-300"
+          class="surface-card group p-8 text-left hover:shadow-card transition-all duration-300"
           @click="setupGame"
         >
           <div class="flex items-start gap-4">
@@ -21,9 +21,7 @@
               <font-awesome-icon icon="gamepad" />
             </div>
             <div>
-              <h3
-                class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
-              >
+              <h3 class="font-branding text-2xl mb-2 text-brand-lightGray">
                 {{ $t('group.create.title') }}
               </h3>
               <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
@@ -38,19 +36,17 @@
         </button>
 
         <button
-          class="gaming-card group p-8 text-left hover:shadow-neon-orange transition-all duration-300"
+          class="surface-card group p-8 text-left hover:shadow-card transition-all duration-300"
           @click="step = 'join'"
         >
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl group-hover:bg-brand-orange group-hover:text-white transition-all duration-300"
+              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl group-hover:bg-brand-orange group-hover:text-brand-onOrange transition-all duration-300"
             >
               <font-awesome-icon icon="rocket" />
             </div>
             <div>
-              <h3
-                class="font-branding text-2xl mb-2 text-brand-lightGray group-hover:text-white transition-colors"
-              >
+              <h3 class="font-branding text-2xl mb-2 text-brand-lightGray">
                 {{ $t('group.join.title') }}
               </h3>
               <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
@@ -74,7 +70,7 @@
         </overlay-block>
       </template>
 
-      <div v-else class="gaming-card justify-self-center w-full">
+      <div v-else class="surface-card justify-self-center w-full">
         <logged-in-block :message="$t('group.notLoggedIn')" />
       </div>
     </template>

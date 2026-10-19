@@ -2,7 +2,7 @@
   <section class="space-y-6">
     <!-- Header -->
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-2xl sm:text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-branding text-2xl sm:text-3xl text-brand-lightGray">
         <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
         {{ $t('competitive.ranked.title') }}
       </h2>
@@ -166,13 +166,9 @@ defineEmits<{ cancel: [] }>()
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  background: #1a1b2e;
-  border: 1px solid rgba(108, 92, 231, 0.35);
+  background: rgb(var(--c-surface));
+  border: 1px solid rgb(var(--c-primary) / 0.35);
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(108, 92, 231, 0.08),
-    0 0 40px rgba(108, 92, 231, 0.18),
-    inset 0 0 40px rgba(108, 92, 231, 0.06);
   flex-shrink: 0;
 }
 
@@ -188,7 +184,7 @@ defineEmits<{ cancel: [] }>()
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(108, 92, 231, 0.14) 0%, transparent 65%);
+  background: radial-gradient(circle at center, rgb(var(--c-primary) / 0.14) 0%, transparent 65%);
   pointer-events: none;
 }
 
@@ -196,7 +192,7 @@ defineEmits<{ cancel: [] }>()
 .radar-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(108, 92, 231, 0.18);
+  border: 1px solid rgb(var(--c-primary) / 0.18);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -217,7 +213,7 @@ defineEmits<{ cancel: [] }>()
 /* Cross-hair */
 .radar-line {
   position: absolute;
-  background: rgba(108, 92, 231, 0.14);
+  background: rgb(var(--c-primary) / 0.14);
 }
 .radar-line--h {
   width: 100%;
@@ -248,9 +244,9 @@ defineEmits<{ cancel: [] }>()
   background: conic-gradient(
     from 0deg,
     transparent 275deg,
-    rgba(108, 92, 231, 0.06) 305deg,
-    rgba(108, 92, 231, 0.22) 338deg,
-    rgba(108, 92, 231, 0.45) 360deg
+    rgb(var(--c-primary) / 0.06) 305deg,
+    rgb(var(--c-primary) / 0.22) 338deg,
+    rgb(var(--c-primary) / 0.45) 360deg
   );
 }
 
@@ -275,8 +271,7 @@ defineEmits<{ cancel: [] }>()
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #6c5ce7;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.9);
+  background: rgb(var(--c-primary));
   position: relative;
   z-index: 1;
 }
@@ -287,7 +282,7 @@ defineEmits<{ cancel: [] }>()
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #6c5ce7;
+  background: rgb(var(--c-primary));
   animation: radar-ping 2.2s ease-out infinite;
 }
 @keyframes radar-ping {
@@ -307,8 +302,7 @@ defineEmits<{ cancel: [] }>()
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #6c5ce7;
-  box-shadow: 0 0 6px rgba(108, 92, 231, 0.8);
+  background: rgb(var(--c-primary));
   animation: blip-pulse 2.4s ease-in-out infinite;
 }
 @keyframes blip-pulse {
@@ -330,9 +324,9 @@ defineEmits<{ cancel: [] }>()
   align-items: center;
   padding: 0.375rem 1.125rem;
   border-radius: 9999px;
-  background: rgba(0, 208, 132, 0.14);
-  border: 1px solid rgba(0, 208, 132, 0.45);
-  color: #00d084;
+  background: rgb(var(--c-green) / 0.14);
+  border: 1px solid rgb(var(--c-green) / 0.45);
+  color: rgb(var(--c-green));
   font-size: 0.875rem;
   font-weight: 600;
   animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
@@ -416,24 +410,18 @@ defineEmits<{ cancel: [] }>()
   border-radius: 50%;
 }
 .avatar-ring--purple {
-  background: linear-gradient(135deg, #6c5ce7, #8b7cf8);
-  box-shadow:
-    0 0 18px rgba(108, 92, 231, 0.55),
-    0 0 36px rgba(108, 92, 231, 0.2);
+  background: rgb(var(--c-primary));
 }
 .avatar-ring--orange {
-  background: linear-gradient(135deg, #ff6b35, #ff8c5a);
-  box-shadow:
-    0 0 18px rgba(255, 107, 53, 0.55),
-    0 0 36px rgba(255, 107, 53, 0.2);
+  background: rgb(var(--c-orange));
 }
 
 .avatar-inner {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #1a1b2e;
-  border: 2px solid #1a1b2e;
+  background: rgb(var(--c-surface));
+  border: 2px solid rgb(var(--c-surface));
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -452,17 +440,17 @@ defineEmits<{ cancel: [] }>()
   line-height: 1;
 }
 .avatar-initial--purple {
-  color: #6c5ce7;
+  color: rgb(var(--c-primary));
 }
 .avatar-initial--orange {
-  color: #ff6b35;
+  color: rgb(var(--c-orange));
 }
 
 /* Player text */
 .player-nick {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #e1e5e9;
+  color: rgb(var(--c-ink));
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -480,7 +468,7 @@ defineEmits<{ cancel: [] }>()
   align-items: center;
   gap: 0.25rem;
   font-size: 0.75rem;
-  color: #8b9aa8;
+  color: rgb(var(--c-muted));
   font-weight: 500;
 }
 
@@ -493,14 +481,11 @@ defineEmits<{ cancel: [] }>()
   animation: vs-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 .vs-text {
-  font-family: 'Baloo 2', cursive;
+  font-family: 'Baloo 2', system-ui, sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  color: #ff6b35;
+  color: rgb(var(--c-orange));
   letter-spacing: 0.05em;
-  text-shadow:
-    0 0 16px rgba(255, 107, 53, 0.7),
-    0 0 40px rgba(255, 107, 53, 0.3);
 }
 @media (min-width: 640px) {
   .vs-text {

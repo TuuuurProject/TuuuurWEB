@@ -4,7 +4,7 @@
       <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.join.title') }}</h2>
     </header>
 
-    <div class="gaming-card">
+    <div class="surface-card">
       <div class="max-w-md mx-auto">
         <div class="block font-semibold mb-3 text-brand-lightGray">{{ $t('group.join.code') }}</div>
         <div class="flex items-center gap-1 sm:gap-2 justify-center">
@@ -12,7 +12,7 @@
             v-for="i in 6"
             :key="i"
             maxlength="1"
-            class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-xl sm:text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
+            class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 font-branding text-xl sm:text-2xl shadow-card text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
             v-model="digits[i - 1]"
             @input="onInput(i - 1)"
             @keydown.backspace.prevent="onBackspace(i - 1)"

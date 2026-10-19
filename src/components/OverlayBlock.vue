@@ -8,7 +8,7 @@
     >
       <div
         class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4"
-        style="border-block-color: #6c5ce7"
+        style="border-block-color: rgb(var(--c-primary))"
       ></div>
       <span class="sr-only">{{ $t('common.loading') }}</span>
     </div>
@@ -34,7 +34,7 @@ const props = defineProps({
 })
 
 const overlayStyle = computed(() => ({
-  backgroundColor: `rgba(10,11,30,${props.opacity / 100})`,
-  boxShadow: 'inset 0 0 0 10px rgba(10,11,30,0.5)',
+  backgroundColor: `rgb(var(--c-bg) / ${props.opacity / 100})`,
+  boxShadow: 'inset 0 0 0 10px rgb(var(--c-bg) / 0.5)',
 }))
 </script>

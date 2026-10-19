@@ -21,15 +21,19 @@
     "profile": "Profile",
     "ranking": "Ranking",
     "modes": "Game modes",
-    "menu": "Menu"
+    "menu": "Menu",
+    "colorMode": {
+      "toLight": "Switch to light mode",
+      "toDark": "Switch to dark mode"
+    }
   },
   "home": {
-    "title": "Tuuuur",
+    "title": "Monkizz",
     "subtitle": "Fun and competitive quiz. Play solo, in groups, or in online duels.",
     "playSolo": "Play Solo",
     "playGroup": "Play in Group",
     "competitiveMode": "Competitive Mode",
-    "footer": "© {year} Tuuuur"
+    "footer": "© {year} Monkizz"
   },
   "auth": {
     "login": {

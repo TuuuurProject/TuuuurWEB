@@ -44,7 +44,7 @@ onMounted(() => {
 .qrcode-card h3 {
   margin-bottom: 1rem;
   font-size: 1rem;
-  color: #555;
+  color: rgb(var(--c-muted));
 }
 
 .qrcode-img {
@@ -56,7 +56,7 @@ onMounted(() => {
 .qrcode-url {
   margin-top: 0.75rem;
   font-size: 0.8rem;
-  color: #888;
+  color: rgb(var(--c-muted));
   word-break: break-all;
 }
 </style>

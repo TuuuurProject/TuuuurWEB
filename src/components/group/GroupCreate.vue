@@ -72,7 +72,7 @@
 
     <div v-if="currentUserIsHost" class="grid gap-6 md:grid-cols-3">
       <!-- Cartes gaming avec backdrop blur -->
-      <div class="md:col-span-2 gaming-card">
+      <div class="md:col-span-2 surface-card">
         <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
           <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }}
         </h3>
@@ -98,7 +98,7 @@
             {{ $t('group.lobby.scoreEachRound') }}
           </div>
           <div
-            class="select-none flex items-center justify-between p-4 rounded-lg bg-brand-darkGray/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
+            class="select-none flex items-center justify-between p-4 rounded-lg bg-brand-surface2/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
             @click="scoreEachRound = !scoreEachRound"
           >
             <div class="flex-1">
@@ -109,7 +109,7 @@
             <div class="relative inline-flex items-center ml-4">
               <input type="checkbox" v-model="scoreEachRound" class="sr-only peer" />
               <div
-                class="w-11 h-6 bg-brand-darkGray rounded-full peer peer-focus:ring-2 peer-focus:ring-brand-purple peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple pointer-events-none"
+                class="w-11 h-6 bg-brand-surface2 rounded-full peer peer-focus:ring-2 peer-focus:ring-brand-purple peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple pointer-events-none"
               ></div>
             </div>
           </div>
@@ -117,16 +117,16 @@
       </div>
 
       <!-- Sidebar des paramètres -->
-      <div class="gaming-card">
+      <div class="surface-card">
         <h3 class="font-display text-xl mb-2 text-brand-lightGray">
           <font-awesome-icon icon="gear" /> {{ $t('solo.settings.title') }}
         </h3>
         <div class="space-y-5">
           <div>
             <div class="flex items-center justify-between">
-              <div class="font-semibold text-brand-lightGray">{{
-                $t('solo.settings.questionsCount')
-              }}</div>
+              <div class="font-semibold text-brand-lightGray">
+                {{ $t('solo.settings.questionsCount') }}
+              </div>
               <span class="pill font-bold text-brand-purple">{{ questions }}</span>
             </div>
             <div class="mt-3 flex items-center gap-3">
@@ -139,7 +139,7 @@
               <!-- Slider personnalisé avec accents colorés -->
               <input
                 type="range"
-                class="w-full h-2 bg-brand-darkGray rounded-lg appearance-none cursor-pointer slider-purple"
+                class="w-full h-2 bg-brand-surface2 rounded-lg appearance-none cursor-pointer slider-purple"
                 min="5"
                 max="20"
                 step="5"
@@ -177,8 +177,6 @@
                   <font-awesome-icon icon="check-circle" />
                 </div>
               </div>
-              <!-- Effet de glow au survol -->
-              <div class="difficulty-glow" :class="diff.glowClass"></div>
             </button>
           </div>
         </div>
@@ -350,119 +348,3 @@ const toggleDifficulty = (id: number) => {
   }
 }
 </script>
-
-<style scoped>
-/* Slider personnalisé */
-.slider-purple::-webkit-slider-thumb {
-  appearance: none;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-}
-
-.slider-purple::-moz-range-thumb {
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #6c5ce7 0%, #5a4fcf 100%);
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-}
-
-/* Boutons de difficulté */
-/* Couleurs par difficulté */
-.diff-easy {
-  --diff-color: #10b981;
-}
-.diff-medium {
-  --diff-color: #f59e0b;
-}
-.diff-hard {
-  --diff-color: #f97316;
-}
-.diff-hardcore {
-  --diff-color: #ef4444;
-}
-
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--diff-color);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-  transform: translateX(4px);
-  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-}
-
-/* Effet de glow animé */
-.difficulty-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 0.75rem;
-}
-
-.difficulty-button:hover .difficulty-glow {
-  opacity: 0.1;
-}
-
-.difficulty-button.selected .difficulty-glow {
-  opacity: 0.15;
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.glow-green {
-  background: radial-gradient(circle, #10b981 0%, transparent 70%);
-}
-.glow-yellow {
-  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
-}
-.glow-orange {
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-}
-.glow-red {
-  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.15;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-
-.check-icon {
-  font-size: 1.125rem;
-  animation: check-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes check-pop {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-</style>

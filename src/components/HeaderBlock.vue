@@ -1,20 +1,15 @@
 <template>
   <header
-    class="sticky top-0 z-10 bg-brand-darkGray/80 backdrop-blur-xl border-b border-brand-purple/20 h-[75px]"
+    class="sticky top-0 z-10 bg-brand-darkGray/80 backdrop-blur-xl border-b border-brand-line h-[75px]"
   >
     <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between h-full">
       <button
         class="inline-flex items-center gap-2 text-brand-lightGray hover:text-brand-purple transition group"
         @click="router.push({ name: 'Home' })"
       >
-        <img
-          src="@/assets/logo.png"
-          alt="Tuuuur Logo"
-          width="50"
-          height="50"
-          class="group-hover:animate-glow"
-        />
-        <span class="font-display text-2xl">Tuuuur</span>
+        <span class="font-display text-2xl font-extrabold"
+          >Monk<span class="text-brand-purple">izz</span></span
+        >
       </button>
 
       <!-- Desktop nav -->
@@ -33,6 +28,7 @@
         </button>
         <mode-switcher />
         <language-switcher />
+        <color-mode-switcher />
       </nav>
 
       <!-- Burger button (mobile only) -->
@@ -56,7 +52,6 @@
         />
       </button>
     </div>
-
   </header>
 
   <!-- Mobile menu dropdown (fixed hors du header pour éviter les conflits de z-index) -->
@@ -70,7 +65,7 @@
   >
     <nav
       v-if="mobileMenuOpen"
-      class="sm:hidden fixed top-[75px] left-0 right-0 z-50 bg-brand-darkGray/95 backdrop-blur-xl border-b border-brand-purple/20 px-6 py-4 flex flex-col gap-3"
+      class="sm:hidden fixed top-[75px] left-0 right-0 z-50 bg-brand-darkGray/95 backdrop-blur-xl border-b border-brand-line px-6 py-4 flex flex-col gap-3"
     >
       <button
         class="pill w-full text-left hover:bg-brand-purple/20 hover:border-brand-purple/40"
@@ -87,6 +82,7 @@
       <div class="flex gap-3">
         <mode-switcher />
         <language-switcher />
+        <color-mode-switcher />
       </div>
     </nav>
   </transition>
@@ -97,6 +93,7 @@ import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 import ModeSwitcher from './ModeSwitcher.vue'
+import ColorModeSwitcher from './ColorModeSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -104,7 +101,9 @@ const mobileMenuOpen = ref(false)
 
 watch(
   () => route.path,
-  () => { mobileMenuOpen.value = false },
+  () => {
+    mobileMenuOpen.value = false
+  },
 )
 
 function navigate(name: string) {

@@ -17,7 +17,7 @@
     <!-- Timer / progress -->
     <div
       v-if="!finished"
-      class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
+      class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-surface2/80 shadow-card"
     >
       <div class="h-2 w-full bg-brand-dark/30">
         <div
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Question card -->
-    <div v-if="!finished" class="gaming-card">
+    <div v-if="!finished" class="surface-card">
       <overlay-block :loading="soloStore.isLoading">
         <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
         <div class="grid gap-3 sm:grid-cols-2">
@@ -47,7 +47,7 @@
             <span
               class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
             >
-              {{ idx + 1 }}
+              {{ Number(idx) + 1 }}
             </span>
             {{ opt?.value }}
           </button>
@@ -88,14 +88,14 @@
     <div v-if="finished" class="space-y-6">
       <!-- Header avec score final -->
       <div
-        class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
+        class="surface-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
       >
         <div
           class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
         >
           <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
         </div>
-        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">
+        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray">
           {{ $t('solo.quiz.finished') }}
         </h3>
         <div class="flex items-center justify-center gap-6 mt-4">
@@ -138,7 +138,7 @@
       </div>
 
       <!-- Informations de la partie -->
-      <div class="gaming-card">
+      <div class="surface-card">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
           <div
             class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
@@ -199,7 +199,7 @@
       </div>
 
       <!-- Récapitulatif des questions -->
-      <div class="gaming-card">
+      <div class="surface-card">
         <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
           <div
             class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
@@ -213,7 +213,7 @@
           <div
             v-for="(questionData, idx) in allQuestionsParty"
             :key="idx"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
           >
             <!-- En-tête de la question -->
             <div class="flex items-start gap-3 mb-3">
@@ -225,7 +225,7 @@
                     : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
                 "
               >
-                {{ idx + 1 }}
+                {{ Number(idx) + 1 }}
               </div>
               <div class="flex-1">
                 <p class="font-semibold text-brand-lightGray mb-2">
@@ -480,14 +480,14 @@ function buttonClass(answerId: number, valid: boolean) {
     if (answerId === userAnswerId.value && valid === false) {
       return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
     }
-    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
   }
 
   if (answerId === userAnswerId.value) {
     return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
   }
 
-  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
+  return 'border-brand-purple/20 bg-brand-surface2/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {
@@ -605,7 +605,7 @@ const getAnswerClass = (questionData: any, answer: any) => {
     return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
   } else {
     // Autre réponse
-    return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'
+    return 'bg-brand-surface2/30 border-brand-gray/20 text-brand-gray'
   }
 }
 
@@ -653,68 +653,3 @@ onBeforeUnmount(() => {
   soloStore.partyId = null
 })
 </script>
-
-<style scoped>
-/* Boutons de difficulté */
-/* Couleurs par difficulté */
-.diff-easy {
-  --diff-color: #10b981;
-}
-.diff-medium {
-  --diff-color: #f59e0b;
-}
-.diff-hard {
-  --diff-color: #f97316;
-}
-.diff-hardcore {
-  --diff-color: #ef4444;
-}
-
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--diff-color);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-}
-
-/* Effet de glow animé */
-.difficulty-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 0.75rem;
-}
-
-.difficulty-button:hover .difficulty-glow {
-  opacity: 0.1;
-}
-
-.glow-green {
-  background: radial-gradient(circle, #10b981 0%, transparent 70%);
-}
-.glow-yellow {
-  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
-}
-.glow-orange {
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-}
-.glow-red {
-  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
-}
-</style>

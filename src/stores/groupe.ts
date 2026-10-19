@@ -55,7 +55,7 @@ export interface GroupePartyInfo {
   [key: string]: unknown
 }
 
-const GROUP_STORAGE_KEY = 'tuuuur_active_group'
+const GROUP_STORAGE_KEY = 'monkizz_active_group'
 
 export default defineStore('groupe', {
   state: () => ({

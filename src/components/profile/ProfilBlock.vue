@@ -10,7 +10,7 @@
             v-if="userStore.userInfo?.avatar"
             :src="userStore.userInfo?.avatar"
             alt="avatar"
-            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple shadow-neon object-cover"
+            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple shadow-card object-cover"
           />
           <div
             v-else

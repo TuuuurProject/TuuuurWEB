@@ -2,10 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap');
+/*
+ * Tokens de couleur Monkizz (DA « Évolution »).
+ * Valeurs en canaux RGB pour que Tailwind puisse appliquer l'opacité (voir tailwind.config.js).
+ * :root = mode clair, .dark (sur <html>) = mode sombre. Le choix est géré par useColorMode.
+ */
+:root {
+  --c-bg: 246 246 251;
+  --c-surface: 255 255 255;
+  --c-surface-2: 236 236 246;
+  --c-line: 225 226 239;
+  --c-ink: 21 22 58;
+  --c-muted: 90 93 125;
+  --c-primary: 90 79 207;
+  --c-primary-strong: 74 63 191;
+  --c-orange: 194 65 12;
+  --c-on-orange: 255 255 255;
+  --c-green: 0 135 90;
+  --c-yellow: 183 121 31;
+  --c-pink: 214 51 108;
+  --c-cyan: 14 116 144;
+  --c-red: 220 38 38;
+  --c-diff-easy: 0 135 90;
+  --c-diff-medium: 180 83 9;
+  --c-diff-hard: 194 65 12;
+  --c-diff-hardcore: 220 38 38;
+  --shadow-card: 0 1px 2px rgb(21 22 58 / 0.06), 0 2px 8px rgb(21 22 58 / 0.05);
+  --shadow-soft: 0 1px 3px rgb(21 22 58 / 0.06);
+  color-scheme: light;
+}
 
-/* Base styles aligned with brand */
+.dark {
+  --c-bg: 15 16 41;
+  --c-surface: 26 27 58;
+  --c-surface-2: 37 39 79;
+  --c-line: 44 47 92;
+  --c-ink: 242 243 250;
+  --c-muted: 169 173 201;
+  --c-primary: 108 92 231;
+  --c-primary-strong: 90 79 207;
+  --c-orange: 255 107 53;
+  --c-on-orange: 27 20 66;
+  --c-green: 0 208 132;
+  --c-yellow: 255 217 61;
+  --c-pink: 255 64 129;
+  --c-cyan: 0 229 255;
+  --c-red: 239 68 68;
+  --c-diff-easy: 16 185 129;
+  --c-diff-medium: 245 158 11;
+  --c-diff-hard: 249 115 22;
+  --c-diff-hardcore: 239 68 68;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.25), 0 4px 12px rgb(0 0 0 / 0.18);
+  --shadow-soft: 0 1px 3px rgb(0 0 0 / 0.25);
+  color-scheme: dark;
+}
+
 html,
 body {
   height: 100%;
@@ -17,21 +68,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Custom scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-brand-darkGray;
+  @apply bg-brand-dark;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-brand-purple rounded-full;
+  @apply bg-brand-line rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-brand-purpleDark;
+  @apply bg-brand-gray;
 }
 
 @layer base {
@@ -45,71 +96,56 @@ body {
     @apply font-branding text-brand-lightGray;
   }
   ::selection {
-    background: rgba(108, 92, 231, 0.3);
-    color: #e1e5e9;
+    background: rgb(var(--c-primary) / 0.25);
+    color: rgb(var(--c-ink));
   }
 }
 
 @layer components {
-  /* Gaming Buttons */
+  /* Boutons */
   .btn {
-    @apply relative overflow-hidden inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-purple/30 disabled:opacity-50 disabled:cursor-not-allowed transform;
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-  }
-
-  .btn:hover::before {
-    left: 100%;
+    @apply inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon hover:shadow-glow-hover;
+    @apply bg-brand-purple text-white hover:bg-brand-purpleDark;
   }
 
   .btn-secondary {
-    @apply bg-gradient-to-r from-brand-orange to-brand-orangeDark text-white shadow-neon-orange hover:shadow-glow-hover-orange;
+    @apply bg-brand-orange text-brand-onOrange hover:opacity-90;
   }
 
   .btn-ghost {
-    @apply bg-brand-darkGray/50 backdrop-blur text-brand-lightGray border-2 border-brand-purple/30 hover:border-brand-purple hover:bg-brand-purple/10;
+    @apply bg-transparent text-brand-lightGray border-2 border-brand-line hover:border-brand-purple hover:bg-brand-purple/10;
   }
 
-  /* Gaming Cards */
-  .gaming-card {
-    @apply rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/20 p-6 shadow-card transition-all duration-300 transform hover:border-brand-purple/30;
+  /* Cartes */
+  .surface-card {
+    @apply rounded-3xl bg-brand-darkGray border border-brand-line p-6 shadow-card transition-colors duration-200;
   }
 
   .menu-card {
-    @apply gaming-card cursor-pointer;
+    @apply surface-card cursor-pointer hover:border-brand-purple/50;
   }
 
-  /* Pills and Badges */
+  /* Pills et badges */
   .pill {
-    @apply rounded-full bg-brand-darkGray/80 backdrop-blur px-4 py-2 text-brand-lightGray border border-brand-purple/20 hover:border-brand-purple/40 transition-all duration-200;
+    @apply rounded-full bg-brand-darkGray px-4 py-2 text-brand-lightGray border border-brand-line hover:border-brand-purple/50 transition-colors duration-200;
   }
 
   .badge-success {
-    @apply inline-flex items-center gap-2 rounded-full bg-brand-green/20 text-brand-green px-3 py-1 text-sm font-semibold border border-brand-green/30;
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-green/15 text-brand-green px-3 py-1 text-sm font-semibold border border-brand-green/30;
   }
 
   .badge-warning {
-    @apply inline-flex items-center gap-2 rounded-full bg-brand-orange/20 text-brand-orange px-3 py-1 text-sm font-semibold border border-brand-orange/30;
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-orange/15 text-brand-orange px-3 py-1 text-sm font-semibold border border-brand-orange/30;
   }
 
   .badge-info {
-    @apply inline-flex items-center gap-2 rounded-full bg-brand-cyan/20 text-brand-cyan px-3 py-1 text-sm font-semibold border border-brand-cyan/30;
+    @apply inline-flex items-center gap-2 rounded-full bg-brand-cyan/15 text-brand-cyan px-3 py-1 text-sm font-semibold border border-brand-cyan/30;
   }
 
-  /* Legacy badges for compatibility */
+  /* Anciens badges, conservés pour compatibilité */
   .badge-green {
     @apply badge-success;
   }
@@ -118,45 +154,91 @@ body {
     @apply badge-warning;
   }
 
-  /* Gaming Text Effects */
-  .glow-text {
-    text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-  }
-
-  .title-gaming {
-    @apply font-display text-6xl md:text-7xl lg:text-8xl bg-gradient-to-r from-brand-purple via-brand-pink to-brand-orange bg-clip-text text-transparent;
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
-  }
-
-  /* Category Buttons */
+  /* Boutons de catégorie */
   .category-button {
-    @apply relative overflow-hidden rounded-2xl border-2 transition-all duration-300 transform;
+    @apply relative overflow-hidden rounded-2xl border-2 transition-colors duration-200;
   }
 
   .category-button:not(.selected) {
-    @apply border-brand-purple/30 bg-brand-darkGray/50 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10;
+    @apply border-brand-line bg-brand-darkGray text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10;
   }
 
   .category-button.selected {
-    @apply border-brand-purple bg-gradient-to-r from-brand-purple to-brand-purpleDark text-white shadow-neon;
+    @apply border-brand-purple bg-brand-purple text-white;
   }
 
-  /* Modal Animations */
+  /* Boutons de difficulté (sélection solo / groupe, récap de partie) */
+  .diff-easy {
+    --diff-color: var(--c-diff-easy);
+  }
+  .diff-medium {
+    --diff-color: var(--c-diff-medium);
+  }
+  .diff-hard {
+    --diff-color: var(--c-diff-hard);
+  }
+  .diff-hardcore {
+    --diff-color: var(--c-diff-hardcore);
+  }
+
+  .difficulty-button {
+    position: relative;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    border: 2px solid rgb(var(--c-line));
+    background: rgb(var(--c-surface));
+    color: rgb(var(--diff-color, var(--c-ink)));
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .difficulty-button:hover {
+    border-color: rgb(var(--diff-color, var(--c-primary)) / 0.5);
+  }
+
+  .difficulty-button.selected {
+    border-color: currentColor;
+    background: rgb(var(--diff-color, var(--c-primary)) / 0.1);
+  }
+
+  /* Slider (nombre de questions) */
+  .slider-purple::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: rgb(var(--c-primary));
+    cursor: pointer;
+  }
+
+  .slider-purple::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: rgb(var(--c-primary));
+    cursor: pointer;
+    border: none;
+  }
+
+  .check-icon {
+    font-size: 1.125rem;
+  }
+
+  /* Animations de modale */
   @keyframes modalPop {
     0% {
-      transform: scale(0.8) rotate(-2deg);
-    }
-    50% {
-      transform: scale(1.05) rotate(1deg);
+      transform: scale(0.96);
+      opacity: 0;
     }
     100% {
-      transform: scale(1) rotate(0deg);
+      transform: scale(1);
+      opacity: 1;
     }
   }
 
   .modal-enter-active {
-    animation: modalPop 0.3s ease-out;
+    animation: modalPop 0.2s ease-out;
   }
 
   /* Transitions */
@@ -170,13 +252,10 @@ body {
     opacity: 0;
   }
 
-  /* Countdown overlay animation (Mario Kart vibe) */
+  /* Compte à rebours avant les questions */
   .countdown-pop {
     font-size: clamp(96px, 18vw, 220px);
     line-height: 1;
-    text-shadow:
-      0 0 18px rgba(108, 92, 231, 0.55),
-      0 0 42px rgba(108, 92, 231, 0.35);
     animation: countdown-pop 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
   }
 
@@ -188,22 +267,19 @@ body {
 
   @keyframes countdown-pop {
     0% {
-      transform: scale(0.65) rotate(-3deg);
+      transform: scale(0.65);
       opacity: 0;
-      filter: blur(2px);
     }
     60% {
-      transform: scale(1.08) rotate(1deg);
+      transform: scale(1.08);
       opacity: 1;
-      filter: blur(0px);
     }
     100% {
-      transform: scale(1) rotate(0deg);
+      transform: scale(1);
       opacity: 1;
     }
   }
 
-  /* Transition for overlay */
   .countdown-fade-enter-active,
   .countdown-fade-leave-active {
     transition: opacity 180ms ease;
@@ -236,5 +312,15 @@ body {
   .countdown-swap-leave-to {
     transform: scale(1.08);
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

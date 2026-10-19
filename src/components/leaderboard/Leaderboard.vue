@@ -1,26 +1,26 @@
 <template>
   <section class="space-y-8">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-branding text-3xl text-brand-lightGray">
         <font-awesome-icon icon="trophy" class="mr-2 text-brand-yellow" />
         {{ $t('leaderboard.title') }}
       </h2>
     </header>
 
     <!-- Not logged in -->
-    <div v-if="!userStore.isLogged && !userStore.isLoggedAsInvited" class="gaming-card">
+    <div v-if="!userStore.isLogged && !userStore.isLoggedAsInvited" class="surface-card">
       <LoggedInBlock :message="$t('leaderboard.notLoggedIn')" />
     </div>
 
     <!-- Loading -->
-    <div v-else-if="rankedStore.isRankingLoading" class="gaming-card text-center py-12">
+    <div v-else-if="rankedStore.isRankingLoading" class="surface-card text-center py-12">
       <font-awesome-icon icon="spinner" spin class="text-3xl text-brand-purple mb-4" />
       <p class="text-brand-gray">{{ $t('common.loading') }}</p>
     </div>
 
     <template v-else>
       <!-- Podium Top 3 -->
-      <div class="gaming-card">
+      <div class="surface-card">
         <!-- Empty state -->
         <div v-if="sortedPlayers.length === 0" class="text-center py-8 text-brand-gray">
           <font-awesome-icon icon="trophy" class="text-4xl mb-3 opacity-30" />
@@ -44,10 +44,10 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
                     :class="
                       isCurrentUser(sortedPlayers[1])
-                        ? 'border-brand-purple shadow-neon'
+                        ? 'border-brand-purple shadow-card'
                         : 'border-brand-gray/40'
                     "
                   >
@@ -102,7 +102,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon"
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-card"
                     :class="
                       isCurrentUser(sortedPlayers[0])
                         ? 'ring-2 ring-brand-purple ring-offset-2 ring-offset-brand-dark'
@@ -145,7 +145,7 @@
                 >
                   {{ sortedPlayers[0].nickName }}
                 </div>
-                <div class="text-3xl font-branding text-brand-yellow mt-1 glow-text">
+                <div class="text-3xl font-branding text-brand-yellow mt-1">
                   {{ sortedPlayers[0].globalElo }}
                   <span class="text-sm font-sans text-brand-yellow/60">{{
                     $t('leaderboard.eloLabel')
@@ -158,7 +158,7 @@
               <!-- 1st place empty slot -->
               <div v-else class="text-center">
                 <div
-                  class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-dashed border-brand-yellow/30 bg-brand-darkGray/20 flex items-center justify-center mx-auto"
+                  class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-dashed border-brand-yellow/30 bg-brand-surface2/20 flex items-center justify-center mx-auto"
                 >
                   <span class="text-3xl font-bold text-brand-yellow/30">?</span>
                 </div>
@@ -171,10 +171,10 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
                     :class="
                       isCurrentUser(sortedPlayers[2])
-                        ? 'border-brand-purple shadow-neon'
+                        ? 'border-brand-purple shadow-card'
                         : 'border-brand-orange/40'
                     "
                   >
@@ -231,7 +231,7 @@
               :class="
                 isCurrentUser(player)
                   ? 'border-brand-purple/60 bg-brand-purple/10'
-                  : 'border-brand-purple/10 bg-brand-darkGray/20 hover:border-brand-purple/30'
+                  : 'border-brand-purple/10 bg-brand-surface2/20 hover:border-brand-purple/30'
               "
             >
               <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -242,7 +242,7 @@
                   {{ index + 4 }}
                 </span>
                 <div
-                  class="w-10 h-10 rounded-full border-2 bg-brand-darkGray/50 flex items-center justify-center shrink-0"
+                  class="w-10 h-10 rounded-full border-2 bg-brand-surface2/50 flex items-center justify-center shrink-0"
                   :class="isCurrentUser(player) ? 'border-brand-purple' : 'border-brand-purple/30'"
                 >
                   <img
@@ -303,7 +303,7 @@
                   }}
                 </span>
                 <div
-                  class="w-10 h-10 rounded-full border-2 border-brand-purple bg-brand-darkGray/50 flex items-center justify-center shrink-0"
+                  class="w-10 h-10 rounded-full border-2 border-brand-purple bg-brand-surface2/50 flex items-center justify-center shrink-0"
                 >
                   <img
                     v-if="userStore.userInfo?.avatar"

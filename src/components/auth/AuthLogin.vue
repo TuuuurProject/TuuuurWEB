@@ -1,16 +1,16 @@
 <template>
   <section class="space-y-6">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-branding text-3xl text-brand-lightGray">
         <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.title') }}
       </h2>
     </header>
 
     <transition name="fade" mode="out-in">
-      <div v-if="step === 0" class="max-w-lg gaming-card mx-auto">
+      <div v-if="step === 0" class="max-w-lg surface-card mx-auto">
         <auth-forgot-password @back="step = 1" @success="handleForgotPasswordSuccess" />
       </div>
-      <div v-else-if="step === 1" class="max-w-lg gaming-card mx-auto">
+      <div v-else-if="step === 1" class="max-w-lg surface-card mx-auto">
         <overlay-block :loading="userStore.isLoading">
           <form class="space-y-5" @submit.prevent="loginUser">
             <div>
@@ -22,7 +22,7 @@
                 data-testid="login-username"
                 v-model="login"
                 type="text"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.login.usernamePlaceholder')"
               />
             </div>
@@ -35,7 +35,7 @@
                 data-testid="login-password"
                 v-model="password"
                 type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.login.passwordPlaceholder')"
               />
               <div class="mt-2 text-sm">
@@ -100,7 +100,7 @@
           </div>
         </overlay-block>
       </div>
-      <div v-else class="max-w-lg gaming-card mx-auto">
+      <div v-else class="max-w-lg surface-card mx-auto">
         <auth-code :loading="userStore.isLoading" @verification="verifyEmail" />
       </div>
     </transition>

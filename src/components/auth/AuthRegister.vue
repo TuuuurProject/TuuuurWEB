@@ -1,13 +1,13 @@
 <template>
   <section class="space-y-6">
     <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-branding text-3xl text-brand-lightGray">
         <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.register.title') }}
       </h2>
     </header>
 
     <transition name="fade" mode="out-in">
-      <div v-if="step === 1" class="max-w-lg gaming-card mx-auto">
+      <div v-if="step === 1" class="max-w-lg surface-card mx-auto">
         <overlay-block :loading="userStore.isLoading">
           <form class="space-y-5" @submit.prevent="registerAuth">
             <div>
@@ -19,7 +19,7 @@
                 v-model="registerData.nickName"
                 type="text"
                 maxlength="50"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.register.nicknamePlaceholder')"
                 required
               />
@@ -32,7 +32,7 @@
                 id="email"
                 v-model="registerData.email"
                 type="email"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.register.emailPlaceholder')"
                 required
               />
@@ -45,7 +45,7 @@
                 id="password"
                 v-model="registerData.password"
                 type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.register.passwordPlaceholder')"
                 required
               />
@@ -58,7 +58,7 @@
                 id="confirmPassword"
                 v-model="registerData.confirmPassword"
                 type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
                 :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
                 required
               />
@@ -68,7 +68,7 @@
             <transition name="slide-fade">
               <div
                 v-if="registerData.nickName"
-                class="rounded-lg p-4 bg-brand-darkGray/30 border border-brand-purple/20"
+                class="rounded-lg p-4 bg-brand-surface2/30 border border-brand-purple/20"
               >
                 <ul class="space-y-1.5 text-sm">
                   <li class="flex items-center gap-2">
@@ -97,7 +97,7 @@
             <transition name="slide-fade">
               <div
                 v-if="registerData.password"
-                class="rounded-lg p-4 bg-brand-darkGray/30 border border-brand-purple/20"
+                class="rounded-lg p-4 bg-brand-surface2/30 border border-brand-purple/20"
               >
                 <ul class="space-y-1.5 text-sm">
                   <li class="flex items-center gap-2">
@@ -195,7 +195,7 @@
           </div>
         </overlay-block>
       </div>
-      <div v-else class="max-w-lg gaming-card mx-auto">
+      <div v-else class="max-w-lg surface-card mx-auto">
         <auth-code :loading="userStore.isLoading" @verification="verifyEmail" />
       </div>
     </transition>

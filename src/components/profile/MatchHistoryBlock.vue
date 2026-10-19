@@ -36,7 +36,7 @@
             'pill text-xs sm:text-sm whitespace-nowrap',
             selectedFilter === filter.id
               ? 'bg-brand-purple/30 border-brand-purple text-brand-purple'
-              : 'bg-brand-darkGray/50 border-brand-gray/30 text-brand-gray hover:bg-brand-purple/10',
+              : 'bg-brand-surface2/50 border-brand-gray/30 text-brand-gray hover:bg-brand-purple/10',
           ]"
           @click="selectedFilter = filter.id"
         >
@@ -49,7 +49,7 @@
         <div
           v-for="match in filteredMatches"
           :key="match.filterKey"
-          class="match-item p-2 sm:p-3 rounded-lg border cursor-pointer bg-brand-darkGray/30 border-brand-purple/20"
+          class="match-item p-2 sm:p-3 rounded-lg border cursor-pointer bg-brand-surface2/30 border-brand-purple/20"
           :class="{ 'opacity-50 pointer-events-none': historyStore.isLoading }"
           @click="showMatchDetails(match)"
         >
@@ -332,11 +332,11 @@ const dateCache = new Map<string, string>()
 
 // Cache pour les couleurs de difficulté
 const difficultyColorMap: Record<string, string> = {
-  facile: 'bg-[#10b981]/20 border-[#10b981]/40 text-[#10b981]',
-  moyen: 'bg-[#f59e0b]/20 border-[#f59e0b]/40 text-[#f59e0b]',
-  difficile: 'bg-[#f97316]/20 border-[#f97316]/40 text-[#f97316]',
-  hardcore: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
-  extreme: 'bg-[#ef4444]/20 border-[#ef4444]/40 text-[#ef4444]',
+  facile: 'bg-diff-easy/15 border-diff-easy/40 text-diff-easy',
+  moyen: 'bg-diff-medium/15 border-diff-medium/40 text-diff-medium',
+  difficile: 'bg-diff-hard/15 border-diff-hard/40 text-diff-hard',
+  hardcore: 'bg-diff-hardcore/15 border-diff-hardcore/40 text-diff-hardcore',
+  extreme: 'bg-diff-hardcore/15 border-diff-hardcore/40 text-diff-hardcore',
 }
 
 const selectedFilter = ref(0) // 'all' by default
@@ -608,8 +608,8 @@ onUnmounted(() => {
 }
 
 .match-item:hover {
-  border-color: rgba(108, 92, 231, 0.4);
-  background-color: rgba(108, 92, 231, 0.05);
+  border-color: rgb(var(--c-primary) / 0.4);
+  background-color: rgb(var(--c-primary) / 0.05);
 }
 
 /* Empêcher le débordement des flex containers */

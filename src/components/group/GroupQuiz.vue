@@ -18,7 +18,7 @@
       <!-- Timer / progress -->
       <div v-if="!finished && !showCurrentRanking" class="flex flex-col gap-4">
         <div
-          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-darkGray/80 shadow-neon"
+          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-surface2/80 shadow-card"
         >
           <div class="h-2 w-full bg-brand-dark/30">
             <div
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Question card -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <overlay-block :loading="false">
             <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
             <div class="grid gap-3 sm:grid-cols-2">
@@ -48,7 +48,7 @@
                 <span
                   class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
                 >
-                  {{ idx + 1 }}
+                  {{ Number(idx) + 1 }}
                 </span>
                 {{ opt?.value }}
               </button>
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Players status section -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <!-- Statut des joueurs (répondu ou non) -->
           <ul
             class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
@@ -74,7 +74,7 @@
             <li
               v-for="p in groupeStore.groupePartyInfo?.partyUsers"
               :key="String(p.id)"
-              class="rounded-xl border bg-brand-darkGray/30 p-3 flex items-center gap-3 transition-all duration-300"
+              class="rounded-xl border bg-brand-surface2/30 p-3 flex items-center gap-3 transition-all duration-300"
               :class="getPlayerCardClass(p.user)"
             >
               <div class="relative shrink-0">
@@ -124,7 +124,7 @@
       </div>
 
       <!-- Classement en temps réel (si scoreEachRound activé et tous ont répondu) -->
-      <div v-else-if="!finished && showCurrentRanking" class="gaming-card">
+      <div v-else-if="!finished && showCurrentRanking" class="surface-card">
         <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-purple/20">
           <div
             class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
@@ -148,7 +148,7 @@
                   ? 'border-brand-gray/40 bg-brand-gray/5'
                   : index === 2
                     ? 'border-brand-orange/40 bg-brand-orange/5'
-                    : 'border-brand-purple/20 bg-brand-darkGray/30',
+                    : 'border-brand-purple/20 bg-brand-surface2/30',
             ]"
           >
             <div class="flex items-center gap-3 min-w-0 flex-1">
@@ -246,14 +246,14 @@
       <div v-else-if="finished" class="space-y-6">
         <!-- Header avec score final -->
         <div
-          class="gaming-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
+          class="surface-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
         >
           <div
             class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
           >
             <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
           </div>
-          <h3 class="font-branding text-4xl mb-2 text-brand-lightGray glow-text">
+          <h3 class="font-branding text-4xl mb-2 text-brand-lightGray">
             {{ $t('group.quiz.finished') }}
           </h3>
           <div class="flex items-center justify-center gap-6 mt-4">
@@ -290,7 +290,7 @@
         </div>
 
         <!-- Classement des joueurs -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
             <div
               class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
@@ -318,7 +318,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-gray/40 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-gray/40 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
                   >
                     <img
                       v-if="sortedPlayers[1]?.user?.avatar"
@@ -354,7 +354,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-neon"
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-card"
                   >
                     <img
                       v-if="sortedPlayers[0]?.user?.avatar"
@@ -380,7 +380,7 @@
                 <div class="font-bold text-brand-lightGray truncate px-2">
                   {{ sortedPlayers[0].user?.nickName }}
                 </div>
-                <div class="text-3xl font-branding text-brand-yellow mt-1 glow-text">
+                <div class="text-3xl font-branding text-brand-yellow mt-1">
                   {{ sortedPlayers[0].score }}
                 </div>
                 <div
@@ -395,7 +395,7 @@
               >
                 <div class="relative inline-block mb-3">
                   <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-orange/40 bg-brand-darkGray/50 flex items-center justify-center mx-auto shadow-lg"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-orange/40 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
                   >
                     <img
                       v-if="sortedPlayers[2]?.user?.avatar"
@@ -430,7 +430,7 @@
           <div v-if="sortedPlayers.length > 3" class="mt-6">
             <button
               @click="showAllPlayers = !showAllPlayers"
-              class="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/20 bg-brand-darkGray/30 hover:bg-brand-purple/10 transition-all duration-300"
+              class="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/20 bg-brand-surface2/30 hover:bg-brand-purple/10 transition-all duration-300"
             >
               <span class="font-semibold text-brand-lightGray">
                 {{ $t('group.quiz.otherPlayers', { count: sortedPlayers.length - 3 }) }}
@@ -455,14 +455,14 @@
                   <div
                     v-for="(player, index) in sortedPlayers.slice(3)"
                     :key="player.user.id"
-                    class="flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/10 bg-brand-darkGray/20 hover:border-brand-purple/30 transition-all duration-200"
+                    class="flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/10 bg-brand-surface2/20 hover:border-brand-purple/30 transition-all duration-200"
                   >
                     <div class="flex items-center gap-3 min-w-0 flex-1">
                       <span class="text-brand-gray font-bold text-sm w-6 text-center shrink-0">
                         {{ index + 4 }}
                       </span>
                       <div
-                        class="w-10 h-10 rounded-full border-2 border-brand-purple/30 bg-brand-darkGray/50 flex items-center justify-center shrink-0"
+                        class="w-10 h-10 rounded-full border-2 border-brand-purple/30 bg-brand-surface2/50 flex items-center justify-center shrink-0"
                       >
                         <img
                           v-if="player?.user?.avatar"
@@ -489,7 +489,7 @@
         </div>
 
         <!-- Informations de la partie -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
             <div
               class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
@@ -564,7 +564,7 @@
         </div>
 
         <!-- Récapitulatif des questions -->
-        <div class="gaming-card">
+        <div class="surface-card">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
             <div
               class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
@@ -580,7 +580,7 @@
             <div
               v-for="(questionData, idx) in allQuestionsParty"
               :key="idx"
-              class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
+              class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
             >
               <!-- En-tête de la question -->
               <div class="flex items-start gap-3 mb-3">
@@ -592,7 +592,7 @@
                       : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
                   "
                 >
-                  {{ idx + 1 }}
+                  {{ Number(idx) + 1 }}
                 </div>
                 <div class="flex-1">
                   <p class="font-semibold text-brand-lightGray mb-2">
@@ -682,11 +682,7 @@
     >
       <div class="text-center select-none">
         <transition name="countdown-swap" mode="out-in">
-          <div
-            :key="countdownValue"
-            class="countdown-pop drop-shadow-[0_0_30px_rgba(108,92,231,0.55)]"
-            :class="countdownTextClass"
-          >
+          <div :key="countdownValue" class="countdown-pop" :class="countdownTextClass">
             {{ countdownValue }}
           </div>
         </transition>
@@ -1052,7 +1048,7 @@ function buttonClass(answerId: number, valid: boolean) {
     if (answerId === userAnswerId.value && valid === false) {
       return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
     }
-    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
   }
 
   if (answerId === userAnswerId.value) {
@@ -1060,10 +1056,10 @@ function buttonClass(answerId: number, valid: boolean) {
   }
 
   if (answered.value) {
-    return 'border-brand-purple/20 bg-brand-darkGray/20 text-brand-gray cursor-default opacity-50'
+    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
   }
 
-  return 'border-brand-purple/20 bg-brand-darkGray/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
+  return 'border-brand-purple/20 bg-brand-surface2/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {
@@ -1200,7 +1196,7 @@ const getAnswerClass = (questionData: any, answer: any) => {
     return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
   } else {
     // Autre réponse
-    return 'bg-brand-darkGray/30 border-brand-gray/20 text-brand-gray'
+    return 'bg-brand-surface2/30 border-brand-gray/20 text-brand-gray'
   }
 }
 
@@ -1554,86 +1550,16 @@ onBeforeUnmount(async () => {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(10, 11, 30, 0.5);
+  background: rgb(var(--c-bg) / 0.5);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(108, 92, 231, 0.4);
+  background: rgb(var(--c-primary) / 0.4);
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 92, 231, 0.6);
-}
-
-/* Boutons de difficulté */
-.difficulty-button {
-  position: relative;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(30, 30, 40, 0.5);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--brand-lightGray);
-}
-
-.difficulty-button:hover {
-  transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.difficulty-button.selected {
-  border-color: currentColor;
-  background: rgba(30, 30, 40, 0.8);
-}
-
-/* Couleurs par difficulté */
-.diff-easy {
-  --diff-color: #10b981;
-}
-.diff-medium {
-  --diff-color: #f59e0b;
-}
-.diff-hard {
-  --diff-color: #f97316;
-}
-.diff-hardcore {
-  --diff-color: #ef4444;
-}
-
-.difficulty-button {
-  color: var(--diff-color);
-}
-
-.difficulty-button.selected {
-  box-shadow: 0 0 20px rgba(var(--diff-color-rgb), 0.3);
-}
-
-/* Effet de glow animé */
-.difficulty-glow {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 0.75rem;
-}
-
-.difficulty-button:hover .difficulty-glow {
-  opacity: 0.1;
-}
-
-.glow-green {
-  background: radial-gradient(circle, #10b981 0%, transparent 70%);
-}
-.glow-yellow {
-  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
-}
-.glow-orange {
-  background: radial-gradient(circle, #f97316 0%, transparent 70%);
-}
-.glow-red {
-  background: radial-gradient(circle, #ef4444 0%, transparent 70%);
+  background: rgb(var(--c-primary) / 0.6);
 }
 </style>

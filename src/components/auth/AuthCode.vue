@@ -1,7 +1,7 @@
 <template>
   <overlay-block :loading="loading">
     <div data-testid="auth-code-container" class="max-w-md mx-auto">
-      <h2 class="font-branding text-3xl text-brand-lightGray glow-text text-center mb-4">
+      <h2 class="font-branding text-3xl text-brand-lightGray text-center mb-4">
         {{ $t('auth.verification.title') }}
       </h2>
       <div class="block font-semibold mb-8 text-brand-green text-center">
@@ -13,7 +13,7 @@
           :key="i"
           :data-testid="`auth-code-input-${i}`"
           maxlength="1"
-          class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-darkGray/50 font-branding text-xl sm:text-2xl shadow-neon text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
+          class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 font-branding text-xl sm:text-2xl shadow-card text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
           v-model="digits[i - 1]"
           @input="onInput(i - 1)"
           @keydown.backspace.prevent="onBackspace(i - 1)"

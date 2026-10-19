@@ -1,9 +1,9 @@
 <template>
-  <section class="gaming-card">
+  <section class="surface-card">
     <div class="flex items-start gap-4">
       <!-- Icône 3D avec effets de flottement -->
       <span
-        class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-purple/20 text-brand-purple animate-float shadow-neon"
+        class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-purple/20 text-brand-purple shadow-card"
       >
         <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor">
           <path
@@ -12,12 +12,12 @@
         </svg>
       </span>
       <div>
-        <h2 class="font-display text-3xl mb-2 text-brand-lightGray glow-text">{{ title }}</h2>
+        <h2 class="font-display text-3xl mb-2 text-brand-lightGray">{{ title }}</h2>
         <p class="text-brand-gray">{{ description }}</p>
 
         <!-- Roadmap visuelle avec badges de statut -->
         <div class="mt-6 flex flex-wrap gap-3">
-          <span class="badge-success animate-pulse-slow">
+          <span class="badge-success">
             <span class="w-2 h-2 rounded-full bg-brand-green"></span>Design System Gaming
           </span>
           <span class="badge-info">
@@ -41,7 +41,7 @@
         </div>
 
         <div class="mt-8">
-          <button class="btn btn-ghost hover:shadow-glow" @click="$emit('back')">
+          <button class="btn btn-ghost hover:shadow-card" @click="$emit('back')">
             <font-awesome-icon icon="arrow-left" /> {{ $t('common.back') }}
           </button>
         </div>

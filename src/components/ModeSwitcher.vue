@@ -13,7 +13,7 @@
     <transition name="fade">
       <div
         v-if="isOpen"
-        class="absolute right-0 mt-2 w-32 rounded-2xl bg-brand-darkGray/95 backdrop-blur-xl border border-brand-purple/30 shadow-neon overflow-hidden z-50"
+        class="absolute right-0 mt-2 w-32 rounded-2xl bg-brand-darkGray/95 backdrop-blur-xl border border-brand-purple/30 shadow-card overflow-hidden z-50"
       >
         <button
           v-for="mode in availableModes"

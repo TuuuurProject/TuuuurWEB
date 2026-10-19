@@ -1,12 +1,12 @@
 <template>
   <section class="space-y-6">
     <header class="flex items-center">
-      <h2 class="font-display text-3xl text-brand-lightGray glow-text">
+      <h2 class="font-display text-3xl text-brand-lightGray">
         <font-awesome-icon icon="user" /> {{ $t('profile.title') }}
       </h2>
     </header>
 
-    <div class="gaming-card justify-self-center w-full">
+    <div class="surface-card justify-self-center w-full">
       <!-- Logged in -->
       <div data-testid="profile-logged" v-if="userStore.isLogged" class="space-y-6">
         <profil-block />
@@ -19,7 +19,7 @@
     <div
       data-testid="profile-history"
       v-if="userStore.isLogged"
-      class="gaming-card justify-self-center w-full"
+      class="surface-card justify-self-center w-full"
     >
       <match-history-block />
     </div>

@@ -8,11 +8,11 @@
           @click="$emit('close')"
         ></div>
         <div
-          class="relative z-10 w-[92vw] max-w-lg rounded-3xl bg-card-gradient backdrop-blur-sm border border-brand-purple/30 p-6 shadow-neon modal-enter-active"
+          class="relative z-10 w-[92vw] max-w-lg rounded-3xl bg-brand-darkGray backdrop-blur-sm border border-brand-purple/30 p-6 shadow-card modal-enter-active"
         >
           <overlay-block :loading="loading">
             <header class="mb-4 flex items-start justify-between gap-4">
-              <h3 class="font-display text-2xl text-brand-lightGray glow-text">{{ title }}</h3>
+              <h3 class="font-display text-2xl text-brand-lightGray">{{ title }}</h3>
               <button
                 class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 h-[40px] w-[40px] flex items-center justify-center"
                 :aria-label="$t('common.close')"

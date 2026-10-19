@@ -2,7 +2,7 @@
   <section data-testid="group-lobby" class="space-y-6 mt-6">
     <div class="grid gap-6 md:grid-cols-12">
       <!-- Players focus panel -->
-      <div class="md:col-span-8 gaming-card">
+      <div class="md:col-span-8 surface-card">
         <div class="mb-4 flex items-center justify-between">
           <h3 class="font-branding text-xl text-brand-lightGray">
             {{ $t('group.lobby.players') }}
@@ -19,7 +19,7 @@
           <li
             v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
             :key="String(p.id)"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-darkGray/30 p-4 items-start hover:shadow-neon transition duration-250 overflow-hidden flex gap-4 items-center"
+            class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/30 p-4 items-start hover:shadow-card transition duration-250 overflow-hidden flex gap-4 items-center"
           >
             <div class="relative shrink-0">
               <div
@@ -29,7 +29,7 @@
                   v-if="p?.user?.avatar"
                   :src="p.user.avatar"
                   alt="avatar"
-                  class="h-12 w-12 rounded-full border-2 border-brand-purple shadow-neon object-cover"
+                  class="h-12 w-12 rounded-full border-2 border-brand-purple shadow-card object-cover"
                 />
                 <div
                   v-else
@@ -60,7 +60,7 @@
 
       <!-- Right rail with QR and actions -->
       <aside class="md:col-span-4 space-y-4">
-        <div class="gaming-card">
+        <div class="surface-card">
           <h3 class="font-branding text-xl mb-3 text-brand-lightGray">
             {{ $t('group.lobby.joinSection') }} !
           </h3>
@@ -368,7 +368,7 @@ onBeforeUnmount(() => {
   }
 }
 .player-aura {
-  background: radial-gradient(closest-side, rgba(195, 122, 62, 0.25), transparent 70%);
+  background: radial-gradient(closest-side, rgb(var(--c-primary) / 0.25), transparent 70%);
   animation: aura 1.6s ease-out infinite;
 }
 </style>

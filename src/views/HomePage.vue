@@ -1,61 +1,31 @@
 <template>
   <div
     id="home-page-section"
-    class="relative flex flex-col items-center justify-center px-6 py-10 bg-gaming-gradient overflow-hidden"
+    class="relative flex flex-col items-center justify-center px-6 py-10 overflow-hidden"
     style="min-height: calc(100vh - 75px)"
   >
-    <!-- Particules animées en arrière-plan -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div
-        class="absolute top-1/4 left-1/4 w-2 h-2 bg-brand-purple rounded-full animate-pulse-slow opacity-60"
-      ></div>
-      <div
-        class="absolute top-3/4 right-1/4 w-1 h-1 bg-brand-orange rounded-full animate-bounce-slow opacity-80"
-      ></div>
-      <div
-        class="absolute top-1/2 left-3/4 w-1.5 h-1.5 bg-brand-green rounded-full animate-float opacity-70"
-      ></div>
-      <div
-        class="absolute top-1/3 right-1/3 w-1 h-1 bg-brand-pink rounded-full animate-wiggle opacity-60"
-      ></div>
-      <div
-        class="absolute bottom-1/4 left-1/2 w-1.5 h-1.5 bg-brand-cyan rounded-full animate-pulse-slow opacity-50"
-      ></div>
-      <!-- Effets cosmiques -->
-      <div class="absolute inset-0 bg-cosmic opacity-30"></div>
-    </div>
-
     <div class="text-center space-y-8 z-10">
       <div class="flex flex-col items-center gap-4">
-        <div class="flex items-center gap-3">
-          <!-- Logo -->
-          <img
-            src="@/assets/logo.png"
-            alt="Tuuuur Logo"
-            width="150"
-            height="150"
-            class="drop-shadow-2xl animate-glow"
-          />
-          <!-- Titre avec gradient animé -->
-          <h1 class="title-gaming tracking-tight animate-float">Tuuuur</h1>
-        </div>
+        <h1 class="font-display font-extrabold tracking-tight text-6xl md:text-7xl lg:text-8xl">
+          Monk<span class="text-brand-purple">izz</span>
+        </h1>
         <p class="max-w-xl text-brand-gray text-base md:text-lg">
           {{ $t('home.subtitle') }}
         </p>
       </div>
 
-      <!-- Boutons principaux avec effets gaming -->
+      <!-- Boutons principaux -->
       <div class="grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
         <button
           data-testid="home-solo"
-          class="btn btn-primary text-lg py-4 shadow-neon hover:shadow-glow-hover"
+          class="btn btn-primary text-lg py-4 shadow-card"
           @click="router.push({ name: 'SoloQuiz' })"
         >
           <font-awesome-icon icon="bullseye" class="mr-2" /> {{ $t('home.playSolo') }}
         </button>
         <button
           data-testid="home-group"
-          class="btn btn-secondary text-lg py-4 shadow-neon-orange hover:shadow-glow-hover"
+          class="btn btn-secondary text-lg py-4 shadow-card"
           @click="router.push({ name: 'GroupMode' })"
         >
           <font-awesome-icon icon="users" class="mr-2" /> {{ $t('home.playGroup') }}
@@ -68,11 +38,11 @@
         </button>
       </div>
 
-      <!-- Cartes de navigation redesignées -->
+      <!-- Cartes de navigation -->
       <div class="mt-10 grid grid-cols-2 sm:grid-cols-2 gap-3 max-w-4xl mx-auto">
         <button
           data-testid="home-profile"
-          class="gaming-card group"
+          class="surface-card group"
           @click="router.push({ name: 'Profile' })"
         >
           <div class="flex items-center gap-3">
@@ -85,16 +55,13 @@
                 />
               </svg>
             </span>
-            <span
-              class="font-semibold text-brand-lightGray group-hover:text-white transition-colors"
-              >{{ $t('nav.profile') }}</span
-            >
+            <span class="font-semibold text-brand-lightGray">{{ $t('nav.profile') }}</span>
           </div>
         </button>
-        <button class="gaming-card group" @click="router.push({ name: 'Ranking' })">
+        <button class="surface-card group" @click="router.push({ name: 'Ranking' })">
           <div class="flex items-center gap-3">
             <span
-              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-orange/20 text-brand-orange group-hover:bg-brand-orange group-hover:text-white transition-all duration-300"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-orange/20 text-brand-orange group-hover:bg-brand-orange group-hover:text-brand-onOrange transition-all duration-300"
             >
               <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor">
                 <path
@@ -102,17 +69,14 @@
                 />
               </svg>
             </span>
-            <span
-              class="font-semibold text-brand-lightGray group-hover:text-white transition-colors"
-              >{{ $t('nav.ranking') }}</span
-            >
+            <span class="font-semibold text-brand-lightGray">{{ $t('nav.ranking') }}</span>
           </div>
         </button>
       </div>
     </div>
 
-    <!-- Footer avec effet glow -->
-    <footer class="absolute bottom-6 text-xs text-brand-gray glow-text">
+    <!-- Footer -->
+    <footer class="absolute bottom-6 text-xs text-brand-gray">
       {{ $t('home.footer', { year: currentYear }) }} - V.{{ packageJson.version }}
     </footer>
   </div>
