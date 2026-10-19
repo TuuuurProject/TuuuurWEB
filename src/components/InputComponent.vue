@@ -1,19 +1,15 @@
 <template>
   <div>
-    <label
-      for="input_component"
-      v-if="props.label"
-      class="block mb-1 font-medium text-brand-lightGray"
-    >
+    <label v-if="props.label" :for="inputId" class="field-label">
       {{ props.label }}
     </label>
 
     <input
-      id="input_component"
+      :id="inputId"
       :value="props.modelValue"
       :disabled="props.disabled"
       :type="props.type"
-      class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 backdrop-blur px-4 py-3 shadow-card focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple text-brand-lightGray placeholder-brand-gray"
+      class="field-input"
       :placeholder="props.placeholder"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
@@ -21,6 +17,9 @@
 </template>
 
 <script setup lang="ts">
+import { useId } from 'vue'
+
+const inputId = useId()
 const props = withDefaults(
   defineProps<{
     modelValue: string

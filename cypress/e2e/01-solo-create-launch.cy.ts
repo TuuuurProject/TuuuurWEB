@@ -22,17 +22,13 @@ describe('Parcours 1: Solo - Créer et lancer une partie', () => {
     // Étape 4: Attendre que les catégories soient chargées
     cy.contains('Mode Solo', { timeout: 10000 }).should('be.visible')
 
-    // Étape 5: Sélectionner une catégorie (cliquer sur le premier bouton de catégorie)
-    cy.get('.category-button').first().click()
+    // Étape 5: Sélectionner un thème
+    cy.getByTestId('setup-theme').first().click()
 
-    // Étape 6: Cliquer sur "Commencer l'aventure"
+    // Étape 6: Lancer la partie (plus de modale de confirmation)
     cy.getByTestId('solo-start').should('be.visible').and('not.be.disabled').click()
 
-    // Étape 7: Confirmer dans la modal
-    cy.getByTestId('solo-confirm-modal').should('be.visible')
-    cy.contains('button', 'Confirmer').click()
-
-    // Étape 8: Vérifier qu'on est sur la page du quiz (devrait afficher des questions)
+    // Étape 7: Vérifier qu'on est sur la page du quiz (devrait afficher des questions)
     cy.url().should('include', '/solo')
 
     // Attendre que le quiz se charge

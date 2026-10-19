@@ -1,27 +1,24 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex items-center">
-      <h2 class="font-display text-3xl text-brand-lightGray">
-        <font-awesome-icon icon="user" /> {{ $t('profile.title') }}
-      </h2>
+  <section class="flex flex-col gap-6">
+    <header class="flex flex-col gap-2">
+      <h2 class="text-3xl font-bold">{{ $t('profile.title') }}</h2>
     </header>
 
-    <div class="surface-card justify-self-center w-full">
-      <!-- Logged in -->
-      <div data-testid="profile-logged" v-if="userStore.isLogged" class="space-y-6">
+    <div
+      v-if="userStore.isLogged"
+      data-testid="profile-logged"
+      class="grid grid-cols-1 gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start"
+    >
+      <aside class="surface-card min-w-0 lg:sticky lg:top-24">
         <profil-block />
-      </div>
-      <!-- Not logged in -->
-      <logged-in-block v-else :message="$t('profile.notLoggedIn')" />
+      </aside>
+      <section data-testid="profile-history" class="surface-card min-w-0">
+        <match-history-block />
+      </section>
     </div>
 
-    <!-- Match History -->
-    <div
-      data-testid="profile-history"
-      v-if="userStore.isLogged"
-      class="surface-card justify-self-center w-full"
-    >
-      <match-history-block />
+    <div v-else class="surface-card w-full">
+      <logged-in-block :message="$t('profile.notLoggedIn')" />
     </div>
   </section>
 </template>

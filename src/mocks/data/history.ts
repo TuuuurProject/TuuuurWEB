@@ -57,7 +57,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       nbQuestions: 10,
       percent: 80,
       time: 120,
-      partyType: { id: 1, label: 'Solo' },
+      partyType: { id: 3, label: 'Solo' },
       partyDifficulty: [
         {
           id: 1,
@@ -86,7 +86,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       nbQuestions: 10,
       percent: 60,
       time: 150,
-      partyType: { id: 1, label: 'Solo' },
+      partyType: { id: 3, label: 'Solo' },
       partyDifficulty: [
         {
           id: 2,
@@ -115,7 +115,7 @@ export function getMockHistory(page: number = 1, size: number = 7) {
       nbQuestions: 15,
       percent: 90,
       time: 180,
-      partyType: { id: 2, label: 'Groupe' },
+      partyType: { id: 1, label: 'Groupe' },
       partyDifficulty: [
         {
           id: 3,

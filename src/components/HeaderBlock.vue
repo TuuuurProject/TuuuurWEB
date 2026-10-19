@@ -1,86 +1,102 @@
 <template>
   <header
-    class="sticky top-0 z-10 bg-brand-darkGray/80 backdrop-blur-xl border-b border-brand-line h-[75px]"
+    class="sticky top-0 z-20 h-[75px] border-b border-brand-line bg-brand-darkGray/90 backdrop-blur-xl"
   >
-    <div class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between h-full">
-      <button
-        class="inline-flex items-center gap-2 text-brand-lightGray hover:text-brand-purple transition group"
-        @click="router.push({ name: 'Home' })"
+    <div class="mx-auto flex h-full max-w-6xl items-center gap-6 px-6">
+      <router-link
+        :to="{ name: 'Home' }"
+        class="shrink-0 rounded-xl font-display text-2xl font-extrabold text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40"
+        :aria-label="$t('nav.home')"
       >
-        <span class="font-display text-2xl font-extrabold"
-          >Monk<span class="text-brand-purple">izz</span></span
-        >
-      </button>
+        Monk<span class="text-brand-purple">izz</span>
+      </router-link>
 
-      <!-- Desktop nav -->
-      <nav class="hidden sm:flex gap-3">
-        <button
-          class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'Home' })"
+      <!-- Navigation principale (desktop) -->
+      <nav class="hidden flex-1 items-center gap-1 lg:flex" :aria-label="$t('nav.main')">
+        <router-link
+          v-for="link in links"
+          :key="link.name"
+          :to="{ name: link.name }"
+          class="nav-link"
+          :class="{ 'is-active': isActive(link.name) }"
+          :aria-current="isActive(link.name) ? 'page' : undefined"
         >
-          {{ $t('nav.home') }}
-        </button>
-        <button
-          class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40"
-          @click="router.push({ name: 'Profile' })"
-        >
-          {{ $t('nav.profile') }}
-        </button>
-        <mode-switcher />
-        <language-switcher />
-        <color-mode-switcher />
+          <font-awesome-icon :icon="link.icon" class="text-sm" />
+          {{ $t(link.label) }}
+        </router-link>
       </nav>
 
-      <!-- Burger button (mobile only) -->
-      <button
-        class="sm:hidden flex flex-col gap-1.5 p-2 text-brand-lightGray hover:text-brand-purple transition"
-        :aria-label="$t('nav.menu')"
-        :aria-expanded="mobileMenuOpen"
-        @click="mobileMenuOpen = !mobileMenuOpen"
-      >
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? 'rotate-45 translate-y-2' : ''"
-        />
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? 'opacity-0' : ''"
-        />
-        <span
-          class="block w-6 h-0.5 bg-current transition-all duration-300"
-          :class="mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''"
-        />
-      </button>
+      <div class="ml-auto flex items-center gap-2">
+        <div class="hidden items-center gap-2 lg:flex">
+          <language-switcher />
+          <color-mode-switcher />
+        </div>
+
+        <!-- Compte -->
+        <router-link
+          v-if="userStore.isLogged"
+          :to="{ name: 'Profile' }"
+          class="flex items-center gap-2 rounded-full border-2 border-transparent py-1 pl-1 pr-3 transition-colors hover:border-brand-line"
+          :class="{ 'border-brand-purple/40': isActive('Profile') }"
+          :aria-label="$t('nav.profile')"
+        >
+          <player-avatar
+            :name="userStore.userInfo?.nickName"
+            :avatar="userStore.userInfo?.avatar"
+            size="sm"
+          />
+          <span class="hidden max-w-[10rem] truncate font-semibold sm:inline">
+            {{ userStore.userInfo?.nickName ?? $t('nav.profile') }}
+          </span>
+        </router-link>
+        <router-link
+          v-else-if="!isAuthPage"
+          :to="{ name: 'Login' }"
+          class="btn btn-primary px-4 py-2 text-sm"
+        >
+          {{ $t('auth.login.submit') }}
+        </router-link>
+
+        <!-- Menu mobile -->
+        <button
+          type="button"
+          class="flex h-10 w-10 items-center justify-center rounded-full text-brand-lightGray transition-colors hover:bg-brand-surface2 lg:hidden"
+          :aria-label="$t('nav.menu')"
+          :aria-expanded="mobileMenuOpen"
+          aria-controls="mobile-menu"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <font-awesome-icon :icon="mobileMenuOpen ? 'xmark' : 'bars'" class="text-lg" />
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- Mobile menu dropdown (fixed hors du header pour éviter les conflits de z-index) -->
+  <!-- Panneau mobile (fixé hors du header pour éviter les conflits de z-index) -->
   <transition
-    enter-active-class="transition-all duration-200 ease-out"
+    enter-active-class="transition duration-200 ease-out"
     enter-from-class="opacity-0 -translate-y-2"
-    enter-to-class="opacity-100 translate-y-0"
-    leave-active-class="transition-all duration-150 ease-in"
-    leave-from-class="opacity-100 translate-y-0"
+    leave-active-class="transition duration-150 ease-in"
     leave-to-class="opacity-0 -translate-y-2"
   >
     <nav
       v-if="mobileMenuOpen"
-      class="sm:hidden fixed top-[75px] left-0 right-0 z-50 bg-brand-darkGray/95 backdrop-blur-xl border-b border-brand-line px-6 py-4 flex flex-col gap-3"
+      id="mobile-menu"
+      class="fixed left-0 right-0 top-[75px] z-30 flex flex-col gap-1 border-b border-brand-line bg-brand-darkGray px-6 py-4 shadow-card lg:hidden"
+      :aria-label="$t('nav.main')"
     >
-      <button
-        class="pill w-full text-left hover:bg-brand-purple/20 hover:border-brand-purple/40"
-        @click="navigate('Home')"
+      <router-link
+        v-for="link in mobileLinks"
+        :key="link.name"
+        :to="{ name: link.name }"
+        class="nav-link py-3 text-base"
+        :class="{ 'is-active': isActive(link.name) }"
+        :aria-current="isActive(link.name) ? 'page' : undefined"
       >
-        {{ $t('nav.home') }}
-      </button>
-      <button
-        class="pill w-full text-left hover:bg-brand-purple/20 hover:border-brand-purple/40"
-        @click="navigate('Profile')"
-      >
-        {{ $t('nav.profile') }}
-      </button>
-      <div class="flex gap-3">
-        <mode-switcher />
+        <font-awesome-icon :icon="link.icon" class="w-5" />
+        {{ $t(link.label) }}
+      </router-link>
+      <div class="mt-2 flex items-center gap-2 border-t border-brand-line pt-4">
         <language-switcher />
         <color-mode-switcher />
       </div>
@@ -89,24 +105,50 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { computed, ref, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import LanguageSwitcher from './LanguageSwitcher.vue'
-import ModeSwitcher from './ModeSwitcher.vue'
 import ColorModeSwitcher from './ColorModeSwitcher.vue'
+import PlayerAvatar from './game/PlayerAvatar.vue'
+import useUserStore from '@/stores/user'
 
-const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 const mobileMenuOpen = ref(false)
 
+const links = [
+  { name: 'SoloQuiz', label: 'nav.solo', icon: 'bullseye' },
+  { name: 'GroupMode', label: 'nav.group', icon: 'users' },
+  { name: 'CompetitiveMode', label: 'nav.competitive', icon: 'bolt' },
+  { name: 'Ranking', label: 'nav.ranking', icon: 'ranking-star' },
+]
+
+const mobileLinks = [{ name: 'Home', label: 'nav.home', icon: 'home' }, ...links]
+
+const isActive = (name: string) => route.name === name
+
+const isAuthPage = computed(() => route.name === 'Login' || route.name === 'Register')
+
+// Avatar et pseudo du joueur connecté
+const loadUser = () => {
+  if (userStore.isLogged && !userStore.userInfo) userStore.getUserInfo()
+}
+onMounted(loadUser)
+watch(() => userStore.isLogged, loadUser)
+
 watch(
-  () => route.path,
+  () => route.fullPath,
   () => {
     mobileMenuOpen.value = false
   },
 )
-
-function navigate(name: string) {
-  router.push({ name })
-}
 </script>
+
+<style scoped>
+.nav-link {
+  @apply flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-brand-gray transition-colors hover:bg-brand-surface2 hover:text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+}
+.nav-link.is-active {
+  @apply bg-brand-purple/10 text-brand-purple;
+}
+</style>

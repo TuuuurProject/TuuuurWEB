@@ -17,7 +17,7 @@
     "home": "Home",
     "solo": "Solo",
     "group": "Group",
-    "competitive": "Competitive",
+    "competitive": "Ranked duel",
     "profile": "Profile",
     "ranking": "Ranking",
     "modes": "Game modes",
@@ -25,15 +25,83 @@
     "colorMode": {
       "toLight": "Switch to light mode",
       "toDark": "Switch to dark mode"
-    }
+    },
+    "main": "Main navigation",
+    "language": "Language"
   },
   "home": {
     "title": "Monkizz",
-    "subtitle": "Fun and competitive quiz. Play solo, in groups, or in online duels.",
-    "playSolo": "Play Solo",
-    "playGroup": "Play in Group",
-    "competitiveMode": "Competitive Mode",
-    "footer": "© {year} Monkizz"
+    "heroTitle": "The quiz you play alone, with friends or head to head",
+    "heroTitleLogged": "Welcome back, {name}!",
+    "subtitle": "Pick your topics, answer before the timer runs out and climb the leaderboard.",
+    "playSolo": "Play solo",
+    "playGroup": "Play with friends",
+    "duration": "10 questions, about 3 minutes",
+    "preview": {
+      "label": "Sample question",
+      "theme": "Geography",
+      "difficulty": "Medium",
+      "question": "What is the capital of Australia?",
+      "answer1": "Sydney",
+      "answer2": "Canberra",
+      "answer3": "Melbourne",
+      "answer4": "Perth",
+      "correct": "Correct!"
+    },
+    "modes": {
+      "title": "Game modes",
+      "solo": {
+        "title": "Solo",
+        "description": "Practice your favourite topics at your own pace.",
+        "meta": "5 to 20 questions"
+      },
+      "group": {
+        "title": "Group",
+        "description": "Create a game and share the code or QR code with your friends.",
+        "meta": "Guests play without an account"
+      },
+      "ranked": {
+        "title": "Ranked duel",
+        "description": "Face a player of your level. Every win raises your Elo.",
+        "meta": "1 vs 1"
+      }
+    },
+    "progress": {
+      "title": "Your progress",
+      "elo": "Elo",
+      "rank": "Rank",
+      "rankTotal": "out of {total} players",
+      "unranked": "Not ranked yet",
+      "lastGame": "Last game",
+      "points": "{score} pts",
+      "noGame": "No games yet",
+      "seeProfile": "My profile and history",
+      "seeRanking": "See the leaderboard",
+      "lastGameMeta": "{mode}, {date}"
+    },
+    "guest": {
+      "title": "Track your progress",
+      "text": "With an account, your games are saved, you earn Elo in duels and you appear on the leaderboard.",
+      "register": "Create an account",
+      "login": "Log in"
+    },
+    "footer": "© {year} Monkizz, version {version}",
+    "mascot": {
+      "firstGame": "No games yet? Start a solo game, I'll keep you company.",
+      "lastGame": "{score} pts {mode} last time. Can you beat it today?"
+    },
+    "partyModes": {
+      "name": {
+        "solo": "Solo",
+        "group": "Group",
+        "ranked": "Ranked duel"
+      },
+      "inline": {
+        "solo": "in solo",
+        "group": "in a group game",
+        "ranked": "in a ranked duel"
+      }
+    }
   },
   "auth": {
     "login": {
@@ -46,7 +114,9 @@
       "forgotPassword": "Forgot password?",
       "submit": "Sign in",
       "noAccount": "No account?",
-      "createAccount": "Create an account"
+      "createAccount": "Create an account",
+      "subtitle": "Get back your progress, Elo and history.",
+      "mascot": "Good to see you again! Shall we pick up where we left off?"
     },
     "register": {
       "title": "Create an Account",
@@ -69,12 +139,15 @@
       "nicknameFormat": "Letters, numbers, hyphens and spaces only",
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
-      "signIn": "Sign in"
+      "signIn": "Sign in",
+      "subtitle": "Free. Your games, Elo and leaderboard spot are saved.",
+      "mascot": "Welcome to the gang! Ready for your first quiz?"
     },
     "verification": {
       "title": "Email Verification",
       "message": "A code has been sent to your email address.",
-      "submit": "Confirm"
+      "submit": "Confirm",
+      "codeLabel": "Code received by email"
     },
     "forgotPassword": {
       "title": "Forgot Password",
@@ -93,12 +166,13 @@
       "codeError": "Error sending code. Check your information.",
       "resetSuccess": "Password reset successfully!",
       "resetError": "Error resetting password. Check the code and try again.",
-      "successMessage": "You can now log in with your new password."
+      "successMessage": "You can now log in with your new password.",
+      "backToLogin": "Back to login"
     },
     "googleError": "Error logging in with Google"
   },
   "profile": {
-    "title": "Player Profile",
+    "title": "Profile",
     "userProfile": "User profile",
     "notLoggedIn": "Log in or create an account to access your profile",
     "elo": "Elo",
@@ -125,13 +199,15 @@
     "avatar": {
       "updateSuccess": "Avatar updated successfully!",
       "updateError": "Error updating avatar",
-      "processingError": "Error processing image"
+      "processingError": "Error processing image",
+      "change": "Change profile picture"
     },
     "nickname": {
       "emptyError": "Username cannot be empty",
       "invalidFormatError": "Username must contain only letters, numbers, hyphens and spaces (50 characters max)",
       "updateSuccess": "Username updated successfully!",
-      "updateError": "Error updating username"
+      "updateError": "Error updating username",
+      "edit": "Edit nickname"
     },
     "matchHistory": {
       "title": "Match History",
@@ -151,10 +227,15 @@
       "pagination": {
         "showing": "Showing {from} to {to} of {total} game | Showing {from} to {to} of {total} games",
         "firstPage": "First page",
-        "previousPage": "Previous page",
-        "nextPage": "Next page",
-        "lastPage": "Last page"
-      }
+        "previousPage": "Previous",
+        "nextPage": "Next",
+        "lastPage": "Last page",
+        "label": "History pages",
+        "pageOf": "Page {page} of {total}"
+      },
+      "played": "Games played",
+      "filterLabel": "Filter by mode",
+      "duration": "{time} long"
     }
   },
   "solo": {
@@ -235,8 +316,10 @@
         "title": "Join Game",
         "nickname": "Choose a nickname for the lobby",
         "nicknamePlaceholder": "Your nickname",
-        "submit": "Join the game"
-      }
+        "submit": "Join the game",
+        "nicknameHint": "This is the name other players will see."
+      },
+      "digit": "Code digit {n}"
     },
     "lobby": {
       "joinError": "Error trying to join the game",
@@ -263,7 +346,15 @@
       "expelPlayer": "Expel player",
       "playerExpelled": "{name} was expelled from the lobby",
       "youWereExpelled": "You were expelled from the lobby",
-      "expelError": "Error expelling player"
+      "expelError": "Error expelling player",
+      "inviteTitle": "Invite your friends",
+      "inviteText": "They enter this code or scan the QR code from Monkizz.",
+      "copyCode": "Copy the code",
+      "copyLink": "Copy invite link",
+      "host": "Host",
+      "expelNamed": "Remove {name}",
+      "waitingHost": "Waiting for the host to start…",
+      "readyHint": "All set. Start when all your friends have arrived."
     },
     "quiz": {
       "title": "Group Quiz",
@@ -306,6 +397,12 @@
       },
       "returnToLobby": "Return to lobby",
       "noQuestions": "No question available for this game"
+    },
+    "mode": {
+      "intro": "A game for several players, each on their own phone or computer. Friends join with a code, even without an account.",
+      "createText": "Pick the topics, share the code and start when everyone is in.",
+      "joinText": "Enter the 6-digit code shown by the host.",
+      "accountNeeded": "You need an account to create a game."
     }
   },
   "competitive": {
@@ -329,13 +426,15 @@
     "startSearch": "Start Search",
     "matchmaking": {
       "searching": "Searching…",
-      "searchingMessage": "Looking for a compatible opponent…",
+      "searchingMessage": "Looking for a player at your level. It usually takes under a minute.",
       "found": "Opponent found!",
       "gameStartingSoon": "The game is about to start…",
       "you": "You",
       "opponent": "Opponent",
       "vs": "VS",
-      "cancel": "Cancel search"
+      "cancel": "Cancel search",
+      "elo": "{value} Elo",
+      "elapsed": "Searching for {time}"
     },
     "quiz": {
       "abort": "Abort",
@@ -377,10 +476,31 @@
         "message": "Are you sure you want to leave the ongoing game? Your progress will be lost and ELO will not be updated."
       },
       "noQuestions": "No question available for this duel"
+    },
+    "lobby": {
+      "title": "Ranked duel",
+      "intro": "Face a player of your level, one on one. The result changes your Elo and your leaderboard position.",
+      "level": "Your level",
+      "rulesTitle": "How it works",
+      "rules": {
+        "match": {
+          "title": "An opponent at your level",
+          "text": "You're matched with a player whose Elo is close to yours."
+        },
+        "play": {
+          "title": "Same questions, same time",
+          "text": "15 seconds per question. The best score wins the duel."
+        },
+        "elo": {
+          "title": "Your Elo moves",
+          "text": "A win raises it, a loss lowers it."
+        }
+      },
+      "mascot": "Ready to challenge someone at your level?"
     }
   },
   "leaderboard": {
-    "title": "Global Leaderboard",
+    "title": "Leaderboard",
     "badge": "Top Legends",
     "podium": {
       "first": "#1",
@@ -398,12 +518,16 @@
       "confirmedPlayer": "Confirmed Player"
     },
     "otherPlayers": "See {count} other players",
-    "empty": "No ranked players yet",
+    "empty": "Nobody is ranked yet. Start the first duel!",
     "eloLabel": "Elo",
     "notLoggedIn": "Log in or create an account to access the leaderboard!",
     "you": "You",
     "unranked": "Unranked",
-    "yourPosition": "Your position"
+    "yourPosition": "Your position",
+    "intro": "The best ranked duel players. The leaderboard moves after every duel.",
+    "topPlayers": "Top players",
+    "playRanked": "Play a ranked duel",
+    "unrankedHint": "Play a ranked duel to appear on the leaderboard."
   },
   "modal": {
     "defaultTitle": "Confirmation",
@@ -413,5 +537,87 @@
   },
   "errors": {
     "generic": "An error occurred"
+  },
+  "mascot": {
+    "alt": "The Monkizz monkey"
+  },
+  "game": {
+    "setup": {
+      "soloIntro": "Pick your topics and level, then start the game. 15 seconds per question.",
+      "themes": "Topics",
+      "themesHint": "One or more, questions are drawn at random.",
+      "allThemes": "Select all",
+      "clearThemes": "Clear all",
+      "difficulty": "Difficulty",
+      "difficultyHint": "You can pick several.",
+      "questions": "Number of questions",
+      "start": "Start the game",
+      "pickTheme": "Pick at least one topic.",
+      "pickDifficulty": "Pick at least one difficulty.",
+      "ready": "Ready: {count} question, about 15 seconds each. | Ready: {count} questions, about 15 seconds each."
+    },
+    "summary": {
+      "noTheme": "No topic chosen yet",
+      "noDifficulty": "No difficulty chosen yet"
+    },
+    "hud": {
+      "question": "Question {current}",
+      "questionOf": "Question {current} of {total}",
+      "points": "pts",
+      "multiplier": "Points multiplier",
+      "timeLeft": "{time} seconds left",
+      "leave": "Leave the game"
+    },
+    "feedback": {
+      "correct": "Correct!",
+      "correctPoints": "Correct! +{points} pts",
+      "wrong": "Wrong answer",
+      "noAnswer": "Time's up",
+      "skipped": "Question skipped"
+    },
+    "controls": {
+      "skip": "Skip",
+      "next": "Next question",
+      "finish": "See results"
+    },
+    "status": {
+      "waiting": "Thinking…",
+      "answered": "Answered",
+      "correct": "Correct",
+      "wrong": "Wrong",
+      "noAnswer": "No answer",
+      "you": "(you)"
+    },
+    "results": {
+      "score": "Score",
+      "goodAnswers": "Correct answers",
+      "successRate": "Success",
+      "finished": "Game over",
+      "replay": "Play again",
+      "newGame": "Change topics",
+      "backToProfile": "Back to profile",
+      "partyInfo": "The game",
+      "mascot": {
+        "great": "Impressive! You're a walking encyclopedia.",
+        "good": "Well played! One more push for a perfect score.",
+        "low": "That was a tough one. Another round?",
+        "zero": "Ouch… Next one's yours!"
+      },
+      "ranked": {
+        "win": "Victory! Your Elo is going up.",
+        "lose": "A loss, but revenge is coming.",
+        "draw": "A perfect tie. That needs a rematch!"
+      },
+      "against": "against {name}",
+      "groupFirst": "You win the game!",
+      "groupPlace": "Place {rank}"
+    },
+    "recap": {
+      "title": "Your answers",
+      "yourAnswer": "Your answer: {answer}",
+      "correctAnswer": "Correct answer: {answer}",
+      "noAnswer": "No answer",
+      "empty": "No questions played."
+    }
   }
 }

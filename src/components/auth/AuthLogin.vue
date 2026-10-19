@@ -1,63 +1,46 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray">
-        <font-awesome-icon icon="lock" class="mr-2" /> {{ $t('auth.login.title') }}
-      </h2>
-    </header>
-
+  <auth-layout :title="title" :subtitle="subtitle" :mascot-message="$t('auth.login.mascot')">
     <transition name="fade" mode="out-in">
-      <div v-if="step === 0" class="max-w-lg surface-card mx-auto">
-        <auth-forgot-password @back="step = 1" @success="handleForgotPasswordSuccess" />
-      </div>
-      <div v-else-if="step === 1" class="max-w-lg surface-card mx-auto">
-        <overlay-block :loading="userStore.isLoading">
-          <form class="space-y-5" @submit.prevent="loginUser">
+      <auth-forgot-password
+        v-if="step === 0"
+        @back="step = 1"
+        @success="handleForgotPasswordSuccess"
+      />
+
+      <overlay-block v-else-if="step === 1" :loading="userStore.isLoading">
+        <div class="flex flex-col gap-6">
+          <form class="flex flex-col gap-5" @submit.prevent="loginUser">
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="username">{{
-                $t('auth.login.username')
-              }}</label>
+              <label class="field-label" for="username">{{ $t('auth.login.username') }}</label>
               <input
                 id="username"
-                data-testid="login-username"
                 v-model="login"
+                data-testid="login-username"
                 type="text"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                autocomplete="username"
+                class="field-input"
                 :placeholder="$t('auth.login.usernamePlaceholder')"
               />
             </div>
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="password">{{
-                $t('auth.login.password')
-              }}</label>
-              <input
-                id="password"
-                data-testid="login-password"
-                v-model="password"
-                type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                :placeholder="$t('auth.login.passwordPlaceholder')"
-              />
-              <div class="mt-2 text-sm">
-                <button type="button" class="pill hover:bg-brand-purple/10" @click="step = 0">
+              <div class="flex items-baseline justify-between gap-3">
+                <label class="field-label" for="password">{{ $t('auth.login.password') }}</label>
+                <button type="button" class="text-link text-sm" @click="step = 0">
                   {{ $t('auth.login.forgotPassword') }}
                 </button>
               </div>
+              <input
+                id="password"
+                v-model="password"
+                data-testid="login-password"
+                type="password"
+                autocomplete="current-password"
+                class="field-input"
+                :placeholder="$t('auth.login.passwordPlaceholder')"
+              />
             </div>
-            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
-              <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                {{ $t('common.cancel') }}
-              </button>
-              <button data-testid="login-submit" type="submit" class="btn btn-primary">
-                {{ $t('auth.login.submit') }}
-              </button>
-            </div>
-          </form>
-          <div v-if="error" class="my-5">
-            <div
-              class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
-              role="alert"
-            >
+
+            <div v-if="error" class="form-error" role="alert">
               <template
                 v-if="
                   typeof error === 'string' ||
@@ -66,55 +49,60 @@
               >
                 {{ error }}
               </template>
-              <template v-else-if="error && typeof error === 'object'">
-                <ul
-                  v-for="field in Object.keys(error)"
-                  :key="field"
-                  class="mt-1 list-disc list-inside"
-                >
+              <ul v-else-if="error && typeof error === 'object'" class="flex flex-col gap-1">
+                <template v-for="field in Object.keys(error)" :key="field">
                   <li v-for="(msg, idx) in error[field]" :key="idx">
                     {{ typeof msg === 'string' ? msg : msg?.description }}
                   </li>
-                </ul>
-              </template>
+                </template>
+              </ul>
             </div>
+
+            <button
+              data-testid="login-submit"
+              type="submit"
+              class="btn btn-primary w-full py-4"
+              :disabled="!login || !password"
+            >
+              {{ $t('auth.login.submit') }}
+            </button>
+          </form>
+
+          <div class="flex items-center gap-4" aria-hidden="true">
+            <span class="h-px flex-1 bg-brand-line"></span>
+            <span class="text-sm text-brand-gray">{{ $t('common.or') }}</span>
+            <span class="h-px flex-1 bg-brand-line"></span>
           </div>
 
-          <div class="mt-6 text-center space-y-4">
-            <div class="flex items-center justify-center gap-4">
-              <div class="h-px bg-brand-purple/30 flex-1"></div>
-              <span class="text-sm text-brand-gray">{{ $t('common.or') }}</span>
-              <div class="h-px bg-brand-purple/30 flex-1"></div>
-            </div>
-
+          <div class="flex justify-center">
             <google-login :callback="handleGoogleLogin" />
           </div>
 
-          <div
-            class="mt-6 text-sm text-brand-gray text-center flex items-center justify-center gap-2 flex-col sm:flex-row"
-          >
+          <p class="text-center text-sm text-brand-gray">
             {{ $t('auth.login.noAccount') }}
-            <button class="pill hover:bg-brand-purple/10 sm:ml-2" @click="$emit('goto-register')">
+            <button type="button" class="text-link ml-1" @click="$emit('goto-register')">
               {{ $t('auth.login.createAccount') }}
             </button>
-          </div>
-        </overlay-block>
-      </div>
-      <div v-else class="max-w-lg surface-card mx-auto">
-        <auth-code :loading="userStore.isLoading" @verification="verifyEmail" />
-      </div>
+          </p>
+        </div>
+      </overlay-block>
+
+      <auth-code v-else :loading="userStore.isLoading" @verification="verifyEmail" />
     </transition>
-  </section>
+  </auth-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import router from '@/router'
 import AuthCode from '@/components/auth/AuthCode.vue'
 import AuthForgotPassword from '@/components/auth/AuthForgotPassword.vue'
+import AuthLayout from '@/components/auth/AuthLayout.vue'
+
+defineEmits<{ back: []; 'goto-register': [] }>()
 
 const { t } = useI18n()
 const login = ref('')
@@ -130,6 +118,18 @@ const error = ref<Record<string, ErrorField[]> | null>(null)
 const step = ref(1) // 0: forgot password, 1: login, 2: verify email
 
 const userStore = useUserStore()
+
+const title = computed(() => {
+  if (step.value === 0) return t('auth.forgotPassword.title')
+  if (step.value === 2) return t('auth.verification.title')
+  return t('auth.login.title')
+})
+
+const subtitle = computed(() => {
+  if (step.value === 0) return t('auth.forgotPassword.description')
+  if (step.value === 2) return t('auth.verification.message')
+  return t('auth.login.subtitle')
+})
 
 // Connect user
 const loginUser = async () => {

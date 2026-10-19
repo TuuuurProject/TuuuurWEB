@@ -1,90 +1,76 @@
 <template>
   <section>
-    <div v-if="step === 'mode'" class="space-y-8">
-      <header class="flex items-center justify-between">
-        <h2 class="font-branding text-3xl text-brand-lightGray">
-          <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.title') }}
-        </h2>
+    <div v-if="step === 'mode'" class="flex flex-col gap-6">
+      <header class="flex flex-col gap-2">
+        <h2 class="text-3xl font-bold">{{ $t('group.title') }}</h2>
+        <p class="max-w-2xl text-brand-gray">{{ $t('group.mode.intro') }}</p>
       </header>
 
-      <!-- Cartes interactives avec icônes gaming -->
       <div class="grid gap-6 md:grid-cols-2">
-        <button
-          data-testid="group-create"
-          class="surface-card group p-8 text-left hover:shadow-card transition-all duration-300"
-          @click="setupGame"
-        >
-          <div class="flex items-start gap-4">
-            <div
-              class="w-12 h-12 rounded-2xl bg-brand-purple/20 flex items-center justify-center text-brand-purple text-2xl group-hover:bg-brand-purple group-hover:text-white transition-all duration-300"
-            >
-              <font-awesome-icon icon="gamepad" />
-            </div>
-            <div>
-              <h3 class="font-branding text-2xl mb-2 text-brand-lightGray">
-                {{ $t('group.create.title') }}
-              </h3>
-              <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
-                {{ $t('group.create.subtitle') }}
-              </p>
-              <!-- Ligne d'accent animée -->
-              <div
-                class="w-0 h-0.5 bg-brand-purple mt-3 group-hover:w-full transition-all duration-500"
-              ></div>
-            </div>
+        <!-- Créer -->
+        <section class="surface-card flex flex-col gap-5" aria-labelledby="group-create-title">
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-purple/15 text-xl text-brand-purple"
+          >
+            <font-awesome-icon icon="gamepad" />
+          </span>
+          <div class="flex flex-col gap-2">
+            <h3 id="group-create-title" class="text-2xl font-bold">
+              {{ $t('group.create.title') }}
+            </h3>
+            <p class="text-brand-gray">{{ $t('group.mode.createText') }}</p>
           </div>
-        </button>
+          <div class="mt-auto flex flex-col gap-2">
+            <button
+              data-testid="group-create"
+              class="btn btn-primary w-full py-4"
+              @click="setupGame"
+            >
+              <font-awesome-icon icon="play" class="mr-2" /> {{ $t('group.create.title') }}
+            </button>
+            <p v-if="!userStore.isLogged" class="text-sm text-brand-gray">
+              {{ $t('group.mode.accountNeeded') }}
+            </p>
+          </div>
+        </section>
 
-        <button
-          class="surface-card group p-8 text-left hover:shadow-card transition-all duration-300"
-          @click="step = 'join'"
-        >
-          <div class="flex items-start gap-4">
-            <div
-              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl group-hover:bg-brand-orange group-hover:text-brand-onOrange transition-all duration-300"
-            >
-              <font-awesome-icon icon="rocket" />
-            </div>
-            <div>
-              <h3 class="font-branding text-2xl mb-2 text-brand-lightGray">
-                {{ $t('group.join.title') }}
-              </h3>
-              <p class="text-brand-gray group-hover:text-brand-lightGray transition-colors">
-                {{ $t('group.join.subtitle') }}
-              </p>
-              <!-- Ligne d'accent animée -->
-              <div
-                class="w-0 h-0.5 bg-brand-orange mt-3 group-hover:w-full transition-all duration-500"
-              ></div>
-            </div>
+        <!-- Rejoindre -->
+        <section class="surface-card flex flex-col gap-5" aria-labelledby="group-join-title">
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-orange/15 text-xl text-brand-orange"
+          >
+            <font-awesome-icon icon="door-open" />
+          </span>
+          <div class="flex flex-col gap-2">
+            <h3 id="group-join-title" class="text-2xl font-bold">{{ $t('group.join.title') }}</h3>
+            <p class="text-brand-gray">{{ $t('group.mode.joinText') }}</p>
           </div>
-        </button>
+          <GroupJoin class="mt-auto" @joined="goLobbyFromJoin" />
+        </section>
       </div>
     </div>
 
     <template v-else-if="step === 'lobby'">
       <template v-if="userStore.isLogged || userStore.isLoggedAsInvited">
         <overlay-block :loading="groupeStore.isLoadingCreationGroupe">
-          <GroupCreate />
-          <GroupLobby @back="step = 'mode'" @go-to="goTo" />
+          <GroupLobby @go-to="goTo">
+            <GroupCreate />
+          </GroupLobby>
         </overlay-block>
       </template>
 
-      <div v-else class="surface-card justify-self-center w-full">
+      <div v-else class="surface-card w-full">
         <logged-in-block :message="$t('group.notLoggedIn')" />
       </div>
     </template>
-
-    <GroupJoin v-else-if="step === 'join'" @back="step = 'mode'" @joined="goLobbyFromJoin" />
 
     <GroupQuiz v-else-if="step === 'game'" @exit="step = 'mode'" @go-to-lobby="goTo('lobby')" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, getCurrentInstance, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import GroupCreate from './GroupCreate.vue'
 import GroupJoin from './GroupJoin.vue'
 import GroupLobby from './GroupLobby.vue'
@@ -98,9 +84,6 @@ const userStore = useUserStore()
 const groupeStore = useGroupeStore()
 
 const route = useRoute()
-const { t } = useI18n()
-const instance = getCurrentInstance()
-const proxy = instance?.proxy
 
 type Step = 'mode' | 'join' | 'lobby' | 'game'
 const step = ref<Step>('mode')
@@ -125,13 +108,6 @@ onMounted(async () => {
     groupeStore.groupeId = groupeId
 
     step.value = 'game'
-  }
-
-  // If code is in url, try to join the group (handles page refresh and direct link with code)
-  const urlParams = new URLSearchParams(globalThis.location.search)
-  const codeFromUrl = urlParams.get('code')
-  if (codeFromUrl && !groupeStore.groupeId) {
-    step.value = 'join'
   }
 })
 </script>

@@ -1,205 +1,109 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray">
-        <font-awesome-icon icon="user-plus" class="mr-2" /> {{ $t('auth.register.title') }}
-      </h2>
-    </header>
-
+  <auth-layout
+    :title="step === 1 ? $t('auth.register.title') : $t('auth.verification.title')"
+    :subtitle="step === 1 ? $t('auth.register.subtitle') : $t('auth.verification.message')"
+    :mascot-message="$t('auth.register.mascot')"
+  >
     <transition name="fade" mode="out-in">
-      <div v-if="step === 1" class="max-w-lg surface-card mx-auto">
-        <overlay-block :loading="userStore.isLoading">
-          <form class="space-y-5" @submit.prevent="registerAuth">
-            <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="nickName">
-                {{ $t('auth.register.nickname') }}
-              </label>
-              <input
-                id="nickName"
-                v-model="registerData.nickName"
-                type="text"
-                maxlength="50"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                :placeholder="$t('auth.register.nicknamePlaceholder')"
-                required
-              />
+      <overlay-block v-if="step === 1" :loading="userStore.isLoading">
+        <div class="flex flex-col gap-6">
+          <form class="flex flex-col gap-5" @submit.prevent="registerAuth">
+            <div class="flex flex-col gap-2">
+              <div>
+                <label class="field-label" for="nickName">{{ $t('auth.register.nickname') }}</label>
+                <input
+                  id="nickName"
+                  v-model="registerData.nickName"
+                  type="text"
+                  maxlength="50"
+                  autocomplete="nickname"
+                  class="field-input"
+                  :placeholder="$t('auth.register.nicknamePlaceholder')"
+                  required
+                />
+              </div>
+              <field-rules v-if="registerData.nickName" :rules="nicknameRuleList" />
             </div>
+
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="email">{{
-                $t('auth.register.email')
-              }}</label>
+              <label class="field-label" for="email">{{ $t('auth.register.email') }}</label>
               <input
                 id="email"
                 v-model="registerData.email"
                 type="email"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                autocomplete="email"
+                class="field-input"
                 :placeholder="$t('auth.register.emailPlaceholder')"
                 required
               />
             </div>
-            <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="password">
-                {{ $t('auth.register.password') }}
-              </label>
-              <input
-                id="password"
-                v-model="registerData.password"
-                type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                :placeholder="$t('auth.register.passwordPlaceholder')"
-                required
+
+            <div class="flex flex-col gap-2">
+              <div>
+                <label class="field-label" for="password">{{ $t('auth.register.password') }}</label>
+                <input
+                  id="password"
+                  v-model="registerData.password"
+                  type="password"
+                  autocomplete="new-password"
+                  class="field-input"
+                  :placeholder="$t('auth.register.passwordPlaceholder')"
+                  required
+                />
+              </div>
+              <field-rules v-if="registerData.password" :rules="passwordRuleList" />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div>
+                <label class="field-label" for="confirmPassword">
+                  {{ $t('auth.register.confirmPassword') }}
+                </label>
+                <input
+                  id="confirmPassword"
+                  v-model="registerData.confirmPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  class="field-input"
+                  :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
+                  required
+                />
+              </div>
+              <field-rules
+                v-if="registerData.confirmPassword"
+                :rules="[
+                  { ok: passwordRules.passwordsMatch, label: $t('auth.register.passwordsMatch') },
+                ]"
               />
             </div>
-            <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="confirmPassword">
-                {{ $t('auth.register.confirmPassword') }}
-              </label>
-              <input
-                id="confirmPassword"
-                v-model="registerData.confirmPassword"
-                type="password"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
-                :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
-                required
-              />
-            </div>
 
-            <!-- Nickname validation rules -->
-            <transition name="slide-fade">
-              <div
-                v-if="registerData.nickName"
-                class="rounded-lg p-4 bg-brand-surface2/30 border border-brand-purple/20"
-              >
-                <ul class="space-y-1.5 text-sm">
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="nicknameRules.maxLength ? 'check-circle' : 'times-circle'"
-                      :class="nicknameRules.maxLength ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="nicknameRules.maxLength ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.nicknameMaxLength') }}
-                    </span>
+            <div v-if="error" class="form-error" role="alert">
+              <ul class="flex flex-col gap-1">
+                <template v-for="field in Object.keys(error)" :key="field">
+                  <li v-for="(msg, idx) in error[field]" :key="idx">
+                    {{ typeof msg === 'string' ? msg : msg?.description }}
                   </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="nicknameRules.validFormat ? 'check-circle' : 'times-circle'"
-                      :class="nicknameRules.validFormat ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="nicknameRules.validFormat ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.nicknameFormat') }}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </transition>
-
-            <!-- Password validation rules -->
-            <transition name="slide-fade">
-              <div
-                v-if="registerData.password"
-                class="rounded-lg p-4 bg-brand-surface2/30 border border-brand-purple/20"
-              >
-                <ul class="space-y-1.5 text-sm">
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="passwordRules.minLength ? 'check-circle' : 'times-circle'"
-                      :class="passwordRules.minLength ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="passwordRules.minLength ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.passwordMinLength') }}
-                    </span>
-                  </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="passwordRules.hasLowercase ? 'check-circle' : 'times-circle'"
-                      :class="passwordRules.hasLowercase ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span
-                      :class="passwordRules.hasLowercase ? 'text-green-400' : 'text-brand-gray'"
-                    >
-                      {{ $t('auth.register.passwordLowercase') }}
-                    </span>
-                  </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="passwordRules.hasUppercase ? 'check-circle' : 'times-circle'"
-                      :class="passwordRules.hasUppercase ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span
-                      :class="passwordRules.hasUppercase ? 'text-green-400' : 'text-brand-gray'"
-                    >
-                      {{ $t('auth.register.passwordUppercase') }}
-                    </span>
-                  </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="passwordRules.hasNumber ? 'check-circle' : 'times-circle'"
-                      :class="passwordRules.hasNumber ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span :class="passwordRules.hasNumber ? 'text-green-400' : 'text-brand-gray'">
-                      {{ $t('auth.register.passwordNumber') }}
-                    </span>
-                  </li>
-                  <li class="flex items-center gap-2">
-                    <font-awesome-icon
-                      :icon="passwordRules.passwordsMatch ? 'check-circle' : 'times-circle'"
-                      :class="passwordRules.passwordsMatch ? 'text-green-400' : 'text-red-400'"
-                    />
-                    <span
-                      :class="passwordRules.passwordsMatch ? 'text-green-400' : 'text-brand-gray'"
-                    >
-                      {{ $t('auth.register.passwordsMatch') }}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-            </transition>
-
-            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
-              <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                {{ $t('common.cancel') }}
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                :disabled="!isFormValid"
-                :class="{ 'opacity-50 cursor-not-allowed': !isFormValid }"
-              >
-                {{ $t('auth.register.submit') }}
-              </button>
-            </div>
-          </form>
-
-          <div v-if="error" class="my-5">
-            <div
-              v-for="field in Object.keys(error)"
-              :key="field"
-              class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
-              role="alert"
-            >
-              <ul class="mt-1 list-disc list-inside">
-                <li v-for="(msg, idx) in error[field]" :key="idx">
-                  {{ typeof msg === 'string' ? msg : msg?.description }}
-                </li>
+                </template>
               </ul>
             </div>
-          </div>
 
-          <div
-            class="mt-6 text-sm text-brand-gray text-center flex items-center justify-center gap-2 flex-col sm:flex-row"
-          >
+            <button type="submit" class="btn btn-primary w-full py-4" :disabled="!isFormValid">
+              {{ $t('auth.register.submit') }}
+            </button>
+          </form>
+
+          <p class="text-center text-sm text-brand-gray">
             {{ $t('auth.register.alreadyRegistered') }}
-            <button class="pill hover:bg-brand-purple/10 sm:ml-2" @click="$emit('goto-login')">
+            <button type="button" class="text-link ml-1" @click="$emit('goto-login')">
               {{ $t('auth.register.signIn') }}
             </button>
-          </div>
-        </overlay-block>
-      </div>
-      <div v-else class="max-w-lg surface-card mx-auto">
-        <auth-code :loading="userStore.isLoading" @verification="verifyEmail" />
-      </div>
+          </p>
+        </div>
+      </overlay-block>
+
+      <auth-code v-else :loading="userStore.isLoading" @verification="verifyEmail" />
     </transition>
-  </section>
+  </auth-layout>
 </template>
 
 <script setup lang="ts">
@@ -208,6 +112,13 @@ import { useRouter } from 'vue-router'
 import useUserStore from '@/stores/user'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import AuthCode from '@/components/auth/AuthCode.vue'
+import AuthLayout from '@/components/auth/AuthLayout.vue'
+import FieldRules from '@/components/auth/FieldRules.vue'
+import { useI18n } from 'vue-i18n'
+
+defineEmits<{ back: []; 'goto-login': [] }>()
+
+const { t } = useI18n()
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -256,6 +167,18 @@ const passwordRules = computed(() => ({
     registerData.value.password.length > 0 &&
     registerData.value.confirmPassword.length > 0,
 }))
+
+const nicknameRuleList = computed(() => [
+  { ok: nicknameRules.value.maxLength, label: t('auth.register.nicknameMaxLength') },
+  { ok: nicknameRules.value.validFormat, label: t('auth.register.nicknameFormat') },
+])
+
+const passwordRuleList = computed(() => [
+  { ok: passwordRules.value.minLength, label: t('auth.register.passwordMinLength') },
+  { ok: passwordRules.value.hasLowercase, label: t('auth.register.passwordLowercase') },
+  { ok: passwordRules.value.hasUppercase, label: t('auth.register.passwordUppercase') },
+  { ok: passwordRules.value.hasNumber, label: t('auth.register.passwordNumber') },
+])
 
 // Check if the form is valid
 const isFormValid = computed(() => {

@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 flex items-center justify-center"
+    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-brand-line text-brand-lightGray transition-colors hover:border-brand-purple/50"
     :aria-label="isDark ? $t('nav.colorMode.toLight') : $t('nav.colorMode.toDark')"
     :title="isDark ? $t('nav.colorMode.toLight') : $t('nav.colorMode.toDark')"
     @click="toggle"

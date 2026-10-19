@@ -202,6 +202,80 @@ body {
     background: rgb(var(--diff-color, var(--c-primary)) / 0.1);
   }
 
+  /* Formulaires */
+  .field-label {
+    @apply mb-1.5 block text-sm font-bold text-brand-lightGray;
+  }
+  .field-input {
+    @apply w-full rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-brand-lightGray transition-colors placeholder:text-brand-gray/70 focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
+  }
+  .form-error {
+    @apply rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-sm font-semibold text-brand-orange;
+  }
+  .text-link {
+    @apply font-bold text-brand-purple hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+  }
+  .code-digit {
+    @apply h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-darkGray text-center font-display text-2xl font-extrabold text-brand-lightGray transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
+  }
+
+  /* Tuile de choix (thèmes) */
+  .choice-tile {
+    @apply flex items-center gap-2 rounded-2xl border-2 border-brand-line bg-brand-darkGray px-2.5 py-2.5 text-left sm:gap-3 sm:px-3 sm:py-3 font-semibold text-brand-lightGray transition-colors duration-200 hover:border-brand-purple/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+  }
+  .choice-tile.selected {
+    @apply border-brand-purple bg-brand-purple/10;
+  }
+  .choice-tile-icon {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-brand-gray transition-colors duration-200 sm:h-9 sm:w-9;
+  }
+  .choice-tile.selected .choice-tile-icon {
+    @apply bg-brand-purple text-white;
+  }
+
+  /* Choix unique en segments (nombre de questions) */
+  .segmented {
+    @apply grid auto-cols-fr grid-flow-col gap-1 rounded-2xl bg-brand-surface2 p-1;
+  }
+  .segmented button {
+    @apply rounded-xl px-2 py-2 font-bold tabular-nums text-brand-gray transition-colors duration-200 hover:text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+  }
+  .segmented button[aria-checked='true'] {
+    @apply bg-brand-darkGray text-brand-purple shadow-soft;
+  }
+
+  /* Réponses pendant une partie */
+  .answer-tile {
+    @apply flex min-h-[4.25rem] w-full items-center gap-4 rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-left text-lg font-semibold text-brand-lightGray transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+  }
+  .answer-tile.is-idle {
+    @apply cursor-pointer hover:border-brand-purple hover:bg-brand-purple/5;
+  }
+  .answer-tile.is-pending {
+    @apply border-brand-purple bg-brand-purple/10;
+  }
+  .answer-tile.is-correct {
+    @apply border-brand-green bg-brand-green/10;
+  }
+  .answer-tile.is-wrong {
+    @apply border-brand-orange bg-brand-orange/10;
+  }
+  .answer-tile.is-dim {
+    @apply opacity-50;
+  }
+  .answer-key {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-sm font-bold text-brand-gray;
+  }
+  .answer-tile.is-pending .answer-key {
+    @apply bg-brand-purple text-white;
+  }
+  .answer-tile.is-correct .answer-key {
+    @apply bg-brand-green text-brand-dark;
+  }
+  .answer-tile.is-wrong .answer-key {
+    @apply bg-brand-orange text-brand-onOrange;
+  }
+
   /* Slider (nombre de questions) */
   .slider-purple::-webkit-slider-thumb {
     appearance: none;

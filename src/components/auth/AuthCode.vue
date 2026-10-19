@@ -1,37 +1,39 @@
 <template>
   <overlay-block :loading="loading">
-    <div data-testid="auth-code-container" class="max-w-md mx-auto">
-      <h2 class="font-branding text-3xl text-brand-lightGray text-center mb-4">
-        {{ $t('auth.verification.title') }}
-      </h2>
-      <div class="block font-semibold mb-8 text-brand-green text-center">
-        {{ $t('auth.verification.message') }}
-      </div>
-      <div class="flex items-center gap-1 sm:gap-2 justify-center">
-        <input
-          v-for="i in 6"
-          :key="i"
-          :data-testid="`auth-code-input-${i}`"
-          maxlength="1"
-          class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 font-branding text-xl sm:text-2xl shadow-card text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
-          v-model="digits[i - 1]"
-          @input="onInput(i - 1)"
-          @keydown.backspace.prevent="onBackspace(i - 1)"
-          @paste.prevent="handlePaste"
-          @keydown.ctrl.v.prevent="handleKeyboardPaste"
-        />
-      </div>
-      <div class="mt-8 flex items-center justify-center gap-3">
-        <button
-          data-testid="auth-code-submit"
-          class="btn btn-primary"
-          :disabled="!canSendAuthCode"
-          @click="emit('verification', digits.join(''))"
-        >
-          {{ $t('auth.verification.submit') }}
-        </button>
-      </div>
-    </div>
+    <form
+      data-testid="auth-code-container"
+      class="flex flex-col gap-5"
+      @submit.prevent="canSendAuthCode && emit('verification', digits.join(''))"
+    >
+      <fieldset class="flex flex-col gap-2">
+        <legend class="field-label">{{ $t('auth.verification.codeLabel') }}</legend>
+        <div class="flex justify-between gap-1.5 sm:gap-2">
+          <input
+            v-for="i in 6"
+            :key="i"
+            v-model="digits[i - 1]"
+            :data-testid="`auth-code-input-${i}`"
+            maxlength="1"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            :aria-label="$t('group.join.digit', { n: i })"
+            class="code-digit"
+            @input="onInput(i - 1)"
+            @keydown.backspace.prevent="onBackspace(i - 1)"
+            @paste.prevent="handlePaste"
+            @keydown.ctrl.v.prevent="handleKeyboardPaste"
+          />
+        </div>
+      </fieldset>
+      <button
+        data-testid="auth-code-submit"
+        type="submit"
+        class="btn btn-primary w-full py-4"
+        :disabled="!canSendAuthCode"
+      >
+        {{ $t('auth.verification.submit') }}
+      </button>
+    </form>
   </overlay-block>
 </template>
 

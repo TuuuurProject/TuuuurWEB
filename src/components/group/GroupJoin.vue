@@ -1,57 +1,52 @@
 <template>
-  <section class="space-y-8">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.join.title') }}</h2>
-    </header>
-
-    <div class="surface-card">
-      <div class="max-w-md mx-auto">
-        <div class="block font-semibold mb-3 text-brand-lightGray">{{ $t('group.join.code') }}</div>
-        <div class="flex items-center gap-1 sm:gap-2 justify-center">
+  <div class="flex flex-col gap-4">
+    <form class="flex flex-col gap-4" @submit.prevent="join">
+      <fieldset class="flex flex-col gap-2">
+        <legend class="mb-2 text-sm font-semibold text-brand-gray">
+          {{ $t('group.join.code') }}
+        </legend>
+        <div class="flex justify-between gap-1.5 sm:gap-2">
           <input
             v-for="i in 6"
             :key="i"
-            maxlength="1"
-            class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 font-branding text-xl sm:text-2xl shadow-card text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
             v-model="digits[i - 1]"
+            maxlength="1"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            :aria-label="$t('group.join.digit', { n: i })"
+            class="h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-darkGray text-center font-display text-2xl font-extrabold text-brand-lightGray transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
             @input="onInput(i - 1)"
             @keydown.backspace.prevent="onBackspace(i - 1)"
             @paste.prevent="handlePaste"
             @keydown.ctrl.v.prevent="handleKeyboardPaste"
           />
         </div>
-        <p class="text-center text-brand-gray mt-4">{{ $t('group.join.example') }}</p>
+      </fieldset>
 
-        <div class="mt-8 flex items-center justify-center gap-3">
-          <button class="btn btn-secondary" @click="$emit('back')">{{ $t('common.back') }}</button>
-          <button class="btn btn-primary" :disabled="!canJoin" @click="join">
-            {{ $t('group.join.joinButton') }}
-          </button>
-        </div>
-      </div>
+      <button type="submit" class="btn btn-secondary w-full py-4" :disabled="!canJoin">
+        {{ $t('group.join.joinButton') }}
+      </button>
+    </form>
 
-      <div v-if="error" class="my-5">
-        <div
-          class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
-          role="alert"
-        >
-          <template
-            v-if="
-              typeof error === 'string' ||
-              (typeof error === 'object' && error?.name?.includes('Axios'))
-            "
-          >
-            {{ error }}
-          </template>
-          <template v-else-if="error && typeof error === 'object'">
-            <ul v-for="field in Object.keys(error)" :key="field" class="mt-1 list-disc list-inside">
-              <li v-for="(msg, idx) in error[field]" :key="idx">
-                {{ typeof msg === 'string' ? msg : msg?.description }}
-              </li>
-            </ul>
-          </template>
-        </div>
-      </div>
+    <div
+      v-if="error"
+      class="rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-sm font-semibold text-brand-orange"
+      role="alert"
+    >
+      <template
+        v-if="
+          typeof error === 'string' || (typeof error === 'object' && error?.name?.includes('Axios'))
+        "
+      >
+        {{ error }}
+      </template>
+      <ul v-else-if="error && typeof error === 'object'" class="flex flex-col gap-1">
+        <template v-for="field in Object.keys(error)" :key="field">
+          <li v-for="(msg, idx) in error[field]" :key="idx">
+            {{ typeof msg === 'string' ? msg : msg?.description }}
+          </li>
+        </template>
+      </ul>
     </div>
 
     <ModalDialog
@@ -63,44 +58,47 @@
       @confirm="joinGroupInvited"
       @close="showModalUsername = false"
     >
-      <div class="space-y-3">
+      <div class="flex flex-col gap-2">
+        <label for="nicknameInputJoin" class="text-sm text-brand-gray">
+          {{ $t('group.join.modal.nicknameHint') }}
+        </label>
         <input
           id="nicknameInputJoin"
           v-model="username"
           type="text"
-          class="my-5 font-branding text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1 w-full"
+          maxlength="50"
+          class="w-full rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-lg font-semibold text-brand-lightGray focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
           :placeholder="$t('group.join.modal.nicknamePlaceholder')"
+          @keydown.enter.prevent="joinGroupInvited"
         />
       </div>
 
-      <div v-if="errorUsername" class="my-5">
-        <div
-          class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
-          role="alert"
+      <div
+        v-if="errorUsername"
+        class="mt-4 rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-sm font-semibold text-brand-orange"
+        role="alert"
+      >
+        <template
+          v-if="
+            typeof errorUsername === 'string' ||
+            (typeof errorUsername === 'object' && errorUsername?.name?.includes('Axios'))
+          "
         >
-          <template
-            v-if="
-              typeof errorUsername === 'string' ||
-              (typeof errorUsername === 'object' && errorUsername?.name?.includes('Axios'))
-            "
-          >
-            {{ errorUsername }}
+          {{ errorUsername }}
+        </template>
+        <ul
+          v-else-if="errorUsername && typeof errorUsername === 'object'"
+          class="flex flex-col gap-1"
+        >
+          <template v-for="field in Object.keys(errorUsername)" :key="field">
+            <li v-for="(msg, idx) in errorUsername[field]" :key="idx">
+              {{ typeof msg === 'string' ? msg : msg?.description }}
+            </li>
           </template>
-          <template v-else-if="errorUsername && typeof errorUsername === 'object'">
-            <ul
-              v-for="field in Object.keys(errorUsername)"
-              :key="field"
-              class="mt-1 list-disc list-inside"
-            >
-              <li v-for="(msg, idx) in errorUsername[field]" :key="idx">
-                {{ typeof msg === 'string' ? msg : msg?.description }}
-              </li>
-            </ul>
-          </template>
-        </div>
+        </ul>
       </div>
     </ModalDialog>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -129,7 +127,6 @@ const username = ref('')
 
 const emit = defineEmits<{
   (e: 'joined', joined: boolean): void
-  (e: 'back'): void
 }>()
 
 watch(
@@ -215,6 +212,8 @@ const canJoin = computed(() => {
 })
 
 const join = async () => {
+  if (!canJoin.value) return
+
   // If user isn't logged in, ask for username and create temp token
   if (!userStore.isLogged) {
     showModalUsername.value = true

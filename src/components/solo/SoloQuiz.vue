@@ -1,305 +1,111 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <h2 class="font-branding text-3xl">{{ $t('solo.quiz.title') }}</h2>
-      </div>
-      <div v-if="!finished" class="flex items-center gap-3">
-        <span class="pill">{{
-          $t('solo.quiz.question', { current: index + 1, total: nbMaxQuestions })
-        }}</span>
-        <span class="pill">
-          {{ $t('solo.quiz.score') }} <strong>{{ score }}</strong>
-        </span>
-      </div>
-    </header>
+  <section class="flex flex-col gap-6">
+    <template v-if="!finished">
+      <game-hud
+        :current="index + 1"
+        :total="nbMaxQuestions"
+        :score="score"
+        :remaining="remaining"
+        :duration="TOTAL_TIME"
+      />
 
-    <!-- Timer / progress -->
-    <div
-      v-if="!finished"
-      class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-surface2/80 shadow-card"
-    >
-      <div class="h-2 w-full bg-brand-dark/30">
-        <div
-          class="h-2 transition-[width] duration-250"
-          :class="remainingRatio < 0.33 ? 'bg-brand-orange' : 'bg-brand-green'"
-          :style="{ width: (remainingRatio * 100).toFixed(2) + '%' }"
-        />
-      </div>
-      <div class="px-6 py-3 flex items-center justify-between text-sm text-brand-lightGray">
-        <span>{{ $t('solo.quiz.timeRemaining', { time: remaining.toFixed(1) }) }}</span>
-      </div>
-    </div>
-
-    <!-- Question card -->
-    <div v-if="!finished" class="surface-card">
       <overlay-block :loading="soloStore.isLoading">
-        <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
-        <div class="grid gap-3 sm:grid-cols-2">
-          <button
-            v-for="(opt, idx) in currentAnswer"
-            :key="opt"
-            class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
-            :disabled="answered"
-            :class="buttonClass(Number.parseInt(opt.id), opt.valid)"
-            @click="answer(opt)"
-          >
-            <span
-              class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
-            >
-              {{ Number(idx) + 1 }}
-            </span>
-            {{ opt?.value }}
-          </button>
-        </div>
-
-        <div class="mt-6 flex items-center justify-between">
-          <div class="text-sm" v-if="answered">
-            <span v-if="wasCorrect" class="badge-green">{{
-              $t('solo.quiz.correct', { points: lastPoints })
-            }}</span>
-            <span v-else class="badge-orange">{{ $t('solo.quiz.incorrect') }}</span>
-          </div>
-          <div class="flex items-center gap-3 ml-auto">
-            <button class="btn btn-secondary" @click="skip" :disabled="answered">
-              {{ $t('solo.quiz.skip') }}
-              <span
-                v-if="!answered"
-                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
-              >
-                S
-              </span>
-            </button>
-            <button class="btn btn-primary relative" @click="next" :disabled="!answered">
-              {{ $t('solo.quiz.next') }}
-              <span
-                v-if="answered"
-                class="ml-2 px-2 py-0.5 rounded bg-brand-lightGray/20 text-xs font-mono"
-              >
-                <font-awesome-icon icon="turn-down" />
-              </span>
-            </button>
-          </div>
-        </div>
+        <question-card
+          :question="currentQuestion"
+          :answers="currentAnswer || []"
+          :selected-id="userAnswerId"
+          :revealed="answered"
+          :locked="answered"
+          @select="answer"
+        >
+          <template #footer>
+            <answer-feedback
+              v-if="answered"
+              :correct="wasCorrect"
+              :points="lastPoints"
+              :timed-out="userAnswerId === null && !skipped"
+              :skipped="skipped"
+            />
+            <div class="ml-auto flex flex-wrap gap-3">
+              <button v-if="!answered" class="btn btn-ghost" @click="skip">
+                {{ $t('game.controls.skip') }}
+                <kbd class="ml-2 rounded bg-brand-surface2 px-2 py-0.5 text-xs font-bold">S</kbd>
+              </button>
+              <button v-else class="btn btn-primary" @click="next">
+                {{
+                  index + 1 >= nbMaxQuestions
+                    ? $t('game.controls.finish')
+                    : $t('game.controls.next')
+                }}
+                <kbd class="ml-2 rounded bg-white/20 px-2 py-0.5 text-xs">
+                  <font-awesome-icon icon="turn-down" class="rotate-90" />
+                </kbd>
+              </button>
+            </div>
+          </template>
+        </question-card>
       </overlay-block>
-    </div>
+    </template>
 
-    <!-- Results -->
-    <div v-if="finished" class="space-y-6">
-      <!-- Header avec score final -->
-      <div
-        class="surface-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
-      >
-        <div
-          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
-        >
-          <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
-        </div>
-        <h3 class="font-branding text-4xl mb-2 text-brand-lightGray">
-          {{ $t('solo.quiz.finished') }}
-        </h3>
-        <div class="flex items-center justify-center gap-6 mt-4">
-          <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.finalScore') }}</div>
-            <div class="font-branding text-3xl text-brand-yellow">{{ score }}</div>
-          </div>
-          <div class="h-12 w-px bg-brand-purple/30"></div>
-          <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.questions') }}</div>
-            <div class="font-branding text-3xl text-brand-lightGray">
-              {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
-            </div>
-          </div>
-          <div class="h-12 w-px bg-brand-purple/30"></div>
-          <div class="text-center">
-            <div class="text-sm text-brand-gray mb-1">{{ $t('solo.quiz.successRate') }}</div>
-            <div class="font-branding text-3xl text-brand-green">
-              {{
-                Math.round(
-                  (correctAnswersCount / (soloPartyInfoComputed as PartyInfo)?.nbQuestions) * 100,
-                )
-              }}%
-            </div>
-          </div>
-        </div>
+    <game-results
+      v-else
+      :title="$t('game.results.finished')"
+      :score="score"
+      :correct="correctAnswersCount"
+      :total="(soloPartyInfoComputed as PartyInfo)?.nbQuestions ?? allQuestionsParty.length"
+    >
+      <template #actions>
+        <template v-if="comeFromHistory">
+          <button class="btn btn-primary" @click="router.push({ name: 'Profile' })">
+            <font-awesome-icon icon="arrow-left" class="mr-2" />
+            {{ $t('game.results.backToProfile') }}
+          </button>
+        </template>
+        <template v-else>
+          <button class="btn btn-primary" @click="restart">
+            <font-awesome-icon icon="rotate-right" class="mr-2" /> {{ $t('game.results.replay') }}
+          </button>
+          <button class="btn btn-ghost" @click="$emit('exit')">
+            {{ $t('game.results.newGame') }}
+          </button>
+        </template>
+      </template>
 
-        <!-- Statistiques rapides -->
-        <div class="flex items-center justify-center gap-3 mt-6">
-          <div class="badge-success">
-            <font-awesome-icon icon="check-circle" class="mr-1" />
-            {{ correctAnswersCount }} {{ $t('solo.quiz.correctAnswers') }}
-          </div>
-          <div class="badge-warning">
-            <font-awesome-icon icon="times-circle" class="mr-1" />
-            {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions - correctAnswersCount }}
-            {{ $t('solo.quiz.incorrectAnswers') }}
-          </div>
-        </div>
+      <div class="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+        <section class="surface-card flex flex-col gap-4">
+          <h3 class="text-xl font-bold">{{ $t('game.results.partyInfo') }}</h3>
+          <party-summary
+            :themes="partyThemes"
+            :difficulties="partyDifficulties"
+            :questions="(soloPartyInfoComputed as PartyInfo)?.nbQuestions"
+          />
+        </section>
+        <question-recap :items="recapItems" />
       </div>
-
-      <!-- Informations de la partie -->
-      <div class="surface-card">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
-          <div
-            class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
-          >
-            <font-awesome-icon icon="info-circle" />
-          </div>
-          <h3 class="font-branding text-2xl text-brand-lightGray">
-            {{ $t('solo.quiz.partyInfo') }}
-          </h3>
-        </div>
-
-        <div class="space-y-4">
-          <!-- Thèmes -->
-          <div class="flex flex-wrap gap-2 items-center">
-            <h3 class="font-branding text-xl text-brand-lightGray">
-              <font-awesome-icon icon="tag" class="mr-2" /> {{ $t('solo.quiz.themes') }} :
-            </h3>
-            <div class="flex flex-wrap gap-3">
-              <div
-                v-for="theme in partyThemes"
-                :key="theme.id"
-                class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-              >
-                <font-awesome-icon :icon="theme.icon" class="text-lg" />
-                <span>{{ theme.label }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Difficultés -->
-          <div class="flex flex-wrap gap-2 items-center">
-            <h3 class="font-branding text-xl text-brand-lightGray">
-              <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-              {{ $t('solo.quiz.difficulties') }} :
-            </h3>
-            <div class="flex flex-wrap gap-3">
-              <div
-                v-for="diff in partyDifficulties"
-                :key="diff?.id"
-                class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-                :class="[diff?.colorClass]"
-              >
-                <font-awesome-icon :icon="diff?.icon" class="text-lg" />
-                <span>{{ diff?.label }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Nombre de questions -->
-          <div>
-            <h3 class="font-branding text-xl text-brand-lightGray">
-              <font-awesome-icon icon="list-ol" class="mr-2" />
-              {{ $t('solo.quiz.numberOfQuestions') }} :
-              {{ (soloPartyInfoComputed as PartyInfo)?.nbQuestions }}
-            </h3>
-          </div>
-        </div>
-      </div>
-
-      <!-- Récapitulatif des questions -->
-      <div class="surface-card">
-        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
-          <div
-            class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
-          >
-            <font-awesome-icon icon="list-check" />
-          </div>
-          <h3 class="font-branding text-2xl text-brand-lightGray">{{ $t('solo.quiz.summary') }}</h3>
-        </div>
-
-        <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
-          <div
-            v-for="(questionData, idx) in allQuestionsParty"
-            :key="idx"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
-          >
-            <!-- En-tête de la question -->
-            <div class="flex items-start gap-3 mb-3">
-              <div
-                class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                :class="
-                  isQuestionCorrect(questionData)
-                    ? 'bg-brand-green/20 text-brand-green border border-brand-green/40'
-                    : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
-                "
-              >
-                {{ Number(idx) + 1 }}
-              </div>
-              <div class="flex-1">
-                <p class="font-semibold text-brand-lightGray mb-2">
-                  {{ questionData?.question?.label }}
-                </p>
-                <div v-if="isQuestionCorrect(questionData)" class="badge-success text-xs">
-                  <font-awesome-icon icon="check" class="mr-1" />
-                  {{ $t('solo.quiz.goodAnswer') }} +{{ getQuestionPoints(questionData) }}
-                  pts
-                </div>
-                <div v-else class="badge-warning text-xs">
-                  <font-awesome-icon icon="times" class="mr-1" /> {{ $t('solo.quiz.badAnswer') }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Liste des réponses -->
-            <div class="grid gap-2 sm:grid-cols-2 mt-3">
-              <div
-                v-for="answer in questionData?.question?.answer"
-                :key="answer.id"
-                class="rounded-xl px-3 py-2 text-sm border transition-all duration-200"
-                :class="getAnswerClass(questionData, answer)"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="flex-shrink-0">
-                    <font-awesome-icon v-if="answer.valid" icon="check" />
-                    <font-awesome-icon
-                      v-else-if="answer.id === questionData?.userPartyQuestion?.idAnswer"
-                      icon="times"
-                    />
-                    <font-awesome-icon v-else icon="circle" class="text-xs" />
-                  </span>
-                  <span class="flex-1">{{ answer.value }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else class="text-center text-brand-gray space-y-4 pr-2">
-          {{ $t('solo.quiz.noQuestions') }}
-        </div>
-      </div>
-
-      <!-- Actions finales -->
-      <div
-        class="sticky bottom-0 left-0 right-0 flex flex-col sm:flex-row items-center justify-center gap-3 pb-3"
-      >
-        <button
-          class="btn btn-secondary w-full sm:w-auto"
-          @click="comeFromHistory ? router.push({ name: 'Profile' }) : $emit('exit')"
-        >
-          <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
-        </button>
-        <button v-if="!comeFromHistory" class="btn btn-primary w-full sm:w-auto" @click="restart">
-          <font-awesome-icon icon="rotate-right" class="mr-2" /> {{ $t('solo.quiz.replay') }}
-        </button>
-      </div>
-    </div>
+    </game-results>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import useSoloStore from '@/stores/solo.js'
 import useThemeStore from '@/stores/theme.js'
 import OverlayBlock from '@/components/OverlayBlock.vue'
+import GameHud from '@/components/game/GameHud.vue'
+import QuestionCard from '@/components/game/QuestionCard.vue'
+import AnswerFeedback from '@/components/game/AnswerFeedback.vue'
+import GameResults from '@/components/game/GameResults.vue'
+import PartySummary from '@/components/game/PartySummary.vue'
+import QuestionRecap, { type RecapItem } from '@/components/game/QuestionRecap.vue'
+import { useDifficulties } from '@/composables/useDifficulties'
 
 const soloStore = useSoloStore()
 const themeStore = useThemeStore()
 const router = useRouter()
-const { t } = useI18n()
+const { fromParty } = useDifficulties()
+
+defineEmits<{ exit: [] }>()
 
 const TOTAL_TIME = 15 // seconds per question
 
@@ -319,12 +125,11 @@ const wasCorrect = ref(false)
 const lastPoints = ref(0)
 const finished = ref(false)
 const comeFromHistory = ref(false)
+const skipped = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: ReturnType<typeof setInterval> | null = null
 let startTime: number | null = null
-
-const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
 // Gestion du clavier
 const handleKeyPress = async (event: KeyboardEvent) => {
@@ -397,18 +202,18 @@ function clearTimer() {
   }
 }
 
-const answer = async (opt: { id: string }) => {
+const answer = async (opt: { id: string | number }) => {
   if (answered.value) return
   answered.value = true
-  userAnswerId.value = Number.parseInt(opt.id)
+  userAnswerId.value = Number.parseInt(String(opt.id))
 
   clearTimer()
 
   // Load the answer by ID
-  await soloStore.loadAnswerById(Number.parseInt(opt.id))
+  await soloStore.loadAnswerById(Number.parseInt(String(opt.id)))
 
   // Test if correct
-  wasCorrect.value = isUserAnswerIsCorrect(Number.parseInt(opt.id))
+  wasCorrect.value = isUserAnswerIsCorrect(Number.parseInt(String(opt.id)))
 
   let newScore = 0
   if (wasCorrect.value) {
@@ -426,6 +231,7 @@ const skip = async () => {
     await soloStore.loadAnswerById(null)
 
     answered.value = true
+    skipped.value = true
     userAnswerId.value = null
     clearTimer()
     wasCorrect.value = false
@@ -450,6 +256,7 @@ const next = async () => {
   }
   index.value++
   answered.value = false
+  skipped.value = false
   userAnswerId.value = null
   wasCorrect.value = false
   lastPoints.value = 0
@@ -463,6 +270,7 @@ const restart = async () => {
   router.replace({ name: 'SoloQuiz', params: { id: soloStore.partyId } })
 
   answered.value = false
+  skipped.value = false
   userAnswerId.value = null
   index.value = 0
   score.value = 0
@@ -470,24 +278,6 @@ const restart = async () => {
   lastPoints.value = 0
   finished.value = false
   startTimer()
-}
-
-function buttonClass(answerId: number, valid: boolean) {
-  if (answered.value) {
-    if (valid === true) {
-      return 'border-brand-green bg-brand-green/15 text-brand-green cursor-default'
-    }
-    if (answerId === userAnswerId.value && valid === false) {
-      return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
-    }
-    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
-  }
-
-  if (answerId === userAnswerId.value) {
-    return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
-  }
-
-  return 'border-brand-purple/20 bg-brand-surface2/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
 }
 
 const allQuestionsParty = computed(() => {
@@ -504,7 +294,7 @@ const currentQuestion = computed(() => {
 })
 
 const currentAnswer = computed(() => {
-  return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? ''
+  return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? []
 })
 
 const isUserAnswerIsCorrect = (answerId: number) => {
@@ -531,58 +321,10 @@ const isQuestionCorrect = (questionData: any) => {
   return questionData?.userPartyQuestion?.correct
 }
 
-const getQuestionPoints = (questionData: any) => {
-  // Simuler les points gagnés (à adapter selon votre logique)
-  return questionData?.userPartyQuestion?.score || 100
-}
-
-// Computed properties pour les informations de la partie
-const difficulties = computed(() => [
-  {
-    id: 1,
-    label: t('solo.difficulties.easy'),
-    icon: 'seedling',
-    colorClass: 'diff-easy',
-    glowClass: 'glow-green',
-  },
-  {
-    id: 2,
-    label: t('solo.difficulties.medium'),
-    icon: 'bolt',
-    colorClass: 'diff-medium',
-    glowClass: 'glow-yellow',
-  },
-  {
-    id: 3,
-    label: t('solo.difficulties.hard'),
-    icon: 'fire',
-    colorClass: 'diff-hard',
-    glowClass: 'glow-orange',
-  },
-  {
-    id: 4,
-    label: t('solo.difficulties.hardcore'),
-    icon: 'skull',
-    colorClass: 'diff-hardcore',
-    glowClass: 'glow-red',
-  },
-])
-
-const partyDifficulties = computed(() => {
-  const diffLabels =
-    (soloPartyInfoComputed.value as any)?.partyDifficulty.map((d: any) => {
-      const difficultyObj = difficulties.value.find(
-        (diff: any) => diff.label.toLowerCase() === d.difficulty.label.toLowerCase(),
-      )
-
-      if (difficultyObj) return difficultyObj
-    }) || []
-
-  if (!diffLabels || diffLabels.length === 0) return []
-
-  // Remove null values and duplicates
-  return diffLabels.filter(Boolean)
-})
+// Informations de la partie
+const partyDifficulties = computed(() =>
+  fromParty((soloPartyInfoComputed.value as any)?.partyDifficulty),
+)
 
 const partyThemes = computed(() => {
   const themeIds = (soloPartyInfoComputed.value as any)?.partyTheme.map((t: any) => t.idTheme) || []
@@ -590,24 +332,15 @@ const partyThemes = computed(() => {
   return themeStore.list.filter((t: any) => themeIds.includes(Number.parseInt(t.id)))
 })
 
-const getAnswerClass = (questionData: any, answer: any) => {
-  const isCorrect = answer.valid
-  const isUserChoice = answer.id === questionData?.userPartyQuestion?.idAnswer
-
-  if (isCorrect && isUserChoice) {
-    // Bonne réponse sélectionnée
-    return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
-  } else if (isCorrect) {
-    // Bonne réponse non sélectionnée
-    return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
-  } else if (isUserChoice) {
-    // Mauvaise réponse sélectionnée
-    return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
-  } else {
-    // Autre réponse
-    return 'bg-brand-surface2/30 border-brand-gray/20 text-brand-gray'
-  }
-}
+const recapItems = computed<RecapItem[]>(() =>
+  allQuestionsParty.value.map((q: any) => ({
+    label: q?.question?.label ?? '',
+    correct: isQuestionCorrect(q),
+    points: q?.userPartyQuestion?.score,
+    selectedId: q?.userPartyQuestion?.idAnswer ?? null,
+    answers: q?.question?.answer ?? [],
+  })),
+)
 
 onMounted(async () => {
   // Load themes if not already loaded

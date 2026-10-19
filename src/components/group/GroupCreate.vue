@@ -1,203 +1,65 @@
 <template>
-  <section class="space-y-6">
-    <!-- Top header with code emphasis -->
-    <header class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <font-awesome-icon icon="users" class="text-2xl text-brand-purple" />
-        <h2 class="font-branding text-3xl text-brand-lightGray">{{ $t('group.lobby.title') }}</h2>
-        <span class="badge-green">
-          <template v-if="currentUserIsHost">
-            {{ $t('group.lobby.hostBadge') }}
-          </template>
-          <template v-else>
-            {{ $t('group.lobby.waitingBadge') }}
-          </template>
-        </span>
-      </div>
-    </header>
-
-    <template v-if="!currentUserIsHost">
-      <div class="flex flex-wrap gap-2 items-center">
-        <h3 class="font-branding text-xl text-brand-lightGray">
-          <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }} :
-        </h3>
-
-        <template v-if="selectedThemes.length === 0">
-          <div class="text-brand-gray">{{ $t('group.lobby.noThemeSelected') }}</div>
-        </template>
-        <div v-else class="flex flex-wrap gap-3">
-          <div
-            v-for="cat in selectedThemes"
-            :key="cat.id"
-            class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-          >
-            <font-awesome-icon :icon="cat.icon" class="text-lg" />
-            <span>{{ cat.label }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-wrap gap-2 items-center mb-4 mt-4">
-        <h3 class="font-branding text-xl text-brand-lightGray">
-          <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-          {{ $t('solo.settings.difficulty') }} :
-        </h3>
-        <template v-if="selectedDifficultyList.length === 0">
-          <div class="text-brand-gray">{{ $t('group.lobby.noDifficultySelected') }}</div>
-        </template>
-        <div v-else class="flex flex-wrap gap-3">
-          <div
-            v-for="diff in selectedDifficultyList"
-            :key="diff.id"
-            class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-            :class="[diff.colorClass]"
-          >
-            <font-awesome-icon :icon="diff.icon" class="text-lg" />
-            <span>{{ diff.label }}</span>
-          </div>
-        </div>
-      </div>
-      <div>
-        <h3 class="font-branding text-xl text-brand-lightGray">
-          <font-awesome-icon icon="gear" class="mr-2" /> {{ $t('solo.settings.questionsCount') }} :
-          {{ questions }}
-        </h3>
-      </div>
-      <div>
-        <h3 class="font-branding text-xl text-brand-lightGray">
-          <font-awesome-icon icon="trophy" class="mr-2" /> {{ $t('group.lobby.scoreEachRound') }} :
-          {{ scoreEachRound ? $t('common.yes') : $t('common.no') }}
-        </h3>
-      </div>
-    </template>
-
-    <div v-if="currentUserIsHost" class="grid gap-6 md:grid-cols-3">
-      <!-- Cartes gaming avec backdrop blur -->
-      <div class="md:col-span-2 surface-card">
-        <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
-          <font-awesome-icon icon="gamepad" class="mr-2" /> {{ $t('solo.categories.title') }}
-        </h3>
-        <p class="text-brand-gray mb-4">
-          {{ $t('solo.categories.subtitle') }}
-        </p>
-        <div class="flex flex-wrap gap-3">
-          <button
-            v-for="cat in themesList"
-            :key="cat.id"
-            @click="toggle(cat.id)"
-            class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-            :class="selected.has(cat.id) ? 'selected' : ''"
-          >
-            <font-awesome-icon :icon="cat.icon" class="text-lg" />
-            <span>{{ cat.label }}</span>
-          </button>
-        </div>
-
-        <div>
-          <div class="font-semibold mb-3 block text-brand-lightGray mt-6">
-            <font-awesome-icon icon="trophy" class="mr-2 text-brand-purple" />
+  <section class="flex flex-col gap-6">
+    <!-- Invité : récapitulatif des réglages choisis par l'hôte -->
+    <div v-if="!currentUserIsHost" class="surface-card">
+      <party-summary
+        :themes="selectedThemes"
+        :difficulties="selectedDifficultyList"
+        :questions="questions"
+      >
+        <div class="flex flex-col gap-1">
+          <dt class="text-sm font-semibold text-brand-gray">
             {{ $t('group.lobby.scoreEachRound') }}
-          </div>
-          <div
-            class="select-none flex items-center justify-between p-4 rounded-lg bg-brand-surface2/50 border border-brand-lightGray/10 cursor-pointer hover:border-brand-purple/30 transition-all"
-            @click="scoreEachRound = !scoreEachRound"
-          >
-            <div class="flex-1">
-              <p class="text-brand-lightGray text-sm">
-                {{ $t('group.lobby.scoreEachRoundDescription') }}
-              </p>
-            </div>
-            <div class="relative inline-flex items-center ml-4">
-              <input type="checkbox" v-model="scoreEachRound" class="sr-only peer" />
-              <div
-                class="w-11 h-6 bg-brand-surface2 rounded-full peer peer-focus:ring-2 peer-focus:ring-brand-purple peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-purple pointer-events-none"
-              ></div>
-            </div>
-          </div>
+          </dt>
+          <dd class="font-bold">{{ scoreEachRound ? $t('common.yes') : $t('common.no') }}</dd>
         </div>
-      </div>
-
-      <!-- Sidebar des paramètres -->
-      <div class="surface-card">
-        <h3 class="font-display text-xl mb-2 text-brand-lightGray">
-          <font-awesome-icon icon="gear" /> {{ $t('solo.settings.title') }}
-        </h3>
-        <div class="space-y-5">
-          <div>
-            <div class="flex items-center justify-between">
-              <div class="font-semibold text-brand-lightGray">
-                {{ $t('solo.settings.questionsCount') }}
-              </div>
-              <span class="pill font-bold text-brand-purple">{{ questions }}</span>
-            </div>
-            <div class="mt-3 flex items-center gap-3">
-              <button
-                class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all"
-                @click="dec()"
-              >
-                −
-              </button>
-              <!-- Slider personnalisé avec accents colorés -->
-              <input
-                type="range"
-                class="w-full h-2 bg-brand-surface2 rounded-lg appearance-none cursor-pointer slider-purple"
-                min="5"
-                max="20"
-                step="5"
-                v-model.number="questions"
-              />
-              <button
-                class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 transition-all"
-                @click="inc()"
-              >
-                ＋
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="font-semibold mb-3 block text-brand-lightGray mt-6">
-            <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-            {{ $t('solo.settings.difficulty') }}
-          </div>
-          <div class="space-y-2">
-            <button
-              v-for="diff in difficulties"
-              :key="diff.id"
-              @click="toggleDifficulty(diff.id)"
-              class="difficulty-button w-full group relative overflow-hidden"
-              :class="[selectedDifficulty.includes(diff.id) ? 'selected' : '', diff.colorClass]"
-            >
-              <div class="flex items-center justify-between relative z-10">
-                <div class="flex items-center gap-2">
-                  <font-awesome-icon :icon="diff.icon" class="text-base" />
-                  <span class="font-semibold">{{ diff.label }}</span>
-                </div>
-                <div v-if="selectedDifficulty.includes(diff.id)" class="check-icon">
-                  <font-awesome-icon icon="check-circle" />
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
+      </party-summary>
     </div>
+
+    <!-- Hôte : réglages de la partie -->
+    <game-setup
+      v-else
+      v-model:selected-themes="selected"
+      v-model:difficulties="selectedDifficulty"
+      v-model:questions="questions"
+      :themes="themesList"
+    >
+      <template #options>
+        <label
+          class="flex cursor-pointer select-none items-start justify-between gap-4 rounded-2xl border border-brand-line p-4 transition-colors hover:border-brand-purple/50"
+        >
+          <span class="flex flex-col gap-1">
+            <span class="font-bold">{{ $t('group.lobby.scoreEachRound') }}</span>
+            <span class="text-sm text-brand-gray">
+              {{ $t('group.lobby.scoreEachRoundDescription') }}
+            </span>
+          </span>
+          <span class="relative mt-1 inline-flex shrink-0 items-center">
+            <input v-model="scoreEachRound" type="checkbox" class="peer sr-only" />
+            <span
+              class="h-6 w-11 rounded-full bg-brand-surface2 transition-colors after:absolute after:left-[2px] after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow-soft after:transition-all after:content-[''] peer-checked:bg-brand-purple peer-checked:after:translate-x-full peer-focus-visible:ring-2 peer-focus-visible:ring-brand-purple/40"
+            ></span>
+          </span>
+        </label>
+      </template>
+    </game-setup>
   </section>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed, onMounted, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { ref, computed, onMounted, watch } from 'vue'
 import useThemeStore from '@/stores/theme'
 import useGroupeStore, { type PartyDifficulty, type PartyTheme } from '@/stores/groupe'
 import useUserStore from '@/stores/user'
+import GameSetup from '@/components/game/GameSetup.vue'
+import PartySummary from '@/components/game/PartySummary.vue'
+import { useDifficulties } from '@/composables/useDifficulties'
 
-const { t } = useI18n()
 const themeStore = useThemeStore()
 const groupeStore = useGroupeStore()
 const userStore = useUserStore()
 
-const selectedDifficulty = ref<number[]>([]) // Moyen par défaut
+const selectedDifficulty = ref<number[]>([])
 
 interface Theme {
   id: string
@@ -205,36 +67,7 @@ interface Theme {
   icon: string
 }
 
-const difficulties = computed(() => [
-  {
-    id: 1,
-    label: t('solo.difficulties.easy'),
-    icon: 'seedling',
-    colorClass: 'diff-easy',
-    glowClass: 'glow-green',
-  },
-  {
-    id: 2,
-    label: t('solo.difficulties.medium'),
-    icon: 'bolt',
-    colorClass: 'diff-medium',
-    glowClass: 'glow-yellow',
-  },
-  {
-    id: 3,
-    label: t('solo.difficulties.hard'),
-    icon: 'fire',
-    colorClass: 'diff-hard',
-    glowClass: 'glow-orange',
-  },
-  {
-    id: 4,
-    label: t('solo.difficulties.hardcore'),
-    icon: 'skull',
-    colorClass: 'diff-hardcore',
-    glowClass: 'glow-red',
-  },
-])
+const { difficulties } = useDifficulties()
 
 const currentUserIsHost = computed(
   () => groupeStore.groupePartyInfo?.idUserHost === userStore.userId,
@@ -251,11 +84,9 @@ const themesList = computed<Array<Theme>>(() => {
 })
 
 const themesMap = computed(() => new Map(themesList.value.map((c: Theme) => [c.id, c])))
-const selected = reactive<Set<string>>(new Set())
+const selected = ref<string[]>([])
 const selectedThemes = computed(() => {
-  return Array.from(selected)
-    .map((id) => themesMap.value.get(id))
-    .filter((t) => t !== undefined)
+  return selected.value.map((id) => themesMap.value.get(id)).filter((t) => t !== undefined)
 })
 
 const selectedDifficultyList = computed(() => {
@@ -268,8 +99,7 @@ const scoreEachRound = ref(false)
 
 function applyPartyInfo(newInfo: NonNullable<typeof groupeStore.groupePartyInfo>) {
   if (newInfo.partyTheme && Array.isArray(newInfo.partyTheme)) {
-    selected.clear()
-    newInfo.partyTheme.forEach((theme: PartyTheme) => selected.add(theme.idTheme as string))
+    selected.value = newInfo.partyTheme.map((theme: PartyTheme) => String(theme.idTheme))
   }
   if (newInfo.partyDifficulty && Array.isArray(newInfo.partyDifficulty)) {
     selectedDifficulty.value = newInfo.partyDifficulty.map(
@@ -297,17 +127,9 @@ watch(
   { deep: true, immediate: true },
 )
 
-const toggle = (id: string) => {
-  if (selected.has(id)) {
-    selected.delete(id)
-  } else {
-    selected.add(id)
-  }
-}
-
 const groupSettingsComputed = computed(() => {
   return {
-    themes: Array.from(selected),
+    themes: [...selected.value],
     difficulties: selectedDifficulty.value,
     nbQuestions: questions.value,
     scoreEachRound: scoreEachRound.value,
@@ -330,21 +152,5 @@ watch(
 
 const updateSettingsGroupe = async () => {
   await groupeStore.updateSettings(groupSettingsComputed.value)
-}
-
-const inc = () => {
-  questions.value = Math.min(20, questions.value + 5)
-}
-
-const dec = () => {
-  questions.value = Math.max(5, questions.value - 5)
-}
-
-const toggleDifficulty = (id: number) => {
-  if (selectedDifficulty.value.includes(id)) {
-    selectedDifficulty.value = selectedDifficulty.value.filter((d: number) => d !== id)
-  } else {
-    selectedDifficulty.value.push(id)
-  }
 }
 </script>

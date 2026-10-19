@@ -1,666 +1,106 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <h2 class="font-branding text-3xl">{{ $t('group.quiz.title') }}</h2>
-      </div>
-      <div v-if="!finished" class="flex items-center gap-3">
-        <span class="pill">{{
-          $t('group.quiz.question', { current: lastQuestionIndex + 1, total: nbMaxQuestions })
-        }}</span>
-        <span class="pill">
-          {{ $t('group.quiz.score') }} <strong>{{ globalUserScore }}</strong>
-        </span>
-      </div>
-    </header>
-
+  <section class="flex flex-col gap-6">
     <Transition name="slide-fade" mode="out-in">
-      <!-- Timer / progress -->
-      <div v-if="!finished && !showCurrentRanking" class="flex flex-col gap-4">
-        <div
-          class="rounded-2xl overflow-hidden border border-brand-purple/20 bg-brand-surface2/80 shadow-card"
+      <div v-if="!finished && !showCurrentRanking" key="game" class="flex flex-col gap-6">
+        <game-hud
+          :current="lastQuestionIndex + 1"
+          :total="nbMaxQuestions"
+          :score="globalUserScore"
+          :remaining="remaining"
+          :duration="TOTAL_TIME"
+          leavable
+          :leave-label="$t('game.hud.leave')"
+          @leave="showConfirmLeaveModal = true"
+        />
+
+        <question-card
+          :question="currentQuestion"
+          :answers="currentAnswer || []"
+          :selected-id="userAnswerId"
+          :revealed="scoreIsAvailable"
+          :locked="answered"
+          @select="answer"
         >
-          <div class="h-2 w-full bg-brand-dark/30">
-            <div
-              class="h-2 transition-[width] duration-250"
-              :class="remainingRatio < 0.33 ? 'bg-brand-orange' : 'bg-brand-green'"
-              :style="{ width: (remainingRatio * 100).toFixed(2) + '%' }"
-            />
-          </div>
-          <div class="px-6 py-3 flex items-center justify-between text-sm text-brand-lightGray">
-            <span>{{ $t('group.quiz.timeRemaining', { time: remaining.toFixed(1) }) }}</span>
-          </div>
-        </div>
+          <template v-if="answered && scoreIsAvailable" #footer>
+            <answer-feedback :correct="wasCorrect" :points="lastPoints" />
+          </template>
+        </question-card>
 
-        <!-- Question card -->
-        <div class="surface-card">
-          <overlay-block :loading="false">
-            <h3 class="font-branding text-2xl mb-4 text-brand-lightGray">{{ currentQuestion }}</h3>
-            <div class="grid gap-3 sm:grid-cols-2">
-              <button
-                v-for="(opt, idx) in currentAnswer"
-                :key="opt"
-                class="group rounded-2xl border px-4 py-3 text-left font-semibold transition duration-250 relative"
-                :disabled="answered"
-                :class="buttonClass(opt.id, opt.valid)"
-                @click="answer(opt)"
-              >
-                <span
-                  class="absolute top-2 right-2 w-6 h-6 rounded-md bg-brand-purple/20 border border-brand-purple/40 text-brand-purple text-xs flex items-center justify-center font-bold"
-                >
-                  {{ Number(idx) + 1 }}
-                </span>
-                {{ opt?.value }}
-              </button>
-            </div>
-
-            <div v-if="answered && scoreIsAvailable" class="mt-6 flex items-center justify-between">
-              <div class="text-sm">
-                <span v-if="wasCorrect" class="badge-green">{{
-                  $t('group.quiz.correct', { points: lastPoints })
-                }}</span>
-                <span v-else class="badge-orange">{{ $t('group.quiz.incorrect') }}</span>
-              </div>
-            </div>
-          </overlay-block>
-        </div>
-
-        <!-- Players status section -->
-        <div class="surface-card">
-          <!-- Statut des joueurs (répondu ou non) -->
-          <ul
-            class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
-          >
-            <li
-              v-for="p in groupeStore.groupePartyInfo?.partyUsers"
-              :key="String(p.id)"
-              class="rounded-xl border bg-brand-surface2/30 p-3 flex items-center gap-3 transition-all duration-300"
-              :class="getPlayerCardClass(p.user)"
-            >
-              <div class="relative shrink-0">
-                <div class="rounded-full bg-brand-purple/20 flex items-center justify-center">
-                  <img
-                    v-if="p?.user?.avatar"
-                    :src="p.user.avatar"
-                    alt="avatar"
-                    class="h-10 w-10 rounded-full border-2 object-cover"
-                    :class="getPlayerBorderClass(p.user)"
-                  />
-                  <div
-                    v-else
-                    class="h-10 w-10 rounded-full border-2 flex items-center justify-center"
-                    :class="getPlayerBorderClass(p.user)"
-                  >
-                    <span class="text-lg font-bold" :class="getPlayerStatusColor(p.user)">
-                      {{ p?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                </div>
-                <!-- Status indicator badge -->
-                <div
-                  class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center shadow-lg transition-all duration-300"
-                  :class="getPlayerBadgeClass(p.user)"
-                >
-                  <font-awesome-icon
-                    :icon="getPlayerStatusIcon(p.user)"
-                    class="text-[10px] text-white"
-                  />
-                </div>
-              </div>
-              <div class="min-w-0 flex-1">
-                <div
-                  class="text-sm font-semibold leading-tight truncate"
-                  :class="getPlayerStatusColor(p.user)"
-                >
-                  {{ p.user?.nickName }}
-                </div>
-                <div class="text-xs text-brand-gray">
-                  {{ getPlayerStatusText(p.user) }}
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
+        <section class="flex flex-col gap-3" aria-labelledby="group-players-title">
+          <h3 id="group-players-title" class="text-lg font-bold">
+            {{ $t('group.quiz.playersStatus') }}
+          </h3>
+          <player-status-list :players="playerStatusEntries" />
+        </section>
       </div>
 
-      <!-- Classement en temps réel (si scoreEachRound activé et tous ont répondu) -->
-      <div v-else-if="!finished && showCurrentRanking" class="surface-card">
-        <div class="flex items-center gap-3 mb-4 pb-3 border-b border-brand-purple/20">
-          <div
-            class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
-          >
-            <font-awesome-icon icon="trophy" />
-          </div>
-          <h3 class="font-branding text-xl text-brand-lightGray">
-            {{ $t('group.quiz.currentRanking') }}
-          </h3>
-        </div>
+      <live-ranking
+        v-else-if="!finished && showCurrentRanking"
+        key="ranking"
+        :entries="rankingEntries"
+        :title="$t('group.quiz.currentRanking')"
+        :me-id="myId"
+      />
 
-        <div class="space-y-2">
-          <div
-            v-for="(player, index) in sortedCurrentPlayers"
-            :key="player.user.id"
-            class="flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-300"
-            :class="[
-              index === 0
-                ? 'border-brand-yellow/40 bg-brand-yellow/10'
-                : index === 1
-                  ? 'border-brand-gray/40 bg-brand-gray/5'
-                  : index === 2
-                    ? 'border-brand-orange/40 bg-brand-orange/5'
-                    : 'border-brand-purple/20 bg-brand-surface2/30',
-            ]"
-          >
-            <div class="flex items-center gap-3 min-w-0 flex-1">
-              <span
-                class="font-bold text-sm w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                :class="[
-                  index === 0
-                    ? 'bg-brand-yellow/20 text-brand-yellow'
-                    : index === 1
-                      ? 'bg-brand-gray/20 text-brand-gray'
-                      : index === 2
-                        ? 'bg-brand-orange/20 text-brand-orange'
-                        : 'bg-brand-purple/20 text-brand-purple',
-                ]"
-              >
-                {{ index + 1 }}
-              </span>
-              <div class="relative shrink-0">
-                <div
-                  class="w-10 h-10 rounded-full border-2 flex items-center justify-center"
-                  :class="[
-                    index === 0
-                      ? 'border-brand-yellow'
-                      : index === 1
-                        ? 'border-brand-gray'
-                        : index === 2
-                          ? 'border-brand-orange'
-                          : 'border-brand-purple',
-                  ]"
-                >
-                  <img
-                    v-if="player?.user?.avatar"
-                    :src="player.user.avatar"
-                    alt="avatar"
-                    class="w-full h-full rounded-full object-cover"
-                  />
-                  <span
-                    v-else
-                    class="text-lg font-bold"
-                    :class="[
-                      index === 0
-                        ? 'text-brand-yellow'
-                        : index === 1
-                          ? 'text-brand-gray'
-                          : index === 2
-                            ? 'text-brand-orange'
-                            : 'text-brand-purple',
-                    ]"
-                  >
-                    {{ player?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                  </span>
-                </div>
-                <div
-                  v-if="index < 3"
-                  class="absolute -top-1 -right-1 w-5 h-5 rounded-full border-2 border-brand-dark flex items-center justify-center"
-                  :class="[
-                    index === 0
-                      ? 'bg-brand-yellow'
-                      : index === 1
-                        ? 'bg-brand-gray'
-                        : 'bg-brand-orange',
-                  ]"
-                >
-                  <font-awesome-icon
-                    v-if="index === 0"
-                    icon="crown"
-                    class="text-[10px] text-brand-dark"
-                  />
-                  <span v-else class="text-[10px] font-bold text-white">{{ index + 1 }}</span>
-                </div>
-              </div>
-              <span class="font-semibold text-brand-lightGray truncate">
-                {{ player.user?.nickName }}
-              </span>
-            </div>
-            <div
-              class="font-branding text-xl shrink-0 ml-3"
-              :class="[
-                index === 0
-                  ? 'text-brand-yellow'
-                  : index === 1
-                    ? 'text-brand-gray'
-                    : index === 2
-                      ? 'text-brand-orange'
-                      : 'text-brand-purple',
-              ]"
-            >
-              {{ player.score }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Results -->
-      <div v-else-if="finished" class="space-y-6">
-        <!-- Header avec score final -->
-        <div
-          class="surface-card text-center bg-gradient-to-br from-brand-purple/20 to-brand-orange/20"
-        >
-          <div
-            class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-yellow/20 border-2 border-brand-yellow mb-4"
-          >
-            <font-awesome-icon icon="trophy" class="text-3xl text-brand-yellow" />
-          </div>
-          <h3 class="font-branding text-4xl mb-2 text-brand-lightGray">
-            {{ $t('group.quiz.finished') }}
-          </h3>
-          <div class="flex items-center justify-center gap-6 mt-4">
-            <div class="text-center">
-              <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.finalScore') }}</div>
-              <div class="font-branding text-3xl text-brand-yellow">{{ globalUserScore }}</div>
-            </div>
-            <div class="h-12 w-px bg-brand-purple/30"></div>
-            <div class="text-center">
-              <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.questions') }}</div>
-              <div class="font-branding text-3xl text-brand-lightGray">
-                {{ allQuestionsParty.length }}
-              </div>
-            </div>
-            <div class="h-12 w-px bg-brand-purple/30"></div>
-            <div class="text-center">
-              <div class="text-sm text-brand-gray mb-1">{{ $t('group.quiz.successRate') }}</div>
-              <div class="font-branding text-3xl text-brand-green">{{ pourcentageCorrect }}%</div>
-            </div>
-          </div>
-
-          <!-- Statistiques rapides -->
-          <div class="flex items-center justify-center gap-3 mt-6">
-            <div class="badge-success">
-              <font-awesome-icon icon="check-circle" class="mr-1" />
-              {{ correctAnswersCount }} {{ $t('group.quiz.correctAnswers') }}
-            </div>
-            <div class="badge-warning">
-              <font-awesome-icon icon="times-circle" class="mr-1" />
-              {{ allQuestionsParty.length - correctAnswersCount }}
-              {{ $t('group.quiz.incorrectAnswers') }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Classement des joueurs -->
-        <div class="surface-card">
-          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
-            <div
-              class="w-8 h-8 rounded-xl bg-brand-yellow/20 flex items-center justify-center text-brand-yellow"
-            >
-              <font-awesome-icon icon="trophy" />
-            </div>
-            <h3 class="font-branding text-2xl text-brand-lightGray">
-              {{ $t('group.quiz.ranking') }}
-            </h3>
-          </div>
-
-          <!-- Podium Top 3 -->
-          <div class="mb-6">
-            <div
-              class="grid gap-4 max-w-3xl mx-auto items-end"
-              :class="{
-                'grid-cols-1 max-w-xs': sortedPlayers.length === 1,
-                'grid-cols-3': sortedPlayers.length > 1,
-              }"
-            >
-              <!-- 2nd place -->
-              <div
-                v-if="sortedPlayers[1]"
-                class="text-center transform transition-all duration-300 hover:scale-105"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-gray/40 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
-                  >
-                    <img
-                      v-if="sortedPlayers[1]?.user?.avatar"
-                      :src="sortedPlayers[1].user.avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-2xl sm:text-3xl font-bold text-brand-gray">
-                      {{ sortedPlayers[1]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-gray/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-white">2</span>
-                  </div>
-                </div>
-                <div class="font-semibold text-sm text-brand-lightGray truncate px-2">
-                  {{ sortedPlayers[1].user?.nickName }}
-                </div>
-                <div class="text-2xl font-branding text-brand-gray mt-1">
-                  {{ sortedPlayers[1].score }}
-                </div>
-                <div
-                  class="mt-2 h-24 sm:h-32 bg-gradient-to-t from-brand-gray/30 to-brand-gray/10 border-2 border-brand-gray/30 rounded-t-xl"
-                ></div>
-              </div>
-
-              <!-- 1st place -->
-              <div
-                v-if="sortedPlayers[0]"
-                class="text-center transform transition-all duration-300 hover:scale-105"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-brand-yellow bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-card"
-                  >
-                    <img
-                      v-if="sortedPlayers[0]?.user?.avatar"
-                      :src="sortedPlayers[0].user.avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-3xl sm:text-4xl font-bold text-brand-yellow">
-                      {{ sortedPlayers[0]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <font-awesome-icon icon="crown" class="text-sm text-brand-dark" />
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-yellow border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-brand-dark">1</span>
-                  </div>
-                </div>
-                <div class="font-bold text-brand-lightGray truncate px-2">
-                  {{ sortedPlayers[0].user?.nickName }}
-                </div>
-                <div class="text-3xl font-branding text-brand-yellow mt-1">
-                  {{ sortedPlayers[0].score }}
-                </div>
-                <div
-                  class="mt-2 h-32 sm:h-40 bg-gradient-to-t from-brand-yellow/30 to-brand-yellow/10 border-2 border-brand-yellow/40 rounded-t-xl"
-                ></div>
-              </div>
-
-              <!-- 3rd place -->
-              <div
-                v-if="sortedPlayers[2]"
-                class="text-center transform transition-all duration-300 hover:scale-105"
-              >
-                <div class="relative inline-block mb-3">
-                  <div
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-brand-orange/40 bg-brand-surface2/50 flex items-center justify-center mx-auto shadow-lg"
-                  >
-                    <img
-                      v-if="sortedPlayers[2]?.user?.avatar"
-                      :src="sortedPlayers[2].user.avatar"
-                      alt="avatar"
-                      class="w-full h-full rounded-full object-cover"
-                    />
-                    <span v-else class="text-2xl sm:text-3xl font-bold text-brand-orange">
-                      {{ sortedPlayers[2]?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                    </span>
-                  </div>
-                  <div
-                    class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-brand-orange/80 border-2 border-brand-dark flex items-center justify-center shadow-lg"
-                  >
-                    <span class="text-sm font-bold text-white">3</span>
-                  </div>
-                </div>
-                <div class="font-semibold text-sm text-brand-lightGray truncate px-2">
-                  {{ sortedPlayers[2].user?.nickName }}
-                </div>
-                <div class="text-2xl font-branding text-brand-orange mt-1">
-                  {{ sortedPlayers[2].score }}
-                </div>
-                <div
-                  class="mt-2 h-20 sm:h-28 bg-gradient-to-t from-brand-orange/30 to-brand-orange/10 border-2 border-brand-orange/30 rounded-t-xl"
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Autres joueurs (Accordion) -->
-          <div v-if="sortedPlayers.length > 3" class="mt-6">
-            <button
-              @click="showAllPlayers = !showAllPlayers"
-              class="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/20 bg-brand-surface2/30 hover:bg-brand-purple/10 transition-all duration-300"
-            >
-              <span class="font-semibold text-brand-lightGray">
-                {{ $t('group.quiz.otherPlayers', { count: sortedPlayers.length - 3 }) }}
-              </span>
-              <font-awesome-icon
-                :icon="showAllPlayers ? 'chevron-up' : 'chevron-down'"
-                class="text-brand-purple transition-transform duration-300"
-                :class="{ 'rotate-180': showAllPlayers }"
-              />
-            </button>
-
-            <transition
-              enter-active-class="transition-all duration-300 ease-out"
-              enter-from-class="opacity-0 max-h-0"
-              enter-to-class="opacity-100 max-h-[500px]"
-              leave-active-class="transition-all duration-300 ease-in"
-              leave-from-class="opacity-100 max-h-[500px]"
-              leave-to-class="opacity-0 max-h-0"
-            >
-              <div v-show="showAllPlayers" class="overflow-hidden">
-                <div class="mt-3 space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                  <div
-                    v-for="(player, index) in sortedPlayers.slice(3)"
-                    :key="player.user.id"
-                    class="flex items-center justify-between px-4 py-3 rounded-xl border border-brand-purple/10 bg-brand-surface2/20 hover:border-brand-purple/30 transition-all duration-200"
-                  >
-                    <div class="flex items-center gap-3 min-w-0 flex-1">
-                      <span class="text-brand-gray font-bold text-sm w-6 text-center shrink-0">
-                        {{ index + 4 }}
-                      </span>
-                      <div
-                        class="w-10 h-10 rounded-full border-2 border-brand-purple/30 bg-brand-surface2/50 flex items-center justify-center shrink-0"
-                      >
-                        <img
-                          v-if="player?.user?.avatar"
-                          :src="player.user.avatar"
-                          alt="avatar"
-                          class="w-full h-full rounded-full object-cover"
-                        />
-                        <span v-else class="text-lg font-bold text-brand-purple">
-                          {{ player?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                        </span>
-                      </div>
-                      <span class="font-semibold text-brand-lightGray truncate">
-                        {{ player.user?.nickName }}
-                      </span>
-                    </div>
-                    <div class="font-branding text-xl text-brand-purple shrink-0 ml-3">
-                      {{ player.score }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
-        </div>
-
-        <!-- Informations de la partie -->
-        <div class="surface-card">
-          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
-            <div
-              class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
-            >
-              <font-awesome-icon icon="info-circle" />
-            </div>
-            <h3 class="font-branding text-2xl text-brand-lightGray">
-              {{ $t('group.quiz.partyInfo') }}
-            </h3>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Thèmes -->
-            <div class="flex flex-wrap gap-2 items-center">
-              <h3 class="font-branding text-xl text-brand-lightGray">
-                <font-awesome-icon icon="tag" class="mr-2" /> {{ $t('group.quiz.themes') }} :
-              </h3>
-              <template v-if="partyThemes.length === 0">
-                <div class="text-brand-gray">{{ $t('group.quiz.allThemes') }}</div>
-              </template>
-              <div v-else class="flex flex-wrap gap-3">
-                <div
-                  v-for="theme in partyThemes"
-                  :key="theme.id"
-                  class="category-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-                >
-                  <font-awesome-icon :icon="theme.icon" class="text-lg" />
-                  <span>{{ theme.label }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Difficultés -->
-            <div class="flex flex-wrap gap-2 items-center">
-              <h3 class="font-branding text-xl text-brand-lightGray">
-                <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-                {{ $t('group.quiz.difficulties') }} :
-              </h3>
-              <div class="flex flex-wrap gap-3">
-                <div
-                  v-for="diff in partyDifficulties"
-                  :key="diff.id"
-                  class="difficulty-button group inline-flex items-center gap-2 px-4 py-3 font-semibold"
-                  :class="[diff.colorClass]"
-                >
-                  <font-awesome-icon :icon="diff.icon" class="text-lg" />
-                  <span>{{ diff.label }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Nombre de questions -->
-            <div>
-              <h3 class="font-branding text-xl text-brand-lightGray">
-                <font-awesome-icon icon="list-ol" class="mr-2" />
-                {{ $t('group.quiz.numberOfQuestions') }} :
-                {{ groupeStore.groupePartyInfo?.nbQuestions }}
-              </h3>
-            </div>
-
-            <!-- Score Each Round (uniquement en groupe) -->
-            <div v-if="groupeStore.groupePartyInfo?.scoreEachRound !== undefined">
-              <h3 class="font-branding text-xl text-brand-lightGray">
-                <font-awesome-icon icon="trophy" class="mr-2" />
-                {{ $t('group.quiz.scoreEachRound') }} :
-                {{
-                  groupeStore.groupePartyInfo?.scoreEachRound ? $t('common.yes') : $t('common.no')
-                }}
-              </h3>
-            </div>
-          </div>
-        </div>
-
-        <!-- Récapitulatif des questions -->
-        <div class="surface-card">
-          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-brand-purple/20">
-            <div
-              class="w-8 h-8 rounded-xl bg-brand-purple/20 flex items-center justify-center text-brand-purple"
-            >
-              <font-awesome-icon icon="list-check" />
-            </div>
-            <h3 class="font-branding text-2xl text-brand-lightGray">
-              {{ $t('group.quiz.summary') }}
-            </h3>
-          </div>
-
-          <div v-if="allQuestionsParty.length > 0" class="space-y-4 pr-2">
-            <div
-              v-for="(questionData, idx) in allQuestionsParty"
-              :key="idx"
-              class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/50 p-4 hover:border-brand-purple/40 transition-all duration-300"
-            >
-              <!-- En-tête de la question -->
-              <div class="flex items-start gap-3 mb-3">
-                <div
-                  class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
-                  :class="
-                    isQuestionCorrect(questionData)
-                      ? 'bg-brand-green/20 text-brand-green border border-brand-green/40'
-                      : 'bg-brand-orange/20 text-brand-orange border border-brand-orange/40'
-                  "
-                >
-                  {{ Number(idx) + 1 }}
-                </div>
-                <div class="flex-1">
-                  <p class="font-semibold text-brand-lightGray mb-2">
-                    {{ questionData?.question?.label }}
-                  </p>
-                  <div v-if="isQuestionCorrect(questionData)" class="badge-success text-xs">
-                    <font-awesome-icon icon="check" class="mr-1" />
-                    {{ $t('group.quiz.goodAnswer') }} +{{ getQuestionPoints(questionData) }}
-                    pts
-                  </div>
-                  <div v-else class="badge-warning text-xs">
-                    <font-awesome-icon icon="times" class="mr-1" /> {{ $t('group.quiz.badAnswer') }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Liste des réponses -->
-              <div class="grid gap-2 sm:grid-cols-2 mt-3">
-                <div
-                  v-for="answer in questionData?.question?.answer"
-                  :key="answer.id"
-                  class="rounded-xl px-3 py-2 text-sm border transition-all duration-200"
-                  :class="getAnswerClass(questionData, answer)"
-                >
-                  <div class="flex items-center gap-2">
-                    <span class="flex-shrink-0">
-                      <font-awesome-icon v-if="answer.valid" icon="check" />
-                      <font-awesome-icon
-                        v-else-if="answer.id === questionData?.idAnswer"
-                        icon="times"
-                      />
-                      <font-awesome-icon v-else icon="circle" class="text-xs" />
-                    </span>
-                    <span class="flex-1">{{ answer.value }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else class="text-center text-brand-gray space-y-4 pr-2">
-            {{ $t('group.quiz.noQuestions') }}
-          </div>
-        </div>
-
-        <!-- Actions finales -->
-        <div
-          class="flex flex-col sm:flex-row items-center justify-center gap-3 sticky bottom-0 left-0 right-0 pb-3"
-        >
+      <game-results
+        v-else
+        key="results"
+        :title="resultsTitle"
+        :score="globalUserScore"
+        :correct="correctAnswersCount"
+        :total="allQuestionsParty.length"
+        :rate="pourcentageCorrect"
+        :tone="myRank === 1 ? 'win' : 'neutral'"
+      >
+        <template #actions>
           <button
             v-if="comeFromHistory"
-            class="btn btn-secondary w-full sm:w-auto"
+            class="btn btn-primary"
             @click="router.push({ name: 'Profile' })"
           >
-            <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('common.back') }}
-          </button>
-          <button v-else class="btn btn-secondary w-full sm:w-auto" @click="exitQuizGame">
             <font-awesome-icon icon="arrow-left" class="mr-2" />
-            {{ $t('group.quiz.returnToLobby') }}
+            {{ $t('game.results.backToProfile') }}
           </button>
-        </div>
-      </div>
-    </Transition>
+          <button v-else class="btn btn-primary" @click="exitQuizGame">
+            <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.quiz.returnToLobby') }}
+          </button>
+        </template>
 
-    <div v-if="!finished" class="flex flex-wrap items-center justify-end gap-3 mt-4">
-      <button class="btn btn-ghost" @click="showConfirmLeaveModal = true">
-        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
-      </button>
-    </div>
+        <results-podium
+          v-if="rankingEntries.length > 0"
+          :entries="rankingEntries"
+          :title="$t('group.quiz.ranking')"
+          :me-id="myId"
+        />
+
+        <div class="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)] lg:items-start">
+          <section class="surface-card flex flex-col gap-4">
+            <h3 class="text-xl font-bold">{{ $t('game.results.partyInfo') }}</h3>
+            <party-summary
+              :themes="partyThemes"
+              :difficulties="partyDifficulties"
+              :questions="groupeStore.groupePartyInfo?.nbQuestions"
+              :empty-themes="$t('group.quiz.allThemes')"
+            >
+              <div
+                v-if="groupeStore.groupePartyInfo?.scoreEachRound !== undefined"
+                class="flex flex-col gap-1"
+              >
+                <dt class="text-sm font-semibold text-brand-gray">
+                  {{ $t('group.quiz.scoreEachRound') }}
+                </dt>
+                <dd class="font-bold">
+                  {{
+                    groupeStore.groupePartyInfo?.scoreEachRound ? $t('common.yes') : $t('common.no')
+                  }}
+                </dd>
+              </div>
+            </party-summary>
+          </section>
+          <question-recap :items="recapItems" />
+        </div>
+      </game-results>
+    </Transition>
 
     <!-- Modale de confirmation pour quitter la partie -->
     <ModalDialog
@@ -673,32 +113,24 @@
     </ModalDialog>
   </section>
 
-  <transition name="countdown-fade">
-    <div
-      v-if="countdownValue !== null"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/80 backdrop-blur-sm mt-0"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
-      <div class="text-center select-none">
-        <transition name="countdown-swap" mode="out-in">
-          <div :key="countdownValue" class="countdown-pop" :class="countdownTextClass">
-            {{ countdownValue }}
-          </div>
-        </transition>
-        <div class="countdown-message mt-4 text-sm text-brand-lightGray/80">
-          {{ $t('group.quiz.getReady') }}
-        </div>
-      </div>
-    </div>
-  </transition>
+  <countdown-overlay :value="countdownValue" :message="$t('group.quiz.getReady')" />
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRouter, type RouteLocationNormalized } from 'vue-router'
-import OverlayBlock from '@/components/OverlayBlock.vue'
+import GameHud from '@/components/game/GameHud.vue'
+import QuestionCard from '@/components/game/QuestionCard.vue'
+import AnswerFeedback from '@/components/game/AnswerFeedback.vue'
+import PlayerStatusList, { type PlayerStatusEntry } from '@/components/game/PlayerStatusList.vue'
+import LiveRanking, { type RankingEntry } from '@/components/game/LiveRanking.vue'
+import ResultsPodium from '@/components/game/ResultsPodium.vue'
+import GameResults from '@/components/game/GameResults.vue'
+import PartySummary from '@/components/game/PartySummary.vue'
+import QuestionRecap, { type RecapItem } from '@/components/game/QuestionRecap.vue'
+import CountdownOverlay from '@/components/game/CountdownOverlay.vue'
+import { useDifficulties } from '@/composables/useDifficulties'
 import ModalDialog from '@/components/ModalDialog.vue'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useGroupeStore, {
@@ -717,6 +149,7 @@ const { cleanupGroup } = useGroupLifecycle()
 const router = useRouter()
 
 const { t } = useI18n()
+const { fromParty } = useDifficulties()
 
 const TOTAL_TIME = 15 // seconds per question
 
@@ -756,7 +189,6 @@ const playersRanking = ref<
     }
   }>
 >([])
-const showAllPlayers = ref(false)
 
 const remaining = ref(TOTAL_TIME)
 let timer: ReturnType<typeof setInterval> | null = null
@@ -765,8 +197,6 @@ let startTime: number | null = null
 // Gestion de la modale de confirmation pour quitter
 const showConfirmLeaveModal = ref(false)
 let pendingNavigation: { to: RouteLocationNormalized; from: RouteLocationNormalized } | null = null
-
-const remainingRatio = computed(() => Math.max(0, remaining.value / TOTAL_TIME))
 
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
@@ -815,107 +245,32 @@ const playersStatus = computed(() => {
       }
     }
 
-    statusMap.set(userId, {
-      status,
-      colorClass:
-        status === 'correct'
-          ? 'text-brand-green'
-          : status === 'incorrect'
-            ? 'text-red-500'
-            : status === 'answered'
-              ? 'text-brand-green'
-              : status === 'noAnswer'
-                ? 'text-brand-gray'
-                : 'text-brand-orange',
-      borderClass:
-        status === 'correct'
-          ? 'border-brand-green'
-          : status === 'incorrect'
-            ? 'border-red-500'
-            : status === 'answered'
-              ? 'border-brand-green'
-              : status === 'noAnswer'
-                ? 'border-brand-gray'
-                : 'border-brand-orange',
-      cardClass:
-        status === 'correct'
-          ? 'border-brand-green/40 bg-brand-green/5'
-          : status === 'incorrect'
-            ? 'border-red-500/40 bg-red-500/5'
-            : status === 'answered'
-              ? 'border-brand-green/40 bg-brand-green/5'
-              : status === 'noAnswer'
-                ? 'border-brand-gray/40 bg-brand-gray/5'
-                : 'border-brand-orange/40 bg-brand-orange/5',
-      badgeClass:
-        status === 'correct'
-          ? 'bg-brand-green'
-          : status === 'incorrect'
-            ? 'bg-red-500'
-            : status === 'answered'
-              ? 'bg-brand-green'
-              : status === 'noAnswer'
-                ? 'bg-brand-gray'
-                : 'bg-brand-orange animate-pulse',
-      icon:
-        status === 'correct'
-          ? 'check'
-          : status === 'incorrect'
-            ? 'times'
-            : status === 'answered'
-              ? 'check'
-              : status === 'noAnswer'
-                ? 'times'
-                : 'clock',
-      text:
-        status === 'correct'
-          ? t('group.quiz.goodAnswer')
-          : status === 'incorrect'
-            ? t('group.quiz.badAnswer')
-            : status === 'answered'
-              ? t('group.quiz.answered')
-              : status === 'noAnswer'
-                ? t('group.quiz.noAnswer')
-                : t('group.quiz.waiting'),
-    })
+    statusMap.set(userId, status === 'incorrect' ? 'wrong' : status)
   })
 
   return statusMap
 })
 
-// Helper functions to get player status data
-const getPlayerStatusData = (user: { id?: number | string; idUser?: number | string }) => {
-  const userId = user?.id ?? user?.idUser
-  return (
-    playersStatus.value.get(userId) || {
-      status: 'waiting',
-      colorClass: 'text-brand-orange',
-      borderClass: 'border-brand-orange',
-      cardClass: 'border-brand-orange/40 bg-brand-orange/5',
-      badgeClass: 'bg-brand-orange animate-pulse',
-      icon: 'clock',
-      text: t('group.quiz.waiting'),
+const myId = computed(() =>
+  userStore.isLogged
+    ? userStore.userId
+    : userStore.isLoggedAsInvited
+      ? userStore.userIdInvited
+      : null,
+)
+
+const playerStatusEntries = computed<PlayerStatusEntry[]>(() =>
+  (groupeStore.groupePartyInfo?.partyUsers || []).map((p: any) => {
+    const userId = p.user?.id ?? p.user?.idUser
+    return {
+      id: String(p.id),
+      name: p.user?.nickName,
+      avatar: p.user?.avatar,
+      status: playersStatus.value.get(userId) ?? 'waiting',
+      isMe: userId != null && String(userId) === String(myId.value),
     }
-  )
-}
-
-const getPlayerStatusColor = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).colorClass
-
-const getPlayerBorderClass = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).borderClass
-
-const getPlayerCardClass = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).cardClass
-
-const getPlayerStatusIcon = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).icon
-
-const getPlayerBadgeClass = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).badgeClass
-
-const getPlayerStatusText = (user: { id?: number | string; idUser?: number | string }) =>
-  getPlayerStatusData(user).text
+  }),
+)
 
 // Gestion du clavier
 const handleKeyPress = async (event: KeyboardEvent) => {
@@ -988,14 +343,15 @@ function clearTimer() {
   }
 }
 
-const answer = async (opt: { id: number }) => {
+const answer = async (opt: { id: number | string }) => {
   if (answered.value) return
   answered.value = true
 
   clearTimer()
 
   // Set user answer ID
-  userAnswerId.value = opt.id
+  const answerId = Number(opt.id)
+  userAnswerId.value = answerId
 
   // Add current user to answered set
   if (userStore.userId && userStore.isLogged) {
@@ -1006,7 +362,7 @@ const answer = async (opt: { id: number }) => {
 
   // Answer
   if (signalrService.isConnected()) {
-    await signalrService.send(GroupEvent.SendAnswer, opt.id)
+    await signalrService.send(GroupEvent.SendAnswer, answerId)
   } else {
     proxy?.$toast.error(t('group.quiz.errorAnswering'))
   }
@@ -1040,28 +396,6 @@ const next = async () => {
   // startTimer()
 }
 
-function buttonClass(answerId: number, valid: boolean) {
-  if (scoreIsAvailable.value) {
-    if (valid === true) {
-      return 'border-brand-green bg-brand-green/15 text-brand-green cursor-default'
-    }
-    if (answerId === userAnswerId.value && valid === false) {
-      return 'border-brand-orange bg-brand-orange/15 text-brand-orange cursor-default'
-    }
-    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
-  }
-
-  if (answerId === userAnswerId.value) {
-    return 'border-brand-purple bg-brand-purple/20 text-brand-lightGray cursor-default'
-  }
-
-  if (answered.value) {
-    return 'border-brand-purple/20 bg-brand-surface2/20 text-brand-gray cursor-default opacity-50'
-  }
-
-  return 'border-brand-purple/20 bg-brand-surface2/30 text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10 cursor-pointer'
-}
-
 const allQuestionsParty = computed(() => {
   if (groupeStore.groupePartyInfo) {
     return groupeStore.getQuestions
@@ -1079,14 +413,26 @@ const currentAnswer = computed(() => {
   return allQuestionsParty.value[lastQuestionIndex.value]?.question?.answer ?? ''
 })
 
-// Sorted players by score (descending)
-const sortedPlayers = computed(() => {
-  return [...playersRanking.value].sort((a, b) => b.score - a.score)
+// Classement des joueurs (intermédiaire et final)
+const rankingEntries = computed<RankingEntry[]>(() =>
+  playersRanking.value.map((p) => ({
+    id: String(p.user?.id ?? ''),
+    name: p.user?.nickName,
+    avatar: p.user?.avatar,
+    score: p.score,
+  })),
+)
+
+const myRank = computed(() => {
+  const sorted = [...rankingEntries.value].sort((a, b) => b.score - a.score)
+  const index = sorted.findIndex((entry) => String(entry.id) === String(myId.value))
+  return index === -1 ? null : index + 1
 })
 
-// Sorted current players for real-time ranking
-const sortedCurrentPlayers = computed(() => {
-  return [...playersRanking.value].sort((a, b) => b.score - a.score)
+const resultsTitle = computed(() => {
+  if (myRank.value === 1) return t('game.results.groupFirst')
+  if (myRank.value) return t('game.results.groupPlace', { rank: myRank.value })
+  return t('game.results.finished')
 })
 
 // Check if scoreEachRound is enabled
@@ -1115,59 +461,20 @@ const isQuestionCorrect = (questionData: any) => {
   return questionData?.correct
 }
 
-const getQuestionPoints = (questionData: any) => {
-  // Simuler les points gagnés (à adapter selon votre logique)
-  return questionData?.score || 100
-}
+const recapItems = computed<RecapItem[]>(() =>
+  allQuestionsParty.value.map((q: any) => ({
+    label: q?.question?.label ?? '',
+    correct: isQuestionCorrect(q),
+    points: q?.score,
+    selectedId: q?.idAnswer ?? null,
+    answers: q?.question?.answer ?? [],
+  })),
+)
 
-// Computed properties pour les informations de la partie
-const difficulties = computed(() => [
-  {
-    id: 1,
-    label: t('solo.difficulties.easy'),
-    icon: 'seedling',
-    colorClass: 'diff-easy',
-    glowClass: 'glow-green',
-  },
-  {
-    id: 2,
-    label: t('solo.difficulties.medium'),
-    icon: 'bolt',
-    colorClass: 'diff-medium',
-    glowClass: 'glow-yellow',
-  },
-  {
-    id: 3,
-    label: t('solo.difficulties.hard'),
-    icon: 'fire',
-    colorClass: 'diff-hard',
-    glowClass: 'glow-orange',
-  },
-  {
-    id: 4,
-    label: t('solo.difficulties.hardcore'),
-    icon: 'skull',
-    colorClass: 'diff-hardcore',
-    glowClass: 'glow-red',
-  },
-])
-
-const partyDifficulties = computed(() => {
-  const diffLabels =
-    groupeStore.groupePartyInfo?.partyDifficulty.map((d: any) => {
-      const difficultyObj = difficulties.value.find(
-        (diff: any) => diff.label.toLowerCase() === d.difficulty.label.toLowerCase(),
-      )
-
-      if (difficultyObj) return difficultyObj
-      return null
-    }) || []
-
-  if (!diffLabels || diffLabels.length === 0) return []
-
-  // Remove null values and duplicates
-  return diffLabels.filter((item): item is NonNullable<typeof item> => Boolean(item))
-})
+// Informations de la partie
+const partyDifficulties = computed(() =>
+  fromParty(groupeStore.groupePartyInfo?.partyDifficulty as any),
+)
 
 const partyThemes = computed(() => {
   if (!groupeStore.groupePartyInfo?.partyTheme || !themeStore.list) return []
@@ -1179,25 +486,6 @@ const isUserAnswerIsCorrect = (questions: any, answerId: number) => {
   const answer = questions.answer.find((ans: { id: number }) => ans.id === answerId)
 
   return answer ? answer.valid : false
-}
-
-const getAnswerClass = (questionData: any, answer: any) => {
-  const isCorrect = answer.valid
-  const isUserChoice = answer.id === questionData?.idAnswer
-
-  if (isCorrect && isUserChoice) {
-    // Bonne réponse sélectionnée
-    return 'bg-brand-green/20 border-brand-green text-brand-green font-semibold'
-  } else if (isCorrect) {
-    // Bonne réponse non sélectionnée
-    return 'bg-brand-green/10 border-brand-green/40 text-brand-green'
-  } else if (isUserChoice) {
-    // Mauvaise réponse sélectionnée
-    return 'bg-brand-orange/20 border-brand-orange text-brand-orange font-semibold'
-  } else {
-    // Autre réponse
-    return 'bg-brand-surface2/30 border-brand-gray/20 text-brand-gray'
-  }
 }
 
 const exitQuizGame = async () => {
@@ -1219,14 +507,6 @@ const exitQuizGame = async () => {
 // Handlers for SignalR events
 const countdownValue = ref<number | null>(null)
 let countdownClearTimeout: ReturnType<typeof setTimeout> | null = null
-
-const countdownTextClass = computed(() => {
-  // Variantes de couleur façon “3-2-1” arcade
-  if (countdownValue.value === 3) return 'text-brand-yellow'
-  if (countdownValue.value === 2) return 'text-brand-orange'
-  if (countdownValue.value === 1) return 'text-brand-green'
-  return 'text-brand-lightGray'
-})
 
 const handleOnUserAnswer = (data: any) => {
   if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.log('User answer received:', data)
@@ -1288,7 +568,6 @@ const handleQuestionSend = (data: any) => {
   if (finished.value) {
     finished.value = false
     globalUserScore.value = 0
-    showAllPlayers.value = false
 
     // Réinitialiser les questions de la partie précédente
     if (groupeStore.groupePartyInfo) {

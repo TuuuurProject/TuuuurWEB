@@ -1,20 +1,19 @@
-// cypress.config.js
-const { defineConfig } = require('cypress')
-const { vitePreprocessor } = require('cypress-vite')
+import { defineConfig } from 'cypress'
+import { vitePreprocessor } from 'cypress-vite'
+import codeCoverageTask from '@cypress/code-coverage/task'
 
-module.exports = defineConfig({
+export default defineConfig({
   requestTimeout: 30000,
   responseTimeout: 30000,
   video: false,
-  videoUploadOnPasses: false,
   screenshotOnRunFailure: true,
   fixturesFolder: 'cypress/fixtures',
   e2e: {
-    setupNodeEvents(on: any, config: any) {
+    setupNodeEvents(on, config) {
       on('file:preprocessor', vitePreprocessor())
 
       // Code coverage
-      require('@cypress/code-coverage/task')(on, config)
+      codeCoverageTask(on, config)
       return config
     },
     baseUrl: 'http://localhost:5173',

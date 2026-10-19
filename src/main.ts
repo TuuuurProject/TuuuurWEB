@@ -107,6 +107,8 @@ import {
   faFlag,
   faSun,
   faMoon,
+  faRankingStar,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -194,6 +196,8 @@ library.add(
   faFlag,
   faSun,
   faMoon,
+  faRankingStar,
+  faBars,
 )
 
 // Functions

@@ -16,8 +16,8 @@
   "nav": {
     "home": "Accueil",
     "solo": "Solo",
-    "group": "Groupe",
-    "competitive": "Compétitif",
+    "group": "En groupe",
+    "competitive": "Duel classé",
     "profile": "Profil",
     "ranking": "Classement",
     "modes": "Modes de jeu",
@@ -25,15 +25,83 @@
     "colorMode": {
       "toLight": "Passer en mode clair",
       "toDark": "Passer en mode sombre"
-    }
+    },
+    "main": "Navigation principale",
+    "language": "Langue"
   },
   "home": {
     "title": "Monkizz",
-    "subtitle": "Quiz fun et compétitif. Jouez en solo, en groupe ou en duel en ligne.",
+    "heroTitle": "Le quiz qui se joue seul, entre amis ou en duel",
+    "heroTitleLogged": "Content de vous revoir, {name} !",
+    "subtitle": "Choisissez vos thèmes, répondez avant la fin du chrono et grimpez au classement.",
     "playSolo": "Jouer en solo",
-    "playGroup": "Jouer en groupe",
-    "competitiveMode": "Mode compétitif",
-    "footer": "© {year} Monkizz"
+    "playGroup": "Jouer entre amis",
+    "duration": "10 questions, environ 3 minutes",
+    "preview": {
+      "label": "Exemple de question",
+      "theme": "Géographie",
+      "difficulty": "Moyen",
+      "question": "Quelle est la capitale de l'Australie ?",
+      "answer1": "Sydney",
+      "answer2": "Canberra",
+      "answer3": "Melbourne",
+      "answer4": "Perth",
+      "correct": "Bonne réponse !"
+    },
+    "modes": {
+      "title": "Modes de jeu",
+      "solo": {
+        "title": "Solo",
+        "description": "Entraînez-vous sur vos thèmes préférés, à votre rythme.",
+        "meta": "5 à 20 questions"
+      },
+      "group": {
+        "title": "En groupe",
+        "description": "Créez une partie et partagez le code ou le QR code avec vos amis.",
+        "meta": "Vos invités jouent sans compte"
+      },
+      "ranked": {
+        "title": "Duel classé",
+        "description": "Affrontez un joueur de votre niveau. Chaque victoire fait monter votre Élo.",
+        "meta": "1 contre 1"
+      }
+    },
+    "progress": {
+      "title": "Votre progression",
+      "elo": "Élo",
+      "rank": "Classement",
+      "rankTotal": "sur {total} joueurs",
+      "unranked": "Pas encore classé",
+      "lastGame": "Dernière partie",
+      "points": "{score} pts",
+      "noGame": "Aucune partie pour l'instant",
+      "seeProfile": "Mon profil et historique",
+      "seeRanking": "Voir le classement",
+      "lastGameMeta": "{mode}, {date}"
+    },
+    "guest": {
+      "title": "Suivez votre progression",
+      "text": "Avec un compte, vos parties sont enregistrées, vous gagnez de l'Élo en duel et vous apparaissez au classement.",
+      "register": "Créer un compte",
+      "login": "Se connecter"
+    },
+    "footer": "© {year} Monkizz, version {version}",
+    "mascot": {
+      "firstGame": "Pas encore de partie ? Lancez un solo, je vous accompagne.",
+      "lastGame": "{score} pts {mode} la dernière fois. On fait mieux aujourd'hui ?"
+    },
+    "partyModes": {
+      "name": {
+        "solo": "Solo",
+        "group": "Groupe",
+        "ranked": "Duel classé"
+      },
+      "inline": {
+        "solo": "en solo",
+        "group": "en groupe",
+        "ranked": "en duel classé"
+      }
+    }
   },
   "auth": {
     "login": {
@@ -46,7 +114,9 @@
       "forgotPassword": "Mot de passe oublié ?",
       "submit": "Se connecter",
       "noAccount": "Pas de compte ?",
-      "createAccount": "Créer un compte"
+      "createAccount": "Créer un compte",
+      "subtitle": "Retrouvez votre progression, votre Élo et votre historique.",
+      "mascot": "Content de vous revoir ! On reprend où on s'était arrêtés ?"
     },
     "register": {
       "title": "Créer un compte",
@@ -69,12 +139,15 @@
       "nicknameFormat": "Lettres, chiffres, tirets et espaces uniquement",
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
-      "signIn": "Se connecter"
+      "signIn": "Se connecter",
+      "subtitle": "Gratuit. Vos parties, votre Élo et votre place au classement sont enregistrés.",
+      "mascot": "Bienvenue dans la bande ! Prêt pour votre premier quiz ?"
     },
     "verification": {
       "title": "Vérification de votre email",
       "message": "Un code a été envoyé à votre adresse email.",
-      "submit": "Confirmer"
+      "submit": "Confirmer",
+      "codeLabel": "Code reçu par e-mail"
     },
     "forgotPassword": {
       "title": "Mot de passe oublié",
@@ -93,12 +166,13 @@
       "codeError": "Erreur lors de l'envoi du code. Vérifiez vos informations.",
       "resetSuccess": "Mot de passe réinitialisé avec succès !",
       "resetError": "Erreur lors de la réinitialisation. Vérifiez le code et réessayez.",
-      "successMessage": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe."
+      "successMessage": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "backToLogin": "Retour à la connexion"
     },
     "googleError": "Erreur lors de la connexion avec Google"
   },
   "profile": {
-    "title": "Profil Joueur",
+    "title": "Profil",
     "userProfile": "Profil joueur",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder à votre profil",
     "elo": "Élo",
@@ -125,13 +199,15 @@
     "avatar": {
       "updateSuccess": "Avatar mis à jour avec succès !",
       "updateError": "Erreur lors de la mise à jour de l'avatar",
-      "processingError": "Erreur lors du traitement de l'image"
+      "processingError": "Erreur lors du traitement de l'image",
+      "change": "Changer la photo de profil"
     },
     "nickname": {
       "emptyError": "Le nom d'utilisateur ne peut pas être vide",
       "invalidFormatError": "Le pseudo doit contenir uniquement des lettres, chiffres, tirets et espaces (50 caractères max)",
       "updateSuccess": "Nom d'utilisateur mis à jour avec succès !",
-      "updateError": "Erreur lors de la mise à jour du nom d'utilisateur"
+      "updateError": "Erreur lors de la mise à jour du nom d'utilisateur",
+      "edit": "Modifier le pseudo"
     },
     "matchHistory": {
       "title": "Historique des parties",
@@ -141,7 +217,7 @@
         "all": "Tous",
         "solo": "Solo",
         "group": "Groupe",
-        "ranked": "Compétitif"
+        "ranked": "Classé"
       },
       "inProgress": "En cours",
       "questions": "Questions:",
@@ -151,10 +227,15 @@
       "pagination": {
         "showing": "Affichage de {from} à {to} sur {total} partie | Affichage de {from} à {to} sur {total} parties",
         "firstPage": "Première page",
-        "previousPage": "Page précédente",
-        "nextPage": "Page suivante",
-        "lastPage": "Dernière page"
-      }
+        "previousPage": "Précédente",
+        "nextPage": "Suivante",
+        "lastPage": "Dernière page",
+        "label": "Pages de l'historique",
+        "pageOf": "Page {page} sur {total}"
+      },
+      "played": "Parties jouées",
+      "filterLabel": "Filtrer par mode",
+      "duration": "durée {time}"
     }
   },
   "solo": {
@@ -235,8 +316,10 @@
         "title": "Rejoindre la partie",
         "nickname": "Choisissez un pseudo pour le salon",
         "nicknamePlaceholder": "Votre pseudo",
-        "submit": "Rejoindre la partie"
-      }
+        "submit": "Rejoindre la partie",
+        "nicknameHint": "C'est le nom que les autres joueurs verront."
+      },
+      "digit": "Chiffre {n} du code"
     },
     "lobby": {
       "joinError": "Erreur lors de la tentative de rejoindre la partie",
@@ -263,7 +346,15 @@
       "expelPlayer": "Expulser le joueur",
       "playerExpelled": "{name} a été expulsé(e) du lobby",
       "youWereExpelled": "Vous avez été expulsé(e) du lobby",
-      "expelError": "Erreur lors de l'expulsion du joueur"
+      "expelError": "Erreur lors de l'expulsion du joueur",
+      "inviteTitle": "Invitez vos amis",
+      "inviteText": "Ils saisissent ce code ou scannent le QR code depuis Monkizz.",
+      "copyCode": "Copier le code",
+      "copyLink": "Copier le lien d'invitation",
+      "host": "Hôte",
+      "expelNamed": "Expulser {name}",
+      "waitingHost": "En attente du lancement par l'hôte…",
+      "readyHint": "Tout est prêt. Lancez quand tous vos amis sont arrivés."
     },
     "quiz": {
       "title": "Quiz en Groupe",
@@ -306,6 +397,12 @@
       },
       "returnToLobby": "Retour au lobby",
       "noQuestions": "Aucune question disponible pour cette partie"
+    },
+    "mode": {
+      "intro": "Une partie à plusieurs, chacun sur son téléphone ou son ordinateur. Vos amis rejoignent avec un code, même sans compte.",
+      "createText": "Choisissez les thèmes, partagez le code et lancez quand tout le monde est là.",
+      "joinText": "Saisissez le code à 6 chiffres affiché chez l'hôte.",
+      "accountNeeded": "Un compte est nécessaire pour créer une partie."
     }
   },
   "competitive": {
@@ -329,13 +426,15 @@
     "startSearch": "Lancer la recherche",
     "matchmaking": {
       "searching": "Recherche en cours…",
-      "searchingMessage": "Nous cherchons un adversaire compatible…",
+      "searchingMessage": "On cherche un joueur de votre niveau. Ça prend en général moins d'une minute.",
       "found": "Adversaire trouvé !",
       "gameStartingSoon": "La partie va bientôt commencer...",
       "you": "Vous",
       "opponent": "Adversaire",
       "vs": "VS",
-      "cancel": "Annuler la recherche"
+      "cancel": "Annuler la recherche",
+      "elo": "{value} Élo",
+      "elapsed": "Recherche depuis {time}"
     },
     "quiz": {
       "abort": "Abandonner",
@@ -377,10 +476,31 @@
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
       },
       "noQuestions": "Aucune question disponible pour ce duel"
+    },
+    "lobby": {
+      "title": "Duel classé",
+      "intro": "Affrontez un joueur de votre niveau en 1 contre 1. Le résultat fait évoluer votre Élo et votre place au classement.",
+      "level": "Votre niveau",
+      "rulesTitle": "Comment ça marche",
+      "rules": {
+        "match": {
+          "title": "Un adversaire à votre niveau",
+          "text": "On vous associe à un joueur dont l'Élo est proche du vôtre."
+        },
+        "play": {
+          "title": "Les mêmes questions, en même temps",
+          "text": "15 secondes par question. Le meilleur score remporte le duel."
+        },
+        "elo": {
+          "title": "Votre Élo évolue",
+          "text": "Une victoire le fait monter, une défaite le fait baisser."
+        }
+      },
+      "mascot": "Prêt à défier quelqu'un de votre niveau ?"
     }
   },
   "leaderboard": {
-    "title": "Classement Global",
+    "title": "Classement",
     "badge": "Top Légendes",
     "podium": {
       "first": "#1",
@@ -398,12 +518,16 @@
       "confirmedPlayer": "Joueur confirmé"
     },
     "otherPlayers": "Voir les {count} autres joueurs",
-    "empty": "Aucun joueur classé pour l'instant",
+    "empty": "Personne n'est encore classé. Lancez le premier duel !",
     "eloLabel": "Élo",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder au classement !",
     "you": "Vous",
     "unranked": "Hors classement",
-    "yourPosition": "Votre position"
+    "yourPosition": "Votre position",
+    "intro": "Les meilleurs joueurs en duel classé. Le classement bouge après chaque duel.",
+    "topPlayers": "Meilleurs joueurs",
+    "playRanked": "Jouer un duel classé",
+    "unrankedHint": "Jouez un duel classé pour apparaître au classement."
   },
   "modal": {
     "defaultTitle": "Confirmation",
@@ -413,5 +537,87 @@
   },
   "errors": {
     "generic": "Une erreur s'est produite"
+  },
+  "mascot": {
+    "alt": "Le singe Monkizz"
+  },
+  "game": {
+    "setup": {
+      "soloIntro": "Choisissez vos thèmes et votre niveau, puis lancez la partie. 15 secondes par question.",
+      "themes": "Thèmes",
+      "themesHint": "Un ou plusieurs, les questions seront tirées au hasard.",
+      "allThemes": "Tout sélectionner",
+      "clearThemes": "Tout désélectionner",
+      "difficulty": "Difficulté",
+      "difficultyHint": "Plusieurs choix possibles.",
+      "questions": "Nombre de questions",
+      "start": "Lancer la partie",
+      "pickTheme": "Choisissez au moins un thème.",
+      "pickDifficulty": "Choisissez au moins une difficulté.",
+      "ready": "Prêt : {count} question, environ 15 secondes chacune. | Prêt : {count} questions, environ 15 secondes chacune."
+    },
+    "summary": {
+      "noTheme": "Aucun thème choisi pour l'instant",
+      "noDifficulty": "Aucune difficulté choisie pour l'instant"
+    },
+    "hud": {
+      "question": "Question {current}",
+      "questionOf": "Question {current} sur {total}",
+      "points": "pts",
+      "multiplier": "Multiplicateur de points",
+      "timeLeft": "{time} secondes restantes",
+      "leave": "Quitter la partie"
+    },
+    "feedback": {
+      "correct": "Bonne réponse !",
+      "correctPoints": "Bonne réponse ! +{points} pts",
+      "wrong": "Mauvaise réponse",
+      "noAnswer": "Temps écoulé",
+      "skipped": "Question passée"
+    },
+    "controls": {
+      "skip": "Passer",
+      "next": "Question suivante",
+      "finish": "Voir les résultats"
+    },
+    "status": {
+      "waiting": "Réfléchit…",
+      "answered": "A répondu",
+      "correct": "Bonne réponse",
+      "wrong": "Mauvaise réponse",
+      "noAnswer": "Pas de réponse",
+      "you": "(vous)"
+    },
+    "results": {
+      "score": "Score",
+      "goodAnswers": "Bonnes réponses",
+      "successRate": "Réussite",
+      "finished": "Partie terminée",
+      "replay": "Rejouer",
+      "newGame": "Changer de thèmes",
+      "backToProfile": "Retour au profil",
+      "partyInfo": "La partie",
+      "mascot": {
+        "great": "Impressionnant ! Vous êtes une vraie encyclopédie.",
+        "good": "Bien joué ! Encore un effort pour le sans-faute.",
+        "low": "Pas facile celle-là. On en refait une ?",
+        "zero": "Aïe… La prochaine sera la bonne !"
+      },
+      "ranked": {
+        "win": "Victoire ! Votre Élo grimpe.",
+        "lose": "Défaite, mais vous allez prendre votre revanche.",
+        "draw": "Égalité parfaite. Il faudra départager ça !"
+      },
+      "against": "contre {name}",
+      "groupFirst": "Vous gagnez la partie !",
+      "groupPlace": "{rank}e place"
+    },
+    "recap": {
+      "title": "Vos réponses",
+      "yourAnswer": "Votre réponse : {answer}",
+      "correctAnswer": "Bonne réponse : {answer}",
+      "noAnswer": "Pas de réponse",
+      "empty": "Aucune question jouée."
+    }
   }
 }

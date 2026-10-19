@@ -1,522 +1,164 @@
 <template>
-  <section class="space-y-6">
-    <!-- Header -->
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-2xl sm:text-3xl text-brand-lightGray">
-        <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-        {{ $t('competitive.ranked.title') }}
-      </h2>
+  <section class="flex flex-col gap-6">
+    <header class="flex flex-col gap-2">
+      <h2 class="text-3xl font-bold">{{ $t('competitive.lobby.title') }}</h2>
     </header>
 
-    <!-- Matchmaking visual -->
-    <Transition name="state-switch" mode="out-in">
-      <!-- ── SEARCHING ────────────────────────────────────────── -->
-      <div v-if="state === 'search'" key="search" class="flex flex-col items-center gap-8 py-4">
-        <!-- Radar -->
-        <div class="radar">
-          <!-- Ambient glow -->
-          <div class="radar-glow"></div>
+    <div
+      class="surface-card mx-auto flex w-full max-w-3xl flex-col items-center gap-8 md:p-10"
+      aria-live="polite"
+    >
+      <p
+        class="flex items-center gap-2 rounded-full px-4 py-1.5 font-bold"
+        :class="
+          state === 'found'
+            ? 'bg-brand-green/15 text-brand-green'
+            : 'bg-brand-purple/10 text-brand-purple'
+        "
+      >
+        <font-awesome-icon
+          :icon="state === 'found' ? 'bolt' : 'circle-notch'"
+          :class="{ 'animate-spin': state === 'search' }"
+        />
+        {{
+          state === 'found'
+            ? $t('competitive.matchmaking.found')
+            : $t('competitive.matchmaking.searching')
+        }}
+      </p>
 
-          <!-- Static concentric rings -->
-          <div class="radar-ring radar-ring--outer"></div>
-          <div class="radar-ring radar-ring--mid"></div>
-          <div class="radar-ring radar-ring--inner"></div>
-
-          <!-- Cross-hair lines -->
-          <div class="radar-line radar-line--h"></div>
-          <div class="radar-line radar-line--v"></div>
-
-          <!-- Rotating sweep -->
-          <div class="radar-sweep-wrap">
-            <div class="radar-sweep"></div>
-          </div>
-
-          <!-- Blip dots scattered on the radar -->
-          <div class="blip" style="top: 22%; left: 58%"></div>
-          <div class="blip" style="top: 65%; left: 30%; animation-delay: 1.1s"></div>
-          <div class="blip" style="top: 40%; left: 72%; animation-delay: 0.5s"></div>
-          <div class="blip" style="top: 72%; left: 62%; animation-delay: 1.8s"></div>
-
-          <!-- Center dot -->
-          <div class="radar-center">
-            <div class="radar-dot"></div>
-            <div class="radar-dot-ping"></div>
-          </div>
+      <!-- Face-à-face : le joueur à gauche, l'adversaire (ou sa place vide) à droite -->
+      <div
+        class="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-6"
+      >
+        <div class="flex min-w-0 flex-col items-center gap-2 text-center">
+          <player-avatar
+            :name="currentUser?.nickName"
+            :avatar="currentUser?.avatar"
+            size="xl"
+            class="border-4 border-brand-purple"
+          />
+          <span class="w-full truncate text-lg font-bold">
+            {{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}
+          </span>
+          <span class="text-sm font-semibold text-brand-gray tabular-nums">
+            {{ $t('competitive.matchmaking.elo', { value: currentUser?.globalElo ?? '—' }) }}
+          </span>
         </div>
 
-        <!-- Status text -->
-        <div class="text-center space-y-2">
-          <p class="font-branding text-xl text-brand-lightGray tracking-wide">
-            {{ $t('competitive.matchmaking.searching') }}
-          </p>
-          <p class="text-sm text-brand-gray max-w-xs mx-auto">
-            {{ $t('competitive.matchmaking.searchingMessage') }}
-          </p>
-          <div class="flex gap-1.5 justify-center pt-1">
-            <span
-              class="w-2 h-2 rounded-full bg-brand-purple animate-bounce"
-              style="animation-delay: 0s"
-            ></span>
-            <span
-              class="w-2 h-2 rounded-full bg-brand-purple animate-bounce"
-              style="animation-delay: 0.15s"
-            ></span>
-            <span
-              class="w-2 h-2 rounded-full bg-brand-purple animate-bounce"
-              style="animation-delay: 0.3s"
-            ></span>
-          </div>
-        </div>
+        <span class="font-display text-3xl font-extrabold text-brand-gray">
+          {{ $t('competitive.matchmaking.vs') }}
+        </span>
 
-        <!-- Cancel -->
-        <button class="btn btn-ghost" @click="$emit('cancel')">
-          <font-awesome-icon icon="xmark" class="mr-1.5" />
-          {{ $t('competitive.matchmaking.cancel') }}
-        </button>
-      </div>
-
-      <!-- ── FOUND ───────────────────────────────────────────── -->
-      <div v-else key="found" class="flex flex-col items-center gap-6 py-4 w-full">
-        <!-- Match found badge -->
-        <div class="found-badge">
-          <font-awesome-icon icon="bolt" class="mr-1.5" />
-          {{ $t('competitive.matchmaking.found') }}
-        </div>
-
-        <!-- Players face-off -->
-        <div class="matchup">
-          <!-- You -->
-          <div class="player player--you">
-            <div class="avatar-ring avatar-ring--purple">
-              <div class="avatar-inner">
-                <img
-                  v-if="currentUser?.avatar"
-                  :src="currentUser.avatar"
-                  class="w-full h-full object-cover"
-                  alt=""
-                />
-                <span v-else class="avatar-initial avatar-initial--purple">
-                  {{ currentUser?.nickName?.charAt(0).toUpperCase() || '?' }}
-                </span>
-              </div>
-            </div>
-            <p class="player-nick">
-              {{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}
-            </p>
-            <div class="player-elo">
-              <span>{{ currentUser?.globalElo ?? '—' }} ELO</span>
-            </div>
-          </div>
-
-          <!-- VS -->
-          <div class="vs-block">
-            <span class="vs-text">VS</span>
-          </div>
-
-          <!-- Opponent -->
-          <div class="player player--opponent">
-            <div class="avatar-ring avatar-ring--orange">
-              <div class="avatar-inner">
-                <img
-                  v-if="opponent?.avatar"
-                  :src="opponent.avatar"
-                  class="w-full h-full object-cover"
-                  alt=""
-                />
-                <span v-else class="avatar-initial avatar-initial--orange">
-                  {{ opponent?.nickName?.charAt(0).toUpperCase() || '?' }}
-                </span>
-              </div>
-            </div>
-            <p class="player-nick">
+        <div class="flex min-w-0 flex-col items-center gap-2 text-center">
+          <template v-if="state === 'found'">
+            <player-avatar
+              :name="opponent?.nickName"
+              :avatar="opponent?.avatar"
+              size="xl"
+              class="border-4 border-brand-orange"
+            />
+            <span class="w-full truncate text-lg font-bold">
               {{ opponent?.nickName ?? $t('competitive.matchmaking.opponent') }}
-            </p>
-            <div class="player-elo">
-              <span>{{ opponent?.globalElo ?? '—' }} ELO</span>
-            </div>
-          </div>
+            </span>
+            <span class="text-sm font-semibold text-brand-gray tabular-nums">
+              {{ $t('competitive.matchmaking.elo', { value: opponent?.globalElo ?? '—' }) }}
+            </span>
+          </template>
+          <template v-else>
+            <span
+              class="opponent-slot flex h-20 w-20 items-center justify-center rounded-full border-4 border-dashed border-brand-line text-3xl font-bold text-brand-gray"
+              aria-hidden="true"
+            >
+              ?
+            </span>
+            <span class="text-lg font-bold text-brand-gray">
+              {{ $t('competitive.matchmaking.opponent') }}
+            </span>
+            <span class="text-sm font-semibold text-brand-gray tabular-nums">
+              {{ $t('competitive.matchmaking.elapsed', { time: elapsedLabel }) }}
+            </span>
+          </template>
         </div>
-
-        <!-- Starting soon -->
-        <p class="text-sm text-brand-gray text-center animate-pulse">
-          {{ $t('competitive.matchmaking.gameStartingSoon') }}
-        </p>
       </div>
-    </Transition>
+
+      <p class="max-w-md text-center text-brand-gray">
+        {{
+          state === 'found'
+            ? $t('competitive.matchmaking.gameStartingSoon')
+            : $t('competitive.matchmaking.searchingMessage')
+        }}
+      </p>
+
+      <button v-if="state === 'search'" class="btn btn-ghost" @click="$emit('cancel')">
+        <font-awesome-icon icon="xmark" class="mr-2" />
+        {{ $t('competitive.matchmaking.cancel') }}
+      </button>
+    </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import PlayerAvatar from '@/components/game/PlayerAvatar.vue'
 import type { RankedUser } from '@/stores/ranked'
 
-defineProps<{
+const props = defineProps<{
   state: 'search' | 'found'
   opponent?: RankedUser | null
   currentUser?: RankedUser | null
 }>()
 
 defineEmits<{ cancel: [] }>()
+
+// Temps d'attente affiché pendant la recherche
+const elapsed = ref(0)
+let interval: ReturnType<typeof setInterval> | null = null
+
+const stopClock = () => {
+  if (interval) clearInterval(interval)
+  interval = null
+}
+
+const startClock = () => {
+  stopClock()
+  elapsed.value = 0
+  interval = setInterval(() => elapsed.value++, 1000)
+}
+
+const elapsedLabel = computed(() => {
+  const minutes = Math.floor(elapsed.value / 60)
+  const seconds = String(elapsed.value % 60).padStart(2, '0')
+  return `${minutes}:${seconds}`
+})
+
+watch(
+  () => props.state,
+  (state) => (state === 'search' ? startClock() : stopClock()),
+)
+
+onMounted(() => {
+  if (props.state === 'search') startClock()
+})
+
+onBeforeUnmount(stopClock)
 </script>
 
 <style scoped>
-/* ── RADAR ─────────────────────────────────────────────────── */
-
-.radar {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  background: rgb(var(--c-surface));
-  border: 1px solid rgb(var(--c-primary) / 0.35);
-  overflow: hidden;
-  flex-shrink: 0;
+/* Place de l'adversaire : respiration lente pendant la recherche */
+.opponent-slot {
+  animation: slot-breathe 2s ease-in-out infinite;
 }
 
-@media (min-width: 640px) {
-  .radar {
-    width: 280px;
-    height: 280px;
-  }
-}
-
-/* Ambient radial glow */
-.radar-glow {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgb(var(--c-primary) / 0.14) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-/* Static concentric rings */
-.radar-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgb(var(--c-primary) / 0.18);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.radar-ring--outer {
-  width: 88%;
-  height: 88%;
-}
-.radar-ring--mid {
-  width: 62%;
-  height: 62%;
-}
-.radar-ring--inner {
-  width: 36%;
-  height: 36%;
-}
-
-/* Cross-hair */
-.radar-line {
-  position: absolute;
-  background: rgb(var(--c-primary) / 0.14);
-}
-.radar-line--h {
-  width: 100%;
-  height: 1px;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-}
-.radar-line--v {
-  width: 1px;
-  height: 100%;
-  left: 50%;
-  top: 0;
-  transform: translateX(-50%);
-}
-
-/* Rotating sweep (conic-gradient) */
-.radar-sweep-wrap {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  animation: radar-rotate 3s linear infinite;
-}
-.radar-sweep {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 275deg,
-    rgb(var(--c-primary) / 0.06) 305deg,
-    rgb(var(--c-primary) / 0.22) 338deg,
-    rgb(var(--c-primary) / 0.45) 360deg
-  );
-}
-
-@keyframes radar-rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Center dot */
-.radar-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-}
-.radar-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgb(var(--c-primary));
-  position: relative;
-  z-index: 1;
-}
-.radar-dot-ping {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgb(var(--c-primary));
-  animation: radar-ping 2.2s ease-out infinite;
-}
-@keyframes radar-ping {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(6);
-    opacity: 0;
-  }
-}
-
-/* Blip dots */
-.blip {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgb(var(--c-primary));
-  animation: blip-pulse 2.4s ease-in-out infinite;
-}
-@keyframes blip-pulse {
+@keyframes slot-breathe {
   0%,
   100% {
-    opacity: 0.2;
-    transform: scale(0.8);
+    opacity: 0.55;
+    transform: scale(0.96);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.3);
-  }
-}
-
-/* ── FOUND STATE ────────────────────────────────────────────── */
-
-.found-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.375rem 1.125rem;
-  border-radius: 9999px;
-  background: rgb(var(--c-green) / 0.14);
-  border: 1px solid rgb(var(--c-green) / 0.45);
-  color: rgb(var(--c-green));
-  font-size: 0.875rem;
-  font-weight: 600;
-  animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-@keyframes badge-pop {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  to {
+    opacity: 1;
     transform: scale(1);
-    opacity: 1;
   }
-}
-
-/* Players row */
-.matchup {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  width: 100%;
-}
-@media (min-width: 480px) {
-  .matchup {
-    gap: 1.75rem;
-  }
-}
-@media (min-width: 640px) {
-  .matchup {
-    gap: 2.5rem;
-  }
-}
-
-.player {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-  min-width: 0;
-  max-width: 110px;
-}
-@media (min-width: 640px) {
-  .player {
-    max-width: 140px;
-  }
-}
-
-/* Slide-in animations */
-.player--you {
-  animation: slide-from-left 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
-}
-.player--opponent {
-  animation: slide-from-right 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) 0.08s both;
-}
-@keyframes slide-from-left {
-  from {
-    transform: translateX(-28px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-@keyframes slide-from-right {
-  from {
-    transform: translateX(28px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Avatar ring */
-.avatar-ring {
-  padding: 3px;
-  border-radius: 50%;
-}
-.avatar-ring--purple {
-  background: rgb(var(--c-primary));
-}
-.avatar-ring--orange {
-  background: rgb(var(--c-orange));
-}
-
-.avatar-inner {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgb(var(--c-surface));
-  border: 2px solid rgb(var(--c-surface));
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-@media (min-width: 640px) {
-  .avatar-inner {
-    width: 88px;
-    height: 88px;
-  }
-}
-
-.avatar-initial {
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1;
-}
-.avatar-initial--purple {
-  color: rgb(var(--c-primary));
-}
-.avatar-initial--orange {
-  color: rgb(var(--c-orange));
-}
-
-/* Player text */
-.player-nick {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgb(var(--c-ink));
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-@media (min-width: 640px) {
-  .player-nick {
-    font-size: 0.875rem;
-  }
-}
-
-.player-elo {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-size: 0.75rem;
-  color: rgb(var(--c-muted));
-  font-weight: 500;
-}
-
-/* VS block */
-.vs-block {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  animation: vs-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-}
-.vs-text {
-  font-family: 'Baloo 2', system-ui, sans-serif;
-  font-size: 2rem;
-  font-weight: 800;
-  color: rgb(var(--c-orange));
-  letter-spacing: 0.05em;
-}
-@media (min-width: 640px) {
-  .vs-text {
-    font-size: 2.75rem;
-  }
-}
-@keyframes vs-pop {
-  from {
-    transform: scale(0.2) rotate(-20deg);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-/* ── STATE SWITCH TRANSITION ────────────────────────────────── */
-
-.state-switch-enter-active,
-.state-switch-leave-active {
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-}
-.state-switch-enter-from {
-  opacity: 0;
-  transform: scale(0.96) translateY(8px);
-}
-.state-switch-leave-to {
-  opacity: 0;
-  transform: scale(1.03) translateY(-8px);
 }
 </style>

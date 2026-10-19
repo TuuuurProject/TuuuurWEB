@@ -2,8 +2,9 @@
 
 Jeu de quiz (1 question, 4 réponses) : solo, groupe temps réel, duel classé 1v1 avec ELO, historique, classement.
 **Le jeu s'appelle désormais Monkizz.** Côté front le nom est appliqué (titre, header en texte « Monk**izz** », locales, clé `monkizz_active_group`). L'API garde « Tuuuur » (`Tuuuur.sln`). `src/assets/logo.png` (singe néon « Tuuuur ») n'est plus affiché, gardé en attendant la mascotte.
-Une mascotte singe viendra plus tard : prévoir une place pour elle dans les layouts sans la dessiner pour l'instant.
+Mascotte singe : `components/mascot/MonkizzMascot.vue` est un SVG **provisoire** (bandeau à la couleur `--c-primary`), à remplacer par l'illustration officielle en gardant ses props (`size`, `animated`). L'utiliser pour les moments personnels (accueil connecté, fin de partie…) plutôt que comme décor.
 Refonte en cours (branche `newDa`) : DA grand public mais compétitive (pas enfantine), mode clair + sombre, puis nouveaux layouts page par page. Pistes explorées : `../design/pistes-da.html` ; retenue : variante 3 « Évolution » (palette et polices actuelles, sans néon). On évite de copier GeoGuessr (référence d'esprit seulement).
+Avancement des layouts : **Accueil fait** (hero avec « Jouer en solo » / « Jouer entre amis » ; à droite la mascotte et une bulle sur la dernière partie si connecté, sinon un exemple de question, cartes des 3 modes, bloc « Votre progression » Élo / rang / dernière partie si connecté, sinon invitation à créer un compte). **Parcours de jeu fait** : sélection (solo + hôte de groupe), question et résultats mutualisés entre solo, groupe et classé via `components/game/` (voir Architecture) ; la mascotte commente la fin de partie ; plus de modale de confirmation avant une partie solo. **Groupe fait** : l'écran groupe présente « Créer » et « Rejoindre » côte à côte (saisie du code intégrée, `GroupJoin` n'a plus d'écran à lui ni d'événement `back`) ; le salon (`GroupLobby`) affiche en haut le code, le QR, le lien à copier, les joueurs (hôte, expulsion) et le bouton de lancement, puis les réglages passés en slot (`GroupCreate`). Plus de modale de confirmation au lancement. **Duel classé fait** : écran de lancement (`OnlineMode`, étape idle : Élo + rang, règles, mascotte + bouton de recherche placé en premier sur mobile) et `RankedMatchmaking` en face-à-face joueur / adversaire (place vide qui respire + temps de recherche, puis adversaire trouvé). Le radar néon a été supprimé. **Classement et profil faits** : `Leaderboard` = podium (`ResultsPodium` avec `unit`) + carte « Votre position » ; profil = carte joueur (avatar cliquable, pseudo modifiable, Élo, actions du compte, suppression en lien discret) + historique (filtres en segments, une ligne par partie, pagination précédente / suivante). **Header et auth faits** : header avec liens directs (Solo, En groupe, Duel classé, Classement, lien actif surligné), langue compacte (FR/EN), thème, avatar + pseudo vers le profil ou « Se connecter » (masqué sur les pages d'auth), panneau mobile sous 1024 px ; `ModeSwitcher` supprimé. Auth : gabarit `auth/AuthLayout` (mascotte à gauche sur grand écran + carte formulaire), `FieldRules` pour les règles de pseudo/mot de passe, champs en classes `.field-label` / `.field-input` / `.form-error` / `.text-link` / `.code-digit` (base.css). **Toutes les pages ont été refondues.**
 L'API .NET est dans `../api` (référence uniquement, on ne la modifie pas sauf demande).
 
 ## Stack
@@ -17,7 +18,7 @@ L'API .NET est dans `../api` (référence uniquement, on ne la modifie pas sauf 
 
 ## Commandes
 
-Lancer l'app : `npm run dev` (API attendue sur `localhost:8080`, cf. `.env.local`). Sans API, `npm run dev:e2e` lance l'app avec les mocks MSW ; pour être connecté en mock, poser dans `localStorage['user-store']` un token créé par `createMockToken()` de `src/mocks/data/user.ts`. Configs `web` / `web-mock` dans `../.claude/launch.json`.
+Lancer l'app : `npm run dev` (API attendue sur `localhost:8080`, cf. `.env.local`). Sans API, `npm run dev:e2e` lance l'app avec les mocks MSW (partie solo jouable de bout en bout ; groupe et classé impossibles sans SignalR) ; pour être connecté en mock, poser dans `localStorage['user-store']` un token créé par `createMockToken()` de `src/mocks/data/user.ts`. Configs `web` / `web-mock` dans `../.claude/launch.json`.
 
 ```bash
 npm run dev          # Vite
@@ -25,7 +26,7 @@ npm run build        # type-check + build
 npm run type-check   # vue-tsc --build
 npm run lint         # eslint --fix
 npm run format       # prettier src/
-npm run e2e:run      # Cypress headless avec MSW (port 5173, mode e2e)
+npm run e2e:run      # Cypress headless avec MSW (port 5173 doit être libre, mode e2e)
 ```
 
 Env : `VITE_API_URL` (base REST, se termine par `/`… les stores concatènent directement `'solo'`, `'me'`, etc.), `VITE_BASE_API_URL` (base des hubs SignalR `group` / `ranked`), `VITE_GOOGLE_CLIENT_ID`, `VITE_DEBUG_CONSOLE_LOG`.
@@ -39,16 +40,21 @@ src/
   router/index.ts    routes FR (/solo/:id?, /groupe/:id?, /competitif/:id?, /profil, /classement, /connexion, /inscription)
   views/             pages minces : conteneur `mx-auto max-w-5xl px-6 py-10` + 1 composant (sauf HomePage, autonome)
   components/
-    HeaderBlock, ModeSwitcher, LanguageSwitcher, ColorModeSwitcher   navigation (header sticky 75px, burger < sm)
+    HeaderBlock, LanguageSwitcher, ColorModeSwitcher   navigation (header sticky 75px, panneau mobile < lg)
     ModalDialog, OverlayBlock (loader), InputComponent, LoggedInBlock (CTA connexion/inscription)
-    auth/        AuthLogin, AuthRegister, AuthCode (2FA e-mail), AuthForgotPassword
-    solo/        SoloSelect (thèmes + nb questions + difficulté) → SoloQuiz (jeu + résultats)
-    group/       GroupMode (machine à étapes mode|join|lobby|game) → GroupCreate, GroupJoin, GroupLobby (+QRPreview), GroupQuiz
+    auth/        AuthLayout (gabarit), AuthLogin, AuthRegister, AuthCode (2FA e-mail), AuthForgotPassword, FieldRules
+    game/        briques d'affichage partagées par les 3 modes (aucune logique de jeu, tout passe par props/événements) :
+                 GameSetup (thèmes, difficulté, nb de questions ; v-model) · PartySummary · GameHud (question n/total, score, timer, quitter)
+                 QuestionCard (états idle/pending/correct/wrong/dim) · AnswerFeedback · PlayerStatusList · LiveRanking
+                 CountdownOverlay · GameResults (mascotte + verdict + stats, slots highlight/actions) · ResultsPodium · QuestionRecap · PlayerAvatar
+    mascot/      MonkizzMascot (SVG provisoire) · MascotSpeech (bulle + mascotte)
+    solo/        SoloSelect (GameSetup) → SoloQuiz (jeu + résultats)
+    group/       GroupMode (étapes mode|lobby|game ; la saisie du code est dans l'étape mode) → GroupJoin, GroupLobby (+QRPreview, slot = GroupCreate), GroupQuiz
     online/      OnlineMode (étapes idle|search|found|game) → RankedMatchmaking (radar), RankedQuiz
     leaderboard/ Leaderboard (podium top 3 + liste + joueur courant épinglé)
     profile/     ProfileView → ProfilBlock (avatar, pseudo, mdp, suppression) + MatchHistoryBlock (liste paginée, filtres)
   stores/      user, solo, groupe, ranked (setup store), history, theme (liste des thèmes de quiz, ≠ thème visuel)
-  composables/ useGroupLifecycle, useRankedLifecycle (connexion/déconnexion SignalR, cleanup, beforeunload), useColorMode (clair/sombre)
+  composables/ useGroupLifecycle, useRankedLifecycle (connexion/déconnexion SignalR, cleanup, beforeunload), useColorMode (clair/sombre), useDifficulties (liste des 4 difficultés + conversion depuis l'API)
   services/    signalrService.ts (singleton, enums GroupEvent / RankedEvent), axiosOverlay(.js) + axiosOverlayConnector.js (token, refresh sur 401)
   locales/     fr.json / en.json (clés : common, nav, home, auth, profile, solo, group, competitive, leaderboard, modal, errors)
   mocks/       MSW (handlers + données) pour Cypress
@@ -61,6 +67,7 @@ Les gros fichiers : `GroupQuiz.vue` (~1640 l), `RankedQuiz.vue` (~1100 l), `Solo
 - Stores : `loading` en compteur (`loading++` / `finally loading--`) + getter `isLoading` ; les actions **retournent l'erreur** au lieu de la lever (`return errData ?? error`).
 - Appels API : toujours via `axiosOverlayConnector({ url, method, data })` avec `import.meta.env.VITE_API_URL + 'chemin'`.
 - Temps réel : `signalrService.on/off/send/invoke` ; enregistrer les handlers dans un tableau `{ name, handler }` et les retirer au démontage. Événements serveur préfixés `On…` (voir `ranked.md` pour le hub Ranked).
+- Types de partie de l'API : **1 groupe, 2 classé, 3 solo** (`src/services/partyTypes.ts`, `partyModeKey()`), ne pas se fier aux libellés renvoyés par l'API.
 - Auth : routes protégées listées dans `router/index.ts` (`protectedRoutes`) ; `user.comeFrom` mémorise la cible avant login. Mode invité possible en groupe (`invitedToken`).
 - Tout texte visible passe par i18n (`$t` / `t`) ; mettre à jour **fr.json et en.json** ensemble.
 - `data-testid` utilisés par Cypress (home-solo, home-group, home-profile, solo-start, group-create, profile-logged, profile-history, profile-not-logged…) : ne pas les supprimer en refondant les layouts.
@@ -74,6 +81,7 @@ Les gros fichiers : `GroupQuiz.vue` (~1640 l), `RankedQuiz.vue` (~1100 l), `Solo
   Les noms (`darkGray`, `lightGray`) sont trompeurs en mode clair : les lire comme « surface » et « encre ». Renommage prévu pendant la refonte des layouts.
 - **Piège** : `bg-brand-darkGray/30` dans une carte = blanc sur blanc en clair ; utiliser `bg-brand-surface2/…`. `text-white` seulement sur fond `brand-purple`.
 - **Classes composants** (`@layer components` de `base.css`) : `.btn` + `.btn-primary|secondary|ghost`, `.surface-card` (ex-`gaming-card`), `.menu-card`, `.pill`, `.badge-*`, `.category-button`, `.difficulty-button` + `.diff-*`, `.slider-purple`, animations countdown.
+- **Tics à éviter** (skill frontend-design) : étiquette au-dessus des titres, libellés en majuscules espacées, infos jointes par « · », un mot coloré dans un titre.
 - **Interdit** (ancienne DA « gaming néon », retirée) : lueurs (`shadow-neon`, `glow-text`, `drop-shadow` colorés), dégradés animés, particules, polices gaming. Ombres disponibles : `shadow-card`, `shadow-soft`.
 - **Mode clair/sombre** : `useColorMode()` (suit le système par défaut, choix mémorisé dans `localStorage['color-mode']`), script inline dans `index.html` pour éviter le flash, bouton `ColorModeSwitcher` dans le header.
 - Polices : Baloo 2 (titres, boutons) + Nunito (texte), chargées dans `index.html`.

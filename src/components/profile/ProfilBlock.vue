@@ -1,110 +1,108 @@
 <template>
   <overlay-block :loading="userStore.isLoading">
-    <div
-      data-testid="profile-info"
-      class="gap-4 p-4 rounded-2xl bg-brand-purple/10 border border-brand-purple/20 grid sm:grid-cols-1 md:grid-cols-2"
-    >
-      <div class="flex items-center gap-3 sm:gap-4">
-        <div class="relative group cursor-pointer" @click="triggerFileInput">
-          <img
-            v-if="userStore.userInfo?.avatar"
-            :src="userStore.userInfo?.avatar"
-            alt="avatar"
-            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple shadow-card object-cover"
-          />
-          <div
-            v-else
-            class="h-12 w-12 sm:h-16 sm:w-16 rounded-full border-2 border-brand-purple flex items-center justify-center"
-          >
-            <span id="user-nickname" class="text-2xl font-bold text-brand-purple">
-              {{ userStore.userInfo?.nickName?.charAt(0).toUpperCase() || '?' }}
-            </span>
-          </div>
-          <!-- Camera overlay on hover -->
-          <div
-            class="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            <font-awesome-icon icon="camera" class="text-white text-xl" />
-          </div>
-          <!-- Hidden file input -->
+    <div data-testid="profile-info" class="flex flex-col items-center gap-5 text-center">
+      <!-- Avatar : cliquer pour le changer -->
+      <button
+        type="button"
+        class="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40"
+        :aria-label="$t('profile.avatar.change')"
+        :title="$t('profile.avatar.change')"
+        @click="triggerFileInput"
+      >
+        <player-avatar
+          :name="userStore.userInfo?.nickName"
+          :avatar="userStore.userInfo?.avatar"
+          size="xl"
+          class="border-4 border-brand-purple"
+        />
+        <span
+          class="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand-darkGray bg-brand-purple text-sm text-white transition-transform group-hover:scale-110"
+        >
+          <font-awesome-icon icon="camera" />
+        </span>
+      </button>
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+        @change="handleFileChange"
+      />
+
+      <!-- Pseudo modifiable -->
+      <div class="flex w-full flex-col items-center gap-1">
+        <button
+          v-if="!isEditingNickname"
+          id="nickname"
+          type="button"
+          class="flex max-w-full items-center gap-2 rounded-xl px-2 text-2xl font-bold transition-colors hover:text-brand-purple"
+          :title="$t('profile.nickname.edit')"
+          @click="startEditingNickname"
+        >
+          <span class="truncate">{{ userStore.userInfo?.nickName }}</span>
+          <font-awesome-icon icon="pen" class="shrink-0 text-sm text-brand-purple" />
+        </button>
+        <div v-else class="flex w-full items-center gap-2">
           <input
-            ref="fileInput"
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="handleFileChange"
+            ref="nicknameInput"
+            v-model="newNickname"
+            type="text"
+            maxlength="50"
+            :aria-label="$t('profile.nickname.edit')"
+            class="min-w-0 flex-1 rounded-xl border-2 border-brand-purple bg-brand-darkGray px-3 py-2 text-lg font-bold text-brand-lightGray focus:outline-none"
+            @keydown.enter="saveNickname"
+            @keydown.escape="cancelEditingNickname"
           />
+          <button
+            type="button"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-green/15 text-brand-green"
+            :aria-label="$t('common.save')"
+            @click="saveNickname"
+          >
+            <font-awesome-icon icon="check" />
+          </button>
+          <button
+            type="button"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface2 text-brand-gray"
+            :aria-label="$t('common.cancel')"
+            @click="cancelEditingNickname"
+          >
+            <font-awesome-icon icon="xmark" />
+          </button>
         </div>
-        <div class="flex-1">
-          <div v-if="!isEditingNickname" class="flex items-center gap-2">
-            <div
-              id="nickname"
-              class="font-branding text-sm md:text-2xl text-brand-lightGray cursor-pointer hover:text-brand-purple transition-colors flex items-center"
-              @click="startEditingNickname"
-            >
-              {{ userStore.userInfo?.nickName }}
-              <font-awesome-icon icon="pen" class="ml-2 text-sm text-brand-purple" />
-            </div>
-          </div>
-          <div v-else class="flex items-center gap-2">
-            <input
-              ref="nicknameInput"
-              v-model="newNickname"
-              type="text"
-              maxlength="50"
-              class="font-branding text-sm md:text-2xl text-brand-lightGray bg-transparent border-b-2 border-brand-purple focus:outline-none px-1"
-              @keydown.enter="saveNickname"
-              @keydown.escape="cancelEditingNickname"
-            />
-            <button
-              class="text-green-400 hover:text-green-300 transition-colors"
-              @click="saveNickname"
-            >
-              <font-awesome-icon icon="check" />
-            </button>
-            <button
-              class="text-red-400 hover:text-red-300 transition-colors"
-              @click="cancelEditingNickname"
-            >
-              <font-awesome-icon icon="xmark" />
-            </button>
-          </div>
-          <div class="text-sm text-brand-gray">{{ userStore.userInfo?.email }}</div>
-        </div>
+        <span class="max-w-full truncate text-sm text-brand-gray">{{
+          userStore.userInfo?.email
+        }}</span>
       </div>
-      <div class="text-right flex items-center justify-start sm:justify-end" style="z-index: -1">
-        <div class="pill bg-brand-orange/20 border-brand-orange/40 text-brand-orange font-bold">
-          <font-awesome-icon icon="trophy" class="mr-1" /> {{ $t('profile.elo') }}:
+
+      <div class="flex w-full flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
+        <span class="text-sm font-semibold text-brand-gray">
+          <font-awesome-icon icon="trophy" class="mr-1 text-brand-yellow" /> {{ $t('profile.elo') }}
+        </span>
+        <span class="font-display text-4xl font-extrabold tabular-nums">
           {{ userStore.userInfo?.globalElo ?? '—' }}
-        </div>
+        </span>
       </div>
     </div>
 
-    <div class="mt-4 gap-5 md:gap-2 grid md:grid-cols-2 sm:grid-cols-1 mx-auto">
-      <div>
-        <button
-          v-if="!userStore.userInfo?.isGoogleUser"
-          class="btn btn-ghost border border-brand-purple hover:bg-brand-purple/10 h-full w-full md:w-auto"
-          @click="showModalChangePassword = true"
-        >
-          <font-awesome-icon icon="key" class="mr-2" /> {{ $t('profile.changePassword') }}
-        </button>
-      </div>
-      <div class="gap-5 grid md:grid-cols-2 sm:grid-cols-1">
-        <button
-          class="btn text-brand-orange hover:bg-brand-orange/10 border border-transparent hover:border-brand-orange"
-          @click="showModalCompte = true"
-        >
-          <font-awesome-icon icon="trash" class="mr-2" /> {{ $t('profile.deleteAccount') }}
-        </button>
-        <button
-          data-testid="profile-logout"
-          class="btn btn-ghost text-danger"
-          @click="userStore.logout()"
-        >
-          <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
-        </button>
-      </div>
+    <!-- Compte -->
+    <div class="mt-6 flex flex-col gap-3 border-t border-brand-line pt-6">
+      <button
+        v-if="!userStore.userInfo?.isGoogleUser"
+        class="btn btn-ghost w-full"
+        @click="showModalChangePassword = true"
+      >
+        <font-awesome-icon icon="key" class="mr-2" /> {{ $t('profile.changePassword') }}
+      </button>
+      <button data-testid="profile-logout" class="btn btn-ghost w-full" @click="userStore.logout()">
+        <font-awesome-icon icon="sign-out-alt" class="mr-2" /> {{ $t('profile.logout') }}
+      </button>
+      <button
+        class="mt-2 self-center text-sm font-semibold text-brand-orange hover:underline"
+        @click="showModalCompte = true"
+      >
+        {{ $t('profile.deleteAccount') }}
+      </button>
     </div>
   </overlay-block>
 
@@ -158,7 +156,7 @@
 
       <div v-if="errorsPasswords" class="my-5">
         <div
-          class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
+          class="rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-sm font-semibold text-brand-orange"
           role="alert"
         >
           <ul
@@ -183,6 +181,7 @@ import router from '@/router'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 import ModalDialog from '@/components/ModalDialog.vue'
 import InputComponent from '@/components/InputComponent.vue'
+import PlayerAvatar from '@/components/game/PlayerAvatar.vue'
 import { resizeImage } from '@/services/fileUtils.js'
 
 const { t } = useI18n()

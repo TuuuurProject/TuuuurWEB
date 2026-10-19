@@ -1,6 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { mockUsers, createMockToken, getMockUserInfo, type UserInfo } from './data/user'
-import { createSoloParty, getPartyInfo, answerQuestion, createGroupLobby } from './data/games'
+import {
+  createSoloParty,
+  getPartyInfo,
+  answerQuestion,
+  createGroupLobby,
+  toApiParty,
+} from './data/games'
 import { getMockHistory } from './data/history'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:7260/api/v1/'
@@ -161,7 +167,7 @@ export const handlers = [
       return HttpResponse.json({ error: 'Partie non trouvée' }, { status: 404 })
     }
 
-    return HttpResponse.json(partyInfo)
+    return HttpResponse.json(toApiParty(partyInfo, 'get'))
   }),
 
   // SOLO: Answer question
@@ -175,7 +181,7 @@ export const handlers = [
       return HttpResponse.json({ error: 'Partie non trouvée' }, { status: 404 })
     }
 
-    return HttpResponse.json(updatedParty)
+    return HttpResponse.json(toApiParty(updatedParty, 'answer'))
   }),
 
   // HISTORY: Get match history
@@ -208,5 +214,27 @@ export const handlers = [
     ]
 
     return HttpResponse.json(themes)
+  }),
+
+  // RANKED: Get global ranking
+  http.get(`${API_URL}ranked/ranking`, () => {
+    return HttpResponse.json({
+      users: [
+        { id: 'player-0', nickName: 'Léa', avatar: null, globalElo: 1420, elo: [] },
+        { id: 'player-1', nickName: 'Tom', avatar: null, globalElo: 1383, elo: [] },
+        { id: 'player-2', nickName: 'Inès', avatar: null, globalElo: 1346, elo: [] },
+        { id: 'player-3', nickName: 'Hugo', avatar: null, globalElo: 1309, elo: [] },
+        { id: 'player-4', nickName: 'Sarah', avatar: null, globalElo: 1272, elo: [] },
+        { id: 'player-5', nickName: 'Nathan', avatar: null, globalElo: 1235, elo: [] },
+        { id: 'player-6', nickName: 'Camille', avatar: null, globalElo: 1198, elo: [] },
+      ],
+      userRanking: 12,
+      userElo: 1000,
+      currentPage: 1,
+      totalPages: 1,
+      totalUsers: 148,
+      userTier: 0,
+      userDivision: 0,
+    })
   }),
 ]

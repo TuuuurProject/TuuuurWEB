@@ -1,42 +1,102 @@
 <template>
   <section>
     <template v-if="userStore.isLogged">
-      <!-- Landing: search button only -->
-      <div v-if="step === 'idle'" class="space-y-6">
-        <header class="flex items-center justify-between">
-          <h2 class="font-branding text-3xl text-brand-lightGray">
-            <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-            {{ $t('competitive.ranked.title') }}
-          </h2>
+      <!-- Lancement : niveau du joueur, règles en bref, bouton de recherche -->
+      <div v-if="step === 'idle'" class="flex flex-col gap-6">
+        <header class="flex flex-col gap-2">
+          <h2 class="text-3xl font-bold">{{ $t('competitive.lobby.title') }}</h2>
+          <p class="max-w-2xl text-brand-gray">{{ $t('competitive.lobby.intro') }}</p>
         </header>
 
-        <div class="surface-card">
-          <div class="flex items-start gap-4 mb-6">
-            <div
-              class="w-12 h-12 rounded-2xl bg-brand-orange/20 flex items-center justify-center text-brand-orange text-2xl shrink-0"
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+          <div class="flex min-w-0 flex-col gap-6">
+            <section
+              class="surface-card grid grid-cols-2 gap-3 sm:gap-4"
+              aria-labelledby="ranked-level-title"
             >
-              <font-awesome-icon icon="bullseye" />
-            </div>
-            <div>
-              <h3 class="font-branding text-xl mb-2 text-brand-lightGray">
-                <font-awesome-icon icon="trophy" class="mr-2" />
-                {{ $t('competitive.ranked.subtitle') }}
+              <h3 id="ranked-level-title" class="sr-only">{{ $t('competitive.lobby.level') }}</h3>
+              <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
+                <span class="text-sm font-semibold text-brand-gray">
+                  <font-awesome-icon icon="trophy" class="mr-1 text-brand-yellow" />
+                  {{ $t('home.progress.elo') }}
+                </span>
+                <span class="font-display text-4xl font-extrabold tabular-nums">
+                  {{ currentUser?.globalElo || rankedStore.rankingData?.userElo || '—' }}
+                </span>
+              </div>
+              <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
+                <span class="text-sm font-semibold text-brand-gray">
+                  <font-awesome-icon icon="ranking-star" class="mr-1 text-brand-purple" />
+                  {{ $t('home.progress.rank') }}
+                </span>
+                <template v-if="rankedStore.rankingData?.userRanking">
+                  <span class="font-display text-4xl font-extrabold tabular-nums">
+                    #{{ rankedStore.rankingData.userRanking }}
+                  </span>
+                  <span class="text-sm text-brand-gray">
+                    {{
+                      $t('home.progress.rankTotal', { total: rankedStore.rankingData.totalUsers })
+                    }}
+                  </span>
+                </template>
+                <span v-else class="pt-2 font-semibold text-brand-gray">
+                  {{ $t('home.progress.unranked') }}
+                </span>
+              </div>
+            </section>
+
+            <section class="surface-card flex flex-col gap-4" aria-labelledby="ranked-rules-title">
+              <h3 id="ranked-rules-title" class="text-xl font-bold">
+                {{ $t('competitive.lobby.rulesTitle') }}
               </h3>
-              <p class="text-brand-gray">{{ $t('competitive.ranked.description') }}</p>
-            </div>
+              <ol class="flex flex-col gap-4">
+                <li v-for="rule in rules" :key="rule.key" class="flex items-start gap-3">
+                  <span
+                    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-brand-purple"
+                  >
+                    <font-awesome-icon :icon="rule.icon" />
+                  </span>
+                  <span class="flex flex-col">
+                    <span class="font-semibold">{{
+                      $t(`competitive.lobby.rules.${rule.key}.title`)
+                    }}</span>
+                    <span class="text-sm text-brand-gray">
+                      {{ $t(`competitive.lobby.rules.${rule.key}.text`) }}
+                    </span>
+                  </span>
+                </li>
+              </ol>
+            </section>
           </div>
 
-          <div class="flex justify-center">
-            <button class="btn btn-secondary" :disabled="connectionLoading" @click="startSearch">
+          <section
+            class="surface-card order-first flex flex-col items-center gap-5 text-center lg:sticky lg:top-24 lg:order-none"
+          >
+            <mascot-speech
+              :message="$t('competitive.lobby.mascot')"
+              :size="180"
+              mascot-class="w-36"
+            />
+            <button
+              data-testid="ranked-search"
+              class="btn btn-primary w-full py-4 text-lg"
+              :disabled="connectionLoading"
+              @click="startSearch"
+            >
               <font-awesome-icon
-                v-if="connectionLoading"
-                icon="circle-notch"
-                class="animate-spin mr-1"
+                :icon="connectionLoading ? 'circle-notch' : 'magnifying-glass'"
+                :class="{ 'animate-spin': connectionLoading }"
+                class="mr-2"
               />
-              <font-awesome-icon v-else icon="magnifying-glass" class="mr-1" />
               {{ $t('competitive.ranked.searchOpponent') }}
             </button>
-          </div>
+            <router-link
+              :to="{ name: 'Ranking' }"
+              class="text-sm font-bold text-brand-purple hover:underline"
+            >
+              {{ $t('home.progress.seeRanking') }}
+            </router-link>
+          </section>
         </div>
       </div>
 
@@ -61,7 +121,7 @@
       />
     </template>
 
-    <div v-else class="surface-card justify-self-center w-full">
+    <div v-else class="surface-card w-full">
       <logged-in-block :message="$t('competitive.notLoggedIn')" />
     </div>
   </section>
@@ -79,6 +139,13 @@ import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import RankedMatchmaking from './RankedMatchmaking.vue'
 import RankedQuiz from './RankedQuiz.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
+import MascotSpeech from '@/components/mascot/MascotSpeech.vue'
+
+const rules = [
+  { key: 'match', icon: 'users' },
+  { key: 'play', icon: 'bolt' },
+  { key: 'elo', icon: 'chart-line' },
+]
 
 const { t } = useI18n()
 const rankedStore = useRankedStore()
@@ -209,6 +276,9 @@ onMounted(async () => {
       if (import.meta.env.VITE_DEBUG_CONSOLE_LOG) console.warn('Failed to fetch user info:', e)
     }
   }
+
+  // Niveau du joueur affiché sur l'écran de lancement
+  rankedStore.loadRanking(1, 1)
 
   // History mode: partyId set from route param by CompetitiveModePage
   if (rankedStore.partyId) {

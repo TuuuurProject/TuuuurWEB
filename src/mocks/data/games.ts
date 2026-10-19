@@ -86,7 +86,7 @@ export function answerQuestion(partyId: string, answerId: number | null): PartyI
     currentQuestion.isCorrect = correctAnswer?.id === answerId
 
     if (currentQuestion.isCorrect) {
-      party.score += 10
+      party.score += 120
     }
 
     party.currentQuestionIndex++
@@ -98,6 +98,51 @@ export function answerQuestion(partyId: string, answerId: number | null): PartyI
   }
 
   return party
+}
+
+/**
+ * Met une partie au format de l'API réelle : seules les questions déjà posées sont renvoyées,
+ * avec `question.label`, `answer[].value` et `valid` masqué tant que le joueur n'a pas répondu.
+ * `mode` : 'get' renvoie aussi la question en cours, 'answer' s'arrête à la question répondue.
+ */
+export function toApiParty(party: PartyInfo, mode: 'get' | 'answer') {
+  const shown =
+    mode === 'answer' || party.finish ? party.currentQuestionIndex : party.currentQuestionIndex + 1
+
+  return {
+    id: party.id,
+    active: party.active,
+    finish: party.finish,
+    score: party.score,
+    nbQuestions: party.nbQuestions,
+    partyTheme: [],
+    partyDifficulty: [],
+    partyQuestions: party.partyQuestions.slice(0, shown).map((pq, index) => {
+      const answered = index < party.currentQuestionIndex
+      return {
+        id: pq.id,
+        idParty: pq.idParty,
+        idQuestion: pq.idQuestion,
+        question: {
+          id: pq.question.id,
+          label: pq.question.question,
+          answer: pq.question.answers.map((a) => ({
+            id: a.id,
+            idQuestion: pq.question.id,
+            value: a.text,
+            valid: answered ? Boolean(a.isCorrect) : null,
+          })),
+        },
+        userPartyQuestion: answered
+          ? {
+              idAnswer: pq.userAnswerId,
+              correct: Boolean(pq.isCorrect),
+              score: pq.isCorrect ? 120 : 0,
+            }
+          : null,
+      }
+    }),
+  }
 }
 
 function generateMockQuestions(partyId: string, count: number): PartyQuestion[] {

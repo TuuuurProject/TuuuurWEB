@@ -1,135 +1,111 @@
 <template>
-  <section data-testid="group-lobby" class="space-y-6 mt-6">
-    <div class="grid gap-6 md:grid-cols-12">
-      <!-- Players focus panel -->
-      <div class="md:col-span-8 surface-card">
-        <div class="mb-4 flex items-center justify-between">
-          <h3 class="font-branding text-xl text-brand-lightGray">
+  <section data-testid="group-lobby" class="flex flex-col gap-6">
+    <header class="flex flex-wrap items-center gap-3">
+      <h2 class="text-3xl font-bold">{{ $t('group.lobby.title') }}</h2>
+      <span class="badge-green">
+        {{ currentUserIsHost ? $t('group.lobby.hostBadge') : $t('group.lobby.waitingBadge') }}
+      </span>
+      <button class="btn btn-ghost ml-auto" @click="leaveGroupe">
+        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
+      </button>
+    </header>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] lg:items-start">
+      <!-- Invitation : le code doit être visible tout de suite -->
+      <section
+        class="surface-card flex min-w-0 flex-col items-center gap-4 text-center"
+        aria-labelledby="lobby-invite-title"
+      >
+        <h3 id="lobby-invite-title" class="text-xl font-bold">
+          {{ $t('group.lobby.inviteTitle') }}
+        </h3>
+        <p class="text-sm text-brand-gray">{{ $t('group.lobby.inviteText') }}</p>
+        <button
+          type="button"
+          class="group flex items-center gap-3 rounded-2xl px-4 py-2 transition-colors hover:bg-brand-surface2"
+          :aria-label="$t('group.lobby.copyCode')"
+          :title="$t('group.lobby.copyCode')"
+          @click="copyCode"
+        >
+          <span
+            class="font-display text-4xl font-extrabold tracking-[0.15em] tabular-nums sm:text-5xl"
+          >
+            {{ groupeStore.groupePartyInfo?.code }}
+          </span>
+          <font-awesome-icon icon="copy" class="text-brand-gray group-hover:text-brand-purple" />
+        </button>
+        <QRPreview :code="groupeStore.groupePartyInfo?.code || ''" />
+        <button type="button" class="btn btn-ghost w-full" @click="copyLink">
+          <font-awesome-icon icon="copy" class="mr-2" /> {{ $t('group.lobby.copyLink') }}
+        </button>
+      </section>
+
+      <!-- Joueurs et lancement -->
+      <section
+        class="surface-card flex min-w-0 flex-col gap-5"
+        aria-labelledby="lobby-players-title"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <h3 id="lobby-players-title" class="text-xl font-bold">
             {{ $t('group.lobby.players') }}
           </h3>
-          <span class="pill">{{
-            $t('group.lobby.playersConnected', {
-              count: groupeStore.groupePartyInfo?.partyUsers?.length || 0,
-            })
-          }}</span>
+          <span class="pill text-sm font-semibold">
+            {{ $t('group.lobby.playersConnected', { count: players.length }, players.length) }}
+          </span>
         </div>
-        <ul
-          class="grid gap-4 lg:grid-cols-[repeat(auto-fit,minmax(220px,0.5fr))] grid-cols-1 sm:grid-cols-2"
-        >
+
+        <ul class="grid gap-3 sm:grid-cols-2">
           <li
-            v-for="p in groupeStore.groupePartyInfo?.partyUsers || []"
+            v-for="p in players"
             :key="String(p.id)"
-            class="rounded-2xl border border-brand-purple/20 bg-brand-surface2/30 p-4 items-start hover:shadow-card transition duration-250 overflow-hidden flex gap-4 items-center"
+            class="flex items-center gap-3 rounded-2xl border-2 border-brand-line px-3 py-2"
           >
-            <div class="relative shrink-0">
-              <div
-                class="rounded-full bg-brand-purple/20 flex items-center justify-center text-brand-purple"
-              >
-                <img
-                  v-if="p?.user?.avatar"
-                  :src="p.user.avatar"
-                  alt="avatar"
-                  class="h-12 w-12 rounded-full border-2 border-brand-purple shadow-card object-cover"
-                />
-                <div
-                  v-else
-                  class="h-12 w-12 rounded-full border-2 border-brand-purple flex items-center justify-center"
-                >
-                  <span class="text-2xl font-bold text-brand-purple">
-                    {{ p?.user?.nickName?.charAt(0).toUpperCase() || '?' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="font-semibold leading-tight truncate text-brand-lightGray">
+            <player-avatar :name="p.user?.nickName" :avatar="p.user?.avatar" />
+            <span class="flex min-w-0 flex-1 flex-col">
+              <span class="truncate font-semibold">
                 {{ p.user?.nickName }}
-              </div>
-            </div>
+                <span v-if="isMe(p)" class="text-sm font-normal text-brand-gray">
+                  {{ $t('game.status.you') }}
+                </span>
+              </span>
+              <span v-if="isHost(p)" class="text-sm font-semibold text-brand-yellow">
+                <font-awesome-icon icon="crown" class="mr-1" /> {{ $t('group.lobby.host') }}
+              </span>
+            </span>
             <button
-              v-if="currentUserIsHost && (p.user.idUser ?? p.user.id) !== userStore.userId"
-              @click="handleExpelPlayer(p)"
-              class="btn-icon text-brand-orange hover:text-red-500 transition-colors shrink-0"
+              v-if="currentUserIsHost && !isMe(p)"
+              type="button"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-gray transition-colors hover:bg-brand-orange/10 hover:text-brand-orange"
+              :aria-label="$t('group.lobby.expelNamed', { name: p.user?.nickName })"
               :title="$t('group.lobby.expelPlayer')"
+              @click="handleExpelPlayer(p)"
             >
-              <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+              <font-awesome-icon icon="xmark" />
             </button>
           </li>
         </ul>
-      </div>
 
-      <!-- Right rail with QR and actions -->
-      <aside class="md:col-span-4 space-y-4">
-        <div class="surface-card">
-          <h3 class="font-branding text-xl mb-3 text-brand-lightGray">
-            {{ $t('group.lobby.joinSection') }} !
-          </h3>
-          <div
-            class="text-center font-branding text-2xl tracking-wider text-brand-lightGray hover:underline cursor-pointer mb-4"
-            type="button"
-            @click.prevent.stop="copyCode"
-          >
-            {{ groupeStore?.groupePartyInfo?.code }}
-          </div>
-
-          <div class="flex justify-center">
-            <QRPreview :code="groupeStore?.groupePartyInfo?.code || ''" />
-          </div>
+        <div class="flex flex-col gap-3 border-t border-brand-line pt-5">
+          <template v-if="currentUserIsHost">
+            <p class="text-sm text-brand-gray">{{ startHint }}</p>
+            <button
+              data-testid="lobby-start"
+              class="btn btn-primary w-full py-4 text-lg sm:w-auto sm:self-start sm:px-10"
+              :disabled="canCreateGame"
+              @click="confirmStartGame"
+            >
+              <font-awesome-icon icon="play" class="mr-2" /> {{ $t('group.lobby.start') }}
+            </button>
+          </template>
+          <p v-else class="flex items-center gap-2 font-semibold text-brand-gray">
+            <font-awesome-icon icon="hourglass-half" /> {{ $t('group.lobby.waitingHost') }}
+          </p>
         </div>
-      </aside>
+      </section>
     </div>
 
-    <div class="flex flex-wrap items-center justify-end gap-3">
-      <button class="btn btn-ghost" @click="leaveGroupe">
-        <font-awesome-icon icon="arrow-left" class="mr-2" /> {{ $t('group.lobby.leave') }}
-      </button>
-
-      <button
-        v-if="currentUserIsHost"
-        class="btn btn-primary"
-        :disabled="canCreateGame"
-        @click="openModalStartGame = true"
-      >
-        <font-awesome-icon icon="rocket" class="mr-2" /> {{ $t('group.lobby.start') }}
-      </button>
-    </div>
-
-    <ModalDialog
-      :open="openModalStartGame"
-      :title="$t('group.create.modal.title')"
-      :loading="groupeStore.isLoading"
-      @confirm="confirmStartGame"
-      @close="openModalStartGame = false"
-    >
-      <div class="space-y-3">
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="bullseye" class="text-brand-purple" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.categories') }}</strong>
-          <span class="text-brand-gray">{{
-            Array.from(groupeStore?.groupePartyInfo?.partyTheme || [])
-              .map((theme: any) => theme?.theme?.label)
-              .join(', ')
-          }}</span>
-        </p>
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="chart-bar" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.questions') }}</strong>
-          <span class="text-brand-gray">{{ groupeStore?.groupePartyInfo?.nbQuestions }}</span>
-        </p>
-
-        <p class="flex items-center gap-2">
-          <font-awesome-icon icon="fire" class="text-brand-orange" />
-          <strong class="text-brand-lightGray">{{ $t('group.create.modal.difficulties') }} </strong>
-          <span class="text-brand-gray">
-            {{
-              Array.from(groupeStore?.groupePartyInfo?.partyDifficulty || [])
-                .map((difficulty: any) => difficulty?.difficulty?.label)
-                .join(', ')
-            }}</span
-          >
-        </p>
-      </div>
-    </ModalDialog>
+    <!-- Réglages (hôte) ou récapitulatif (invités) -->
+    <slot />
   </section>
 </template>
 
@@ -138,7 +114,7 @@ import { computed, getCurrentInstance, onMounted, onBeforeUnmount, ref } from 'v
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 import QRPreview from './QRPreview.vue'
-import ModalDialog from '@/components/ModalDialog.vue'
+import PlayerAvatar from '@/components/game/PlayerAvatar.vue'
 import useGroupeStore from '@/stores/groupe'
 import signalrService, { GroupEvent } from '@/services/signalrService'
 import useUserStore from '@/stores/user'
@@ -156,7 +132,6 @@ const { connectSignalR, cleanupGroup } = useGroupLifecycle()
 const instance = getCurrentInstance()
 const proxy = instance?.proxy
 
-const openModalStartGame = ref(false)
 const gameStarted = ref(false)
 
 const currentUserIsHost = computed(
@@ -168,6 +143,34 @@ const copyCode = async () => {
     proxy?.$toast.success(t('group.lobby.copySuccess'))
   })
 }
+
+const copyLink = async () => {
+  const link = `${globalThis.location.origin}${globalThis.location.pathname}?code=${groupeStore.groupePartyInfo?.code ?? ''}`
+  navigator.clipboard.writeText(link).then(() => {
+    proxy?.$toast.success(t('group.lobby.copySuccess'))
+  })
+}
+
+const players = computed(() => groupeStore.groupePartyInfo?.partyUsers ?? [])
+
+const playerId = (p: any) => p?.user?.idUser ?? p?.user?.id
+
+const isMe = (p: any) => {
+  const id = playerId(p)
+  return (
+    (userStore.isLogged && id === userStore.userId) ||
+    (userStore.isLoggedAsInvited && id === userStore.userIdInvited)
+  )
+}
+
+const isHost = (p: any) => playerId(p) === groupeStore.groupePartyInfo?.idUserHost
+
+const startHint = computed(() => {
+  if ((groupeStore.groupePartyInfo?.partyTheme.length ?? 0) < 1) return t('game.setup.pickTheme')
+  if ((groupeStore.groupePartyInfo?.partyDifficulty.length ?? 0) < 1)
+    return t('game.setup.pickDifficulty')
+  return t('group.lobby.readyHint')
+})
 
 const leaveGroupe = async () => {
   // Nettoyage complet de groupe
@@ -251,7 +254,6 @@ const handleExpelPlayer = async (player: any) => {
 const confirmStartGame = async () => {
   if (signalrService.isConnected()) {
     await signalrService.send(GroupEvent.StartGroupParty)
-    openModalStartGame.value = false
   } else {
     proxy?.$toast.error(t('group.lobby.connectionError'))
   }

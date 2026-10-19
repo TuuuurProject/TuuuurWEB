@@ -1,40 +1,29 @@
 <template>
-  <section class="space-y-6">
-    <header class="flex items-center justify-between">
-      <h2 class="font-branding text-3xl text-brand-lightGray">
-        <font-awesome-icon icon="key" class="mr-2" /> {{ $t('auth.forgotPassword.title') }}
-      </h2>
-    </header>
-
+  <section class="flex flex-col gap-6">
     <transition name="fade" mode="out-in">
       <!-- Step 1: Request code -->
-      <div v-if="step === 1" class="max-w-lg mx-auto">
+      <div v-if="step === 1">
         <overlay-block :loading="userStore.isLoading">
-          <form class="space-y-5" @submit.prevent="requestPasswordReset">
+          <form class="flex flex-col gap-5" @submit.prevent="requestPasswordReset">
             <div>
-              <label class="block font-semibold mb-1 text-brand-lightGray" for="login">
+              <label class="field-label" for="login">
                 {{ $t('auth.forgotPassword.loginLabel') }}
               </label>
               <input
                 id="login"
                 v-model="login"
                 type="text"
-                class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                class="field-input"
                 :placeholder="$t('auth.forgotPassword.loginPlaceholder')"
                 required
               />
             </div>
-            <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
-              <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                {{ $t('common.cancel') }}
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                :disabled="!login.trim()"
-                :class="{ 'opacity-50 cursor-not-allowed': !login.trim() }"
-              >
+            <div class="flex flex-col gap-3">
+              <button type="submit" class="btn btn-primary w-full py-4" :disabled="!login.trim()">
                 {{ $t('auth.forgotPassword.sendCode') }}
+              </button>
+              <button type="button" class="text-link self-center text-sm" @click="$emit('back')">
+                {{ $t('auth.forgotPassword.backToLogin') }}
               </button>
             </div>
           </form>
@@ -42,23 +31,26 @@
       </div>
 
       <!-- Step 2: Enter code and new password -->
-      <div v-else-if="step === 2" class="max-w-lg mx-auto">
+      <div v-else-if="step === 2">
         <overlay-block :loading="userStore.isLoading">
-          <div class="space-y-6">
+          <div class="flex flex-col gap-6">
             <!-- Code verification -->
             <div>
-              <h3 class="font-semibold text-lg text-brand-lightGray mb-2 text-center">
+              <h3 class="field-label">
                 {{ $t('auth.forgotPassword.codeTitle') }}
               </h3>
-              <p class="text-brand-gray text-sm mb-4 text-center">
+              <p class="mb-3 text-sm text-brand-gray">
                 {{ $t('auth.forgotPassword.codeDescription') }}
               </p>
-              <div class="flex items-center gap-1 sm:gap-2 justify-center">
+              <div class="flex justify-between gap-1.5 sm:gap-2">
                 <input
                   v-for="i in 6"
                   :key="i"
                   maxlength="1"
-                  class="w-10 h-10 sm:w-12 sm:h-12 text-center rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 font-branding text-xl sm:text-2xl shadow-card text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/30 focus:border-brand-purple"
+                  class="code-digit"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  :aria-label="$t('group.join.digit', { n: i })"
                   v-model="codeDigits[i - 1]"
                   @input="onCodeInput(i - 1)"
                   @keydown.backspace.prevent="onCodeBackspace(i - 1)"
@@ -68,104 +60,38 @@
             </div>
 
             <!-- New Password -->
-            <form class="space-y-5" @submit.prevent="resetPassword">
+            <form class="flex flex-col gap-5" @submit.prevent="resetPassword">
               <div>
-                <label class="block font-semibold mb-1 text-brand-lightGray" for="newPassword">
+                <label class="field-label" for="newPassword">
                   {{ $t('auth.forgotPassword.newPassword') }}
                 </label>
                 <input
                   id="newPassword"
                   v-model="newPassword"
                   type="password"
-                  class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                  class="field-input"
                   :placeholder="$t('auth.forgotPassword.newPasswordPlaceholder')"
                   required
                 />
               </div>
               <div>
-                <label
-                  class="block font-semibold mb-1 text-brand-lightGray"
-                  for="confirmNewPassword"
-                >
+                <label class="field-label" for="confirmNewPassword">
                   {{ $t('auth.forgotPassword.confirmPassword') }}
                 </label>
                 <input
                   id="confirmNewPassword"
                   v-model="confirmNewPassword"
                   type="password"
-                  class="w-full rounded-2xl border border-brand-purple/30 bg-brand-surface2/50 px-4 py-3 text-brand-lightGray focus:outline-none focus:ring-2 focus:ring-brand-purple/50 focus:border-brand-purple"
+                  class="field-input"
                   :placeholder="$t('auth.forgotPassword.confirmPasswordPlaceholder')"
                   required
                 />
               </div>
 
-              <!-- Password validation rules -->
-              <transition name="slide-fade">
-                <div
-                  v-if="newPassword"
-                  class="rounded-lg p-4 bg-brand-surface2/30 border border-brand-purple/20"
-                >
-                  <ul class="space-y-1.5 text-sm">
-                    <li class="flex items-center gap-2">
-                      <font-awesome-icon
-                        :icon="passwordRules.minLength ? 'check-circle' : 'times-circle'"
-                        :class="passwordRules.minLength ? 'text-green-400' : 'text-red-400'"
-                      />
-                      <span :class="passwordRules.minLength ? 'text-green-400' : 'text-brand-gray'">
-                        {{ $t('auth.register.passwordMinLength') }}
-                      </span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                      <font-awesome-icon
-                        :icon="passwordRules.hasLowercase ? 'check-circle' : 'times-circle'"
-                        :class="passwordRules.hasLowercase ? 'text-green-400' : 'text-red-400'"
-                      />
-                      <span
-                        :class="passwordRules.hasLowercase ? 'text-green-400' : 'text-brand-gray'"
-                      >
-                        {{ $t('auth.register.passwordLowercase') }}
-                      </span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                      <font-awesome-icon
-                        :icon="passwordRules.hasUppercase ? 'check-circle' : 'times-circle'"
-                        :class="passwordRules.hasUppercase ? 'text-green-400' : 'text-red-400'"
-                      />
-                      <span
-                        :class="passwordRules.hasUppercase ? 'text-green-400' : 'text-brand-gray'"
-                      >
-                        {{ $t('auth.register.passwordUppercase') }}
-                      </span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                      <font-awesome-icon
-                        :icon="passwordRules.hasNumber ? 'check-circle' : 'times-circle'"
-                        :class="passwordRules.hasNumber ? 'text-green-400' : 'text-red-400'"
-                      />
-                      <span :class="passwordRules.hasNumber ? 'text-green-400' : 'text-brand-gray'">
-                        {{ $t('auth.register.passwordNumber') }}
-                      </span>
-                    </li>
-                    <li class="flex items-center gap-2">
-                      <font-awesome-icon
-                        :icon="passwordRules.passwordsMatch ? 'check-circle' : 'times-circle'"
-                        :class="passwordRules.passwordsMatch ? 'text-green-400' : 'text-red-400'"
-                      />
-                      <span
-                        :class="passwordRules.passwordsMatch ? 'text-green-400' : 'text-brand-gray'"
-                      >
-                        {{ $t('auth.register.passwordsMatch') }}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </transition>
+              <field-rules v-if="newPassword" :rules="passwordRuleList" />
 
-              <div v-if="error" class="my-5">
-                <div
-                  class="rounded-lg p-4 text-sm text-red-400 bg-red-900/10 border border-red-400"
-                  role="alert"
-                >
+              <div v-if="error">
+                <div class="form-error" role="alert">
                   <template
                     v-if="
                       typeof error === 'string' ||
@@ -188,17 +114,12 @@
                 </div>
               </div>
 
-              <div class="pt-2 grid gap-3 sm:grid-cols-2 max-w-lg">
-                <button type="button" class="btn btn-secondary" @click="$emit('back')">
-                  {{ $t('common.cancel') }}
-                </button>
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  :disabled="!isFormValid"
-                  :class="{ 'opacity-50 cursor-not-allowed': !isFormValid }"
-                >
+              <div class="flex flex-col gap-3">
+                <button type="submit" class="btn btn-primary w-full py-4" :disabled="!isFormValid">
                   {{ $t('auth.forgotPassword.resetPassword') }}
+                </button>
+                <button type="button" class="text-link self-center text-sm" @click="$emit('back')">
+                  {{ $t('auth.forgotPassword.backToLogin') }}
                 </button>
               </div>
             </form>
@@ -213,6 +134,7 @@
 import { ref, computed, reactive, getCurrentInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useUserStore from '@/stores/user'
+import FieldRules from '@/components/auth/FieldRules.vue'
 import OverlayBlock from '@/components/OverlayBlock.vue'
 
 const { t } = useI18n()
@@ -249,6 +171,14 @@ const passwordRules = computed(() => ({
     newPassword.value.length > 0 &&
     confirmNewPassword.value.length > 0,
 }))
+
+const passwordRuleList = computed(() => [
+  { ok: passwordRules.value.minLength, label: t('auth.register.passwordMinLength') },
+  { ok: passwordRules.value.hasLowercase, label: t('auth.register.passwordLowercase') },
+  { ok: passwordRules.value.hasUppercase, label: t('auth.register.passwordUppercase') },
+  { ok: passwordRules.value.hasNumber, label: t('auth.register.passwordNumber') },
+  { ok: passwordRules.value.passwordsMatch, label: t('auth.register.passwordsMatch') },
+])
 
 const canSendCode = computed(() => {
   return codeDigits.every((d) => d !== '')
