@@ -3,7 +3,7 @@
     <div v-if="step === 'mode'" class="flex flex-col gap-6">
       <header class="flex flex-col gap-2">
         <h2 class="text-3xl font-bold">{{ $t('group.title') }}</h2>
-        <p class="max-w-2xl text-brand-gray">{{ $t('group.mode.intro') }}</p>
+        <p class="max-w-2xl text-brand-muted">{{ $t('group.mode.intro') }}</p>
       </header>
 
       <div class="grid gap-6 md:grid-cols-2">
@@ -18,7 +18,7 @@
             <h3 id="group-create-title" class="text-2xl font-bold">
               {{ $t('group.create.title') }}
             </h3>
-            <p class="text-brand-gray">{{ $t('group.mode.createText') }}</p>
+            <p class="text-brand-muted">{{ $t('group.mode.createText') }}</p>
           </div>
           <div class="mt-auto flex flex-col gap-2">
             <button
@@ -28,7 +28,7 @@
             >
               <font-awesome-icon icon="play" class="mr-2" /> {{ $t('group.create.title') }}
             </button>
-            <p v-if="!userStore.isLogged" class="text-sm text-brand-gray">
+            <p v-if="!userStore.isLogged" class="text-sm text-brand-muted">
               {{ $t('group.mode.accountNeeded') }}
             </p>
           </div>
@@ -43,7 +43,7 @@
           </span>
           <div class="flex flex-col gap-2">
             <h3 id="group-join-title" class="text-2xl font-bold">{{ $t('group.join.title') }}</h3>
-            <p class="text-brand-gray">{{ $t('group.mode.joinText') }}</p>
+            <p class="text-brand-muted">{{ $t('group.mode.joinText') }}</p>
           </div>
           <GroupJoin class="mt-auto" @joined="goLobbyFromJoin" />
         </section>

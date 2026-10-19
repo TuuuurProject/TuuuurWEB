@@ -3,13 +3,13 @@
     <li
       v-for="player in players"
       :key="player.id"
-      class="flex items-center gap-3 rounded-2xl border-2 bg-brand-darkGray px-3 py-2"
+      class="flex items-center gap-3 rounded-2xl border-2 bg-brand-surface px-3 py-2"
       :class="statusStyle[player.status].border"
     >
       <span class="relative">
         <player-avatar :name="player.name" :avatar="player.avatar" />
         <span
-          class="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-brand-darkGray text-[10px]"
+          class="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-brand-surface text-[10px]"
           :class="statusStyle[player.status].badge"
         >
           <font-awesome-icon :icon="statusStyle[player.status].icon" />
@@ -18,7 +18,7 @@
       <span class="flex min-w-0 flex-col">
         <span class="truncate font-semibold">
           {{ player.name }}
-          <span v-if="player.isMe" class="text-sm font-normal text-brand-gray">
+          <span v-if="player.isMe" class="text-sm font-normal text-brand-muted">
             {{ $t('game.status.you') }}
           </span>
         </span>
@@ -51,8 +51,8 @@ const statusStyle: Record<
 > = {
   waiting: {
     border: 'border-brand-line',
-    badge: 'bg-brand-surface2 text-brand-gray',
-    text: 'text-brand-gray',
+    badge: 'bg-brand-surface2 text-brand-muted',
+    text: 'text-brand-muted',
     icon: 'hourglass-half',
   },
   answered: {
@@ -63,7 +63,7 @@ const statusStyle: Record<
   },
   correct: {
     border: 'border-brand-green',
-    badge: 'bg-brand-green text-brand-dark',
+    badge: 'bg-brand-green text-brand-bg',
     text: 'text-brand-green',
     icon: 'check',
   },
@@ -75,8 +75,8 @@ const statusStyle: Record<
   },
   noAnswer: {
     border: 'border-brand-line',
-    badge: 'bg-brand-surface2 text-brand-gray',
-    text: 'text-brand-gray',
+    badge: 'bg-brand-surface2 text-brand-muted',
+    text: 'text-brand-muted',
     icon: 'xmark',
   },
 }

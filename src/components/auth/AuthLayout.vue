@@ -10,7 +10,7 @@
     <div class="surface-card flex min-w-0 flex-col gap-6 md:p-8">
       <header class="flex flex-col gap-2">
         <h2 class="text-3xl font-bold">{{ title }}</h2>
-        <p v-if="subtitle" class="text-brand-gray">{{ subtitle }}</p>
+        <p v-if="subtitle" class="text-brand-muted">{{ subtitle }}</p>
       </header>
       <slot />
     </div>

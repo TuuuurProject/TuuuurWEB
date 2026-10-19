@@ -2,13 +2,13 @@
   <div ref="root" class="relative">
     <button
       type="button"
-      class="flex h-10 items-center gap-2 rounded-full border-2 border-brand-line px-3 text-sm font-bold text-brand-lightGray transition-colors hover:border-brand-purple/50"
+      class="flex h-10 items-center gap-2 rounded-full border-2 border-brand-line px-3 text-sm font-bold text-brand-ink transition-colors hover:border-brand-purple/50"
       :aria-label="$t('nav.language')"
       :aria-expanded="isOpen"
       aria-haspopup="listbox"
       @click="isOpen = !isOpen"
     >
-      <font-awesome-icon icon="globe" class="text-brand-gray" />
+      <font-awesome-icon icon="globe" class="text-brand-muted" />
       {{ currentLocale.toUpperCase() }}
     </button>
 
@@ -17,7 +17,7 @@
         v-if="isOpen"
         role="listbox"
         :aria-label="$t('nav.language')"
-        class="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-brand-line bg-brand-darkGray py-1 shadow-card"
+        class="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-2xl border border-brand-line bg-brand-surface py-1 shadow-card"
       >
         <li v-for="lang in availableLocales" :key="lang.code">
           <button
@@ -25,7 +25,7 @@
             role="option"
             :aria-selected="lang.code === currentLocale"
             class="flex w-full items-center justify-between px-4 py-2 text-left font-semibold transition-colors hover:bg-brand-surface2"
-            :class="lang.code === currentLocale ? 'text-brand-purple' : 'text-brand-lightGray'"
+            :class="lang.code === currentLocale ? 'text-brand-purple' : 'text-brand-ink'"
             @click="changeLocale(lang.code)"
           >
             {{ lang.name }}

@@ -4,7 +4,7 @@
       <span
         v-for="tag in tags"
         :key="tag"
-        class="rounded-full bg-brand-surface2 px-3 py-1 text-sm font-semibold text-brand-gray"
+        class="rounded-full bg-brand-surface2 px-3 py-1 text-sm font-semibold text-brand-muted"
       >
         {{ tag }}
       </span>

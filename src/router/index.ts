@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: { name: 'home' },
+    redirect: { name: 'Home' },
   },
 ]
 

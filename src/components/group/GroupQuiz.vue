@@ -86,7 +86,7 @@
                 v-if="groupeStore.groupePartyInfo?.scoreEachRound !== undefined"
                 class="flex flex-col gap-1"
               >
-                <dt class="text-sm font-semibold text-brand-gray">
+                <dt class="text-sm font-semibold text-brand-muted">
                   {{ $t('group.quiz.scoreEachRound') }}
                 </dt>
                 <dd class="font-bold">
@@ -109,7 +109,7 @@
       @confirm="confirmLeave"
       @close="cancelLeave"
     >
-      <p class="text-brand-lightGray">{{ $t('group.quiz.confirmLeave.message') }}</p>
+      <p class="text-brand-ink">{{ $t('group.quiz.confirmLeave.message') }}</p>
     </ModalDialog>
   </section>
 

@@ -5,7 +5,7 @@
         <h3 class="text-xl font-bold">{{ $t('profile.matchHistory.title') }}</h3>
         <dl class="flex gap-6">
           <div class="flex flex-col">
-            <dt class="text-sm font-semibold text-brand-gray">
+            <dt class="text-sm font-semibold text-brand-muted">
               {{ $t('profile.matchHistory.played') }}
             </dt>
             <dd class="font-display text-2xl font-extrabold tabular-nums">
@@ -13,7 +13,7 @@
             </dd>
           </div>
           <div v-if="stats.avgPercent !== null" class="flex flex-col">
-            <dt class="text-sm font-semibold text-brand-gray">
+            <dt class="text-sm font-semibold text-brand-muted">
               {{ $t('game.results.successRate') }}
             </dt>
             <dd class="font-display text-2xl font-extrabold tabular-nums text-brand-green">
@@ -67,7 +67,7 @@
                   v-for="pd in match.partyDifficulty"
                   :key="pd.id"
                   class="rounded-full px-2 py-0.5 text-xs font-semibold"
-                  :class="difficultyChip[pd.idDifficulty] ?? 'bg-brand-surface2 text-brand-gray'"
+                  :class="difficultyChip[pd.idDifficulty] ?? 'bg-brand-surface2 text-brand-muted'"
                 >
                   {{ pd.difficulty.label }}
                 </span>
@@ -78,16 +78,16 @@
                   {{ $t('profile.matchHistory.inProgress') }}
                 </span>
               </span>
-              <span class="truncate text-sm text-brand-gray">
+              <span class="truncate text-sm text-brand-muted">
                 {{ themesLabel(match.partyTheme) }}
               </span>
-              <span class="text-sm text-brand-gray">{{ metaLine(match) }}</span>
+              <span class="text-sm text-brand-muted">{{ metaLine(match) }}</span>
             </span>
 
             <span class="flex shrink-0 flex-col items-end">
               <span class="font-display text-2xl font-extrabold tabular-nums">
                 {{ match.score }}
-                <span class="text-sm font-semibold text-brand-gray">{{
+                <span class="text-sm font-semibold text-brand-muted">{{
                   $t('game.hud.points')
                 }}</span>
               </span>
@@ -101,7 +101,7 @@
             </span>
             <font-awesome-icon
               icon="chevron-right"
-              class="hidden shrink-0 text-brand-gray sm:block"
+              class="hidden shrink-0 text-brand-muted sm:block"
             />
           </button>
         </li>
@@ -109,7 +109,7 @@
 
       <p
         v-if="filteredMatches.length === 0"
-        class="rounded-2xl border-2 border-dashed border-brand-line p-8 text-center text-brand-gray"
+        class="rounded-2xl border-2 border-dashed border-brand-line p-8 text-center text-brand-muted"
       >
         {{ $t('profile.matchHistory.noMatches') }}
       </p>
@@ -129,7 +129,7 @@
           <font-awesome-icon icon="chevron-left" class="mr-2" />
           {{ $t('profile.matchHistory.pagination.previousPage') }}
         </button>
-        <span class="text-sm font-semibold text-brand-gray tabular-nums">
+        <span class="text-sm font-semibold text-brand-muted tabular-nums">
           {{
             $t('profile.matchHistory.pagination.pageOf', {
               page: historyStore.currentPage,

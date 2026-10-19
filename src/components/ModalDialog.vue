@@ -4,15 +4,15 @@
       <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
         <!-- Backdrop avec blur avancé -->
         <div
-          class="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm"
+          class="absolute inset-0 bg-brand-bg/80 backdrop-blur-sm"
           @click="$emit('close')"
         ></div>
         <div
-          class="relative z-10 w-[92vw] max-w-lg rounded-3xl bg-brand-darkGray backdrop-blur-sm border border-brand-purple/30 p-6 shadow-card modal-enter-active"
+          class="relative z-10 w-[92vw] max-w-lg rounded-3xl bg-brand-surface backdrop-blur-sm border border-brand-purple/30 p-6 shadow-card modal-enter-active"
         >
           <overlay-block :loading="loading">
             <header class="mb-4 flex items-start justify-between gap-4">
-              <h3 class="font-display text-2xl text-brand-lightGray">{{ title }}</h3>
+              <h3 class="font-display text-2xl text-brand-ink">{{ title }}</h3>
               <button
                 class="pill hover:bg-brand-purple/20 hover:border-brand-purple/40 h-[40px] w-[40px] flex items-center justify-center"
                 :aria-label="$t('common.close')"
@@ -21,7 +21,7 @@
                 <font-awesome-icon icon="xmark" />
               </button>
             </header>
-            <div class="text-brand-gray">
+            <div class="text-brand-muted">
               <slot />
             </div>
             <footer class="mt-6 flex items-center justify-end gap-3">

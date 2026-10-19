@@ -15,7 +15,7 @@
 
         <dl class="grid grid-cols-3 gap-2 sm:gap-3">
           <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-3 sm:p-4">
-            <dt class="text-sm font-semibold text-brand-gray">{{ $t('game.results.score') }}</dt>
+            <dt class="text-sm font-semibold text-brand-muted">{{ $t('game.results.score') }}</dt>
             <dd
               class="whitespace-nowrap font-display text-2xl font-extrabold tabular-nums sm:text-3xl"
             >
@@ -23,17 +23,17 @@
             </dd>
           </div>
           <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-3 sm:p-4">
-            <dt class="text-sm font-semibold text-brand-gray">
+            <dt class="text-sm font-semibold text-brand-muted">
               {{ $t('game.results.goodAnswers') }}
             </dt>
             <dd
               class="whitespace-nowrap font-display text-2xl font-extrabold tabular-nums sm:text-3xl"
             >
-              {{ correct }}<span class="text-lg text-brand-gray sm:text-xl">/{{ total }}</span>
+              {{ correct }}<span class="text-lg text-brand-muted sm:text-xl">/{{ total }}</span>
             </dd>
           </div>
           <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-3 sm:p-4">
-            <dt class="text-sm font-semibold text-brand-gray">
+            <dt class="text-sm font-semibold text-brand-muted">
               {{ $t('game.results.successRate') }}
             </dt>
             <dd
@@ -94,7 +94,7 @@ const toneClass = computed(
     ({
       win: 'text-brand-green',
       lose: 'text-brand-orange',
-      neutral: 'text-brand-lightGray',
+      neutral: 'text-brand-ink',
     })[props.tone],
 )
 </script>

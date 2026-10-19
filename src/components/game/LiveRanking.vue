@@ -12,7 +12,7 @@
         :class="
           String(entry.id) === String(meId)
             ? 'border-brand-purple bg-brand-purple/10'
-            : 'border-brand-line bg-brand-darkGray'
+            : 'border-brand-line bg-brand-surface'
         "
       >
         <span class="w-6 text-center font-bold tabular-nums" :class="rankColor(index)">
@@ -47,5 +47,5 @@ const props = defineProps<{
 const sorted = computed(() => [...props.entries].sort((a, b) => b.score - a.score))
 
 const rankColor = (index: number) =>
-  index === 0 ? 'text-brand-yellow' : index < 3 ? 'text-brand-lightGray' : 'text-brand-gray'
+  index === 0 ? 'text-brand-yellow' : index < 3 ? 'text-brand-ink' : 'text-brand-muted'
 </script>

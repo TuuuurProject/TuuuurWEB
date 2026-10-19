@@ -8,7 +8,7 @@
         :questions="questions"
       >
         <div class="flex flex-col gap-1">
-          <dt class="text-sm font-semibold text-brand-gray">
+          <dt class="text-sm font-semibold text-brand-muted">
             {{ $t('group.lobby.scoreEachRound') }}
           </dt>
           <dd class="font-bold">{{ scoreEachRound ? $t('common.yes') : $t('common.no') }}</dd>
@@ -30,7 +30,7 @@
         >
           <span class="flex flex-col gap-1">
             <span class="font-bold">{{ $t('group.lobby.scoreEachRound') }}</span>
-            <span class="text-sm text-brand-gray">
+            <span class="text-sm text-brand-muted">
               {{ $t('group.lobby.scoreEachRoundDescription') }}
             </span>
           </span>

@@ -1,11 +1,11 @@
 <template>
   <header
-    class="sticky top-0 z-20 h-[75px] border-b border-brand-line bg-brand-darkGray/90 backdrop-blur-xl"
+    class="sticky top-0 z-20 h-[75px] border-b border-brand-line bg-brand-surface/90 backdrop-blur-xl"
   >
     <div class="mx-auto flex h-full max-w-6xl items-center gap-6 px-6">
       <router-link
         :to="{ name: 'Home' }"
-        class="shrink-0 rounded-xl font-display text-2xl font-extrabold text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40"
+        class="shrink-0 rounded-xl font-display text-2xl font-extrabold text-brand-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40"
         :aria-label="$t('nav.home')"
       >
         Monk<span class="text-brand-purple">izz</span>
@@ -60,7 +60,7 @@
         <!-- Menu mobile -->
         <button
           type="button"
-          class="flex h-10 w-10 items-center justify-center rounded-full text-brand-lightGray transition-colors hover:bg-brand-surface2 lg:hidden"
+          class="flex h-10 w-10 items-center justify-center rounded-full text-brand-ink transition-colors hover:bg-brand-surface2 lg:hidden"
           :aria-label="$t('nav.menu')"
           :aria-expanded="mobileMenuOpen"
           aria-controls="mobile-menu"
@@ -82,7 +82,7 @@
     <nav
       v-if="mobileMenuOpen"
       id="mobile-menu"
-      class="fixed left-0 right-0 top-[75px] z-30 flex flex-col gap-1 border-b border-brand-line bg-brand-darkGray px-6 py-4 shadow-card lg:hidden"
+      class="fixed left-0 right-0 top-[75px] z-30 flex flex-col gap-1 border-b border-brand-line bg-brand-surface px-6 py-4 shadow-card lg:hidden"
       :aria-label="$t('nav.main')"
     >
       <router-link
@@ -146,7 +146,7 @@ watch(
 
 <style scoped>
 .nav-link {
-  @apply flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-brand-gray transition-colors hover:bg-brand-surface2 hover:text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+  @apply flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-brand-muted transition-colors hover:bg-brand-surface2 hover:text-brand-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
 }
 .nav-link.is-active {
   @apply bg-brand-purple/10 text-brand-purple;

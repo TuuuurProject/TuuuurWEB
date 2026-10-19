@@ -70,7 +70,7 @@
 
           <div class="flex items-center gap-4" aria-hidden="true">
             <span class="h-px flex-1 bg-brand-line"></span>
-            <span class="text-sm text-brand-gray">{{ $t('common.or') }}</span>
+            <span class="text-sm text-brand-muted">{{ $t('common.or') }}</span>
             <span class="h-px flex-1 bg-brand-line"></span>
           </div>
 
@@ -78,7 +78,7 @@
             <google-login :callback="handleGoogleLogin" />
           </div>
 
-          <p class="text-center text-sm text-brand-gray">
+          <p class="text-center text-sm text-brand-muted">
             {{ $t('auth.login.noAccount') }}
             <button type="button" class="text-link ml-1" @click="$emit('goto-register')">
               {{ $t('auth.login.createAccount') }}

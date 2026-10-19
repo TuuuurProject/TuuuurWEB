@@ -76,20 +76,15 @@ Les gros fichiers : `GroupQuiz.vue` (~1640 l), `RankedQuiz.vue` (~1100 l), `Solo
 ## Design system (DA « Évolution »)
 
 - **Tokens** dans `src/assets/base.css` : variables `--c-*` en canaux RGB (`246 246 251`), valeurs claires sur `:root`, sombres sur `.dark`. Ne jamais écrire de hex/rgba en dur dans un composant : en CSS scoped, `rgb(var(--c-primary) / 0.4)` ; en classes, les couleurs Tailwind ci-dessous.
-- **Couleurs Tailwind** (`tailwind.config.js`, `darkMode: 'class'`) : les anciens noms `brand-*` sont conservés mais pointent vers les tokens, avec un rôle fixe :
-  `brand-dark` fond de page · `brand-darkGray` cartes/champs · `brand-surface2` blocs imbriqués dans une carte, pistes de slider · `brand-line` bordures neutres · `brand-lightGray` texte · `brand-gray` texte secondaire · `brand-purple` marque et action principale · `brand-orange` action secondaire / mauvaise réponse (texte dessus : `text-brand-onOrange`) · `brand-green` bonne réponse · `brand-yellow` récompenses · `diff-easy|medium|hard|hardcore` difficultés.
-  Les noms (`darkGray`, `lightGray`) sont trompeurs en mode clair : les lire comme « surface » et « encre ». Renommage prévu pendant la refonte des layouts.
-- **Piège** : `bg-brand-darkGray/30` dans une carte = blanc sur blanc en clair ; utiliser `bg-brand-surface2/…`. `text-white` seulement sur fond `brand-purple`.
+- **Couleurs Tailwind** (`tailwind.config.js`, `darkMode: 'class'`) : les `brand-*` pointent vers les tokens du même nom, avec un rôle fixe :
+  `brand-bg` fond de page · `brand-surface` cartes/champs · `brand-surface2` blocs imbriqués dans une carte, pistes de slider · `brand-line` bordures neutres · `brand-ink` texte · `brand-muted` texte secondaire · `brand-purple` marque et action principale · `brand-orange` action secondaire / mauvaise réponse (texte dessus : `text-brand-onOrange`) · `brand-green` bonne réponse · `brand-yellow` récompenses · `diff-easy|medium|hard|hardcore` difficultés.
+- **Piège** : `bg-brand-surface/30` dans une carte = blanc sur blanc en clair ; utiliser `bg-brand-surface2/…`. `text-white` seulement sur fond `brand-purple`.
 - **Classes composants** (`@layer components` de `base.css`) : `.btn` + `.btn-primary|secondary|ghost`, `.surface-card` (ex-`gaming-card`), `.menu-card`, `.pill`, `.badge-*`, `.category-button`, `.difficulty-button` + `.diff-*`, `.slider-purple`, animations countdown.
 - **Tics à éviter** (skill frontend-design) : étiquette au-dessus des titres, libellés en majuscules espacées, infos jointes par « · », un mot coloré dans un titre.
 - **Interdit** (ancienne DA « gaming néon », retirée) : lueurs (`shadow-neon`, `glow-text`, `drop-shadow` colorés), dégradés animés, particules, polices gaming. Ombres disponibles : `shadow-card`, `shadow-soft`.
 - **Mode clair/sombre** : `useColorMode()` (suit le système par défaut, choix mémorisé dans `localStorage['color-mode']`), script inline dans `index.html` pour éviter le flash, bouton `ColorModeSwitcher` dans le header.
 - Polices : Baloo 2 (titres, boutons) + Nunito (texte), chargées dans `index.html`.
 - Vérifier chaque écran dans les deux modes. Si le serveur de dev a été lancé avant une modif de `tailwind.config.js`, le redémarrer (sinon erreur `class does not exist` sur `base.css`).
-
-## Code mort repéré
-
-`online/Duel1v1.vue`, `online/Matchmaking.vue`, `online/CompetitiveSelect.vue`, `PlaceholderPage.vue`, `components/icons/*` ne sont importés nulle part (Duel1v1/Matchmaking utilisent encore une ancienne DA beige claire). La route catch-all redirige vers `{ name: 'home' }` alors que la route s'appelle `Home`.
 
 ## API (../api)
 

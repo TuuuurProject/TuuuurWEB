@@ -25,7 +25,7 @@
               <font-awesome-icon :icon="item.correct ? 'check' : 'xmark'" class="mr-1" />
               {{ $t('game.recap.yourAnswer', { answer: userAnswer(item) }) }}
             </span>
-            <span v-else class="text-brand-gray">
+            <span v-else class="text-brand-muted">
               <font-awesome-icon icon="xmark" class="mr-1" /> {{ $t('game.recap.noAnswer') }}
             </span>
             <span v-if="!item.correct && correctAnswer(item)" class="text-brand-green">
@@ -42,7 +42,7 @@
         </span>
       </li>
     </ol>
-    <p v-else class="text-brand-gray">{{ $t('game.recap.empty') }}</p>
+    <p v-else class="text-brand-muted">{{ $t('game.recap.empty') }}</p>
   </section>
 </template>
 

@@ -1,13 +1,9 @@
 {
   "common": {
-    "leave": "Leave",
     "back": "Back",
     "cancel": "Cancel",
-    "confirm": "Confirm",
     "close": "Close",
     "save": "Save",
-    "edit": "Edit",
-    "delete": "Delete",
     "loading": "Loading...",
     "or": "OR",
     "yes": "Yes",
@@ -20,7 +16,6 @@
     "competitive": "Ranked duel",
     "profile": "Profile",
     "ranking": "Ranking",
-    "modes": "Game modes",
     "menu": "Menu",
     "colorMode": {
       "toLight": "Switch to light mode",
@@ -30,7 +25,6 @@
     "language": "Language"
   },
   "home": {
-    "title": "Monkizz",
     "heroTitle": "The quiz you play alone, with friends or head to head",
     "heroTitleLogged": "Welcome back, {name}!",
     "subtitle": "Pick your topics, answer before the timer runs out and climb the leaderboard.",
@@ -106,7 +100,6 @@
   "auth": {
     "login": {
       "title": "Login",
-      "badge": "Username + password",
       "username": "Username",
       "usernamePlaceholder": "Your username",
       "password": "Password",
@@ -120,7 +113,6 @@
     },
     "register": {
       "title": "Create an Account",
-      "badge": "Simple",
       "nickname": "Username",
       "nicknamePlaceholder": "Choose a username",
       "email": "Email",
@@ -129,7 +121,6 @@
       "passwordPlaceholder": "••••••••",
       "confirmPassword": "Confirm Password",
       "confirmPasswordPlaceholder": "Confirm your password",
-      "passwordMismatch": "Passwords do not match.",
       "passwordMinLength": "Minimum 8 characters",
       "passwordLowercase": "At least one lowercase letter",
       "passwordUppercase": "At least one uppercase letter",
@@ -166,14 +157,12 @@
       "codeError": "Error sending code. Check your information.",
       "resetSuccess": "Password reset successfully!",
       "resetError": "Error resetting password. Check the code and try again.",
-      "successMessage": "You can now log in with your new password.",
       "backToLogin": "Back to login"
     },
     "googleError": "Error logging in with Google"
   },
   "profile": {
     "title": "Profile",
-    "userProfile": "User profile",
     "notLoggedIn": "Log in or create an account to access your profile",
     "elo": "Elo",
     "changePassword": "Change Password",
@@ -211,8 +200,6 @@
     },
     "matchHistory": {
       "title": "Match History",
-      "parties": "{count} Game | {count} Games",
-      "successRate": "{percent}% Success",
       "filters": {
         "all": "All",
         "solo": "Solo",
@@ -220,16 +207,10 @@
         "ranked": "Ranked"
       },
       "inProgress": "In Progress",
-      "questions": "Questions:",
-      "success": "Success:",
-      "time": "Time:",
       "noMatches": "No games found",
       "pagination": {
-        "showing": "Showing {from} to {to} of {total} game | Showing {from} to {to} of {total} games",
-        "firstPage": "First page",
         "previousPage": "Previous",
         "nextPage": "Next",
-        "lastPage": "Last page",
         "label": "History pages",
         "pageOf": "Page {page} of {total}"
       },
@@ -240,80 +221,25 @@
   },
   "solo": {
     "title": "Solo Mode",
-    "selectBadge": "Select at least one category",
     "notLoggedIn": "Log in or create an account to play solo!",
-    "categories": {
-      "title": "Categories",
-      "subtitle": "Choose one or more categories for your adventure."
-    },
-    "settings": {
-      "title": "Settings",
-      "questionsCount": "Number of Questions",
-      "difficulty": "Difficulty"
-    },
     "difficulties": {
       "easy": "Easy",
       "medium": "Medium",
       "hard": "Hard",
       "hardcore": "Hardcore"
-    },
-    "startAdventure": "Start Adventure",
-    "startQuizModal": {
-      "title": "Start Quiz",
-      "categories": "Categories:",
-      "questions": "Questions:"
-    },
-    "quiz": {
-      "title": "Solo Quiz",
-      "home": "Home",
-      "question": "Question {current} / {total}",
-      "score": "Score:",
-      "timeRemaining": "Time remaining: {time}s",
-      "correct": "Correct +{points} pts",
-      "incorrect": "Wrong answer",
-      "skip": "Skip",
-      "next": "Next",
-      "finished": "Quiz Completed!",
-      "finalScore": "Final Score",
-      "questions": "Questions",
-      "successRate": "Success Rate",
-      "correctAnswers": "Correct",
-      "incorrectAnswers": "Incorrect",
-      "summary": "Answer Summary",
-      "goodAnswer": "Correct answer",
-      "badAnswer": "Wrong answer",
-      "replay": "Replay",
-      "partyInfo": "Party Information",
-      "themes": "Themes",
-      "allThemes": "All themes",
-      "difficulties": "Difficulties",
-      "numberOfQuestions": "Number of questions",
-      "noQuestions": "No question available for this quiz"
     }
   },
   "group": {
     "title": "Group Mode",
     "notLoggedIn": "Log in or create an account to access your profile",
     "create": {
-      "title": "Create a Game",
-      "subtitle": "Set parameters and share the code/QR with your friends.",
-      "badge": "Share the code with your friends",
-      "editSettings": "Update Settings",
-      "modal": {
-        "title": "Create Multiplayer Game",
-        "categories": "Categories:",
-        "questions": "Questions:",
-        "difficulties": "Difficulties:"
-      }
+      "title": "Create a Game"
     },
     "join": {
       "title": "Join a Game",
-      "subtitle": "Enter a code to join the lobby and start the adventure.",
       "code": "Game Code",
-      "example": "Example: 538950",
       "joinButton": "Join",
       "modal": {
-        "title": "Join Game",
         "nickname": "Choose a nickname for the lobby",
         "nicknamePlaceholder": "Your nickname",
         "submit": "Join the game",
@@ -322,20 +248,13 @@
       "digit": "Code digit {n}"
     },
     "lobby": {
-      "joinError": "Error trying to join the game",
-      "noThemeSelected": "No theme selected",
-      "noDifficultySelected": "No difficulty selected",
-      "difficulties": "Difficulties:",
       "title": "Lobby",
       "waitingBadge": "Waiting for the host",
       "hostBadge": "You are the host",
-      "categories": "Categories:",
-      "questions": "Questions:",
       "scoreEachRound": "Score Each Round",
       "scoreEachRoundDescription": "Display score after each question",
       "players": "Players",
       "playersConnected": "{count} connected",
-      "joinSection": "To join",
       "leave": "Leave",
       "start": "Start Game",
       "copySuccess": "Copied to clipboard",
@@ -357,46 +276,19 @@
       "readyHint": "All set. Start when all your friends have arrived."
     },
     "quiz": {
-      "title": "Group Quiz",
       "getReady": "Préparez-vous…",
-      "home": "Home",
-      "question": "Question {current} / {total}",
       "score": "Score:",
-      "timeRemaining": "Time remaining: {time}s",
-      "correct": "Correct +{points} pts",
-      "incorrect": "Wrong answer",
       "currentRanking": "Current Ranking",
-      "skip": "Skip",
-      "next": "Next",
-      "finished": "Quiz Completed!",
-      "finalScore": "Final Score",
-      "questions": "Questions",
-      "successRate": "Success Rate",
-      "correctAnswers": "Correct",
-      "incorrectAnswers": "Incorrect",
-      "summary": "Answer Summary",
-      "goodAnswer": "Correct answer",
-      "badAnswer": "Wrong answer",
-      "replay": "Replay",
       "errorAnswering": "Error submitting answer",
       "playersStatus": "Players Status",
-      "answered": "Answered",
-      "waiting": "Waiting...",
-      "noAnswer": "Did not answer",
       "ranking": "Final Ranking",
-      "otherPlayers": "{count} other player | {count} other players",
-      "partyInfo": "Party Information",
-      "themes": "Themes",
       "allThemes": "All themes",
-      "difficulties": "Difficulties",
-      "numberOfQuestions": "Number of questions",
       "scoreEachRound": "Score each round",
       "confirmLeave": {
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? You will lose your progress and cannot return."
       },
-      "returnToLobby": "Return to lobby",
-      "noQuestions": "No question available for this game"
+      "returnToLobby": "Return to lobby"
     },
     "mode": {
       "intro": "A game for several players, each on their own phone or computer. Friends join with a code, even without an account.",
@@ -406,24 +298,10 @@
     }
   },
   "competitive": {
-    "title": "Competitive Mode",
-    "badge": "Ranked",
     "notLoggedIn": "Log in or create an account to access competitive mode!",
     "ranked": {
-      "title": "Ranked Mode",
-      "subtitle": "1v1 Duel",
-      "description": "Face players of similar level in quick duels. The more you win, the higher your ELO!",
-      "badge": "Ranked",
-      "eloInfo": "Your ELO: {value}",
       "searchOpponent": "Find an opponent"
     },
-    "info": {
-      "title": "Competitive Mode",
-      "description": "Face players of similar level in quick duels. The more you win, the higher your rank!",
-      "balancedMatchmaking": "Balanced matchmaking",
-      "dynamicRank": "Dynamic rank"
-    },
-    "startSearch": "Start Search",
     "matchmaking": {
       "searching": "Searching…",
       "searchingMessage": "Looking for a player at your level. It usually takes under a minute.",
@@ -438,44 +316,22 @@
     },
     "quiz": {
       "abort": "Abort",
-      "title": "Ranked Duel",
-      "question": "Question {current}",
-      "score": "Score:",
-      "timeRemaining": "Time remaining: {time}s",
       "getReady": "Get ready…",
-      "playersStatus": "Players status",
-      "answered": "Answered",
-      "waitingAnswer": "Waiting…",
-      "opponentAnswered": "Answered",
-      "waitingOpponent": "Waiting…",
-      "correct": "Correct",
-      "incorrect": "Wrong answer",
-      "finished": "Duel Over!",
       "victory": "Victory!",
       "defeat": "Defeat",
       "draw": "Draw",
       "eloGained": "+{points} ELO",
       "eloLost": "{points} ELO",
       "eloUnchanged": "ELO unchanged",
-      "finalRanking": "Duel Results",
       "replay": "Play again",
       "home": "Home",
       "errorAnswering": "Error submitting answer",
       "currentRanking": "Current Ranking",
-      "finalScore": "Final Score",
-      "questions": "Questions",
-      "successRate": "Success Rate",
-      "correctAnswers": "Correct",
-      "incorrectAnswers": "Incorrect",
-      "summary": "Answer Summary",
       "opponentForfeited": "The opponent forfeited the game.",
-      "goodAnswer": "Correct answer",
-      "badAnswer": "Wrong answer",
       "confirmLeave": {
         "title": "Leave the game?",
         "message": "Are you sure you want to leave the ongoing game? Your progress will be lost and ELO will not be updated."
-      },
-      "noQuestions": "No question available for this duel"
+      }
     },
     "lobby": {
       "title": "Ranked duel",
@@ -501,23 +357,6 @@
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "badge": "Top Legends",
-    "podium": {
-      "first": "#1",
-      "second": "#2",
-      "third": "#3",
-      "empty": "?"
-    },
-    "ranking": {
-      "title": "Full Ranking",
-      "badge": "Real-time updates"
-    },
-    "status": {
-      "currentChampion": "Current Champion",
-      "challenger": "Challenger",
-      "confirmedPlayer": "Confirmed Player"
-    },
-    "otherPlayers": "See {count} other players",
     "empty": "Nobody is ranked yet. Start the first duel!",
     "eloLabel": "Elo",
     "notLoggedIn": "Log in or create an account to access the leaderboard!",
@@ -530,13 +369,8 @@
     "unrankedHint": "Play a ranked duel to appear on the leaderboard."
   },
   "modal": {
-    "defaultTitle": "Confirmation",
     "cancel": "Cancel",
-    "confirm": "Confirm",
-    "close": "Close"
-  },
-  "errors": {
-    "generic": "An error occurred"
+    "confirm": "Confirm"
   },
   "mascot": {
     "alt": "The Monkizz monkey"

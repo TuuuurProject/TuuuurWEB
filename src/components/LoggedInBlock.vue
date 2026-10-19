@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="profile-not-logged" class="text-center p-6 text-brand-gray">
+  <div data-testid="profile-not-logged" class="text-center p-6 text-brand-muted">
     <p class="mb-4">{{ props.message }}</p>
     <div class="grid gap-6 sm:grid-cols-2 max-w-xl mx-auto">
       <button id="btnSeConnecter" class="btn btn-primary" @click="router.push({ name: 'Login' })">

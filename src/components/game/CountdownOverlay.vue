@@ -2,7 +2,7 @@
   <transition name="countdown-fade">
     <div
       v-if="value !== null"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-brand-dark/90 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-brand-bg/90 backdrop-blur-sm"
       aria-live="assertive"
       aria-atomic="true"
     >
@@ -12,7 +12,7 @@
             {{ value }}
           </div>
         </transition>
-        <div class="countdown-message text-lg font-semibold text-brand-gray">{{ message }}</div>
+        <div class="countdown-message text-lg font-semibold text-brand-muted">{{ message }}</div>
       </div>
     </div>
   </transition>
@@ -30,6 +30,6 @@ const colorClass = computed(() => {
   if (props.value === 3) return 'text-brand-yellow'
   if (props.value === 2) return 'text-brand-orange'
   if (props.value === 1) return 'text-brand-green'
-  return 'text-brand-lightGray'
+  return 'text-brand-ink'
 })
 </script>

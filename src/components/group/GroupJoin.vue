@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <form class="flex flex-col gap-4" @submit.prevent="join">
       <fieldset class="flex flex-col gap-2">
-        <legend class="mb-2 text-sm font-semibold text-brand-gray">
+        <legend class="mb-2 text-sm font-semibold text-brand-muted">
           {{ $t('group.join.code') }}
         </legend>
         <div class="flex justify-between gap-1.5 sm:gap-2">
@@ -14,7 +14,7 @@
             inputmode="numeric"
             autocomplete="one-time-code"
             :aria-label="$t('group.join.digit', { n: i })"
-            class="h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-darkGray text-center font-display text-2xl font-extrabold text-brand-lightGray transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
+            class="h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-surface text-center font-display text-2xl font-extrabold text-brand-ink transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
             @input="onInput(i - 1)"
             @keydown.backspace.prevent="onBackspace(i - 1)"
             @paste.prevent="handlePaste"
@@ -59,7 +59,7 @@
       @close="showModalUsername = false"
     >
       <div class="flex flex-col gap-2">
-        <label for="nicknameInputJoin" class="text-sm text-brand-gray">
+        <label for="nicknameInputJoin" class="text-sm text-brand-muted">
           {{ $t('group.join.modal.nicknameHint') }}
         </label>
         <input
@@ -67,7 +67,7 @@
           v-model="username"
           type="text"
           maxlength="50"
-          class="w-full rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-lg font-semibold text-brand-lightGray focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
+          class="w-full rounded-2xl border-2 border-brand-line bg-brand-surface px-4 py-3 text-lg font-semibold text-brand-ink focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30"
           :placeholder="$t('group.join.modal.nicknamePlaceholder')"
           @keydown.enter.prevent="joinGroupInvited"
         />

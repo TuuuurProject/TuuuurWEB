@@ -16,7 +16,7 @@
           class="border-4 border-brand-purple"
         />
         <span
-          class="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand-darkGray bg-brand-purple text-sm text-white transition-transform group-hover:scale-110"
+          class="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-brand-surface bg-brand-purple text-sm text-white transition-transform group-hover:scale-110"
         >
           <font-awesome-icon icon="camera" />
         </span>
@@ -49,7 +49,7 @@
             type="text"
             maxlength="50"
             :aria-label="$t('profile.nickname.edit')"
-            class="min-w-0 flex-1 rounded-xl border-2 border-brand-purple bg-brand-darkGray px-3 py-2 text-lg font-bold text-brand-lightGray focus:outline-none"
+            class="min-w-0 flex-1 rounded-xl border-2 border-brand-purple bg-brand-surface px-3 py-2 text-lg font-bold text-brand-ink focus:outline-none"
             @keydown.enter="saveNickname"
             @keydown.escape="cancelEditingNickname"
           />
@@ -63,20 +63,20 @@
           </button>
           <button
             type="button"
-            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface2 text-brand-gray"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface2 text-brand-muted"
             :aria-label="$t('common.cancel')"
             @click="cancelEditingNickname"
           >
             <font-awesome-icon icon="xmark" />
           </button>
         </div>
-        <span class="max-w-full truncate text-sm text-brand-gray">{{
+        <span class="max-w-full truncate text-sm text-brand-muted">{{
           userStore.userInfo?.email
         }}</span>
       </div>
 
       <div class="flex w-full flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
-        <span class="text-sm font-semibold text-brand-gray">
+        <span class="text-sm font-semibold text-brand-muted">
           <font-awesome-icon icon="trophy" class="mr-1 text-brand-yellow" /> {{ $t('profile.elo') }}
         </span>
         <span class="font-display text-4xl font-extrabold tabular-nums">
@@ -117,7 +117,7 @@
       <p class="font-bold text-lg text-brand-orange">
         {{ $t('profile.deleteAccountModal.warning') }}
       </p>
-      <p class="text-brand-lightGray">
+      <p class="text-brand-ink">
         {{ $t('profile.deleteAccountModal.message') }}
       </p>
       <p class="font-bold">

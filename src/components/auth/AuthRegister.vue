@@ -92,7 +92,7 @@
             </button>
           </form>
 
-          <p class="text-center text-sm text-brand-gray">
+          <p class="text-center text-sm text-brand-muted">
             {{ $t('auth.register.alreadyRegistered') }}
             <button type="button" class="text-link ml-1" @click="$emit('goto-login')">
               {{ $t('auth.register.signIn') }}

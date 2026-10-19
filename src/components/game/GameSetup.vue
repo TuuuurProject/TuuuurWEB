@@ -5,7 +5,7 @@
       <div class="flex flex-wrap items-end justify-between gap-3">
         <div class="flex flex-col gap-1">
           <h3 id="setup-themes-title" class="text-xl font-bold">{{ $t('game.setup.themes') }}</h3>
-          <p class="text-brand-gray">{{ $t('game.setup.themesHint') }}</p>
+          <p class="text-brand-muted">{{ $t('game.setup.themesHint') }}</p>
         </div>
         <button
           v-if="themes.length > 0"
@@ -32,7 +32,7 @@
           <span class="min-w-0 flex-1 break-words leading-tight">{{ theme.label }}</span>
         </button>
       </div>
-      <p v-else class="text-brand-gray">{{ $t('common.loading') }}</p>
+      <p v-else class="text-brand-muted">{{ $t('common.loading') }}</p>
     </section>
 
     <!-- Réglages et action -->
@@ -42,7 +42,7 @@
           <h3 id="setup-difficulty-title" class="text-lg font-bold">
             {{ $t('game.setup.difficulty') }}
           </h3>
-          <p class="text-sm text-brand-gray">{{ $t('game.setup.difficultyHint') }}</p>
+          <p class="text-sm text-brand-muted">{{ $t('game.setup.difficultyHint') }}</p>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <button

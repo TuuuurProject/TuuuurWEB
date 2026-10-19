@@ -2,7 +2,7 @@
   <section class="flex flex-col gap-6">
     <header class="flex flex-col gap-2">
       <h2 class="text-3xl font-bold">{{ $t('leaderboard.title') }}</h2>
-      <p class="max-w-2xl text-brand-gray">{{ $t('leaderboard.intro') }}</p>
+      <p class="max-w-2xl text-brand-muted">{{ $t('leaderboard.intro') }}</p>
     </header>
 
     <!-- Pas connecté -->
@@ -13,7 +13,7 @@
     <!-- Chargement -->
     <div v-else-if="rankedStore.isRankingLoading" class="surface-card py-12 text-center">
       <font-awesome-icon icon="circle-notch" spin class="mb-4 text-3xl text-brand-purple" />
-      <p class="text-brand-gray">{{ $t('common.loading') }}</p>
+      <p class="text-brand-muted">{{ $t('common.loading') }}</p>
     </div>
 
     <!-- Personne n'est classé -->
@@ -54,19 +54,19 @@
         </div>
         <dl class="grid grid-cols-2 gap-3">
           <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-3">
-            <dt class="text-sm font-semibold text-brand-gray">{{ $t('home.progress.rank') }}</dt>
+            <dt class="text-sm font-semibold text-brand-muted">{{ $t('home.progress.rank') }}</dt>
             <dd class="font-display text-3xl font-extrabold tabular-nums">
               {{ myRanking > 0 ? `#${myRanking}` : '—' }}
             </dd>
           </div>
           <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-3">
-            <dt class="text-sm font-semibold text-brand-gray">{{ $t('home.progress.elo') }}</dt>
+            <dt class="text-sm font-semibold text-brand-muted">{{ $t('home.progress.elo') }}</dt>
             <dd class="font-display text-3xl font-extrabold tabular-nums">
               {{ rankedStore.rankingData?.userElo ?? '—' }}
             </dd>
           </div>
         </dl>
-        <p class="text-sm text-brand-gray">
+        <p class="text-sm text-brand-muted">
           <template v-if="myRanking > 0">
             {{ $t('home.progress.rankTotal', { total: rankedStore.rankingData?.totalUsers }) }}
           </template>

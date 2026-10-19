@@ -19,12 +19,12 @@ export default {
     extend: {
       colors: {
         brand: {
-          dark: token('bg'), // Fond de page
-          darkGray: token('surface'), // Cartes, champs
+          bg: token('bg'), // Fond de page
+          surface: token('surface'), // Cartes, champs
           surface2: token('surface-2'), // Surfaces secondaires, pistes de slider
           line: token('line'), // Bordures neutres
-          lightGray: token('ink'), // Texte principal
-          gray: token('muted'), // Texte secondaire
+          ink: token('ink'), // Texte principal
+          muted: token('muted'), // Texte secondaire
           purple: token('primary'), // Marque, action principale
           purpleDark: token('primary-strong'),
           orange: token('orange'), // Action secondaire, mauvaise réponse
@@ -37,9 +37,6 @@ export default {
           cyan: token('cyan'),
           red: token('red'),
           white: '#FFFFFF',
-          // Anciennes couleurs (composants inutilisés uniquement)
-          light: '#C37A3E',
-          beige: '#F3E1C3',
         },
         diff: {
           easy: token('diff-easy'),

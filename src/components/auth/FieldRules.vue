@@ -4,7 +4,7 @@
       v-for="rule in rules"
       :key="rule.label"
       class="flex items-start gap-2"
-      :class="rule.ok ? 'text-brand-green' : 'text-brand-gray'"
+      :class="rule.ok ? 'text-brand-green' : 'text-brand-muted'"
     >
       <font-awesome-icon
         :icon="rule.ok ? 'check-circle' : 'circle'"

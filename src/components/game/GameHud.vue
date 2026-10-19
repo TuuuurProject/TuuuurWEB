@@ -4,7 +4,7 @@
       <button
         v-if="leavable"
         type="button"
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-brand-line text-brand-gray transition-colors hover:border-brand-orange hover:text-brand-orange"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-brand-line text-brand-muted transition-colors hover:border-brand-orange hover:text-brand-orange"
         :aria-label="leaveLabel"
         :title="leaveLabel"
         @click="$emit('leave')"
@@ -26,7 +26,7 @@
       </span>
       <span class="ml-auto flex items-baseline gap-1">
         <span class="font-display text-3xl font-extrabold tabular-nums">{{ score }}</span>
-        <span class="text-sm font-semibold text-brand-gray">{{ $t('game.hud.points') }}</span>
+        <span class="text-sm font-semibold text-brand-muted">{{ $t('game.hud.points') }}</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       </div>
       <span
         class="w-12 text-right font-bold tabular-nums"
-        :class="isLow ? 'text-brand-orange' : 'text-brand-gray'"
+        :class="isLow ? 'text-brand-orange' : 'text-brand-muted'"
       >
         {{ Math.ceil(remaining) }} s
       </span>

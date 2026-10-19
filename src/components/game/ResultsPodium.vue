@@ -33,7 +33,7 @@
             class="whitespace-nowrap font-display text-xl font-extrabold tabular-nums sm:text-2xl"
           >
             {{ step.entry.score }}
-            <span v-if="unit" class="text-sm font-semibold text-brand-gray">{{ unit }}</span>
+            <span v-if="unit" class="text-sm font-semibold text-brand-muted">{{ unit }}</span>
           </span>
         </template>
         <div
@@ -52,12 +52,12 @@
         class="flex items-center gap-3 rounded-2xl border-2 px-4 py-2"
         :class="isMe(entry) ? 'border-brand-purple bg-brand-purple/10' : 'border-brand-line'"
       >
-        <span class="w-6 text-center font-bold tabular-nums text-brand-gray">{{ index + 4 }}</span>
+        <span class="w-6 text-center font-bold tabular-nums text-brand-muted">{{ index + 4 }}</span>
         <player-avatar :name="entry.name" :avatar="entry.avatar" size="sm" />
         <span class="min-w-0 flex-1 truncate font-semibold">{{ entry.name }}</span>
         <span class="font-display text-xl font-extrabold tabular-nums">
           {{ entry.score }}
-          <span v-if="unit" class="text-sm font-semibold text-brand-gray">{{ unit }}</span>
+          <span v-if="unit" class="text-sm font-semibold text-brand-muted">{{ unit }}</span>
         </span>
       </li>
     </ol>
@@ -96,7 +96,7 @@ const medalBorder: Record<number, string> = {
 }
 const medalBlock: Record<number, string> = {
   1: 'bg-brand-yellow/20 text-brand-yellow',
-  2: 'bg-brand-surface2 text-brand-gray',
+  2: 'bg-brand-surface2 text-brand-muted',
   3: 'bg-brand-orange/15 text-brand-orange',
 }
 const blockHeight: Record<number, string> = {

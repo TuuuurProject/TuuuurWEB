@@ -39,7 +39,7 @@
               <h3 class="field-label">
                 {{ $t('auth.forgotPassword.codeTitle') }}
               </h3>
-              <p class="mb-3 text-sm text-brand-gray">
+              <p class="mb-3 text-sm text-brand-muted">
                 {{ $t('auth.forgotPassword.codeDescription') }}
               </p>
               <div class="flex justify-between gap-1.5 sm:gap-2">

@@ -1,6 +1,6 @@
 <template>
   <span
-    class="relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-surface2 font-bold text-brand-lightGray"
+    class="relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-surface2 font-bold text-brand-ink"
     :class="sizeClass"
   >
     <img v-if="avatar" :src="avatar" alt="" class="h-full w-full object-cover" />

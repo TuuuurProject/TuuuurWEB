@@ -1,8 +1,8 @@
 <template>
-  <main class="min-h-screen bg-brand-dark text-brand-lightGray">
+  <main class="min-h-screen bg-brand-bg text-brand-ink">
     <header-block />
 
-    <section id="body-block" class="bg-brand-dark">
+    <section id="body-block" class="bg-brand-bg">
       <router-view id="content_page" v-slot="{ Component }">
         <transition name="slide-fade" mode="out-in">
           <component :is="Component" />

@@ -71,7 +71,7 @@
                   ? 'bg-brand-green/15 text-brand-green'
                   : rankedStore.hasWon === false
                     ? 'bg-brand-orange/15 text-brand-orange'
-                    : 'bg-brand-surface2 text-brand-lightGray'
+                    : 'bg-brand-surface2 text-brand-ink'
               "
             >
               <font-awesome-icon icon="chart-line" />
@@ -83,7 +83,7 @@
                     : $t('competitive.quiz.eloUnchanged')
               }}
             </span>
-            <span v-if="opponent?.nickName" class="text-brand-gray">
+            <span v-if="opponent?.nickName" class="text-brand-muted">
               {{ $t('game.results.against', { name: opponent.nickName }) }}
             </span>
           </div>
@@ -119,7 +119,7 @@
       @confirm="confirmLeave"
       @close="cancelLeave"
     >
-      <p class="text-brand-lightGray">{{ $t('competitive.quiz.confirmLeave.message') }}</p>
+      <p class="text-brand-ink">{{ $t('competitive.quiz.confirmLeave.message') }}</p>
     </ModalDialog>
   </section>
 

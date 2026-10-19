@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center gap-3">
     <p
-      class="mascot-bubble relative max-w-sm rounded-3xl border border-brand-line bg-brand-darkGray px-6 py-4 text-center text-lg font-semibold shadow-card"
+      class="mascot-bubble relative max-w-sm rounded-3xl border border-brand-line bg-brand-surface px-6 py-4 text-center text-lg font-semibold shadow-card"
     >
       {{ message }}
     </p>

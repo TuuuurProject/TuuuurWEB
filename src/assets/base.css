@@ -74,7 +74,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-brand-dark;
+  @apply bg-brand-bg;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -82,18 +82,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-brand-gray;
+  @apply bg-brand-muted;
 }
 
 @layer base {
   body {
-    @apply font-body text-brand-lightGray bg-brand-dark;
+    @apply font-body text-brand-ink bg-brand-bg;
   }
   h1,
   h2,
   h3,
   h4 {
-    @apply font-branding text-brand-lightGray;
+    @apply font-branding text-brand-ink;
   }
   ::selection {
     background: rgb(var(--c-primary) / 0.25);
@@ -104,7 +104,7 @@ body {
 @layer components {
   /* Boutons */
   .btn {
-    @apply inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-dark disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-2xl px-6 py-3 font-bold font-branding transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-bg disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
@@ -116,12 +116,12 @@ body {
   }
 
   .btn-ghost {
-    @apply bg-transparent text-brand-lightGray border-2 border-brand-line hover:border-brand-purple hover:bg-brand-purple/10;
+    @apply bg-transparent text-brand-ink border-2 border-brand-line hover:border-brand-purple hover:bg-brand-purple/10;
   }
 
   /* Cartes */
   .surface-card {
-    @apply rounded-3xl bg-brand-darkGray border border-brand-line p-6 shadow-card transition-colors duration-200;
+    @apply rounded-3xl bg-brand-surface border border-brand-line p-6 shadow-card transition-colors duration-200;
   }
 
   .menu-card {
@@ -130,7 +130,7 @@ body {
 
   /* Pills et badges */
   .pill {
-    @apply rounded-full bg-brand-darkGray px-4 py-2 text-brand-lightGray border border-brand-line hover:border-brand-purple/50 transition-colors duration-200;
+    @apply rounded-full bg-brand-surface px-4 py-2 text-brand-ink border border-brand-line hover:border-brand-purple/50 transition-colors duration-200;
   }
 
   .badge-success {
@@ -160,7 +160,7 @@ body {
   }
 
   .category-button:not(.selected) {
-    @apply border-brand-line bg-brand-darkGray text-brand-lightGray hover:border-brand-purple/60 hover:bg-brand-purple/10;
+    @apply border-brand-line bg-brand-surface text-brand-ink hover:border-brand-purple/60 hover:bg-brand-purple/10;
   }
 
   .category-button.selected {
@@ -204,10 +204,10 @@ body {
 
   /* Formulaires */
   .field-label {
-    @apply mb-1.5 block text-sm font-bold text-brand-lightGray;
+    @apply mb-1.5 block text-sm font-bold text-brand-ink;
   }
   .field-input {
-    @apply w-full rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-brand-lightGray transition-colors placeholder:text-brand-gray/70 focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
+    @apply w-full rounded-2xl border-2 border-brand-line bg-brand-surface px-4 py-3 text-brand-ink transition-colors placeholder:text-brand-muted/70 focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
   }
   .form-error {
     @apply rounded-2xl border border-brand-orange/40 bg-brand-orange/10 p-4 text-sm font-semibold text-brand-orange;
@@ -216,18 +216,18 @@ body {
     @apply font-bold text-brand-purple hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
   }
   .code-digit {
-    @apply h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-darkGray text-center font-display text-2xl font-extrabold text-brand-lightGray transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
+    @apply h-14 w-full min-w-0 rounded-2xl border-2 border-brand-line bg-brand-surface text-center font-display text-2xl font-extrabold text-brand-ink transition-colors focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/30;
   }
 
   /* Tuile de choix (thèmes) */
   .choice-tile {
-    @apply flex items-center gap-2 rounded-2xl border-2 border-brand-line bg-brand-darkGray px-2.5 py-2.5 text-left sm:gap-3 sm:px-3 sm:py-3 font-semibold text-brand-lightGray transition-colors duration-200 hover:border-brand-purple/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+    @apply flex items-center gap-2 rounded-2xl border-2 border-brand-line bg-brand-surface px-2.5 py-2.5 text-left sm:gap-3 sm:px-3 sm:py-3 font-semibold text-brand-ink transition-colors duration-200 hover:border-brand-purple/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
   }
   .choice-tile.selected {
     @apply border-brand-purple bg-brand-purple/10;
   }
   .choice-tile-icon {
-    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-brand-gray transition-colors duration-200 sm:h-9 sm:w-9;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-brand-muted transition-colors duration-200 sm:h-9 sm:w-9;
   }
   .choice-tile.selected .choice-tile-icon {
     @apply bg-brand-purple text-white;
@@ -238,15 +238,15 @@ body {
     @apply grid auto-cols-fr grid-flow-col gap-1 rounded-2xl bg-brand-surface2 p-1;
   }
   .segmented button {
-    @apply rounded-xl px-2 py-2 font-bold tabular-nums text-brand-gray transition-colors duration-200 hover:text-brand-lightGray focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+    @apply rounded-xl px-2 py-2 font-bold tabular-nums text-brand-muted transition-colors duration-200 hover:text-brand-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
   }
   .segmented button[aria-checked='true'] {
-    @apply bg-brand-darkGray text-brand-purple shadow-soft;
+    @apply bg-brand-surface text-brand-purple shadow-soft;
   }
 
   /* Réponses pendant une partie */
   .answer-tile {
-    @apply flex min-h-[4.25rem] w-full items-center gap-4 rounded-2xl border-2 border-brand-line bg-brand-darkGray px-4 py-3 text-left text-lg font-semibold text-brand-lightGray transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
+    @apply flex min-h-[4.25rem] w-full items-center gap-4 rounded-2xl border-2 border-brand-line bg-brand-surface px-4 py-3 text-left text-lg font-semibold text-brand-ink transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-purple/40;
   }
   .answer-tile.is-idle {
     @apply cursor-pointer hover:border-brand-purple hover:bg-brand-purple/5;
@@ -264,13 +264,13 @@ body {
     @apply opacity-50;
   }
   .answer-key {
-    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-sm font-bold text-brand-gray;
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-surface2 text-sm font-bold text-brand-muted;
   }
   .answer-tile.is-pending .answer-key {
     @apply bg-brand-purple text-white;
   }
   .answer-tile.is-correct .answer-key {
-    @apply bg-brand-green text-brand-dark;
+    @apply bg-brand-green text-brand-bg;
   }
   .answer-tile.is-wrong .answer-key {
     @apply bg-brand-orange text-brand-onOrange;

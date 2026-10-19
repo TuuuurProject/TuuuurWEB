@@ -5,7 +5,7 @@
       <div v-if="step === 'idle'" class="flex flex-col gap-6">
         <header class="flex flex-col gap-2">
           <h2 class="text-3xl font-bold">{{ $t('competitive.lobby.title') }}</h2>
-          <p class="max-w-2xl text-brand-gray">{{ $t('competitive.lobby.intro') }}</p>
+          <p class="max-w-2xl text-brand-muted">{{ $t('competitive.lobby.intro') }}</p>
         </header>
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
@@ -16,7 +16,7 @@
             >
               <h3 id="ranked-level-title" class="sr-only">{{ $t('competitive.lobby.level') }}</h3>
               <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
-                <span class="text-sm font-semibold text-brand-gray">
+                <span class="text-sm font-semibold text-brand-muted">
                   <font-awesome-icon icon="trophy" class="mr-1 text-brand-yellow" />
                   {{ $t('home.progress.elo') }}
                 </span>
@@ -25,7 +25,7 @@
                 </span>
               </div>
               <div class="flex flex-col gap-1 rounded-2xl bg-brand-surface2/60 p-4">
-                <span class="text-sm font-semibold text-brand-gray">
+                <span class="text-sm font-semibold text-brand-muted">
                   <font-awesome-icon icon="ranking-star" class="mr-1 text-brand-purple" />
                   {{ $t('home.progress.rank') }}
                 </span>
@@ -33,13 +33,13 @@
                   <span class="font-display text-4xl font-extrabold tabular-nums">
                     #{{ rankedStore.rankingData.userRanking }}
                   </span>
-                  <span class="text-sm text-brand-gray">
+                  <span class="text-sm text-brand-muted">
                     {{
                       $t('home.progress.rankTotal', { total: rankedStore.rankingData.totalUsers })
                     }}
                   </span>
                 </template>
-                <span v-else class="pt-2 font-semibold text-brand-gray">
+                <span v-else class="pt-2 font-semibold text-brand-muted">
                   {{ $t('home.progress.unranked') }}
                 </span>
               </div>
@@ -60,7 +60,7 @@
                     <span class="font-semibold">{{
                       $t(`competitive.lobby.rules.${rule.key}.title`)
                     }}</span>
-                    <span class="text-sm text-brand-gray">
+                    <span class="text-sm text-brand-muted">
                       {{ $t(`competitive.lobby.rules.${rule.key}.text`) }}
                     </span>
                   </span>

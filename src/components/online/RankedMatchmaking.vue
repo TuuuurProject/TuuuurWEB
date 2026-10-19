@@ -41,12 +41,12 @@
           <span class="w-full truncate text-lg font-bold">
             {{ currentUser?.nickName ?? $t('competitive.matchmaking.you') }}
           </span>
-          <span class="text-sm font-semibold text-brand-gray tabular-nums">
+          <span class="text-sm font-semibold text-brand-muted tabular-nums">
             {{ $t('competitive.matchmaking.elo', { value: currentUser?.globalElo ?? '—' }) }}
           </span>
         </div>
 
-        <span class="font-display text-3xl font-extrabold text-brand-gray">
+        <span class="font-display text-3xl font-extrabold text-brand-muted">
           {{ $t('competitive.matchmaking.vs') }}
         </span>
 
@@ -61,28 +61,28 @@
             <span class="w-full truncate text-lg font-bold">
               {{ opponent?.nickName ?? $t('competitive.matchmaking.opponent') }}
             </span>
-            <span class="text-sm font-semibold text-brand-gray tabular-nums">
+            <span class="text-sm font-semibold text-brand-muted tabular-nums">
               {{ $t('competitive.matchmaking.elo', { value: opponent?.globalElo ?? '—' }) }}
             </span>
           </template>
           <template v-else>
             <span
-              class="opponent-slot flex h-20 w-20 items-center justify-center rounded-full border-4 border-dashed border-brand-line text-3xl font-bold text-brand-gray"
+              class="opponent-slot flex h-20 w-20 items-center justify-center rounded-full border-4 border-dashed border-brand-line text-3xl font-bold text-brand-muted"
               aria-hidden="true"
             >
               ?
             </span>
-            <span class="text-lg font-bold text-brand-gray">
+            <span class="text-lg font-bold text-brand-muted">
               {{ $t('competitive.matchmaking.opponent') }}
             </span>
-            <span class="text-sm font-semibold text-brand-gray tabular-nums">
+            <span class="text-sm font-semibold text-brand-muted tabular-nums">
               {{ $t('competitive.matchmaking.elapsed', { time: elapsedLabel }) }}
             </span>
           </template>
         </div>
       </div>
 
-      <p class="max-w-md text-center text-brand-gray">
+      <p class="max-w-md text-center text-brand-muted">
         {{
           state === 'found'
             ? $t('competitive.matchmaking.gameStartingSoon')

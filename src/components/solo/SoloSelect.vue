@@ -2,7 +2,7 @@
   <section class="flex flex-col gap-6">
     <header class="flex flex-col gap-2">
       <h2 class="text-3xl font-bold">{{ $t('solo.title') }}</h2>
-      <p class="max-w-2xl text-brand-gray">{{ $t('game.setup.soloIntro') }}</p>
+      <p class="max-w-2xl text-brand-muted">{{ $t('game.setup.soloIntro') }}</p>
     </header>
 
     <template v-if="userStore.isLogged">
@@ -13,7 +13,7 @@
         :themes="themesList"
       >
         <template #actions>
-          <p class="text-sm text-brand-gray">
+          <p class="text-sm text-brand-muted">
             {{ startHint }}
           </p>
           <button

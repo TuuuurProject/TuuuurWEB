@@ -1,13 +1,9 @@
 {
   "common": {
-    "leave": "Quitter",
     "back": "Retour",
     "cancel": "Annuler",
-    "confirm": "Confirmer",
     "close": "Fermer",
     "save": "Enregistrer",
-    "edit": "Modifier",
-    "delete": "Supprimer",
     "loading": "Chargement...",
     "or": "OU",
     "yes": "Oui",
@@ -20,7 +16,6 @@
     "competitive": "Duel classé",
     "profile": "Profil",
     "ranking": "Classement",
-    "modes": "Modes de jeu",
     "menu": "Menu",
     "colorMode": {
       "toLight": "Passer en mode clair",
@@ -30,7 +25,6 @@
     "language": "Langue"
   },
   "home": {
-    "title": "Monkizz",
     "heroTitle": "Le quiz qui se joue seul, entre amis ou en duel",
     "heroTitleLogged": "Content de vous revoir, {name} !",
     "subtitle": "Choisissez vos thèmes, répondez avant la fin du chrono et grimpez au classement.",
@@ -106,7 +100,6 @@
   "auth": {
     "login": {
       "title": "Connexion",
-      "badge": "Pseudo + mot de passe",
       "username": "Pseudo",
       "usernamePlaceholder": "Votre pseudo",
       "password": "Mot de passe",
@@ -120,7 +113,6 @@
     },
     "register": {
       "title": "Créer un compte",
-      "badge": "Simple",
       "nickname": "Pseudo",
       "nicknamePlaceholder": "Choisissez un pseudo",
       "email": "Email",
@@ -129,7 +121,6 @@
       "passwordPlaceholder": "••••••••",
       "confirmPassword": "Confirmez le mot de passe",
       "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
-      "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "passwordMinLength": "Minimum 8 caractères",
       "passwordLowercase": "Au moins une minuscule",
       "passwordUppercase": "Au moins une majuscule",
@@ -166,14 +157,12 @@
       "codeError": "Erreur lors de l'envoi du code. Vérifiez vos informations.",
       "resetSuccess": "Mot de passe réinitialisé avec succès !",
       "resetError": "Erreur lors de la réinitialisation. Vérifiez le code et réessayez.",
-      "successMessage": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
       "backToLogin": "Retour à la connexion"
     },
     "googleError": "Erreur lors de la connexion avec Google"
   },
   "profile": {
     "title": "Profil",
-    "userProfile": "Profil joueur",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder à votre profil",
     "elo": "Élo",
     "changePassword": "Changer de mot de passe",
@@ -211,8 +200,6 @@
     },
     "matchHistory": {
       "title": "Historique des parties",
-      "parties": "{count} Partie | {count} Parties",
-      "successRate": "{percent}% Réussite",
       "filters": {
         "all": "Tous",
         "solo": "Solo",
@@ -220,16 +207,10 @@
         "ranked": "Classé"
       },
       "inProgress": "En cours",
-      "questions": "Questions:",
-      "success": "Réussite:",
-      "time": "Temps:",
       "noMatches": "Aucune partie trouvée",
       "pagination": {
-        "showing": "Affichage de {from} à {to} sur {total} partie | Affichage de {from} à {to} sur {total} parties",
-        "firstPage": "Première page",
         "previousPage": "Précédente",
         "nextPage": "Suivante",
-        "lastPage": "Dernière page",
         "label": "Pages de l'historique",
         "pageOf": "Page {page} sur {total}"
       },
@@ -240,80 +221,25 @@
   },
   "solo": {
     "title": "Mode Solo",
-    "selectBadge": "Sélectionnez au moins une catégorie",
     "notLoggedIn": "Connectez ou créez vous un compte pour jouer en solo !",
-    "categories": {
-      "title": "Catégories",
-      "subtitle": "Choisissez une ou plusieurs catégories pour votre aventure."
-    },
-    "settings": {
-      "title": "Paramètres",
-      "questionsCount": "Nombre de questions",
-      "difficulty": "Difficulté"
-    },
     "difficulties": {
       "easy": "Facile",
       "medium": "Moyen",
       "hard": "Difficile",
       "hardcore": "Hardcore"
-    },
-    "startAdventure": "Commencer l'aventure",
-    "startQuizModal": {
-      "title": "Démarrer le quiz",
-      "categories": "Catégories:",
-      "questions": "Questions:"
-    },
-    "quiz": {
-      "title": "Quiz Solo",
-      "home": "Accueil",
-      "question": "Question {current} / {total}",
-      "score": "Score:",
-      "timeRemaining": "Temps restant: {time}s",
-      "correct": "Correct +{points} pts",
-      "incorrect": "Mauvaise réponse",
-      "skip": "Passer",
-      "next": "Suivant",
-      "finished": "Quiz Terminé !",
-      "finalScore": "Score Final",
-      "questions": "Questions",
-      "successRate": "Réussite",
-      "correctAnswers": "Correctes",
-      "incorrectAnswers": "Incorrectes",
-      "summary": "Récapitulatif des Réponses",
-      "goodAnswer": "Bonne réponse",
-      "badAnswer": "Mauvaise réponse",
-      "replay": "Rejouer",
-      "partyInfo": "Informations de la partie",
-      "themes": "Thèmes",
-      "allThemes": "Tous les thèmes",
-      "difficulties": "Difficultés",
-      "numberOfQuestions": "Nombre de questions",
-      "noQuestions": "Aucune question disponible pour ce quiz"
     }
   },
   "group": {
     "title": "Mode Groupe",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder à votre profil",
     "create": {
-      "title": "Créer une partie",
-      "subtitle": "Définissez les paramètres et partagez le code/QR avec vos amis.",
-      "editSettings": "Mettre à jour les paramètres",
-      "modal": {
-        "title": "Créer la partie multijoueur",
-        "categories": "Catégories:",
-        "questions": "Questions:",
-        "difficulties": "Difficultés:"
-      }
+      "title": "Créer une partie"
     },
     "join": {
       "title": "Rejoindre une partie",
-      "subtitle": "Entrez un code pour rejoindre le lobby et commencer l'aventure.",
-      "badge": "Entrez le code du salon",
       "code": "Code de la partie",
-      "example": "Exemple: 538950",
       "joinButton": "Rejoindre",
       "modal": {
-        "title": "Rejoindre la partie",
         "nickname": "Choisissez un pseudo pour le salon",
         "nicknamePlaceholder": "Votre pseudo",
         "submit": "Rejoindre la partie",
@@ -322,20 +248,13 @@
       "digit": "Chiffre {n} du code"
     },
     "lobby": {
-      "joinError": "Erreur lors de la tentative de rejoindre la partie",
-      "noThemeSelected": "Aucun thème sélectionné",
-      "noDifficultySelected": "Aucune difficulté sélectionnée",
-      "difficulties": "Difficultés:",
       "title": "Lobby",
       "waitingBadge": "En attente de l'hôte",
       "hostBadge": "Vous êtes l'hôte",
-      "categories": "Catégories:",
-      "questions": "Questions:",
       "scoreEachRound": "Score à chaque tour",
       "scoreEachRoundDescription": "Afficher le score après chaque question",
       "players": "Joueurs",
       "playersConnected": "{count} connecté | {count} connectés",
-      "joinSection": "Pour rejoindre",
       "leave": "Quitter",
       "start": "Lancer la partie",
       "copySuccess": "Copié dans le presse-papier",
@@ -357,46 +276,19 @@
       "readyHint": "Tout est prêt. Lancez quand tous vos amis sont arrivés."
     },
     "quiz": {
-      "title": "Quiz en Groupe",
       "getReady": "Préparez-vous…",
-      "home": "Accueil",
-      "question": "Question {current} / {total}",
       "score": "Score:",
-      "timeRemaining": "Temps restant: {time}s",
-      "correct": "Correct +{points} pts",
-      "incorrect": "Mauvaise réponse",
       "currentRanking": "Classement actuel",
-      "skip": "Passer",
-      "next": "Suivant",
-      "finished": "Quiz Terminé !",
-      "finalScore": "Score Final",
-      "questions": "Questions",
-      "successRate": "Réussite",
-      "correctAnswers": "Correctes",
-      "incorrectAnswers": "Incorrectes",
-      "summary": "Récapitulatif des Réponses",
-      "goodAnswer": "Bonne réponse",
-      "badAnswer": "Mauvaise réponse",
-      "replay": "Rejouer",
       "errorAnswering": "Erreur lors de la soumission de la réponse",
       "playersStatus": "Statut des joueurs",
-      "answered": "A répondu",
-      "waiting": "En attente...",
-      "noAnswer": "Pas répondu",
       "ranking": "Classement Final",
-      "otherPlayers": "{count} autre joueur | {count} autres joueurs",
-      "partyInfo": "Informations de la partie",
-      "themes": "Thèmes",
       "allThemes": "Tous les thèmes",
-      "difficulties": "Difficultés",
-      "numberOfQuestions": "Nombre de questions",
       "scoreEachRound": "Score à chaque tour",
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et ne pourrez pas revenir."
       },
-      "returnToLobby": "Retour au lobby",
-      "noQuestions": "Aucune question disponible pour cette partie"
+      "returnToLobby": "Retour au lobby"
     },
     "mode": {
       "intro": "Une partie à plusieurs, chacun sur son téléphone ou son ordinateur. Vos amis rejoignent avec un code, même sans compte.",
@@ -406,24 +298,10 @@
     }
   },
   "competitive": {
-    "title": "Mode Compétitif",
-    "badge": "Classé",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder au mode compétitif !",
     "ranked": {
-      "title": "Mode Ranked",
-      "subtitle": "Duel 1v1",
-      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre ELO augmente !",
-      "badge": "Classé",
-      "eloInfo": "Votre ELO : {value}",
       "searchOpponent": "Rechercher un adversaire"
     },
-    "info": {
-      "title": "Mode Compétitif",
-      "description": "Affrontez des joueurs de niveau similaire dans des duels rapides. Plus vous gagnez, plus votre rang augmente !",
-      "balancedMatchmaking": "Matchmaking équilibré",
-      "dynamicRank": "Rang dynamique"
-    },
-    "startSearch": "Lancer la recherche",
     "matchmaking": {
       "searching": "Recherche en cours…",
       "searchingMessage": "On cherche un joueur de votre niveau. Ça prend en général moins d'une minute.",
@@ -438,44 +316,22 @@
     },
     "quiz": {
       "abort": "Abandonner",
-      "title": "Duel Ranked",
-      "question": "Question {current}",
-      "score": "Score :",
-      "timeRemaining": "Temps restant : {time}s",
       "getReady": "Préparez-vous…",
-      "playersStatus": "Statut des joueurs",
-      "answered": "A répondu",
-      "waitingAnswer": "En attente…",
-      "opponentAnswered": "A répondu",
-      "waitingOpponent": "En attente…",
-      "correct": "Correct",
-      "incorrect": "Mauvaise réponse",
-      "finished": "Duel Terminé !",
       "victory": "Victoire !",
       "defeat": "Défaite",
       "draw": "Égalité",
       "eloGained": "+{points} ELO",
       "eloLost": "{points} ELO",
       "eloUnchanged": "ELO inchangé",
-      "finalRanking": "Résultats du Duel",
       "replay": "Rejouer",
       "home": "Accueil",
       "errorAnswering": "Erreur lors de la soumission de la réponse",
       "currentRanking": "Classement actuel",
-      "finalScore": "Score final",
-      "questions": "Questions",
-      "successRate": "Taux de réussite",
-      "correctAnswers": "Correctes",
-      "incorrectAnswers": "Incorrectes",
-      "summary": "Récapitulatif des réponses",
       "opponentForfeited": "L'adversaire a abandonné la partie.",
-      "goodAnswer": "Bonne réponse",
-      "badAnswer": "Mauvaise réponse",
       "confirmLeave": {
         "title": "Quitter la partie ?",
         "message": "Êtes-vous sûr de vouloir quitter la partie en cours ? Vous perdrez votre progression et l'ELO ne sera pas mis à jour."
-      },
-      "noQuestions": "Aucune question disponible pour ce duel"
+      }
     },
     "lobby": {
       "title": "Duel classé",
@@ -501,23 +357,6 @@
   },
   "leaderboard": {
     "title": "Classement",
-    "badge": "Top Légendes",
-    "podium": {
-      "first": "#1",
-      "second": "#2",
-      "third": "#3",
-      "empty": "?"
-    },
-    "ranking": {
-      "title": "Classement Complet",
-      "badge": "Mise à jour en temps réel"
-    },
-    "status": {
-      "currentChampion": "Champion actuel",
-      "challenger": "Challenger",
-      "confirmedPlayer": "Joueur confirmé"
-    },
-    "otherPlayers": "Voir les {count} autres joueurs",
     "empty": "Personne n'est encore classé. Lancez le premier duel !",
     "eloLabel": "Élo",
     "notLoggedIn": "Connectez ou créez vous un compte pour accéder au classement !",
@@ -530,13 +369,8 @@
     "unrankedHint": "Jouez un duel classé pour apparaître au classement."
   },
   "modal": {
-    "defaultTitle": "Confirmation",
     "cancel": "Annuler",
-    "confirm": "Confirmer",
-    "close": "Fermer"
-  },
-  "errors": {
-    "generic": "Une erreur s'est produite"
+    "confirm": "Confirmer"
   },
   "mascot": {
     "alt": "Le singe Monkizz"

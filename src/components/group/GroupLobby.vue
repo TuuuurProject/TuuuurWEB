@@ -19,7 +19,7 @@
         <h3 id="lobby-invite-title" class="text-xl font-bold">
           {{ $t('group.lobby.inviteTitle') }}
         </h3>
-        <p class="text-sm text-brand-gray">{{ $t('group.lobby.inviteText') }}</p>
+        <p class="text-sm text-brand-muted">{{ $t('group.lobby.inviteText') }}</p>
         <button
           type="button"
           class="group flex items-center gap-3 rounded-2xl px-4 py-2 transition-colors hover:bg-brand-surface2"
@@ -32,7 +32,7 @@
           >
             {{ groupeStore.groupePartyInfo?.code }}
           </span>
-          <font-awesome-icon icon="copy" class="text-brand-gray group-hover:text-brand-purple" />
+          <font-awesome-icon icon="copy" class="text-brand-muted group-hover:text-brand-purple" />
         </button>
         <QRPreview :code="groupeStore.groupePartyInfo?.code || ''" />
         <button type="button" class="btn btn-ghost w-full" @click="copyLink">
@@ -64,7 +64,7 @@
             <span class="flex min-w-0 flex-1 flex-col">
               <span class="truncate font-semibold">
                 {{ p.user?.nickName }}
-                <span v-if="isMe(p)" class="text-sm font-normal text-brand-gray">
+                <span v-if="isMe(p)" class="text-sm font-normal text-brand-muted">
                   {{ $t('game.status.you') }}
                 </span>
               </span>
@@ -75,7 +75,7 @@
             <button
               v-if="currentUserIsHost && !isMe(p)"
               type="button"
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-gray transition-colors hover:bg-brand-orange/10 hover:text-brand-orange"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-brand-muted transition-colors hover:bg-brand-orange/10 hover:text-brand-orange"
               :aria-label="$t('group.lobby.expelNamed', { name: p.user?.nickName })"
               :title="$t('group.lobby.expelPlayer')"
               @click="handleExpelPlayer(p)"
@@ -87,7 +87,7 @@
 
         <div class="flex flex-col gap-3 border-t border-brand-line pt-5">
           <template v-if="currentUserIsHost">
-            <p class="text-sm text-brand-gray">{{ startHint }}</p>
+            <p class="text-sm text-brand-muted">{{ startHint }}</p>
             <button
               data-testid="lobby-start"
               class="btn btn-primary w-full py-4 text-lg sm:w-auto sm:self-start sm:px-10"
@@ -97,7 +97,7 @@
               <font-awesome-icon icon="play" class="mr-2" /> {{ $t('group.lobby.start') }}
             </button>
           </template>
-          <p v-else class="flex items-center gap-2 font-semibold text-brand-gray">
+          <p v-else class="flex items-center gap-2 font-semibold text-brand-muted">
             <font-awesome-icon icon="hourglass-half" /> {{ $t('group.lobby.waitingHost') }}
           </p>
         </div>

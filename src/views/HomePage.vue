@@ -9,7 +9,7 @@
           </template>
           <template v-else>{{ $t('home.heroTitle') }}</template>
         </h1>
-        <p class="max-w-xl text-brand-gray text-lg">{{ $t('home.subtitle') }}</p>
+        <p class="max-w-xl text-brand-muted text-lg">{{ $t('home.subtitle') }}</p>
         <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <button
             data-testid="home-solo"
@@ -26,7 +26,7 @@
             <font-awesome-icon icon="users" class="mr-2" /> {{ $t('home.playGroup') }}
           </button>
         </div>
-        <p class="text-sm text-brand-gray">
+        <p class="text-sm text-brand-muted">
           <font-awesome-icon icon="clock" class="mr-1" /> {{ $t('home.duration') }}
         </p>
       </div>
@@ -38,7 +38,7 @@
         data-testid="home-mascot"
       >
         <p
-          class="mascot-bubble relative max-w-sm rounded-3xl bg-brand-darkGray border border-brand-line px-6 py-4 text-lg font-semibold shadow-card"
+          class="mascot-bubble relative max-w-sm rounded-3xl bg-brand-surface border border-brand-line px-6 py-4 text-lg font-semibold shadow-card"
         >
           {{ mascotMessage }}
         </p>
@@ -48,7 +48,7 @@
       <!-- Visiteur : un exemple de question montre le jeu (décoratif) -->
       <div v-else class="surface-card flex flex-col gap-4" aria-hidden="true">
         <div class="flex items-center justify-between gap-3">
-          <span class="text-sm font-semibold text-brand-gray">
+          <span class="text-sm font-semibold text-brand-muted">
             {{ $t('home.preview.label') }}
           </span>
           <div class="flex gap-2">
@@ -75,14 +75,14 @@
             class="flex items-center gap-3 rounded-2xl border-2 px-4 py-3 font-semibold"
             :class="
               index === 1
-                ? 'border-brand-green bg-brand-green/10 text-brand-lightGray'
-                : 'border-brand-line text-brand-lightGray'
+                ? 'border-brand-green bg-brand-green/10 text-brand-ink'
+                : 'border-brand-line text-brand-ink'
             "
           >
             <span
               class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold"
               :class="
-                index === 1 ? 'bg-brand-green text-brand-dark' : 'bg-brand-surface2 text-brand-gray'
+                index === 1 ? 'bg-brand-green text-brand-bg' : 'bg-brand-surface2 text-brand-muted'
               "
             >
               <font-awesome-icon v-if="index === 1" icon="check" />
@@ -118,13 +118,13 @@
             <span class="font-branding text-xl font-bold">{{
               $t(`home.modes.${mode.key}.title`)
             }}</span>
-            <span class="text-brand-gray">{{ $t(`home.modes.${mode.key}.description`) }}</span>
+            <span class="text-brand-muted">{{ $t(`home.modes.${mode.key}.description`) }}</span>
           </span>
           <span class="mt-auto flex w-full items-center justify-between text-sm font-semibold">
-            <span class="text-brand-gray">{{ $t(`home.modes.${mode.key}.meta`) }}</span>
+            <span class="text-brand-muted">{{ $t(`home.modes.${mode.key}.meta`) }}</span>
             <font-awesome-icon
               icon="chevron-right"
-              class="text-brand-gray transition-transform group-hover:translate-x-1 group-hover:text-brand-purple"
+              class="text-brand-muted transition-transform group-hover:translate-x-1 group-hover:text-brand-purple"
             />
           </span>
         </button>
@@ -140,7 +140,7 @@
       <h2 id="home-progress-title" class="text-2xl font-bold">{{ $t('home.progress.title') }}</h2>
       <div class="grid gap-4 md:grid-cols-3">
         <div class="surface-card flex flex-col gap-1">
-          <span class="text-sm font-semibold text-brand-gray">
+          <span class="text-sm font-semibold text-brand-muted">
             <font-awesome-icon icon="trophy" class="mr-1 text-brand-yellow" />
             {{ $t('home.progress.elo') }}
           </span>
@@ -149,7 +149,7 @@
           </span>
         </div>
         <div class="surface-card flex flex-col gap-1">
-          <span class="text-sm font-semibold text-brand-gray">
+          <span class="text-sm font-semibold text-brand-muted">
             <font-awesome-icon icon="ranking-star" class="mr-1 text-brand-purple" />
             {{ $t('home.progress.rank') }}
           </span>
@@ -157,16 +157,16 @@
             <span class="font-display text-4xl font-extrabold tabular-nums">
               #{{ rankedStore.rankingData.userRanking }}
             </span>
-            <span class="text-sm text-brand-gray">
+            <span class="text-sm text-brand-muted">
               {{ $t('home.progress.rankTotal', { total: rankedStore.rankingData.totalUsers }) }}
             </span>
           </template>
-          <span v-else class="font-semibold text-brand-gray">{{
+          <span v-else class="font-semibold text-brand-muted">{{
             $t('home.progress.unranked')
           }}</span>
         </div>
         <div class="surface-card flex flex-col gap-1">
-          <span class="text-sm font-semibold text-brand-gray">
+          <span class="text-sm font-semibold text-brand-muted">
             <font-awesome-icon icon="clock-rotate-left" class="mr-1 text-brand-green" />
             {{ $t('home.progress.lastGame') }}
           </span>
@@ -174,7 +174,7 @@
             <span class="font-display text-4xl font-extrabold tabular-nums">
               {{ $t('home.progress.points', { score: lastGame.score }) }}
             </span>
-            <span class="text-sm text-brand-gray">
+            <span class="text-sm text-brand-muted">
               {{
                 $t('home.progress.lastGameMeta', {
                   mode: modeLabel(lastGame.partyType?.id, 'name'),
@@ -183,7 +183,7 @@
               }}
             </span>
           </template>
-          <span v-else class="font-semibold text-brand-gray">{{ $t('home.progress.noGame') }}</span>
+          <span v-else class="font-semibold text-brand-muted">{{ $t('home.progress.noGame') }}</span>
         </div>
       </div>
       <div class="flex flex-wrap gap-3">
@@ -208,7 +208,7 @@
     >
       <div class="flex flex-col gap-2">
         <h2 class="text-2xl font-bold">{{ $t('home.guest.title') }}</h2>
-        <p class="max-w-2xl text-brand-gray">{{ $t('home.guest.text') }}</p>
+        <p class="max-w-2xl text-brand-muted">{{ $t('home.guest.text') }}</p>
       </div>
       <div class="flex flex-wrap gap-3 md:shrink-0">
         <button class="btn btn-primary" @click="router.push({ name: 'Register' })">
@@ -224,7 +224,7 @@
       </div>
     </section>
 
-    <footer class="text-center text-xs text-brand-gray">
+    <footer class="text-center text-xs text-brand-muted">
       {{ $t('home.footer', { year: currentYear, version: packageJson.version }) }}
     </footer>
   </div>

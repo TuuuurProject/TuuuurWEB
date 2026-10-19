@@ -1,7 +1,7 @@
 <template>
   <button
     type="button"
-    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-brand-line text-brand-lightGray transition-colors hover:border-brand-purple/50"
+    class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-brand-line text-brand-ink transition-colors hover:border-brand-purple/50"
     :aria-label="isDark ? $t('nav.colorMode.toLight') : $t('nav.colorMode.toDark')"
     :title="isDark ? $t('nav.colorMode.toLight') : $t('nav.colorMode.toDark')"
     @click="toggle"
