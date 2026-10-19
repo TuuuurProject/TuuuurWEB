@@ -26,9 +26,6 @@
             <font-awesome-icon icon="users" class="mr-2" /> {{ $t('home.playGroup') }}
           </button>
         </div>
-        <p class="text-sm text-brand-muted">
-          <font-awesome-icon icon="clock" class="mr-1" /> {{ $t('home.duration') }}
-        </p>
       </div>
 
       <!-- Joueur connecté : la mascotte l'accueille avec un mot sur sa dernière partie -->
