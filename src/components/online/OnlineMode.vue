@@ -3,11 +3,13 @@
     <template v-if="userStore.isLogged">
       <!-- Landing: search button only -->
       <div v-if="step === 'idle'" class="space-y-6">
-        <header class="flex items-center justify-between">
-          <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-            <font-awesome-icon icon="fire" class="mr-2 text-brand-orange" />
-            {{ $t('competitive.ranked.title') }}
-          </h2>
+        <header class="solo-intro">
+          <div>
+            <p class="eyebrow">{{ $t('arena.ranked.meta') }}</p>
+            <h1>{{ $t('arena.ranked.title') }}</h1>
+            <p class="solo-intro-description">{{ $t('arena.ranked.description') }}</p>
+          </div>
+          <ModeArtwork variant="ranked" />
         </header>
 
         <div class="gaming-card">
@@ -79,6 +81,7 @@ import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import RankedMatchmaking from './RankedMatchmaking.vue'
 import RankedQuiz from './RankedQuiz.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
+import ModeArtwork from '@/components/gaming/ModeArtwork.vue'
 
 const { t } = useI18n()
 const rankedStore = useRankedStore()

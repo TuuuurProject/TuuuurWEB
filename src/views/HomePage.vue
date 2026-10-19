@@ -31,6 +31,14 @@
       <KnowledgeScene />
     </section>
 
+    <div class="topic-strip">
+      <span class="topic-strip-label">{{ $t('arena.topicsLabel') }}</span>
+      <span v-for="topic in topics" :key="topic.key" class="topic-chip">
+        <font-awesome-icon :icon="topic.icon" aria-hidden="true" />
+        {{ $t(`arena.topics.${topic.key}`) }}
+      </span>
+    </div>
+
     <section id="game-modes" class="mode-section" aria-labelledby="modes-title">
       <div class="section-heading">
         <div>
@@ -68,6 +76,25 @@
       </div>
     </section>
 
+    <section id="how-to-play" class="how-to-play" aria-labelledby="how-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">{{ $t('arena.howEyebrow') }}</p>
+          <h2 id="how-title">{{ $t('arena.howTitle') }}</h2>
+        </div>
+        <span class="section-aside">{{ $t('arena.howAside') }}</span>
+      </div>
+      <ol class="how-grid">
+        <li v-for="(step, index) in steps" :key="step">
+          <span class="how-number" aria-hidden="true">0{{ index + 1 }}</span>
+          <div>
+            <h3>{{ $t(`arena.steps.${step}.title`) }}</h3>
+            <p>{{ $t(`arena.steps.${step}.description`) }}</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
     <section class="ranking-banner" aria-labelledby="ranking-title">
       <div class="ranking-medal" aria-hidden="true">
         <font-awesome-icon icon="trophy" />
@@ -99,6 +126,15 @@ import ModeArtwork from '@/components/gaming/ModeArtwork.vue'
 import packageJson from '../../package.json'
 
 const currentYear = new Date().getFullYear()
+const topics = [
+  { key: 'science', icon: 'flask' },
+  { key: 'cinema', icon: 'film' },
+  { key: 'history', icon: 'university' },
+  { key: 'music', icon: 'music' },
+  { key: 'sport', icon: 'medal' },
+  { key: 'art', icon: 'palette' },
+] as const
+const steps = ['choose', 'answer', 'replay'] as const
 const modes = [
   { id: 'solo', number: '01', route: 'SoloQuiz', action: 'home.playSolo' },
   { id: 'group', number: '02', route: 'GroupMode', action: 'home.playGroup' },

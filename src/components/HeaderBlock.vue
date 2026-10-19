@@ -2,9 +2,9 @@
   <header class="site-header" @keydown.esc="closeMenu">
     <a class="skip-link" href="#body-block">{{ $t('arena.skipContent') }}</a>
     <div class="header-inner">
-      <router-link class="brand-lockup" :to="{ name: 'Home' }" aria-label="Tuuuur">
-        <span class="brand-mark" aria-hidden="true">t<span>u</span></span>
-        <span class="brand-wordmark">tuuuur<span>.</span></span>
+      <router-link class="brand-lockup" :to="{ name: 'Home' }" aria-label="Monkizz">
+        <MonkeyMascot portrait class="brand-mascot" />
+        <span class="brand-wordmark">monkizz<span>.</span></span>
       </router-link>
 
       <nav class="desktop-nav" :aria-label="$t('arena.navigation')">
@@ -13,6 +13,9 @@
         </router-link>
         <router-link :to="{ name: 'Ranking' }" class="nav-link" active-class="nav-link--active">
           <font-awesome-icon icon="trophy" aria-hidden="true" /> {{ $t('nav.ranking') }}
+        </router-link>
+        <router-link :to="{ name: 'Home', hash: '#how-to-play' }" class="nav-link">
+          {{ $t('arena.howToPlay') }}
         </router-link>
       </nav>
 
@@ -65,6 +68,7 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import useUserStore from '@/stores/user'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import MonkeyMascot from './gaming/MonkeyMascot.vue'
 
 const userStore = useUserStore()
 const route = useRoute()

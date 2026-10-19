@@ -7,6 +7,12 @@
     <span class="scene-spark scene-spark--two">+</span>
     <span class="scene-dot scene-dot--one" />
     <span class="scene-dot scene-dot--two" />
+    <div class="jungle-halo" />
+    <div class="jungle-platform"><span /></div>
+    <div class="jungle-leaf jungle-leaf--left" />
+    <div class="jungle-leaf jungle-leaf--right" />
+    <div class="mascot-stage"><MonkeyMascot /></div>
+    <div class="mascot-sticker">{{ $t('arena.scene.greeting') }} <span>✦</span></div>
     <div class="cube-shadow" />
     <div class="cube-stage">
       <div class="knowledge-cube">
@@ -33,3 +39,7 @@
     <div class="scene-caption"><span /> {{ $t('arena.scene.caption') }}</div>
   </div>
 </template>
+
+<script setup lang="ts">
+import MonkeyMascot from './MonkeyMascot.vue'
+</script>

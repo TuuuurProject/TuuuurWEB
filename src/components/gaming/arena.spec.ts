@@ -83,6 +83,9 @@ describe('Gaming hub', () => {
     expect(wrapper.get('h1').text()).toContain(en.arena.title)
     expect(wrapper.get('[data-testid="home-group"]').text()).toContain(en.arena.group.title)
     expect(wrapper.get('.btn-play').text()).toContain(en.arena.play)
+    expect(wrapper.get('#how-to-play').text()).toContain(en.arena.steps.answer.description)
+    expect(wrapper.get('.topic-strip').text()).toContain(en.arena.topics.science)
+    expect(wrapper.get('.mascot-sticker').text()).toContain(en.arena.scene.greeting)
     expect(Object.keys(fr.arena).sort()).toEqual(Object.keys(en.arena).sort())
   })
 
@@ -93,10 +96,38 @@ describe('Gaming hub', () => {
     expect(scene.findAll('.cube-face')).toHaveLength(6)
     expect(scene.findAll('button, a, input, [tabindex]')).toHaveLength(0)
     expect(wrapper.findAll('.mode-art[aria-hidden="true"]')).toHaveLength(3)
+    expect(scene.findAll('.mascot-stage .monkey-mascot')).toHaveLength(1)
+    expect(wrapper.findAll('.monkey-mascot[aria-hidden="true"][focusable="false"]')).toHaveLength(4)
+  })
+
+  it('gives every mascot unique gradient references when used together', async () => {
+    const { wrapper } = await setup(HomePage)
+    const ids = wrapper.findAll('.monkey-mascot [id]').map((node) => node.attributes('id'))
+    expect(ids.length).toBeGreaterThan(0)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const node of wrapper.findAll('.monkey-mascot [fill^="url("]')) {
+      const id = node.attributes('fill').slice(5, -1)
+      expect(ids).toContain(id)
+    }
+  })
+
+  it('explains the three existing game steps without pretending topics are controls', async () => {
+    const { wrapper } = await setup(HomePage)
+    expect(wrapper.findAll('#how-to-play ol li')).toHaveLength(3)
+    expect(wrapper.findAll('.topic-chip')).toHaveLength(6)
+    expect(wrapper.findAll('.topic-strip button, .topic-strip a')).toHaveLength(0)
+    expect(wrapper.get('.hub-footer').text()).toContain('Monkizz')
   })
 })
 
 describe('Gaming navigation', () => {
+  it('uses the Monkizz identity and links to the instructions from any page', async () => {
+    const { wrapper } = await setup(HeaderBlock)
+    expect(wrapper.get('.brand-lockup').attributes('aria-label')).toBe('Monkizz')
+    expect(wrapper.get('.brand-lockup').attributes('href')).toBe('/')
+    expect(wrapper.get('.brand-wordmark').text()).toBe('monkizz.')
+    expect(wrapper.get('.desktop-nav a[href="/#how-to-play"]').text()).toBe(fr.arena.howToPlay)
+  })
   it('offers login to visitors and profile to authenticated players', async () => {
     const { wrapper, pinia } = await setup(HeaderBlock)
     expect(wrapper.get('.header-account').attributes('href')).toBe('/connexion')
@@ -114,16 +145,18 @@ describe('Gaming navigation', () => {
         finish: false,
         partyDifficulty: [],
         partyTheme: [],
-        partyQuestions: [{
-          question: {
-            label: 'Combien font 2 + 2 ?',
-            answer: [
-              { id: 1, value: '4', valid: revealed ? true : null },
-              { id: 2, value: '5', valid: revealed ? false : null },
-            ],
+        partyQuestions: [
+          {
+            question: {
+              label: 'Combien font 2 + 2 ?',
+              answer: [
+                { id: 1, value: '4', valid: revealed ? true : null },
+                { id: 2, value: '5', valid: revealed ? false : null },
+              ],
+            },
+            userPartyQuestion: { correct, idAnswer: revealed ? (correct ? 1 : 2) : null },
           },
-          userPartyQuestion: { correct, idAnswer: revealed ? (correct ? 1 : 2) : null },
-        }],
+        ],
       }
     }
 
@@ -152,20 +185,23 @@ describe('Gaming navigation', () => {
       expect(wrapper.get('.quiz-feedback').text()).toBe('')
     })
 
-    it.each([0, 1])('locks answers and exposes non-color feedback for choice %i', async (choice) => {
-      const { wrapper, pinia } = await setupQuiz()
-      await wrapper.findAll('.quiz-answer')[choice].trigger('click')
-      await flushPromises()
-      expect(useSoloStore(pinia).loadAnswerById).toHaveBeenCalledOnce()
-      expect(useSoloStore(pinia).loadAnswerById).toHaveBeenCalledWith(choice + 1)
-      expect(wrapper.findAll('.quiz-answer:disabled')).toHaveLength(2)
-      expect(wrapper.findAll('.quiz-answer')[0].text()).toContain(fr.arena.answerCorrect)
-      if (choice === 1) {
-        expect(wrapper.findAll('.quiz-answer')[1].text()).toContain(fr.arena.answerIncorrect)
-      }
-      expect(wrapper.get('.quiz-feedback').text()).not.toBe('')
-      expect(wrapper.get('.quiz-arena-header').text()).toContain(choice === 0 ? '100' : '0')
-    })
+    it.each([0, 1])(
+      'locks answers and exposes non-color feedback for choice %i',
+      async (choice) => {
+        const { wrapper, pinia } = await setupQuiz()
+        await wrapper.findAll('.quiz-answer')[choice].trigger('click')
+        await flushPromises()
+        expect(useSoloStore(pinia).loadAnswerById).toHaveBeenCalledOnce()
+        expect(useSoloStore(pinia).loadAnswerById).toHaveBeenCalledWith(choice + 1)
+        expect(wrapper.findAll('.quiz-answer:disabled')).toHaveLength(2)
+        expect(wrapper.findAll('.quiz-answer')[0].text()).toContain(fr.arena.answerCorrect)
+        if (choice === 1) {
+          expect(wrapper.findAll('.quiz-answer')[1].text()).toContain(fr.arena.answerIncorrect)
+        }
+        expect(wrapper.get('.quiz-feedback').text()).not.toBe('')
+        expect(wrapper.get('.quiz-arena-header').text()).toContain(choice === 0 ? '100' : '0')
+      },
+    )
   })
 
   it('opens the mobile menu with direct access to all game modes and closes on Escape', async () => {

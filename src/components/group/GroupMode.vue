@@ -1,10 +1,13 @@
 <template>
   <section>
     <div v-if="step === 'mode'" class="space-y-8">
-      <header class="flex items-center justify-between">
-        <h2 class="font-branding text-3xl text-brand-lightGray glow-text">
-          <font-awesome-icon icon="users" class="mr-2" /> {{ $t('group.title') }}
-        </h2>
+      <header class="solo-intro">
+        <div>
+          <p class="eyebrow">{{ $t('arena.group.meta') }}</p>
+          <h1>{{ $t('arena.group.title') }}</h1>
+          <p class="solo-intro-description">{{ $t('arena.group.description') }}</p>
+        </div>
+        <ModeArtwork variant="group" />
       </header>
 
       <!-- Cartes interactives avec icônes gaming -->
@@ -97,6 +100,7 @@ import OverlayBlock from '@/components/OverlayBlock.vue'
 import useUserStore from '@/stores/user.js'
 import useGroupeStore from '@/stores/groupe.js'
 import GroupQuiz from '@/components/group/GroupQuiz.vue'
+import ModeArtwork from '@/components/gaming/ModeArtwork.vue'
 
 const userStore = useUserStore()
 const groupeStore = useGroupeStore()

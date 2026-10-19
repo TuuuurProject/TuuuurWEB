@@ -1,14 +1,22 @@
-# Tuuuur Web
+# Monkizz Web
 
-## Interface gaming
+## Interface gaming — jungle arcade
 
 Le client Vue propose un accueil responsive avec trois modes existants (solo,
 groupe et duel classé), une navigation clavier/mobile et un accès au classement.
-La direction visuelle repose sur un fond bleu nuit, des accents citron/lavande,
-des cartes en relief et une scène de connaissances originale.
+Monkizz est le nouveau nom public du jeu ; les chemins des projets et les contrats
+API Tuuuur sont conservés. La direction visuelle associe fond nuit, vert citron,
+violet, cartes en relief et une mascotte singe originale avec casque et hoodie.
 
-- La scène utilise six faces CSS 3D, sans WebGL, modèle téléchargé ni dépendance
-  supplémentaire. Les illustrations des modes sont également réalisées en CSS.
+- La mascotte est une illustration SVG originale en **2,5D** (dégradés et ombres),
+  pas un modèle 3D. Elle est partagée entre logo, accueil, mode groupe et invitation
+  à se connecter. Les identifiants de dégradés sont uniques par instance.
+- Le décor associe un îlot en relief et un cube à six faces **CSS 3D**, sans WebGL,
+  modèle téléchargé ni dépendance supplémentaire. Les éléments sont décoratifs,
+  non focalisables et ne bloquent jamais le jeu.
+- Les boutons ouvrent les vrais parcours existants. Le bandeau des thèmes est
+  illustratif ; la sélection du quiz reste dans le mode solo. La section
+  « Comment jouer » explique les trois étapes sans simuler une partie.
 - Les animations d'entrée se terminent en moins de deux secondes ; les effets
   de survol sont réservés aux pointeurs précis. `prefers-reduced-motion` supprime
   les animations décoratives et les déplacements de survol.
@@ -18,6 +26,8 @@ des cartes en relief et une scène de connaissances originale.
   de manches, des réponses plus lisibles et des indicateurs correct/incorrect
   qui ne reposent pas uniquement sur la couleur.
 - Aucun défi quotidien, inventaire, solde ou nombre de joueurs fictif n'est affiché.
+- Le titre du navigateur, le favicon, la navigation et les textes FR/EN portent
+  la marque Monkizz. Cette refonte concerne le web responsive, pas le client Flutter.
 
 Les styles partagés et responsive se trouvent dans
 [`src/assets/arena.css`](./src/assets/arena.css), les illustrations dans
@@ -32,7 +42,12 @@ npm run test:unit -- --run src/components/gaming/arena.spec.ts
 npm run e2e:run
 ```
 
-This template should help get you started developing with Vue 3 in Vite.
+Le script `e2e:run` lance tous les scénarios. Pour cibler uniquement l'interface,
+lancer `npm run dev:e2e` puis, dans un autre terminal :
+
+```sh
+npx cypress run --spec cypress/e2e/05-gaming-ui.cy.ts
+```
 
 ## Recommended IDE Setup
 

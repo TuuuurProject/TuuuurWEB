@@ -24,23 +24,23 @@
     "menu": "Menu"
   },
   "home": {
-    "title": "Tuuuur",
+    "title": "Monkizz",
     "subtitle": "Fun and competitive quiz. Play solo, in groups, or in online duels.",
     "playSolo": "Play Solo",
     "playGroup": "Play in Group",
     "competitiveMode": "Competitive Mode",
-    "footer": "© {year} Tuuuur"
+    "footer": "© {year} Monkizz"
   },
   "arena": {
-    "eyebrow": "A playground for curious minds",
-    "title": "Your curiosity.",
-    "titleAccent": "Your superpower.",
-    "description": "From science to pop culture, turn what you know into epic moments. On your own, with friends or against a rival: it's your move.",
+    "eyebrow": "Welcome to the quiz jungle",
+    "title": "A curious mind.",
+    "titleAccent": "A playful instinct.",
+    "description": "One clever monkey. A world of trivia. Ready to take the leap? Challenge your friends, test your knowledge and reach for the top.",
     "play": "Let's play",
     "explore": "Explore game modes",
-    "footnote": "A little knowledge. A lot of fun.",
-    "modesEyebrow": "A mode for every mood",
-    "modesTitle": "Choose your playground.",
+    "footnote": "Solo, with friends or head-to-head. Always curious.",
+    "modesEyebrow": "Your adventure starts here",
+    "modesTitle": "Find your kind of wild.",
     "modesAside": "One curiosity. Three ways to play.",
     "solo": {
       "tag": "Your own challenge",
@@ -61,10 +61,37 @@
       "description": "One opponent. Your knowledge. Make every answer count and climb the leaderboard."
     },
     "rankingEyebrow": "Knowledge earns its place",
-    "rankingTitle": "Great minds deserve a leaderboard.",
+    "rankingTitle": "The jungle has its legends. You're next.",
     "rankingDescription": "Discover the top players and find your next goal.",
     "viewRanking": "View leaderboard",
-    "footer": "Stay curious. Play again.",
+    "footer": "Wildly curious.",
+    "howToPlay": "How to play",
+    "howEyebrow": "Easy to get into",
+    "howTitle": "Learn. Play. One more round.",
+    "howAside": "You don't need to know it all to jump in.",
+    "topicsLabel": "A world of things to know",
+    "topics": {
+      "science": "Science",
+      "cinema": "Cinema",
+      "history": "History",
+      "music": "Music",
+      "sport": "Sport",
+      "art": "Art"
+    },
+    "steps": {
+      "choose": {
+        "title": "Pick your playground",
+        "description": "Make a solo quiz your own, join your friends or enter a ranked duel."
+      },
+      "answer": {
+        "title": "Trust your instinct",
+        "description": "Read the question, pick your answer and keep an eye on the clock."
+      },
+      "replay": {
+        "title": "Reach a little higher",
+        "description": "See your results, sharpen your knowledge and try to beat your score."
+      }
+    },
     "skipContent": "Skip to content",
     "navigation": "Main navigation",
     "navPlay": "Play",
@@ -78,7 +105,8 @@
       "science": "Science",
       "cinema": "Cinema",
       "history": "History",
-      "caption": "A whole universe of knowledge"
+      "caption": "Curiosity is a playground",
+      "greeting": "Let's play!"
     }
   },
   "auth": {

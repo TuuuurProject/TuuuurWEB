@@ -9,9 +9,9 @@
       <span class="art-star art-star--two">+</span>
     </template>
     <template v-else-if="variant === 'group'">
-      <div class="art-pawn art-pawn--left"><span /><i /></div>
-      <div class="art-pawn art-pawn--right"><span /><i /></div>
-      <div class="art-pawn art-pawn--center"><span /><i /></div>
+      <div class="art-friend art-friend--left"><MonkeyMascot portrait /></div>
+      <div class="art-friend art-friend--right"><MonkeyMascot portrait /></div>
+      <div class="art-friend art-friend--center"><MonkeyMascot portrait /></div>
     </template>
     <template v-else>
       <div class="art-podium" />
@@ -23,5 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import MonkeyMascot from './MonkeyMascot.vue'
+
 defineProps<{ variant: 'solo' | 'group' | 'ranked' }>()
 </script>

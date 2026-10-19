@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: { name: 'home' },
+    redirect: { name: 'Home' },
   },
 ]
 
@@ -53,7 +53,9 @@ const router = createRouter({
   routes,
   scrollBehavior(to, _from, savedPosition) {
     if (savedPosition) return savedPosition
-    if (to.hash === '#game-modes') return { el: '#game-modes', top: 96 }
+    if (to.hash === '#game-modes' || to.hash === '#how-to-play') {
+      return { el: to.hash, top: 96 }
+    }
     return { top: 0 }
   },
 })

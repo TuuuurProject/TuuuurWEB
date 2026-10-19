@@ -24,23 +24,23 @@
     "menu": "Menu"
   },
   "home": {
-    "title": "Tuuuur",
+    "title": "Monkizz",
     "subtitle": "Quiz fun et compétitif. Jouez en solo, en groupe ou en duel en ligne.",
     "playSolo": "Jouer en solo",
     "playGroup": "Jouer en groupe",
     "competitiveMode": "Mode compétitif",
-    "footer": "© {year} Tuuuur"
+    "footer": "© {year} Monkizz"
   },
   "arena": {
-    "eyebrow": "Le terrain de jeu des esprits curieux",
-    "title": "Ta curiosité.",
-    "titleAccent": "Ton super-pouvoir.",
-    "description": "De la science à la pop culture, transforme ce que tu sais en moments épiques. En solo, entre amis ou face à un rival : à toi de jouer.",
-    "play": "C'est parti",
+    "eyebrow": "Bienvenue dans la jungle du quiz",
+    "title": "Un esprit curieux.",
+    "titleAccent": "Un instinct joueur.",
+    "description": "Un singe malin. Des questions de culture générale. Et toi, prêt à faire le grand saut ? Défie tes amis, teste tes connaissances et vise le sommet.",
+    "play": "À toi de jouer",
     "explore": "Explorer les modes",
-    "footnote": "Un peu de savoir. Beaucoup de plaisir.",
-    "modesEyebrow": "À chaque humeur, son mode",
-    "modesTitle": "Choisis ton terrain de jeu.",
+    "footnote": "Solo, entre amis ou en duel. Toujours curieux.",
+    "modesEyebrow": "L'aventure commence ici",
+    "modesTitle": "À chacun sa jungle.",
     "modesAside": "Même curiosité. Trois façons de jouer.",
     "solo": {
       "tag": "À ton rythme",
@@ -61,10 +61,37 @@
       "description": "Un adversaire. Tes connaissances. Fais la différence et vise le haut du classement."
     },
     "rankingEyebrow": "La connaissance, ça se classe",
-    "rankingTitle": "Les grandes têtes ont leur classement.",
+    "rankingTitle": "La jungle a ses légendes. À ton tour.",
     "rankingDescription": "Découvre les meilleurs joueurs et trouve ton prochain objectif.",
     "viewRanking": "Voir le classement",
-    "footer": "Reste curieux. Joue encore.",
+    "footer": "Sauvagement curieux.",
+    "howToPlay": "Comment jouer",
+    "howEyebrow": "Facile à prendre en main",
+    "howTitle": "Du savoir. Du fun. Encore une partie.",
+    "howAside": "Pas besoin de tout savoir pour se lancer.",
+    "topicsLabel": "Un terrain de jeu sans limites",
+    "topics": {
+      "science": "Sciences",
+      "cinema": "Cinéma",
+      "history": "Histoire",
+      "music": "Musique",
+      "sport": "Sport",
+      "art": "Art"
+    },
+    "steps": {
+      "choose": {
+        "title": "Trouve ton terrain",
+        "description": "Un quiz solo à ta façon, un salon avec tes amis ou un duel classé."
+      },
+      "answer": {
+        "title": "Fais parler ton instinct",
+        "description": "Lis la question, choisis ta réponse et garde un œil sur le chrono."
+      },
+      "replay": {
+        "title": "Vise un peu plus haut",
+        "description": "Découvre ton résultat, affine tes connaissances et tente de battre ton score."
+      }
+    },
     "skipContent": "Aller au contenu",
     "navigation": "Navigation principale",
     "navPlay": "Jouer",
@@ -78,7 +105,8 @@
       "science": "Sciences",
       "cinema": "Cinéma",
       "history": "Histoire",
-      "caption": "Tout un univers de connaissances"
+      "caption": "La curiosité est un terrain de jeu",
+      "greeting": "On joue ?"
     }
   },
   "auth": {

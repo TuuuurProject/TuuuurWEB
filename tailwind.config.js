@@ -14,8 +14,8 @@ export default {
       colors: {
         brand: {
           // Couleurs gaming vibrantes
-          dark: '#10121C', // Bleu très sombre pour le fond
-          darkGray: '#1B1E2D', // Gris sombre pour les cartes
+          dark: '#12151B', // Bleu très sombre pour le fond
+          darkGray: '#20252C', // Gris sombre pour les cartes
           purple: '#A99AFF', // Violet électrique principal
           purpleDark: '#7562D9', // Violet plus sombre
           orange: '#FF6B35', // Orange énergique
@@ -25,8 +25,8 @@ export default {
           yellow: '#FFD93D', // Jaune vif pour les accents
           pink: '#FF4081', // Rose vif pour les éléments spéciaux
           cyan: '#00E5FF', // Cyan pour les liens/info
-          lightGray: '#E1E5E9', // Texte clair
-          gray: '#A4A9BD', // Texte secondaire
+          lightGray: '#FFF9ED', // Texte clair
+          gray: '#ADB4BF', // Texte secondaire
           white: '#FFFFFF', // Blanc pur
           // Anciennes couleurs pour compatibilité
           light: '#C37A3E',
