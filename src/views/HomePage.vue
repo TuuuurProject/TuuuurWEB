@@ -39,7 +39,7 @@
         >
           {{ mascotMessage }}
         </p>
-        <monkizz-mascot :size="280" animated class="w-56 lg:w-72" />
+        <monkizz-mascot :size="260" pose="victory" />
       </div>
 
       <!-- Visiteur : un exemple de question montre le jeu (décoratif) -->
@@ -180,7 +180,9 @@
               }}
             </span>
           </template>
-          <span v-else class="font-semibold text-brand-muted">{{ $t('home.progress.noGame') }}</span>
+          <span v-else class="font-semibold text-brand-muted">{{
+            $t('home.progress.noGame')
+          }}</span>
         </div>
       </div>
       <div class="flex flex-wrap gap-3">

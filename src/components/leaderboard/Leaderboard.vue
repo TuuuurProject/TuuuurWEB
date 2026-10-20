@@ -21,7 +21,7 @@
       v-else-if="entries.length === 0"
       class="surface-card flex flex-col items-center gap-5 py-10 text-center"
     >
-      <mascot-speech :message="$t('leaderboard.empty')" :size="180" mascot-class="w-36" />
+      <mascot-speech :message="$t('leaderboard.empty')" :size="180" />
       <router-link :to="{ name: 'CompetitiveMode' }" class="btn btn-primary">
         <font-awesome-icon icon="bolt" class="mr-2" /> {{ $t('leaderboard.playRanked') }}
       </router-link>

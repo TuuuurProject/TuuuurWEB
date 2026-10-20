@@ -5,7 +5,7 @@
       class="surface-card grid gap-8 md:p-10 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center"
       data-testid="game-results"
     >
-      <mascot-speech :message="mascotMessage" :size="220" mascot-class="w-48 md:w-56" />
+      <mascot-speech :message="mascotMessage" :pose="mascotPose" :size="220" />
 
       <div class="flex flex-col gap-6">
         <div class="flex flex-col gap-2">
@@ -87,6 +87,13 @@ const mascotMessage = computed(() => {
   if (successRate.value >= 50) return t('game.results.mascot.good')
   if (successRate.value > 0) return t('game.results.mascot.low')
   return t('game.results.mascot.zero')
+})
+
+// Le singe célèbre une victoire ou une bonne partie, et se désole sinon
+const mascotPose = computed(() => {
+  if (props.tone === 'win') return 'victory'
+  if (props.tone === 'lose') return 'defeat'
+  return successRate.value >= 50 ? 'victory' : 'defeat'
 })
 
 const toneClass = computed(

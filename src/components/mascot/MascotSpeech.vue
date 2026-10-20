@@ -5,21 +5,22 @@
     >
       {{ message }}
     </p>
-    <monkizz-mascot :size="size" :animated="animated" :class="mascotClass" />
+    <monkizz-mascot :size="size" :pose="pose" :animated="animated" />
   </div>
 </template>
 
 <script setup lang="ts">
 import MonkizzMascot from './MonkizzMascot.vue'
+import type { MascotPose } from './mascotScene'
 
 withDefaults(
   defineProps<{
     message: string
     size?: number
     animated?: boolean
-    mascotClass?: string
+    pose?: MascotPose
   }>(),
-  { size: 240, animated: true, mascotClass: '' },
+  { size: 240, animated: true, pose: 'victory' },
 )
 </script>
 

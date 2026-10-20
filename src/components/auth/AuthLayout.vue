@@ -4,7 +4,7 @@
   >
     <!-- La mascotte accueille le joueur (grand écran uniquement, le formulaire reste prioritaire) -->
     <div class="hidden justify-center lg:flex">
-      <mascot-speech :message="mascotMessage" :size="260" mascot-class="w-60" />
+      <mascot-speech :message="mascotMessage" :size="240" />
     </div>
 
     <div class="surface-card flex min-w-0 flex-col gap-6 md:p-8">

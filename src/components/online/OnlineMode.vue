@@ -72,11 +72,7 @@
           <section
             class="surface-card order-first flex flex-col items-center gap-5 text-center lg:sticky lg:top-24 lg:order-none"
           >
-            <mascot-speech
-              :message="$t('competitive.lobby.mascot')"
-              :size="180"
-              mascot-class="w-36"
-            />
+            <mascot-speech :message="$t('competitive.lobby.mascot')" :size="180" />
             <button
               data-testid="ranked-search"
               class="btn btn-primary w-full py-4 text-lg"
