@@ -1,5 +1,5 @@
 <template>
-  <auth-layout :title="title" :subtitle="subtitle" :mascot-message="$t('auth.login.mascot')">
+  <auth-layout :title="title" :subtitle="subtitle">
     <transition name="fade" mode="out-in">
       <auth-forgot-password
         v-if="step === 0"

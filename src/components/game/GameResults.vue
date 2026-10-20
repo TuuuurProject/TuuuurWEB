@@ -1,15 +1,21 @@
 <template>
   <div class="flex flex-col gap-6">
-    <!-- La mascotte commente la partie : c'est le moment fort de l'écran -->
+    <!-- La mascotte réagit à la partie : c'est le moment fort de l'écran -->
     <section
-      class="surface-card grid gap-8 md:p-10 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center"
+      class="surface-card grid overflow-hidden p-0 lg:grid-cols-[20rem_minmax(0,1fr)]"
       data-testid="game-results"
     >
-      <mascot-speech :message="mascotMessage" :pose="mascotPose" :size="220" />
+      <mascot-stage
+        class="rounded-none"
+        :height="320"
+        :tone="mascotPose === 'victory' ? 'win' : 'lose'"
+        :pose="mascotPose"
+      />
 
-      <div class="flex flex-col gap-6">
+      <div class="flex flex-col justify-center gap-6 p-6 md:p-10">
         <div class="flex flex-col gap-2">
           <h2 class="text-4xl font-extrabold md:text-5xl" :class="toneClass">{{ title }}</h2>
+          <p class="text-lg text-brand-muted">{{ mascotMessage }}</p>
           <slot name="highlight" />
         </div>
 
@@ -57,7 +63,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import MascotSpeech from '@/components/mascot/MascotSpeech.vue'
+import MascotStage from '@/components/mascot/MascotStage.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -65,7 +71,7 @@ const props = withDefaults(
     score: number
     correct: number
     total: number
-    /** Remplace le commentaire automatique de la mascotte */
+    /** Remplace la phrase de commentaire automatique sous le titre */
     message?: string
     tone?: 'win' | 'lose' | 'neutral'
     /** Taux de réussite fourni par l'API, prioritaire sur le calcul local */

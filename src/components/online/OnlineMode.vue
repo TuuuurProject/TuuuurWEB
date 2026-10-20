@@ -70,28 +70,31 @@
           </div>
 
           <section
-            class="surface-card order-first flex flex-col items-center gap-5 text-center lg:sticky lg:top-24 lg:order-none"
+            class="surface-card order-first flex flex-col overflow-hidden p-0 text-center lg:sticky lg:top-24 lg:order-none"
           >
-            <mascot-speech :message="$t('competitive.lobby.mascot')" :size="180" />
-            <button
-              data-testid="ranked-search"
-              class="btn btn-primary w-full py-4 text-lg"
-              :disabled="connectionLoading"
-              @click="startSearch"
-            >
-              <font-awesome-icon
-                :icon="connectionLoading ? 'circle-notch' : 'magnifying-glass'"
-                :class="{ 'animate-spin': connectionLoading }"
-                class="mr-2"
-              />
-              {{ $t('competitive.ranked.searchOpponent') }}
-            </button>
-            <router-link
-              :to="{ name: 'Ranking' }"
-              class="text-sm font-bold text-brand-purple hover:underline"
-            >
-              {{ $t('home.progress.seeRanking') }}
-            </router-link>
+            <mascot-stage class="rounded-none" :height="240" />
+            <div class="flex flex-col items-center gap-4 p-6">
+              <h3 class="text-xl font-bold">{{ $t('competitive.lobby.mascot') }}</h3>
+              <button
+                data-testid="ranked-search"
+                class="btn btn-primary w-full py-4 text-lg"
+                :disabled="connectionLoading"
+                @click="startSearch"
+              >
+                <font-awesome-icon
+                  :icon="connectionLoading ? 'circle-notch' : 'magnifying-glass'"
+                  :class="{ 'animate-spin': connectionLoading }"
+                  class="mr-2"
+                />
+                {{ $t('competitive.ranked.searchOpponent') }}
+              </button>
+              <router-link
+                :to="{ name: 'Ranking' }"
+                class="text-sm font-bold text-brand-purple hover:underline"
+              >
+                {{ $t('home.progress.seeRanking') }}
+              </router-link>
+            </div>
           </section>
         </div>
       </div>
@@ -135,7 +138,7 @@ import { useRankedLifecycle } from '@/composables/useRankedLifecycle'
 import RankedMatchmaking from './RankedMatchmaking.vue'
 import RankedQuiz from './RankedQuiz.vue'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
-import MascotSpeech from '@/components/mascot/MascotSpeech.vue'
+import MascotStage from '@/components/mascot/MascotStage.vue'
 
 const rules = [
   { key: 'match', icon: 'users' },

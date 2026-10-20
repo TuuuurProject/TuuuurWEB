@@ -37,7 +37,7 @@ const props = withDefaults(
     /** false : pose figée (la préférence « réduire les animations » force aussi ce mode) */
     animated?: boolean
   }>(),
-  { size: 200, pose: 'victory', animated: true },
+  { size: 200, pose: 'breath', animated: true },
 )
 
 const root = ref<HTMLDivElement | null>(null)

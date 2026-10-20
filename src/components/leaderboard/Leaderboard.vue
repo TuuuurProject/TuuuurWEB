@@ -19,9 +19,10 @@
     <!-- Personne n'est classé -->
     <div
       v-else-if="entries.length === 0"
-      class="surface-card flex flex-col items-center gap-5 py-10 text-center"
+      class="surface-card flex flex-col items-center gap-5 overflow-hidden p-0 pb-8 text-center"
     >
-      <mascot-speech :message="$t('leaderboard.empty')" :size="180" />
+      <mascot-stage class="rounded-none" :height="260" />
+      <p class="max-w-md px-6 text-lg font-semibold">{{ $t('leaderboard.empty') }}</p>
       <router-link :to="{ name: 'CompetitiveMode' }" class="btn btn-primary">
         <font-awesome-icon icon="bolt" class="mr-2" /> {{ $t('leaderboard.playRanked') }}
       </router-link>
@@ -87,7 +88,7 @@ import useUserStore from '@/stores/user'
 import LoggedInBlock from '@/components/LoggedInBlock.vue'
 import ResultsPodium from '@/components/game/ResultsPodium.vue'
 import PlayerAvatar from '@/components/game/PlayerAvatar.vue'
-import MascotSpeech from '@/components/mascot/MascotSpeech.vue'
+import MascotStage from '@/components/mascot/MascotStage.vue'
 import type { RankingEntry } from '@/components/game/LiveRanking.vue'
 
 const rankedStore = useRankedStore()

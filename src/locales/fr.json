@@ -79,10 +79,6 @@
       "login": "Se connecter"
     },
     "footer": "© {year} Monkizz, version {version}",
-    "mascot": {
-      "firstGame": "Pas encore de partie ? Lancez un solo, je vous accompagne.",
-      "lastGame": "{score} pts {mode} la dernière fois. On fait mieux aujourd'hui ?"
-    },
     "partyModes": {
       "name": {
         "solo": "Solo",
@@ -107,8 +103,7 @@
       "submit": "Se connecter",
       "noAccount": "Pas de compte ?",
       "createAccount": "Créer un compte",
-      "subtitle": "Retrouvez votre progression, votre Élo et votre historique.",
-      "mascot": "Content de vous revoir ! On reprend où on s'était arrêtés ?"
+      "subtitle": "Retrouvez votre progression, votre Élo et votre historique."
     },
     "register": {
       "title": "Créer un compte",
@@ -130,8 +125,7 @@
       "submit": "Créer le compte",
       "alreadyRegistered": "Déjà inscrit ?",
       "signIn": "Se connecter",
-      "subtitle": "Gratuit. Vos parties, votre Élo et votre place au classement sont enregistrés.",
-      "mascot": "Bienvenue dans la bande ! Prêt pour votre premier quiz ?"
+      "subtitle": "Gratuit. Vos parties, votre Élo et votre place au classement sont enregistrés."
     },
     "verification": {
       "title": "Vérification de votre email",

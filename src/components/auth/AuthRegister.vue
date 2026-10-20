@@ -2,7 +2,6 @@
   <auth-layout
     :title="step === 1 ? $t('auth.register.title') : $t('auth.verification.title')"
     :subtitle="step === 1 ? $t('auth.register.subtitle') : $t('auth.verification.message')"
-    :mascot-message="$t('auth.register.mascot')"
   >
     <transition name="fade" mode="out-in">
       <overlay-block v-if="step === 1" :loading="userStore.isLoading">

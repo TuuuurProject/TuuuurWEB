@@ -28,19 +28,8 @@
         </div>
       </div>
 
-      <!-- Joueur connecté : la mascotte l'accueille avec un mot sur sa dernière partie -->
-      <div
-        v-if="userStore.isLogged"
-        class="flex flex-col items-center gap-3"
-        data-testid="home-mascot"
-      >
-        <p
-          class="mascot-bubble relative max-w-sm rounded-3xl bg-brand-surface border border-brand-line px-6 py-4 text-lg font-semibold shadow-card"
-        >
-          {{ mascotMessage }}
-        </p>
-        <monkizz-mascot :size="260" pose="victory" />
-      </div>
+      <!-- Joueur connecté : la mascotte l'accueille sur sa scène -->
+      <mascot-stage v-if="userStore.isLogged" data-testid="home-mascot" :height="400" />
 
       <!-- Visiteur : un exemple de question montre le jeu (décoratif) -->
       <div v-else class="surface-card flex flex-col gap-4" aria-hidden="true">
@@ -240,7 +229,7 @@ import packageJson from '../../package.json'
 import useUserStore from '@/stores/user'
 import useRankedStore from '@/stores/ranked'
 import useHistoryStore from '@/stores/history'
-import MonkizzMascot from '@/components/mascot/MonkizzMascot.vue'
+import MascotStage from '@/components/mascot/MascotStage.vue'
 import { partyModeKey } from '@/services/partyTypes'
 
 dayjs.extend(relativeTime)
@@ -291,14 +280,6 @@ const lastGameDate = computed(() => {
 const modeLabel = (id: number | undefined, form: 'name' | 'inline') =>
   t(`home.partyModes.${form}.${partyModeKey(id)}`)
 
-const mascotMessage = computed(() => {
-  if (!lastGame.value) return t('home.mascot.firstGame')
-  return t('home.mascot.lastGame', {
-    score: lastGame.value.score,
-    mode: modeLabel(lastGame.value.partyType?.id, 'inline'),
-  })
-})
-
 const loadProgress = () => {
   if (!userStore.isLogged) return
   userStore.getUserInfo()
@@ -309,18 +290,3 @@ const loadProgress = () => {
 onMounted(loadProgress)
 watch(() => userStore.isLogged, loadProgress)
 </script>
-
-<style scoped>
-.mascot-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -9px;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  transform: translateX(-50%) rotate(45deg);
-  background: rgb(var(--c-surface));
-  border-right: 1px solid rgb(var(--c-line));
-  border-bottom: 1px solid rgb(var(--c-line));
-}
-</style>

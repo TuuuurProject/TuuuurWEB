@@ -79,10 +79,6 @@
       "login": "Log in"
     },
     "footer": "© {year} Monkizz, version {version}",
-    "mascot": {
-      "firstGame": "No games yet? Start a solo game, I'll keep you company.",
-      "lastGame": "{score} pts {mode} last time. Can you beat it today?"
-    },
     "partyModes": {
       "name": {
         "solo": "Solo",
@@ -107,8 +103,7 @@
       "submit": "Sign in",
       "noAccount": "No account?",
       "createAccount": "Create an account",
-      "subtitle": "Get back your progress, Elo and history.",
-      "mascot": "Good to see you again! Shall we pick up where we left off?"
+      "subtitle": "Get back your progress, Elo and history."
     },
     "register": {
       "title": "Create an Account",
@@ -130,8 +125,7 @@
       "submit": "Create account",
       "alreadyRegistered": "Already registered?",
       "signIn": "Sign in",
-      "subtitle": "Free. Your games, Elo and leaderboard spot are saved.",
-      "mascot": "Welcome to the gang! Ready for your first quiz?"
+      "subtitle": "Free. Your games, Elo and leaderboard spot are saved."
     },
     "verification": {
       "title": "Email Verification",
